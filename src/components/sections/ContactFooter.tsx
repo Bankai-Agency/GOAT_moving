@@ -178,7 +178,7 @@ export function ContactFooter() {
           </p>
           <Link
             href="/privacy"
-            className="hover-underline w-fit font-sans font-normal text-lg leading-[1.4] tracking-[-0.36px] text-white/60 underline hover:text-[#FFE533] transition-colors duration-200"
+            className="w-fit font-sans font-normal text-lg leading-[1.4] tracking-[-0.36px] text-white/60 hover:text-[#FFE533] hover:underline transition-colors duration-200"
           >
             Privacy policy
           </Link>

@@ -197,8 +197,9 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
             </div>
           </div>
 
-          {/* Desktop form — full QuoteForm floating on the right over the image. */}
-          <div className="hidden lg:block absolute top-6 right-6 bottom-6 w-[560px] bg-[#181818] rounded-2xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-y-auto">
+          {/* Desktop form — full QuoteForm floating on the right over the image.
+              Height stretches with the hero (top-6 / bottom-6) — no internal scroll. */}
+          <div className="hidden lg:flex flex-col justify-center absolute top-6 right-6 bottom-6 w-[560px] bg-[#181818] rounded-2xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
             <QuoteForm
               heading="Move information"
               submitLabel="Submit Request"

@@ -110,17 +110,17 @@ function SummaryCardDesktop() {
           Visit our Yelp page to find out more about customer experience.
         </p>
       </div>
-      <div className="flex items-end justify-between">
-        <div className="relative h-9 w-[130px]">
+      <div className="flex items-end justify-between gap-4">
+        <div className="relative h-9 w-[130px] shrink-0">
           {["/images/avatar-1.jpg", "/images/avatar-2.jpg", "/images/avatar-3.jpg", "/images/avatar-4.jpg", "/images/avatar-5.jpg"].map((src, i) => (
             <div key={i} className="absolute top-0 w-9 h-9 rounded-lg border-2 border-[#181818] overflow-hidden" style={{ left: `${i * 24}px` }}>
               <Image src={src} alt="" fill className="object-cover" />
             </div>
           ))}
         </div>
-        <div className="flex flex-col gap-1.5 items-start">
+        <div className="flex flex-col gap-1.5 items-end text-right shrink-0">
           <Stars variant="yellow" />
-          <span className="font-mono font-medium text-sm leading-[1.2] tracking-[-0.56px] uppercase text-white/50">500+ 5-Star Reviews</span>
+          <span className="font-mono font-medium text-xs leading-[1.2] tracking-[-0.48px] uppercase text-white/50 whitespace-nowrap">500+ 5-Star Reviews</span>
         </div>
       </div>
     </div>
@@ -150,21 +150,21 @@ function SummaryCardMobile() {
           Visit our Yelp page to find out more about customer experience.
         </p>
       </div>
-      <div className="flex items-end justify-between">
-        <div className="relative h-9 w-[130px]">
+      <div className="flex items-end justify-between gap-4">
+        <div className="relative h-9 w-[130px] shrink-0">
           {["/images/avatar-1.jpg", "/images/avatar-2.jpg", "/images/avatar-3.jpg", "/images/avatar-4.jpg", "/images/avatar-5.jpg"].map((src, i) => (
             <div key={i} className="absolute top-0 w-9 h-9 rounded-lg border-2 border-[#181818] overflow-hidden" style={{ left: `${i * 24}px` }}>
               <Image src={src} alt="" fill className="object-cover" />
             </div>
           ))}
         </div>
-        <div className="flex flex-col gap-1.5 items-start">
+        <div className="flex flex-col gap-1.5 items-end text-right shrink-0">
           <div className="flex gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
               <Image key={i} src="/icons/star-yellow.svg" alt="" width={18} height={18} />
             ))}
           </div>
-          <span className="font-mono font-medium text-sm leading-[1.2] tracking-[-0.56px] uppercase text-white/50">500+ 5-Star Reviews</span>
+          <span className="font-mono font-medium text-xs leading-[1.2] tracking-[-0.48px] uppercase text-white/50 whitespace-nowrap">500+ 5-Star Reviews</span>
         </div>
       </div>
     </div>
