@@ -140,8 +140,8 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           {/* Inner content grid — constrained to 1408px, centered */}
           <div className="relative min-h-[560px] lg:min-h-[calc(100dvh_-_132px)] max-w-[1408px] mx-auto">
 
-          {/* Hero content — relative so it sizes the container */}
-          <div className="relative flex flex-col justify-end min-h-[560px] lg:min-h-[calc(100dvh_-_132px)] p-6 lg:px-0 lg:pb-[48px] lg:pt-8 gap-5 lg:gap-5">
+          {/* Hero content — flows top to bottom, scrolls if viewport is short */}
+          <div className="relative flex flex-col p-6 lg:px-0 lg:py-8 gap-5 lg:gap-5">
             {/* Rating strip + title + description */}
             <div className="flex flex-col gap-4 lg:gap-5">
               {/* Rating strip */}
