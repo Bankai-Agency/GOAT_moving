@@ -12,6 +12,7 @@ const TOTAL_STEPS = 3;
 
 const empty: QuoteFormValues = {
   fullName: "",
+  email: "",
   phone: "",
   movingFrom: "",
   movingTo: "",
@@ -88,7 +89,20 @@ export function StepQuoteForm({
   const set = <K extends keyof QuoteFormValues>(key: K, v: QuoteFormValues[K]) =>
     setValues((prev) => ({ ...prev, [key]: v }));
 
-  const handleSubmit = () => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    try {
+      await fetch("/api/submit-quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+    } catch (err) {
+      console.error("Submit failed:", err);
+    }
+    setSubmitting(false);
     setStep(4); // success
   };
 
@@ -135,6 +149,13 @@ export function StepQuoteForm({
             value={values.phone}
             onChange={(v) => set("phone", v)}
           />
+          <FormInput
+            label="Email"
+            placeholder="your@email.com"
+            type="email"
+            value={values.email}
+            onChange={(v) => set("email", v)}
+          />
           <ContinueButton
             label="Continue &rarr;"
             onClick={() => {
@@ -163,8 +184,8 @@ export function StepQuoteForm({
             onChange={(v) => set("movingTo", v)}
           />
           <div className="flex flex-col lg:flex-row gap-5 lg:gap-2.5">
-            <DatePicker label="Move date" placeholder="Choose date" />
-            <SelectDropdown label="Move size" placeholder="Select size" options={MOVE_SIZES} />
+            <DatePicker label="Move date" placeholder="Choose date" value={values.moveDate} onChange={(v) => set("moveDate", v)} />
+            <SelectDropdown label="Move size" placeholder="Select size" options={MOVE_SIZES} value={values.moveSize} onChange={(v) => set("moveSize", v)} />
           </div>
           <ContinueButton label="Continue &rarr;" onClick={() => setStep(3)} />
           <BackButton onClick={() => setStep(1)} />
@@ -185,7 +206,7 @@ export function StepQuoteForm({
               className="backdrop-blur-[20px] bg-white/10 rounded-[10px] p-4 h-[140px] font-sans font-normal text-base lg:text-lg leading-[1.5] lg:leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.36px] text-white placeholder:text-white/60 outline-none focus:bg-white/15 input-glow transition-all duration-200 resize-none"
             />
           </div>
-          <ContinueButton label="Submit Request" onClick={handleSubmit} />
+          <ContinueButton label={submitting ? "Sending..." : "Submit Request"} onClick={handleSubmit} />
           <BackButton onClick={() => setStep(2)} />
         </div>
       )}
