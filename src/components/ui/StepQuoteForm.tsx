@@ -79,7 +79,7 @@ function BackButton({ onClick }: { onClick: () => void }) {
 }
 
 function ErrorMsg({ text }: { text: string }) {
-  return <p className="font-sans text-sm text-red-400 -mt-3">{text}</p>;
+  return <p className="font-sans text-sm text-red-400">{text}</p>;
 }
 
 /* ── Main component ── */
@@ -153,28 +153,30 @@ export function StepQuoteForm({
   if (horizontal) {
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-4">
-          <StepIndicator current={step} />
+        <div className="flex items-center justify-between">
           <h3 className="font-sans font-semibold text-lg leading-[1.2] tracking-[-0.54px] text-white whitespace-nowrap">
             {step === 1 && heading}
             {step === 2 && "Move details"}
             {step === 3 && "Almost done"}
           </h3>
+          <StepIndicator current={step} />
         </div>
 
         {step === 1 && (
-          <div className="flex items-end gap-3">
-            <div className="flex-1"><FormInput label="Full name" placeholder="Enter your name" required value={values.fullName} onChange={(v) => set("fullName", v)} /></div>
-            <div className="flex-1"><FormInput label="Phone number" placeholder="+1 (555) 123-4567" type="tel" required value={values.phone} onChange={(v) => set("phone", v)} /></div>
-            <div className="flex-1"><FormInput label="Email" placeholder="your@email.com" type="email" value={values.email} onChange={(v) => set("email", v)} /></div>
-            <ContinueButton label="Continue" onClick={() => { if (validateStep1()) setStep(2); }} />
-          </div>
-        )}
-        {step === 1 && Object.keys(errors).length > 0 && (
-          <div className="flex gap-4">
-            {errors.fullName && <ErrorMsg text={errors.fullName} />}
-            {errors.phone && <ErrorMsg text={errors.phone} />}
-            {errors.email && <ErrorMsg text={errors.email} />}
+          <div className="flex items-start gap-3">
+            <div className="flex-1 flex flex-col gap-1">
+              <FormInput label="Full name" placeholder="Enter your name" required value={values.fullName} onChange={(v) => set("fullName", v)} />
+              {errors.fullName && <ErrorMsg text={errors.fullName} />}
+            </div>
+            <div className="flex-1 flex flex-col gap-1">
+              <FormInput label="Phone number" placeholder="+1 (555) 123-4567" type="tel" required value={values.phone} onChange={(v) => set("phone", v)} />
+              {errors.phone && <ErrorMsg text={errors.phone} />}
+            </div>
+            <div className="flex-1 flex flex-col gap-1">
+              <FormInput label="Email" placeholder="your@email.com" type="email" value={values.email} onChange={(v) => set("email", v)} />
+              {errors.email && <ErrorMsg text={errors.email} />}
+            </div>
+            <div className="pt-[26px]"><ContinueButton label="Get Your Free Quote" onClick={() => { if (validateStep1()) setStep(2); }} /></div>
           </div>
         )}
 
@@ -184,7 +186,7 @@ export function StepQuoteForm({
             <div className="flex-1"><FormInput label="Moving to" placeholder="Address" value={values.movingTo} onChange={(v) => set("movingTo", v)} /></div>
             <div className="flex-1"><DatePicker label="Move date" placeholder="Choose date" value={values.moveDate} onChange={(v) => set("moveDate", v)} /></div>
             <div className="flex-1"><SelectDropdown label="Move size" placeholder="Select size" options={MOVE_SIZES} value={values.moveSize} onChange={(v) => set("moveSize", v)} /></div>
-            <ContinueButton label="Continue" onClick={() => setStep(3)} />
+            <ContinueButton label="Get Your Free Quote" onClick={() => setStep(3)} />
           </div>
         )}
         {step === 2 && <BackButton onClick={() => setStep(1)} />}
@@ -226,7 +228,7 @@ export function StepQuoteForm({
           {errors.phone && <ErrorMsg text={errors.phone} />}
           <FormInput label="Email" placeholder="your@email.com" type="email" value={values.email} onChange={(v) => set("email", v)} />
           {errors.email && <ErrorMsg text={errors.email} />}
-          <ContinueButton label="Continue" onClick={() => { if (validateStep1()) setStep(2); }} />
+          <ContinueButton label="Get Your Free Quote" onClick={() => { if (validateStep1()) setStep(2); }} />
           <p className="font-sans text-sm text-white/40 text-center">
             Enter your name and phone so we can send you a quote.
           </p>
@@ -241,7 +243,7 @@ export function StepQuoteForm({
             <DatePicker label="Move date" placeholder="Choose date" value={values.moveDate} onChange={(v) => set("moveDate", v)} />
             <SelectDropdown label="Move size" placeholder="Select size" options={MOVE_SIZES} value={values.moveSize} onChange={(v) => set("moveSize", v)} />
           </div>
-          <ContinueButton label="Continue" onClick={() => setStep(3)} />
+          <ContinueButton label="Get Your Free Quote" onClick={() => setStep(3)} />
           <BackButton onClick={() => setStep(1)} />
         </div>
       )}

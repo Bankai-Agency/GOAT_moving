@@ -172,11 +172,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
 
         {/* Mobile form — BELOW the hero image (not overlaid). Hidden on desktop. */}
         <div className="lg:hidden mx-4 mt-4 bg-[#181818] rounded-2xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
-          <LeadForm
-            heading="Get Your Exact Price"
-            submitLabel="Free Quote"
-            footnote="Takes 30 seconds · No obligation"
-          />
+          <StepQuoteForm heading="Get your free quote" city={city} />
         </div>
       </section>
 
