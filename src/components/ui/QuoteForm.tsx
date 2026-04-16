@@ -6,7 +6,7 @@ import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { FormInput } from "@/components/ui/FormInput";
 import { SuccessState } from "@/components/ui/SuccessState";
 
-const MOVE_SIZES = [
+export const MOVE_SIZES = [
   "Room or Less",
   "Studio",
   "Small 1 Bedroom Condo/Aprt.",

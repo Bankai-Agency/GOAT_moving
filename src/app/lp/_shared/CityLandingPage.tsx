@@ -14,7 +14,7 @@ import { ReviewsSection } from "@/components/sections/ReviewsSection";
 import { ContactFooter } from "@/components/sections/ContactFooter";
 import { Touchbar } from "@/components/layout/Touchbar";
 import { QuoteModal } from "@/components/ui/QuoteModal";
-import { QuoteForm } from "@/components/ui/QuoteForm";
+import { StepQuoteForm } from "@/components/ui/StepQuoteForm";
 import { LeadForm } from "@/components/ui/LeadForm";
 import type { CityLPConfig } from "./cityConfigs";
 
@@ -122,7 +122,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           for a cinematic look, while the inner content (title, form, rating
           strip) stays aligned to the standard 1408px content grid. */}
       <section className="bg-[#0c0c0c] pt-[100px] lg:pt-[108px] pb-[24px] lg:pb-[24px]">
-        <div className="mx-4 lg:mx-8 relative rounded-2xl overflow-hidden bg-[#181818] min-h-[560px] lg:min-h-[calc(100vh_-_132px)]">
+        <div className="relative overflow-hidden bg-[#181818] min-h-[560px] lg:min-h-[calc(100vh_-_132px)]">
           {/* Background image + dark overlay — fill the wider image container */}
           <Image
             src={heroImage}
@@ -141,7 +141,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           {/* Hero text overlay.
               Both mobile and desktop: rating chip at the top, title + description at the bottom
               (justify-between). Right padding reserves space for the floating form on desktop. */}
-          <div className="absolute inset-0 flex flex-col justify-between p-6 lg:p-10 lg:pr-[600px] gap-5 lg:gap-6">
+          <div className="absolute inset-0 flex flex-col justify-between p-6 lg:p-10 lg:pr-[520px] gap-5 lg:gap-6">
             {/* Compact rating strip.
                 Mobile: compact 2-platform pill, "437+ Reviews" hidden.
                 Desktop: full pill with review count and a separator. */}
@@ -194,14 +194,9 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
             </div>
           </div>
 
-          {/* Desktop form — full QuoteForm floating on the right over the image.
-              Height stretches with the hero (top-6 / bottom-6) — no internal scroll. */}
-          <div className="hidden lg:flex flex-col justify-center absolute top-6 right-6 bottom-6 w-[560px] bg-[#181818] rounded-2xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
-            <QuoteForm
-              heading="Move information"
-              submitLabel="Submit Request"
-              footnote="Our team will review your information and get back to you with a personalized quote as soon as possible."
-            />
+          {/* Desktop form — multi-step wizard floating on the right over the image. */}
+          <div className="hidden lg:flex flex-col justify-center absolute top-6 right-6 bottom-6 w-[480px] bg-[#181818] rounded-2xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+            <StepQuoteForm heading="Get your free quote" city={city} />
           </div>
           </div>
         </div>
