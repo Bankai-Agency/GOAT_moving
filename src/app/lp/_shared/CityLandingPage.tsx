@@ -91,7 +91,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
   const processSteps = [
     {
       icon: <EstimateIcon />,
-      title: "Get Your Exact Price",
+      title: "Get Your Free Quote",
       description: "We calculate and confirm your fixed price — no time windows, no last-minute changes.",
     },
     {
@@ -213,9 +213,9 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
 
       {/* CTA banner right after pricing */}
       <CTABanner
-        heading={`Get Your Exact Moving Price in ${city} in 30 Seconds`}
+        heading={`Get Your Free Moving Quote in ${city} in 30 Seconds`}
         tagline="No hidden fees. No hourly surprises. Fully licensed and insured."
-        buttonText="Get My Exact Price"
+        buttonText="Get Your Free Quote"
       />
 
       {/* 6. Services */}
