@@ -117,7 +117,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
   const neighborhoodsAreas = config.neighborhoods.map((n) => ({ city: n }));
 
   return (
-    <>
+    <div className="page-zoom">
       <HeaderLP />
 
       {/* ───────────── 1. HERO ─────────────
@@ -144,7 +144,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           {/* Hero text overlay.
               Both mobile and desktop: rating chip at the top, title + description at the bottom
               (justify-between). Right padding reserves space for the floating form on desktop. */}
-          <div className="absolute inset-0 flex flex-col justify-between p-6 lg:p-10 lg:pr-[480px] xl:pr-[530px] 2xl:pr-[600px] gap-5 lg:gap-6">
+          <div className="absolute inset-0 flex flex-col justify-between p-6 lg:p-10 lg:pr-[600px] gap-5 lg:gap-6">
             {/* Compact rating strip.
                 Mobile: compact 2-platform pill, "437+ Reviews" hidden.
                 Desktop: full pill with review count and a separator. */}
@@ -198,8 +198,8 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           </div>
 
           {/* Desktop form — full QuoteForm floating on the right over the image.
-              Keeps original 560px design, scaled down proportionally on smaller desktops. */}
-          <div className="hidden lg:flex flex-col justify-center absolute top-6 right-6 bottom-6 w-[560px] bg-[#181818] rounded-2xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)] lg:scale-[0.78] xl:scale-[0.88] 2xl:scale-100 origin-top-right">
+              Height stretches with the hero (top-6 / bottom-6) — no internal scroll. */}
+          <div className="hidden lg:flex flex-col justify-center absolute top-6 right-6 bottom-6 w-[560px] bg-[#181818] rounded-2xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
             <QuoteForm
               heading="Move information"
               submitLabel="Submit Request"
@@ -286,6 +286,6 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       <ContactFooter />
       <Touchbar />
       <QuoteModal />
-    </>
+    </div>
   );
 }
