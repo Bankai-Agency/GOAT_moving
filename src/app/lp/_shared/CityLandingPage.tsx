@@ -133,15 +133,17 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
             className={`object-cover ${heroImagePosition} lg:object-center`}
             priority
           />
-          <div className="absolute inset-0 bg-black/30" />
+          {/* Gradient overlays — dark where text is, clear where mover is */}
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 45%, transparent 70%)' }} />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 40%, transparent 65%)' }} />
 
           {/* Inner content grid — constrained to 1408px, centered */}
           <div className="relative h-full min-h-[560px] lg:min-h-[calc(100vh_-_132px)] max-w-[1408px] mx-auto">
 
-          {/* Hero content overlay */}
-          <div className="absolute inset-0 flex flex-col justify-end p-6 lg:px-0 lg:py-8 gap-5 lg:gap-6">
-            {/* Rating strip + title + description + form — all grouped at bottom */}
-            <div className="flex flex-col gap-5 lg:gap-6">
+          {/* Hero content overlay — text in lower-left area */}
+          <div className="absolute inset-0 flex flex-col justify-end p-6 lg:px-0 lg:pb-[48px] lg:pt-8 gap-5 lg:gap-5">
+            {/* Rating strip + title + description */}
+            <div className="flex flex-col gap-4 lg:gap-5">
               {/* Rating strip */}
               <div className="inline-flex items-center gap-2 backdrop-blur-[15px] bg-[rgba(13,13,13,0.5)] rounded-full pl-2.5 pr-3 py-1.5 lg:px-4 lg:py-2 w-fit">
                 <a href="https://www.yelp.com/biz/goat-movers-vancouver" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pr-2.5 lg:pr-3 border-r border-white/15 hover:opacity-80 transition-opacity">
@@ -154,15 +156,22 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                 </a>
                 <span className="inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-mono font-bold text-[10px] lg:text-xs uppercase tracking-[-0.48px] text-white/70 whitespace-nowrap">437+<span className="hidden lg:inline"> Verified</span> Reviews</span>
               </div>
-              <h1 className="font-sans font-bold text-[40px] lg:text-[80px] leading-[1.05] tracking-[-1.2px] lg:tracking-[-2.4px] text-white">
-                Stress-Free Movers in <span className="text-[#FFE533]">{city}</span> — $125/Hour
+              <h1 className="font-sans font-bold text-[40px] lg:text-[72px] leading-[1.05] tracking-[-1.2px] lg:tracking-[-2.16px] text-white">
+                Stress-Free
+                <br />
+                Movers in
+                <br />
+                <span className="text-[#FFE533]">{city}</span>
               </h1>
-              <p className="font-sans font-normal text-base lg:text-2xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.72px] text-white max-w-[700px]">
+              <p className="font-sans font-bold text-[32px] lg:text-[60px] leading-[1.05] tracking-[-0.96px] lg:tracking-[-1.8px] text-white">
+                $125/Hour
+              </p>
+              <p className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white/80 max-w-[500px]">
                 We show up on time, handle your belongings with care, and give you the exact price upfront. Most moves in {city} cost $400–$900.
               </p>
 
-              {/* Desktop: horizontal form bar */}
-              <div className="hidden lg:block backdrop-blur-[20px] bg-[rgba(13,13,13,0.7)] rounded-2xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+              {/* Desktop: horizontal form bar — right after description */}
+              <div className="hidden lg:block mt-4 backdrop-blur-[20px] bg-[rgba(24,24,24,0.85)] rounded-2xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
                 <StepQuoteForm heading="Get your free quote" city={city} horizontal />
               </div>
             </div>

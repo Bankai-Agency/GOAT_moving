@@ -83,7 +83,7 @@ export const portlandConfig: CityLPConfig = {
   city: "Portland",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/portland-hero.jpg",
+  heroImage: "/images/portland-city2.png",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Portland — $125/Hour | Goat Movers",
   metaDescription:
