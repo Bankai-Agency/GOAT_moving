@@ -195,7 +195,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           </div>
 
           {/* Desktop form — multi-step wizard floating on the right over the image. */}
-          <div className="hidden lg:flex flex-col justify-center absolute top-6 right-6 bottom-6 w-[480px] bg-[#181818] rounded-2xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+          <div className="hidden lg:block absolute top-6 right-6 w-[480px] bg-[#181818] rounded-2xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
             <StepQuoteForm heading="Get your free quote" city={city} />
           </div>
           </div>
