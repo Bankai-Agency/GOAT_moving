@@ -156,7 +156,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                 </a>
                 <span className="inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-mono font-bold text-[10px] lg:text-xs uppercase tracking-[-0.48px] text-white/70 whitespace-nowrap">437+<span className="hidden lg:inline"> Verified</span> Reviews</span>
               </div>
-              <h1 className="font-sans font-bold text-[40px] lg:text-[72px] leading-[1.05] tracking-[-1.2px] lg:tracking-[-2.16px] text-white">
+              <h1 className="font-sans font-bold text-[40px] lg:text-[80px] leading-[1.05] tracking-[-1.2px] lg:tracking-[-2.4px] text-white">
                 Stress-Free
                 <br />
                 Movers in
