@@ -144,7 +144,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           {/* Hero text overlay.
               Both mobile and desktop: rating chip at the top, title + description at the bottom
               (justify-between). Right padding reserves space for the floating form on desktop. */}
-          <div className="absolute inset-0 flex flex-col justify-between p-6 lg:p-10 lg:pr-[440px] xl:pr-[500px] 2xl:pr-[600px] gap-5 lg:gap-6">
+          <div className="absolute inset-0 flex flex-col justify-between p-6 lg:p-10 lg:pr-[480px] xl:pr-[530px] 2xl:pr-[600px] gap-5 lg:gap-6">
             {/* Compact rating strip.
                 Mobile: compact 2-platform pill, "437+ Reviews" hidden.
                 Desktop: full pill with review count and a separator. */}
@@ -186,7 +186,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
 
             {/* Title + description */}
             <div className="flex flex-col gap-5 lg:gap-6">
-              <h1 className="font-sans font-bold text-[40px] lg:text-[56px] xl:text-[68px] 2xl:text-[80px] leading-[1.05] tracking-[-1.2px] lg:tracking-[-2.4px] text-white">
+              <h1 className="font-sans font-bold text-[40px] lg:text-[80px] leading-[1.05] tracking-[-1.2px] lg:tracking-[-2.4px] text-white">
                 Stress-Free
                 <br />
                 Movers in <span className="text-[#FFE533]">{city}</span> — $125/Hour
@@ -198,8 +198,8 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           </div>
 
           {/* Desktop form — full QuoteForm floating on the right over the image.
-              Height stretches with the hero (top-6 / bottom-6). Width scales with breakpoints. */}
-          <div className="hidden lg:flex flex-col justify-center absolute top-6 right-6 bottom-6 w-[400px] xl:w-[460px] 2xl:w-[560px] bg-[#181818] rounded-2xl p-6 xl:p-7 2xl:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+              Keeps original 560px design, scaled down proportionally on smaller desktops. */}
+          <div className="hidden lg:flex flex-col justify-center absolute top-6 right-6 bottom-6 w-[560px] bg-[#181818] rounded-2xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)] lg:scale-[0.78] xl:scale-[0.88] 2xl:scale-100 origin-top-right">
             <QuoteForm
               heading="Move information"
               submitLabel="Submit Request"
