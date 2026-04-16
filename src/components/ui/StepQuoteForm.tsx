@@ -28,7 +28,7 @@ const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 /* ── Progress indicator ── */
 function StepIndicator({ current }: { current: number }) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center gap-4">
       <span className="font-mono font-bold text-sm uppercase tracking-[-0.48px] text-[#FFE533]">
         Step {current} of {TOTAL_STEPS}
       </span>
