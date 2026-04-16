@@ -167,7 +167,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                 $125/Hour
               </p>
               <p className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white/80 max-w-[500px]">
-                We show up on time, handle your belongings with care, and give you the exact price upfront. Most moves in {city} cost $400–$900.
+                We show up on time, handle your belongings with care, and give you a clear quote upfront. Most moves in {city} cost $400–$900.
               </p>
 
               {/* Desktop: horizontal form bar — right after description */}

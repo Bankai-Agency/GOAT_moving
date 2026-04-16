@@ -160,7 +160,7 @@ export function LocationPage({ config }: { config: LocationConfig }) {
       <CTABanner
         heading={config.ctaHeading}
         tagline={config.ctaTagline}
-        buttonText="Get My Exact Price"
+        buttonText="Get Your Free Quote"
       />
 
       {/* ========================== FAQ ========================== */}
