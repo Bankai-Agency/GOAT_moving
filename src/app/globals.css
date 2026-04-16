@@ -32,9 +32,19 @@ html {
 /* Proportional page zoom — reference design is 1728px (16" MacBook).
    Smaller desktops get a uniform scale-down so everything looks identical. */
 @media (min-width: 1024px) {
-  .page-zoom {
-    zoom: clamp(0.75, calc(100vw / 1728), 1);
-  }
+  .page-zoom { zoom: 0.75; }
+}
+@media (min-width: 1280px) {
+  .page-zoom { zoom: 0.82; }
+}
+@media (min-width: 1440px) {
+  .page-zoom { zoom: 0.88; }
+}
+@media (min-width: 1600px) {
+  .page-zoom { zoom: 0.94; }
+}
+@media (min-width: 1728px) {
+  .page-zoom { zoom: 1; }
 }
 
 body {
