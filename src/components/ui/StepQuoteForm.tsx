@@ -167,7 +167,7 @@ export function StepQuoteForm({
             <div className="flex-1"><FormInput label="Full name" placeholder="Enter your name" required value={values.fullName} onChange={(v) => set("fullName", v)} /></div>
             <div className="flex-1"><FormInput label="Phone number" placeholder="+1 (555) 123-4567" type="tel" required value={values.phone} onChange={(v) => set("phone", v)} /></div>
             <div className="flex-1"><FormInput label="Email" placeholder="your@email.com" type="email" value={values.email} onChange={(v) => set("email", v)} /></div>
-            <ContinueButton label="Continue &rarr;" onClick={() => { if (validateStep1()) setStep(2); }} />
+            <ContinueButton label="Continue" onClick={() => { if (validateStep1()) setStep(2); }} />
           </div>
         )}
         {step === 1 && Object.keys(errors).length > 0 && (
@@ -184,7 +184,7 @@ export function StepQuoteForm({
             <div className="flex-1"><FormInput label="Moving to" placeholder="Address" value={values.movingTo} onChange={(v) => set("movingTo", v)} /></div>
             <div className="flex-1"><DatePicker label="Move date" placeholder="Choose date" value={values.moveDate} onChange={(v) => set("moveDate", v)} /></div>
             <div className="flex-1"><SelectDropdown label="Move size" placeholder="Select size" options={MOVE_SIZES} value={values.moveSize} onChange={(v) => set("moveSize", v)} /></div>
-            <ContinueButton label="Continue &rarr;" onClick={() => setStep(3)} />
+            <ContinueButton label="Continue" onClick={() => setStep(3)} />
           </div>
         )}
         {step === 2 && <BackButton onClick={() => setStep(1)} />}
@@ -226,7 +226,7 @@ export function StepQuoteForm({
           {errors.phone && <ErrorMsg text={errors.phone} />}
           <FormInput label="Email" placeholder="your@email.com" type="email" value={values.email} onChange={(v) => set("email", v)} />
           {errors.email && <ErrorMsg text={errors.email} />}
-          <ContinueButton label="Continue &rarr;" onClick={() => { if (validateStep1()) setStep(2); }} />
+          <ContinueButton label="Continue" onClick={() => { if (validateStep1()) setStep(2); }} />
           <p className="font-sans text-sm text-white/40 text-center">
             Enter your name and phone so we can send you a quote.
           </p>
@@ -241,7 +241,7 @@ export function StepQuoteForm({
             <DatePicker label="Move date" placeholder="Choose date" value={values.moveDate} onChange={(v) => set("moveDate", v)} />
             <SelectDropdown label="Move size" placeholder="Select size" options={MOVE_SIZES} value={values.moveSize} onChange={(v) => set("moveSize", v)} />
           </div>
-          <ContinueButton label="Continue &rarr;" onClick={() => setStep(3)} />
+          <ContinueButton label="Continue" onClick={() => setStep(3)} />
           <BackButton onClick={() => setStep(1)} />
         </div>
       )}
