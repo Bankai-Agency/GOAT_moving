@@ -130,7 +130,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
             fill
             sizes="(max-width: 1024px) 200vw, 100vw"
             quality={90}
-            className={`object-cover ${heroImagePosition} lg:object-center`}
+            className={`object-cover ${heroImagePosition} lg:object-[center_25%]`}
             priority
           />
           {/* Gradient overlays — dark where text is, clear where mover is */}
