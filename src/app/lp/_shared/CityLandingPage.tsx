@@ -122,7 +122,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           for a cinematic look, while the inner content (title, form, rating
           strip) stays aligned to the standard 1408px content grid. */}
       <section className="bg-[#0c0c0c] pt-[100px] lg:pt-[108px] pb-[24px] lg:pb-[24px]">
-        <div className="relative overflow-hidden bg-[#181818] min-h-[560px] lg:min-h-[calc(100vh_-_132px)]">
+        <div className="mx-4 lg:mx-8 relative rounded-2xl overflow-hidden bg-[#181818] min-h-[560px] lg:min-h-[calc(100vh_-_132px)]">
           {/* Background image + dark overlay — fill the wider image container */}
           <Image
             src={heroImage}
