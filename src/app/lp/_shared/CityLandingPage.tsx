@@ -122,7 +122,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           for a cinematic look, while the inner content (title, form, rating
           strip) stays aligned to the standard 1408px content grid. */}
       <section className="bg-[#0c0c0c] pt-[100px] lg:pt-[108px] pb-[24px] lg:pb-[24px]">
-        <div className="mx-4 lg:mx-8 relative rounded-2xl overflow-hidden bg-[#181818] min-h-[560px] lg:min-h-[calc(100vh_-_132px)]">
+        <div className="mx-4 lg:mx-8 relative rounded-2xl overflow-hidden bg-[#181818] min-h-[560px] lg:min-h-[calc(100dvh_-_132px)]">
           {/* Background image + dark overlay — fill the wider image container */}
           <Image
             src={heroImage}
@@ -138,7 +138,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 40%, transparent 65%)' }} />
 
           {/* Inner content grid — constrained to 1408px, centered */}
-          <div className="relative h-full min-h-[560px] lg:min-h-[calc(100vh_-_132px)] max-w-[1408px] mx-auto">
+          <div className="relative h-full min-h-[560px] lg:min-h-[calc(100dvh_-_132px)] max-w-[1408px] mx-auto">
 
           {/* Hero content overlay — text in lower-left area */}
           <div className="absolute inset-0 flex flex-col justify-end p-6 lg:px-0 lg:pb-[48px] lg:pt-8 gap-5 lg:gap-5">
