@@ -84,26 +84,26 @@ export function QuoteForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4 xl:gap-5">
       {heading && (
         <h3 className="font-sans font-semibold text-2xl lg:text-[28px] leading-[1.2] tracking-[-0.72px] lg:tracking-[-0.84px] text-white">
           {heading}
         </h3>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-5 lg:gap-2.5">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-2.5 xl:gap-2.5">
         <FormInput label="Full name" placeholder="Enter your name" required value={values.fullName} onChange={(v) => set("fullName", v)} />
         <FormInput label="Phone number" placeholder="+1 (555) 123-4567" type="tel" required value={values.phone} onChange={(v) => set("phone", v)} />
       </div>
-      <div className="flex flex-col lg:flex-row gap-5 lg:gap-2.5">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-2.5 xl:gap-2.5">
         <FormInput label="Moving from" placeholder="Address" value={values.movingFrom} onChange={(v) => set("movingFrom", v)} />
         <FormInput label="Moving to" placeholder="Address" value={values.movingTo} onChange={(v) => set("movingTo", v)} />
       </div>
-      <div className="flex flex-col lg:flex-row gap-5 lg:gap-2.5">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-2.5 xl:gap-2.5">
         <DatePicker label="Move date" placeholder="Choose date" />
         <SelectDropdown label="Move size" placeholder="Select size" options={MOVE_SIZES} />
       </div>
-      <div className="flex flex-col gap-2 h-[160px]">
+      <div className="flex flex-col gap-2 h-[120px] xl:h-[140px] 2xl:h-[160px]">
         <label className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
           Additional Information (Optional)
         </label>
