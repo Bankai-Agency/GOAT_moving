@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 export type ServiceArea = {
@@ -62,7 +64,16 @@ function AreaCard({ city, state, href }: ServiceArea) {
       </Link>
     );
   }
-  return <div className={common}>{content}</div>;
+  return (
+    <div
+      className={`${common} cursor-pointer`}
+      onClick={() => window.dispatchEvent(new Event("open-quote-modal"))}
+      role="button"
+      tabIndex={0}
+    >
+      {content}
+    </div>
+  );
 }
 
 export function ServiceAreaSection({
