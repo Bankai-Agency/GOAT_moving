@@ -138,65 +138,60 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           {/* Inner content grid — constrained to 1408px, centered */}
           <div className="relative h-full min-h-[560px] lg:min-h-[calc(100vh_-_132px)] max-w-[1408px] mx-auto">
 
-          {/* Hero text overlay.
-              Both mobile and desktop: rating chip at the top, title + description at the bottom
-              (justify-between). Right padding reserves space for the floating form on desktop. */}
-          <div className="absolute inset-0 flex flex-col justify-between p-6 lg:p-10 lg:pr-[520px] gap-5 lg:gap-6">
-            {/* Compact rating strip.
-                Mobile: compact 2-platform pill, "437+ Reviews" hidden.
-                Desktop: full pill with review count and a separator. */}
-            <div className="inline-flex items-center gap-2 backdrop-blur-[15px] bg-[rgba(13,13,13,0.5)] rounded-full pl-2.5 pr-3 py-1.5 lg:px-4 lg:py-2 w-fit">
-              <a
-                href="https://www.yelp.com/biz/goat-movers-vancouver"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 lg:gap-2 pr-2.5 lg:pr-3 border-r border-white/15 hover:opacity-80 transition-opacity"
-              >
-                <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#FF2828] shrink-0">
-                  <Image src="/icons/yelp.svg" alt="Yelp" width={12} height={12} />
-                </div>
-                <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap">
-                  <span className="hidden lg:inline">Yelp </span>
-                  <span className="text-[#FFE533]">4.93</span>
-                  <span className="text-white/40">/5</span>
-                </span>
-              </a>
-              <a
-                href="https://www.google.com/maps/place/GOAT+MOVERS"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 lg:gap-2 pl-0.5 lg:pl-1 hover:opacity-80 transition-opacity"
-              >
-                <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#357DFF] shrink-0">
-                  <Image src="/icons/google.svg" alt="Google" width={12} height={12} />
-                </div>
-                <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap">
-                  <span className="hidden lg:inline">Google </span>
-                  <span className="text-[#FFE533]">4.82</span>
-                  <span className="text-white/40">/5</span>
-                </span>
-              </a>
-              <span className="inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-mono font-bold text-[10px] lg:text-xs uppercase tracking-[-0.48px] text-white/70 whitespace-nowrap">
-                437+<span className="hidden lg:inline"> Verified</span> Reviews
-              </span>
-            </div>
-
-            {/* Title + description */}
+          {/* Hero text overlay — full width, text at top, form bar at bottom */}
+          <div className="absolute inset-0 flex flex-col justify-between p-6 lg:px-0 lg:py-8 gap-5 lg:gap-6">
+            {/* Rating strip + Title group */}
             <div className="flex flex-col gap-5 lg:gap-6">
+              {/* Compact rating strip */}
+              <div className="inline-flex items-center gap-2 backdrop-blur-[15px] bg-[rgba(13,13,13,0.5)] rounded-full pl-2.5 pr-3 py-1.5 lg:px-4 lg:py-2 w-fit">
+                <a
+                  href="https://www.yelp.com/biz/goat-movers-vancouver"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 lg:gap-2 pr-2.5 lg:pr-3 border-r border-white/15 hover:opacity-80 transition-opacity"
+                >
+                  <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#FF2828] shrink-0">
+                    <Image src="/icons/yelp.svg" alt="Yelp" width={12} height={12} />
+                  </div>
+                  <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap">
+                    <span className="hidden lg:inline">Yelp </span>
+                    <span className="text-[#FFE533]">4.93</span>
+                    <span className="text-white/40">/5</span>
+                  </span>
+                </a>
+                <a
+                  href="https://www.google.com/maps/place/GOAT+MOVERS"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 lg:gap-2 pl-0.5 lg:pl-1 hover:opacity-80 transition-opacity"
+                >
+                  <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#357DFF] shrink-0">
+                    <Image src="/icons/google.svg" alt="Google" width={12} height={12} />
+                  </div>
+                  <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap">
+                    <span className="hidden lg:inline">Google </span>
+                    <span className="text-[#FFE533]">4.82</span>
+                    <span className="text-white/40">/5</span>
+                  </span>
+                </a>
+                <span className="inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-mono font-bold text-[10px] lg:text-xs uppercase tracking-[-0.48px] text-white/70 whitespace-nowrap">
+                  437+<span className="hidden lg:inline"> Verified</span> Reviews
+                </span>
+              </div>
+
+              {/* Title + description — full width */}
               <h1 className="font-sans font-bold text-[40px] lg:text-[80px] leading-[1.05] tracking-[-1.2px] lg:tracking-[-2.4px] text-white">
-                Stress-Free
-                <br />
-                Movers in <span className="text-[#FFE533]">{city}</span> — $125/Hour
+                Stress-Free Movers in <span className="text-[#FFE533]">{city}</span> — $125/Hour
               </h1>
-              <p className="font-sans font-normal text-base lg:text-2xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.72px] text-white max-w-[560px]">
+              <p className="font-sans font-normal text-base lg:text-2xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.72px] text-white max-w-[700px]">
                 We show up on time, handle your belongings with care, and give you the exact price upfront. Most moves in {city} cost $400–$900.
               </p>
             </div>
-          </div>
 
-          {/* Desktop form — multi-step wizard floating on the right over the image. */}
-          <div className="hidden lg:block absolute top-6 right-6 w-[480px] bg-[#181818] rounded-2xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
-            <StepQuoteForm heading="Get your free quote" city={city} />
+            {/* Desktop form — horizontal bar at bottom of hero */}
+            <div className="hidden lg:block backdrop-blur-[20px] bg-[rgba(13,13,13,0.7)] rounded-2xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+              <StepQuoteForm heading="Get your free quote" city={city} horizontal />
+            </div>
           </div>
           </div>
         </div>
