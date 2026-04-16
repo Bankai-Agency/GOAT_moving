@@ -154,7 +154,7 @@ export function StepQuoteForm({
     return (
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-sans font-semibold text-lg leading-[1.2] tracking-[-0.54px] text-white whitespace-nowrap">
+          <h3 className="font-sans font-semibold text-xl leading-[1.2] tracking-[-0.6px] text-white whitespace-nowrap">
             {step === 1 && heading}
             {step === 2 && "Move details"}
             {step === 3 && "Almost done"}
@@ -163,21 +163,22 @@ export function StepQuoteForm({
         </div>
 
         {step === 1 && (
-          <div className="flex items-start gap-3">
-            <div className="flex-1 flex flex-col gap-1">
-              <FormInput label="Full name" placeholder="Enter your name" required value={values.fullName} onChange={(v) => set("fullName", v)} />
-              {errors.fullName && <ErrorMsg text={errors.fullName} />}
+          <>
+            <div className="flex items-end gap-3">
+              <div className="flex-1"><FormInput label="Full name" placeholder="Enter your name" required value={values.fullName} onChange={(v) => set("fullName", v)} /></div>
+              <div className="flex-1"><FormInput label="Phone number" placeholder="+1 (555) 123-4567" type="tel" required value={values.phone} onChange={(v) => set("phone", v)} /></div>
+              <div className="flex-1"><FormInput label="Email" placeholder="your@email.com" type="email" value={values.email} onChange={(v) => set("email", v)} /></div>
+              <ContinueButton label="Get Your Free Quote" onClick={() => { if (validateStep1()) setStep(2); }} />
             </div>
-            <div className="flex-1 flex flex-col gap-1">
-              <FormInput label="Phone number" placeholder="+1 (555) 123-4567" type="tel" required value={values.phone} onChange={(v) => set("phone", v)} />
-              {errors.phone && <ErrorMsg text={errors.phone} />}
-            </div>
-            <div className="flex-1 flex flex-col gap-1">
-              <FormInput label="Email" placeholder="your@email.com" type="email" value={values.email} onChange={(v) => set("email", v)} />
-              {errors.email && <ErrorMsg text={errors.email} />}
-            </div>
-            <div className="pt-[26px]"><ContinueButton label="Get Your Free Quote" onClick={() => { if (validateStep1()) setStep(2); }} /></div>
-          </div>
+            {Object.keys(errors).length > 0 && (
+              <div className="flex gap-3">
+                <div className="flex-1">{errors.fullName && <ErrorMsg text={errors.fullName} />}</div>
+                <div className="flex-1">{errors.phone && <ErrorMsg text={errors.phone} />}</div>
+                <div className="flex-1">{errors.email && <ErrorMsg text={errors.email} />}</div>
+                <div className="w-auto lg:px-8 shrink-0" />
+              </div>
+            )}
+          </>
         )}
 
         {step === 2 && (
