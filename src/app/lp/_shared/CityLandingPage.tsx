@@ -201,15 +201,6 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         items={includedItems}
       />
 
-      {/* 5. Pricing */}
-      <LocalMovingRatesSection
-        label="Pricing"
-        title={`How Much Does Moving Cost in ${city}?`}
-        subtitle="Most local moves cost $400–$900 depending on size, stairs, and distance."
-        hideHourlyCard
-        hideCta
-        estimates={pricingEstimates.map((e) => ({ ...e }))}
-      />
 
       {/* CTA banner right after pricing */}
       <CTABanner
