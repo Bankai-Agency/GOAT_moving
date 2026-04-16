@@ -45,19 +45,33 @@ function ModalInput({
   );
 }
 
+type ModalFormData = {
+  fullName: string;
+  email: string;
+  phone: string;
+  movingFrom: string;
+  movingTo: string;
+  moveDate: string;
+};
+
+const emptyForm: ModalFormData = {
+  fullName: "",
+  email: "",
+  phone: "",
+  movingFrom: "",
+  movingTo: "",
+  moveDate: "",
+};
+
 export function QuoteModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
-    fullName: "",
-    phone: "",
-    movingFrom: "",
-    movingTo: "",
-  });
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState<ModalFormData>(emptyForm);
 
   useEffect(() => {
     const handler = (e: Event) => {
-      const detail = (e as CustomEvent<Partial<typeof formData>>).detail;
+      const detail = (e as CustomEvent<Partial<ModalFormData>>).detail;
       if (detail) {
         setFormData((prev) => ({ ...prev, ...detail }));
       }
@@ -81,11 +95,22 @@ export function QuoteModal() {
   const handleClose = () => {
     setIsOpen(false);
     setSubmitted(false);
-    setFormData({ fullName: "", phone: "", movingFrom: "", movingTo: "" });
+    setFormData(emptyForm);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
+    try {
+      await fetch("/api/submit-quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+    } catch (err) {
+      console.error("Submit failed:", err);
+    }
+    setSubmitting(false);
     setSubmitted(true);
   };
 
@@ -146,6 +171,13 @@ export function QuoteModal() {
                 required
               />
               <ModalInput
+                label="Email"
+                placeholder="your@email.com"
+                type="email"
+                value={formData.email}
+                onChange={(val) => setFormData({ ...formData, email: val })}
+              />
+              <ModalInput
                 label="Moving from"
                 placeholder="Address"
                 value={formData.movingFrom}
@@ -159,14 +191,20 @@ export function QuoteModal() {
                 onChange={(val) => setFormData({ ...formData, movingTo: val })}
                 required
               />
-              <DatePicker label="Move date" placeholder="Choose date" />
+              <DatePicker
+                label="Move date"
+                placeholder="Choose date"
+                value={formData.moveDate}
+                onChange={(val) => setFormData({ ...formData, moveDate: val })}
+              />
 
               <button
                 type="submit"
-                className="btn-shine bg-white lg:bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out"
+                disabled={submitting}
+                className="btn-shine bg-white lg:bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
-                  Submit Request
+                  {submitting ? "Sending..." : "Submit Request"}
                 </span>
               </button>
             </form>

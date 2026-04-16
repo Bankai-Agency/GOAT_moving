@@ -20,12 +20,18 @@ function getFirstDayOfWeek(year: number, month: number) {
 export function DatePicker({
   label,
   placeholder = "Choose date",
+  value,
+  onChange,
 }: {
   label: string;
   placeholder?: string;
+  value?: string;
+  onChange?: (formatted: string) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(
+    value ? new Date(value) : null
+  );
   const [viewYear, setViewYear] = useState(new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(new Date().getMonth());
   const ref = useRef<HTMLDivElement>(null);
@@ -67,6 +73,7 @@ export function DatePicker({
   const selectDate = (day: number) => {
     const date = new Date(viewYear, viewMonth, day);
     setSelectedDate(date);
+    onChange?.(formatDate(date));
     setIsOpen(false);
   };
 
@@ -233,6 +240,7 @@ export function DatePicker({
               type="button"
               onClick={() => {
                 setSelectedDate(null);
+                onChange?.("");
                 setIsOpen(false);
               }}
               className="font-mono text-xs uppercase text-white/40 hover:text-white/60 transition-colors cursor-pointer"

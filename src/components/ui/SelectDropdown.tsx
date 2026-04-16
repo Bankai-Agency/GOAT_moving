@@ -6,13 +6,17 @@ export function SelectDropdown({
   label,
   placeholder = "Select",
   options,
+  value,
+  onChange,
 }: {
   label: string;
   placeholder?: string;
   options: string[];
+  value?: string;
+  onChange?: (val: string) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(value ?? null);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,6 +66,7 @@ export function SelectDropdown({
               type="button"
               onClick={() => {
                 setSelected(option);
+                onChange?.(option);
                 setIsOpen(false);
               }}
               className={`w-full text-left px-3 py-2 rounded-[5px] font-sans font-normal text-base leading-[1.4] tracking-[-0.36px] transition-all duration-150 ease-out cursor-pointer ${

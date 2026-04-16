@@ -32,6 +32,7 @@ export type QuoteFormProps = {
 
 export type QuoteFormValues = {
   fullName: string;
+  email: string;
   phone: string;
   movingFrom: string;
   movingTo: string;
@@ -42,6 +43,7 @@ export type QuoteFormValues = {
 
 const empty: QuoteFormValues = {
   fullName: "",
+  email: "",
   phone: "",
   movingFrom: "",
   movingTo: "",
@@ -58,11 +60,22 @@ export function QuoteForm({
 }: QuoteFormProps) {
   const [values, setValues] = useState<QuoteFormValues>(empty);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit?.(values);
-    // Default success state when no custom onSubmit consumes the data.
+    setSubmitting(true);
+    try {
+      await fetch("/api/submit-quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+    } catch (err) {
+      console.error("Submit failed:", err);
+    }
+    setSubmitting(false);
     setSubmitted(true);
   };
 
@@ -95,13 +108,14 @@ export function QuoteForm({
         <FormInput label="Full name" placeholder="Enter your name" required value={values.fullName} onChange={(v) => set("fullName", v)} />
         <FormInput label="Phone number" placeholder="+1 (555) 123-4567" type="tel" required value={values.phone} onChange={(v) => set("phone", v)} />
       </div>
+      <FormInput label="Email" placeholder="your@email.com" type="email" value={values.email} onChange={(v) => set("email", v)} />
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-2.5">
         <FormInput label="Moving from" placeholder="Address" value={values.movingFrom} onChange={(v) => set("movingFrom", v)} />
         <FormInput label="Moving to" placeholder="Address" value={values.movingTo} onChange={(v) => set("movingTo", v)} />
       </div>
       <div className="flex flex-col lg:flex-row gap-5 lg:gap-2.5">
-        <DatePicker label="Move date" placeholder="Choose date" />
-        <SelectDropdown label="Move size" placeholder="Select size" options={MOVE_SIZES} />
+        <DatePicker label="Move date" placeholder="Choose date" value={values.moveDate} onChange={(v) => set("moveDate", v)} />
+        <SelectDropdown label="Move size" placeholder="Select size" options={MOVE_SIZES} value={values.moveSize} onChange={(v) => set("moveSize", v)} />
       </div>
       <div className="flex flex-col gap-2 h-[160px]">
         <label className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
@@ -116,10 +130,11 @@ export function QuoteForm({
       </div>
       <button
         type="submit"
-        className="btn-shine bg-white lg:bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out"
+        disabled={submitting}
+        className="btn-shine bg-white lg:bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
-          {submitLabel}
+          {submitting ? "Sending..." : submitLabel}
         </span>
       </button>
       {footnote && (
