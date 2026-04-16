@@ -64,6 +64,15 @@ export async function POST(request: Request) {
   }
 
   // ── 2. Send lead to MoveBoard CRM ───────────────────────────────────
+  // Convert MM/DD/YYYY → YYYY-MM-DD for CRM
+  let crmDate = "";
+  if (moveDate) {
+    const parts = moveDate.split("/");
+    if (parts.length === 3) {
+      crmDate = `${parts[2]}-${parts[0]}-${parts[1]}`;
+    }
+  }
+
   try {
     const crmPayload = {
       data: {
@@ -73,9 +82,9 @@ export async function POST(request: Request) {
         company_name: "source-website",
         thoroughfare_from: movingFrom,
         thoroughfare_to: movingTo,
-        moving_from_zip: movingFrom,
-        moving_to_zip: movingTo,
-        field_date: moveDate,
+        moving_from_zip: "",
+        moving_to_zip: "",
+        field_date: crmDate,
         field_move_service_type: moveSize,
         field_additional_comments: message,
         field_last_name: "n/a",
