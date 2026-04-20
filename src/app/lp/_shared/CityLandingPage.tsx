@@ -116,29 +116,33 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
   return (
     <div className="page-zoom">
       <HeaderLP />
+      <main>
 
       {/* ───────────── 1. HERO ─────────────
           Image container stretches to (viewport - 32px × 2) on desktop
           for a cinematic look, while the inner content (title, form, rating
           strip) stays aligned to the standard 1408px content grid. */}
       <section className="bg-[#0c0c0c] pt-[100px] lg:pt-[108px] pb-[24px] lg:pb-[24px]">
-        <div className="mx-4 lg:mx-8 relative rounded-2xl overflow-hidden bg-[#181818] min-h-[560px] lg:min-h-[calc(100dvh_-_132px)]">
-          {/* Background image + dark overlay — fill the wider image container */}
-          <Image
-            src={heroImage}
-            alt={`Professional movers in ${city}`}
-            fill
-            sizes="(max-width: 1024px) 200vw, 100vw"
-            quality={90}
-            className={`object-cover ${heroImagePosition} lg:object-[center_25%]`}
-            priority
-          />
-          {/* Gradient overlays — dark where text is, clear where mover is */}
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 45%, transparent 70%)' }} />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 40%, transparent 65%)' }} />
+        <div className="mx-4 lg:mx-8 relative rounded-2xl bg-[#181818] min-h-[560px] lg:min-h-[calc(100dvh_-_132px)]">
+          {/* Image + overlays clipped to rounded corners, but content grid is NOT
+              clipped — so form dropdowns (date/size) can extend below the hero. */}
+          <div className="absolute inset-0 rounded-2xl overflow-hidden">
+            <Image
+              src={heroImage}
+              alt={`Professional movers in ${city}`}
+              fill
+              sizes="(max-width: 1024px) 200vw, 100vw"
+              quality={90}
+              className={`object-cover ${heroImagePosition} lg:object-[center_25%]`}
+              priority
+            />
+            {/* Gradient overlays — dark where text is, clear where mover is */}
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 45%, transparent 70%)' }} />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 40%, transparent 65%)' }} />
+          </div>
 
           {/* Inner content grid — constrained to 1408px, centered */}
-          <div className="relative min-h-[560px] lg:min-h-[calc(100dvh_-_132px)] max-w-[1408px] mx-auto">
+          <div className="relative z-10 min-h-[560px] lg:min-h-[calc(100dvh_-_132px)] max-w-[1408px] mx-auto">
 
           {/* Hero content — pinned to bottom, hero grows if content overflows */}
           <div className="relative flex flex-col justify-end min-h-[560px] lg:min-h-[calc(100dvh_-_132px)] p-6 lg:px-0 lg:pb-[48px] lg:pt-8 gap-5 lg:gap-5">
@@ -150,7 +154,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                   <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#FF2828] shrink-0"><Image src="/icons/yelp.svg" alt="Yelp" width={12} height={12} /></div>
                   <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className="hidden lg:inline">Yelp </span><span className="text-[#FFE533]">4.93</span><span className="text-white/40">/5</span></span>
                 </a>
-                <a href="https://www.google.com/maps/place/GOAT+MOVERS" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pl-0.5 lg:pl-1 hover:opacity-80 transition-opacity">
+                <a href="https://www.google.com/maps/place/GOAT+MOVERS/@45.5454821,-122.635238,10z/data=!3m1!4b1!4m6!3m5!1s0xa4790ebd1e7ffb07:0x697d406165de98a5!8m2!3d45.5454821!4d-122.635238!16s%2Fg%2F11wbt8363h?entry=ttu" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pl-0.5 lg:pl-1 hover:opacity-80 transition-opacity">
                   <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#357DFF] shrink-0"><Image src="/icons/google.svg" alt="Google" width={12} height={12} /></div>
                   <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className="hidden lg:inline">Google </span><span className="text-[#FFE533]">4.82</span><span className="text-white/40">/5</span></span>
                 </a>
@@ -170,8 +174,9 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                 We show up on time, handle your belongings with care, and give you a clear quote upfront. Most moves in {city} cost $400–$900.
               </p>
 
-              {/* Desktop: horizontal form bar — right after description */}
-              <div className="hidden lg:block mt-4 backdrop-blur-[20px] bg-[rgba(24,24,24,0.85)] rounded-2xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+              {/* Desktop: horizontal form bar — right after description.
+                  Elevated z-index so date/size dropdowns overlay the next section. */}
+              <div className="hidden lg:block mt-4 backdrop-blur-[20px] bg-[rgba(24,24,24,0.85)] rounded-2xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)] relative z-40">
                 <StepQuoteForm heading="Get your free quote" city={city} horizontal />
               </div>
             </div>
@@ -239,6 +244,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
 
       {/* 10. FAQ */}
       <FAQSection title="Frequently Asked Questions" items={config.faqs} />
+      </main>
 
       <ContactFooter />
       <Touchbar />

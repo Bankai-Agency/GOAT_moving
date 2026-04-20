@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import LongDistanceClient from "./LongDistanceClient";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { serviceSchema, SITE_URL } from "@/lib/seo/schema";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Long Distance Movers from Vancouver, WA & Portland, OR",
@@ -25,5 +28,25 @@ export const metadata: Metadata = {
 };
 
 export default function LongDistanceMovingPage() {
-  return <LongDistanceClient />;
+  return (
+    <>
+      <JsonLd
+        data={serviceSchema({
+          name: "Long Distance Moving",
+          description:
+            "Licensed FMCSA interstate relocations from Vancouver, WA and Portland, OR (USDOT #4232069). Door-to-door delivery, full insurance, transparent pricing.",
+          url: `${SITE_URL}/long-distance-moving`,
+          serviceType: "Long Distance Moving",
+        })}
+      />
+      <Breadcrumbs
+        schemaOnly
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Long Distance Moving" },
+        ]}
+      />
+      <LongDistanceClient />
+    </>
+  );
 }

@@ -257,14 +257,9 @@ function CMIndustries() {
               key={i}
               className="bg-[#181818] rounded-xl lg:rounded-2xl p-6 lg:p-8 flex flex-col gap-4 lg:gap-5 min-h-[200px] lg:min-h-[240px]"
             >
-              {/* Icon (left) + number (right) */}
-              <div className="flex items-start justify-between">
-                <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-lg lg:rounded-xl bg-[#FFE533]/10 flex items-center justify-center shrink-0">
-                  {ind.icon}
-                </div>
-                <span className="font-mono font-bold text-sm uppercase tracking-[-0.56px] leading-[1.2] text-[#FFE533]">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
+              {/* Icon */}
+              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-lg lg:rounded-xl bg-[#FFE533]/10 flex items-center justify-center shrink-0">
+                {ind.icon}
               </div>
 
               {/* Title + description grouped, pinned to bottom */}
@@ -334,20 +329,22 @@ function CMOtherServices() {
 /* ===================== MAIN ===================== */
 export default function CommercialMovingClient() {
   return (
-    <>
+    <div className="page-zoom">
       <Header />
-      <CMHero />
-      <CMWhatsIncluded />
-      <CMWhyTrust />
-      <CMHowItWorks />
-      <CMIndustries />
-      <ReviewsSection />
-      <CTABanner />
-      <CMFAQSection />
-      <CMOtherServices />
+      <main>
+        <CMHero />
+        <CMWhatsIncluded />
+        <CMWhyTrust />
+        <CMHowItWorks />
+        <CMIndustries />
+        <ReviewsSection />
+        <CTABanner />
+        <CMFAQSection />
+        <CMOtherServices />
+      </main>
       <ContactFooter />
       <Touchbar />
       <QuoteModal />
-    </>
+    </div>
   );
 }

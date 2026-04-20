@@ -65,8 +65,9 @@ export function LocationPage({ config }: { config: LocationConfig }) {
   const includedItems = defaultIncludedItems;
 
   return (
-    <>
+    <div className="page-zoom">
       <Header />
+      <main>
 
       {/* ========================== HERO ========================== */}
       <section className="relative h-screen min-h-[720px] lg:min-h-[900px] overflow-hidden">
@@ -169,12 +170,12 @@ export function LocationPage({ config }: { config: LocationConfig }) {
         items={config.faqs}
       />
 
+      {/* Hidden SEO helper — makes the state appear in rendered HTML for indexing */}
+      <span className="sr-only">{`Movers in ${cityDisplay}. ${state} licensed moving company.`}</span>
+      </main>
       <ContactFooter />
       <Touchbar />
       <QuoteModal />
-
-      {/* Hidden SEO helper — makes the state appear in rendered HTML for indexing */}
-      <span className="sr-only">{`Movers in ${cityDisplay}. ${state} licensed moving company.`}</span>
-    </>
+    </div>
   );
 }

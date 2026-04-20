@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import LocalMovingClient from "./LocalMovingClient";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { serviceSchema, SITE_URL } from "@/lib/seo/schema";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Local Movers in Vancouver, WA & Portland, OR — $125/hr",
@@ -24,5 +27,25 @@ export const metadata: Metadata = {
 };
 
 export default function LocalMovingPage() {
-  return <LocalMovingClient />;
+  return (
+    <>
+      <JsonLd
+        data={serviceSchema({
+          name: "Local Moving",
+          description:
+            "Residential local moving at a flat $125/hour in Vancouver, WA and Portland, OR. Truck, fuel, equipment included. Licensed & insured.",
+          url: `${SITE_URL}/local-moving`,
+          serviceType: "Local Moving",
+        })}
+      />
+      <Breadcrumbs
+        schemaOnly
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Local Moving" },
+        ]}
+      />
+      <LocalMovingClient />
+    </>
+  );
 }

@@ -141,7 +141,8 @@ export function LocalMovingRatesSection({
             </div>
           )}
 
-          {/* Estimate cards — 3 across */}
+          {/* Estimate cards — 3 across. Hidden when no estimates are passed. */}
+          {estimates.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
             {estimates.map((est, i) => (
               <div
@@ -183,6 +184,7 @@ export function LocalMovingRatesSection({
               </div>
             ))}
           </div>
+          )}
 
           {/* Included tagline (compact mode) */}
           {includedLine && (

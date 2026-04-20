@@ -298,20 +298,22 @@ function PKOtherServices() {
 /* ===================== MAIN ===================== */
 export default function PackingServicesClient() {
   return (
-    <>
+    <div className="page-zoom">
       <Header />
-      <PKHero />
-      <PKServiceTypes />
-      <PKWhatsIncluded />
-      <PKHowItWorks />
-      <PKFragile />
-      <ReviewsSection />
-      <CTABanner />
-      <PKFAQSection />
-      <PKOtherServices />
+      <main>
+        <PKHero />
+        <PKServiceTypes />
+        <PKWhatsIncluded />
+        <PKHowItWorks />
+        <PKFragile />
+        <ReviewsSection />
+        <CTABanner />
+        <PKFAQSection />
+        <PKOtherServices />
+      </main>
       <ContactFooter />
       <Touchbar />
       <QuoteModal />
-    </>
+    </div>
   );
 }

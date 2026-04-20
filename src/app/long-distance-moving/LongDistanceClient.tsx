@@ -94,6 +94,7 @@ function LDWhyTrust() {
       image="/images/home-hero.jpg"
       imageAlt="GOAT movers long distance crew"
       items={ldTrustPoints}
+      hideLabelDivider
     />
   );
 }
@@ -257,20 +258,22 @@ function LDOtherServices() {
 
 export default function LongDistanceClient() {
   return (
-    <>
+    <div className="page-zoom">
       <Header />
-      <LDHero />
-      <LDWhatsIncluded />
-      <LDWhyTrust />
-      <LDHowItWorks />
-      <WhereWeMove />
-      <ReviewsSection />
-      <CTABanner />
-      <LDFAQSection />
-      <LDOtherServices />
+      <main>
+        <LDHero />
+        <LDWhatsIncluded />
+        <LDWhyTrust />
+        <LDHowItWorks />
+        <WhereWeMove />
+        <ReviewsSection />
+        <CTABanner />
+        <LDFAQSection />
+        <LDOtherServices />
+      </main>
       <ContactFooter />
       <Touchbar />
       <QuoteModal />
-    </>
+    </div>
   );
 }

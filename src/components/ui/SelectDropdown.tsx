@@ -59,7 +59,7 @@ export function SelectDropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 z-50 backdrop-blur-[15px] bg-[rgba(13,13,13,0.4)] rounded-[7px] p-2 flex flex-col gap-0.5 shadow-2xl animate-dropdown-in">
+        <div className="absolute top-full left-0 right-0 mt-2 z-[100] backdrop-blur-[20px] bg-[rgba(20,20,20,0.96)] ring-1 ring-white/10 rounded-[10px] p-2 flex flex-col gap-0.5 shadow-2xl animate-dropdown-in">
           {options.map((option) => (
             <button
               key={option}

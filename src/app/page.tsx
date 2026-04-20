@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { localBusinessSchema, websiteSchema } from "@/lib/seo/schema";
 import { HeroSection } from "@/components/sections/HeroSection";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { ServicesSection } from "@/components/sections/ServicesSection";
@@ -28,19 +30,22 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <>
+    <div className="page-zoom">
+      <JsonLd data={[localBusinessSchema(), websiteSchema()]} />
       <Header />
-      <HeroSection />
-      <AboutSection />
-      <ServicesSection />
-      <ServiceAreaSection />
-      <ReviewsSection />
-      <GallerySection />
-      <CTABanner />
-      <FAQSection />
+      <main>
+        <HeroSection />
+        <AboutSection />
+        <ServicesSection />
+        <ServiceAreaSection />
+        <ReviewsSection />
+        <GallerySection />
+        <CTABanner />
+        <FAQSection />
+      </main>
       <ContactFooter />
       <Touchbar />
       <QuoteModal />
-    </>
+    </div>
   );
 }

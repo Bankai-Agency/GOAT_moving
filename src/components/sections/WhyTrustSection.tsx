@@ -16,6 +16,9 @@ export type WhyTrustSectionProps = {
   image?: string;
   imageAlt?: string;
   items?: WhyTrustItem[];
+  /** Hide the thin divider line under the label (useful when the
+      background image has faces/details the line cuts across). */
+  hideLabelDivider?: boolean;
 };
 
 const defaultItems: WhyTrustItem[] = [
@@ -65,6 +68,7 @@ export function WhyTrustSection({
   image = defaults.image,
   imageAlt = defaults.imageAlt,
   items = defaultItems,
+  hideLabelDivider = false,
 }: WhyTrustSectionProps = {}) {
   const sectionRef = useRef<HTMLElement>(null);
   const [offset, setOffset] = useState(0);
@@ -117,7 +121,7 @@ export function WhyTrustSection({
       </div>
       <div className="relative w-full max-w-[1408px] mx-auto flex flex-col justify-between gap-10 lg:gap-16">
         <div className="flex flex-col gap-6 lg:gap-8">
-          <div className="border-b border-white/16 pb-4">
+          <div className={hideLabelDivider ? "" : "border-b border-white/16 pb-4"}>
             <div className="flex items-center gap-2.5">
               <span className="w-2 h-2 rounded-full bg-[#FFE533]" />
               <span className="font-mono font-bold text-base uppercase tracking-[-0.64px] leading-[1.2] text-white/80">{label}</span>

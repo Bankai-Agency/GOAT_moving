@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import CommercialMovingClient from "./CommercialMovingClient";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { serviceSchema, SITE_URL } from "@/lib/seo/schema";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Office & Commercial Movers in Vancouver, WA & Portland, OR",
@@ -25,5 +28,25 @@ export const metadata: Metadata = {
 };
 
 export default function CommercialMovingPage() {
-  return <CommercialMovingClient />;
+  return (
+    <>
+      <JsonLd
+        data={serviceSchema({
+          name: "Commercial Moving",
+          description:
+            "Office and commercial relocations across Vancouver, WA and Portland, OR. After-hours and weekend service, IT equipment handling, full insurance and COI available.",
+          url: `${SITE_URL}/commercial-moving`,
+          serviceType: "Commercial Moving",
+        })}
+      />
+      <Breadcrumbs
+        schemaOnly
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Commercial Moving" },
+        ]}
+      />
+      <CommercialMovingClient />
+    </>
+  );
 }

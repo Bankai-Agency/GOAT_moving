@@ -47,13 +47,13 @@ export function CTABanner({
 
             {/* Yellow floating island bar — with margins and rounded corners */}
             <div className="absolute bottom-4 lg:bottom-6 left-4 lg:left-6 right-4 lg:right-6">
-              <div className="bg-[#FFE533] rounded-xl lg:rounded-2xl px-6 lg:px-10 py-5 lg:py-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
+              <div className="bg-[#FFE533] rounded-xl lg:rounded-2xl px-5 lg:px-8 py-3 lg:py-3.5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
                 <p className="font-sans font-normal text-sm lg:text-base leading-[1.4] text-[#0c0c0c]/80 lg:whitespace-nowrap">
                   {tagline}
                 </p>
                 <button
                   onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
-                  className="bg-[#0c0c0c] text-white h-[44px] lg:h-[48px] px-6 lg:px-8 rounded-lg font-mono font-bold text-sm lg:text-base uppercase tracking-[-0.64px] leading-[1.2] flex items-center justify-center hover:bg-[#1a1a1a] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer whitespace-nowrap shrink-0"
+                  className="bg-[#0c0c0c] text-white h-[40px] lg:h-[44px] px-5 lg:px-7 rounded-lg font-mono font-bold text-sm lg:text-base uppercase tracking-[-0.64px] leading-[1.2] flex items-center justify-center hover:bg-[#1a1a1a] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer whitespace-nowrap shrink-0"
                 >
                   {buttonText}
                 </button>

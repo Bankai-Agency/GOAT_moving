@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import FAQClient from "./FAQClient";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { faqPageSchema } from "@/lib/seo/schema";
+import { allFaqs } from "./faqData";
 
 export const metadata: Metadata = {
-  title: "Moving FAQ — Pricing, Insurance, Process",
+  title: "Moving FAQ — Vancouver, WA & Portland, OR | Pricing & Insurance",
   description:
     "Answers to the most common moving questions: cost, pricing structure, insurance, what's included, booking timelines. Based on 500+ moves in Vancouver, WA and Portland, OR.",
   keywords: [
@@ -24,5 +27,10 @@ export const metadata: Metadata = {
 };
 
 export default function FAQPage() {
-  return <FAQClient />;
+  return (
+    <>
+      <JsonLd data={faqPageSchema(allFaqs)} />
+      <FAQClient />
+    </>
+  );
 }

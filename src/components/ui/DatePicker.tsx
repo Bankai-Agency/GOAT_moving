@@ -140,7 +140,7 @@ export function DatePicker({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 z-50 w-[300px] backdrop-blur-[15px] bg-[rgba(13,13,13,0.4)] rounded-[7px] p-4 shadow-2xl animate-dropdown-in">
+        <div className="absolute top-full left-0 mt-2 z-[100] w-[300px] backdrop-blur-[20px] bg-[rgba(20,20,20,0.96)] ring-1 ring-white/10 rounded-[10px] p-4 shadow-2xl animate-dropdown-in">
           {/* Header: month/year + arrows */}
           <div className="flex items-center justify-between mb-3">
             <span className="font-sans font-semibold text-base text-white">

@@ -123,7 +123,7 @@ function FooterContent() {
               <Image src="/icons/yelp-footer.svg" alt="Yelp" width={23} height={29} />
             </a>
             <a
-              href="https://www.google.com/maps/place/GOAT+MOVERS/@45.5454821,-122.635238,10z"
+              href="https://www.google.com/maps/place/GOAT+MOVERS/@45.5454821,-122.635238,10z/data=!3m1!4b1!4m6!3m5!1s0xa4790ebd1e7ffb07:0x697d406165de98a5!8m2!3d45.5454821!4d-122.635238!16s%2Fg%2F11wbt8363h?entry=ttu"
               target="_blank"
               rel="noopener noreferrer"
               className="social-icon social-icon--google"

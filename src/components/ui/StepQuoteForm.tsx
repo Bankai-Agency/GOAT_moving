@@ -193,16 +193,26 @@ export function StepQuoteForm({
         {step === 2 && <BackButton onClick={() => setStep(1)} />}
 
         {step === 3 && (
-          <div className="flex items-end gap-3">
-            <div className="flex-1">
-              <textarea
+          <div className="flex items-stretch gap-3">
+            <div className="flex-1 flex">
+              <input
+                type="text"
                 placeholder="Any special requests or details... (optional)"
                 value={values.message}
                 onChange={(e) => set("message", e.target.value)}
-                className="w-full backdrop-blur-[20px] bg-white/10 rounded-[10px] p-4 h-[56px] font-sans font-normal text-base leading-[1.4] tracking-[-0.48px] text-white placeholder:text-white/60 outline-none focus:bg-white/15 input-glow transition-all duration-200 resize-none"
+                className="w-full backdrop-blur-[20px] bg-white/10 rounded-[10px] px-4 h-[56px] font-sans font-normal text-base lg:text-lg leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.36px] text-white placeholder:text-white/60 outline-none focus:bg-white/15 input-glow transition-all duration-200"
               />
             </div>
-            <ContinueButton label={submitting ? "Sending..." : "Submit Request"} onClick={handleSubmit} disabled={submitting} />
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={submitting}
+              className="btn-shine bg-[#FFE533] rounded-lg h-[56px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out shrink-0 px-8 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
+                {submitting ? "Sending..." : "Submit Request"}
+              </span>
+            </button>
           </div>
         )}
         {step === 3 && <BackButton onClick={() => setStep(2)} />}

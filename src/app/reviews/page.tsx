@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import ReviewsClient from "./ReviewsClient";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { localBusinessSchema } from "@/lib/seo/schema";
 
 export const metadata: Metadata = {
-  title: "Customer Reviews — 4.9★ on Google & Yelp",
+  title: "GOAT Movers Reviews — 4.9★ Vancouver, WA & Portland, OR",
   description:
     "Read 850+ verified five-star reviews for GOAT Movers in Vancouver, WA and Portland, OR. Real stories from real customers about stress-free, on-time moves.",
   keywords: [
@@ -24,5 +26,12 @@ export const metadata: Metadata = {
 };
 
 export default function ReviewsPage() {
-  return <ReviewsClient />;
+  return (
+    <>
+      {/* LocalBusiness schema carries AggregateRating (4.9/850 reviews) —
+          rendering it on /reviews lets Google attach the rating to this URL. */}
+      <JsonLd data={localBusinessSchema()} />
+      <ReviewsClient />
+    </>
+  );
 }

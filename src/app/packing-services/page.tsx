@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import PackingServicesClient from "./PackingServicesClient";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { serviceSchema, SITE_URL } from "@/lib/seo/schema";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Professional Packers & Labor-Only Movers — Vancouver, WA & Portland",
@@ -25,5 +28,25 @@ export const metadata: Metadata = {
 };
 
 export default function PackingServicesPage() {
-  return <PackingServicesClient />;
+  return (
+    <>
+      <JsonLd
+        data={serviceSchema({
+          name: "Packing & Labor Services",
+          description:
+            "Full-service packing, partial packing, and labor-only loading for PODS and U-Haul in Vancouver, WA and Portland, OR. Fragile specialists, quality materials, same-day availability.",
+          url: `${SITE_URL}/packing-services`,
+          serviceType: "Packing Services",
+        })}
+      />
+      <Breadcrumbs
+        schemaOnly
+        items={[
+          { name: "Home", href: "/" },
+          { name: "Packing & Labor" },
+        ]}
+      />
+      <PackingServicesClient />
+    </>
+  );
 }

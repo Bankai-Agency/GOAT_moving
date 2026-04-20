@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { ContactFooter } from "@/components/sections/ContactFooter";
 import { Touchbar } from "@/components/layout/Touchbar";
 import { QuoteModal } from "@/components/ui/QuoteModal";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 
 function PhoneIcon() {
   return (
@@ -50,7 +51,7 @@ function ContactsHeroWithCards() {
   ];
 
   return (
-    <section className="bg-[#0c0c0c] px-4 pt-[120px] lg:pt-[150px] pb-[60px] lg:pb-[80px]">
+    <section className="bg-[#0c0c0c] px-4 pt-6 lg:pt-10 pb-[60px] lg:pb-[80px]">
       <div className="max-w-[1408px] mx-auto flex flex-col gap-10 lg:gap-14">
         <div className="flex flex-col gap-4 lg:gap-5">
           <h1 className="font-sans font-bold text-[36px] lg:text-[72px] leading-none tracking-[-1.08px] lg:tracking-[-2.16px]">
@@ -113,13 +114,16 @@ function MapSection() {
 
 export default function ContactsClient() {
   return (
-    <>
+    <div className="page-zoom">
       <Header />
-      <ContactsHeroWithCards />
-      <MapSection />
+      <main>
+        <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Contacts" }]} />
+        <ContactsHeroWithCards />
+        <MapSection />
+      </main>
       <ContactFooter />
       <Touchbar />
       <QuoteModal />
-    </>
+    </div>
   );
 }

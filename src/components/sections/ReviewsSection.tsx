@@ -90,12 +90,12 @@ function SummaryCardDesktop() {
   return (
     <div className="bg-[#181818] rounded-2xl p-8 flex flex-col justify-between h-[374px] w-[calc(100vw-64px)] min-w-[calc(100vw-64px)] lg:w-[340px] lg:min-w-[340px] shrink-0 grow-0 select-none">
       <div className="flex flex-col gap-4">
-        <div className="flex items-start justify-between">
+        <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-0.5">
             <span className="font-sans font-bold text-[64px] leading-[1.2] tracking-[-2.56px] text-white">4,9</span>
             <span className="font-sans font-bold text-[32px] leading-[1.2] tracking-[-0.96px] text-white/60">/5</span>
           </div>
-          <div className="flex gap-3 items-center h-[77px]">
+          <div className="flex gap-3 items-center shrink-0">
             <a href={YELP_URL} target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full bg-[#303030] hover:bg-[#FFE533] flex items-center justify-center transition-all duration-300 ease-out hover:scale-110 group/yelp">
               <Image src="/icons/yelp-white.svg" alt="Yelp" width={17} height={22} className="group-hover/yelp:hidden" />
               <Image src="/icons/yelp-black.svg" alt="Yelp" width={17} height={22} className="hidden group-hover/yelp:block" />
@@ -113,7 +113,7 @@ function SummaryCardDesktop() {
       <div className="flex items-end justify-between gap-4">
         <div className="relative h-9 w-[130px] shrink-0">
           {["/images/avatar-1.jpg", "/images/avatar-2.jpg", "/images/avatar-3.jpg", "/images/avatar-4.jpg", "/images/avatar-5.jpg"].map((src, i) => (
-            <div key={i} className="absolute top-0 w-9 h-9 rounded-lg border-2 border-[#181818] overflow-hidden" style={{ left: `${i * 24}px` }}>
+            <div key={i} className="absolute top-0 w-9 h-9 rounded-full border-2 border-[#181818] overflow-hidden" style={{ left: `${i * 24}px` }}>
               <Image src={src} alt="" fill className="object-cover" />
             </div>
           ))}
@@ -153,7 +153,7 @@ function SummaryCardMobile() {
       <div className="flex items-end justify-between gap-4">
         <div className="relative h-9 w-[130px] shrink-0">
           {["/images/avatar-1.jpg", "/images/avatar-2.jpg", "/images/avatar-3.jpg", "/images/avatar-4.jpg", "/images/avatar-5.jpg"].map((src, i) => (
-            <div key={i} className="absolute top-0 w-9 h-9 rounded-lg border-2 border-[#181818] overflow-hidden" style={{ left: `${i * 24}px` }}>
+            <div key={i} className="absolute top-0 w-9 h-9 rounded-full border-2 border-[#181818] overflow-hidden" style={{ left: `${i * 24}px` }}>
               <Image src={src} alt="" fill className="object-cover" />
             </div>
           ))}
@@ -171,8 +171,10 @@ function SummaryCardMobile() {
   );
 }
 
-/* Desktop review card — horizontal carousel, hover yellow */
-function ReviewCardDesktop({ name, location, rating, text, avatar }: ReviewItem) {
+/* Desktop review card — horizontal carousel, hover yellow.
+   Only the Yelp/Google icon is clickable. */
+function ReviewCardDesktop({ name, location, rating, text, avatar, source }: ReviewItem) {
+  const reviewUrl = source === "yelp" ? YELP_URL : GOOGLE_URL;
   return (
     <div className="bg-[#181818] hover:bg-[#FFE533] rounded-2xl p-8 h-[374px] overflow-hidden w-[calc(100vw-64px)] min-w-[calc(100vw-64px)] lg:w-[340px] lg:min-w-[340px] shrink-0 grow-0 select-none transition-all duration-300 ease-out hover:shadow-[0_12px_32px_rgba(255,229,51,0.15)] group/card">
       <div className="flex flex-col gap-6">
@@ -180,11 +182,11 @@ function ReviewCardDesktop({ name, location, rating, text, avatar }: ReviewItem)
           <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0">
             <Image src={avatar} alt={name} fill className="object-cover" />
           </div>
-          <div className="flex-1 flex flex-col gap-1">
-            <span className="font-sans font-semibold text-2xl leading-[1.4] tracking-[-0.72px] text-white group-hover/card:text-black transition-colors duration-300">{name}</span>
-            <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/60 group-hover/card:text-black/60 transition-colors duration-300">{location}</span>
+          <div className="flex-1 flex flex-col gap-1 min-w-0">
+            <span className="font-sans font-semibold text-2xl leading-[1.4] tracking-[-0.72px] text-white group-hover/card:text-black transition-colors duration-300 truncate">{name}</span>
+            <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/60 group-hover/card:text-black/60 transition-colors duration-300 truncate">{location}</span>
           </div>
-          <a href={YELP_URL} target="_blank" rel="noopener noreferrer" className="bg-[#303030] group-hover/card:bg-[#0c0c0c] w-14 h-14 rounded-full flex items-center justify-center shrink-0 hover:scale-110 transition-all duration-300 ease-out z-10" onClick={(e) => e.stopPropagation()}>
+          <a href={reviewUrl} target="_blank" rel="noopener noreferrer" className="bg-[#303030] group-hover/card:bg-[#0c0c0c] w-14 h-14 rounded-full flex items-center justify-center shrink-0 hover:scale-110 transition-all duration-300 ease-out z-10" onClick={(e) => e.stopPropagation()}>
             <Image src="/icons/yelp-white.svg" alt="Yelp" width={17} height={22} />
           </a>
         </div>
@@ -198,8 +200,10 @@ function ReviewCardDesktop({ name, location, rating, text, avatar }: ReviewItem)
   );
 }
 
-/* Mobile review card — full-width, 360px tall, 20px padding */
-function ReviewCardMobile({ name, location, rating, text, avatar }: ReviewItem) {
+/* Mobile review card — full-width, 360px tall, 20px padding.
+   Only the Yelp/Google icon is clickable. */
+function ReviewCardMobile({ name, location, rating, text, avatar, source }: ReviewItem) {
+  const reviewUrl = source === "yelp" ? YELP_URL : GOOGLE_URL;
   return (
     <div className="bg-[#181818] rounded-2xl p-5 h-[360px] overflow-hidden w-[calc(100vw-64px)] min-w-[calc(100vw-64px)] lg:w-[336px] lg:min-w-[336px] shrink-0 grow-0 select-none">
       <div className="flex flex-col gap-6">
@@ -207,11 +211,11 @@ function ReviewCardMobile({ name, location, rating, text, avatar }: ReviewItem) 
           <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0">
             <Image src={avatar} alt={name} fill className="object-cover" />
           </div>
-          <div className="flex-1 flex flex-col gap-1.5">
-            <span className="font-sans font-semibold text-xl leading-[1.4] tracking-[-0.6px] text-white">{name}</span>
-            <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/60">{location}</span>
+          <div className="flex-1 flex flex-col gap-1.5 min-w-0">
+            <span className="font-sans font-semibold text-xl leading-[1.4] tracking-[-0.6px] text-white truncate">{name}</span>
+            <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/60 truncate">{location}</span>
           </div>
-          <a href={YELP_URL} target="_blank" rel="noopener noreferrer" className="bg-[#303030] w-14 h-14 rounded-full flex items-center justify-center shrink-0">
+          <a href={reviewUrl} target="_blank" rel="noopener noreferrer" className="bg-[#303030] w-14 h-14 rounded-full flex items-center justify-center shrink-0">
             <Image src="/icons/yelp-white.svg" alt="Yelp" width={17} height={22} />
           </a>
         </div>

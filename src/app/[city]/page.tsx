@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LocationPage } from "../_locations/LocationPage";
 import { locationConfigs } from "../_locations/locationConfigs";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { cityPageSchema, breadcrumbSchema, SITE_URL } from "@/lib/seo/schema";
 
 type Params = { city: string };
 
@@ -43,5 +45,24 @@ export default async function CityLocationPage({
   const { city } = await params;
   const config = locationConfigs.find((c) => c.slug === city);
   if (!config) notFound();
-  return <LocationPage config={config} />;
+
+  const schemas = [
+    ...cityPageSchema({
+      city: config.city,
+      state: config.state,
+      slug: config.slug,
+      description: config.metaDescription,
+    }),
+    breadcrumbSchema([
+      { name: "Home", url: `${SITE_URL}/` },
+      { name: `${config.city}, ${config.state}`, url: `${SITE_URL}/${config.slug}` },
+    ]),
+  ];
+
+  return (
+    <>
+      <JsonLd data={schemas} />
+      <LocationPage config={config} />
+    </>
+  );
 }

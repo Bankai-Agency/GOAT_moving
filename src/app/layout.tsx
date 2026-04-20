@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Roboto_Mono } from "next/font/google";
 import { NavProgress } from "@/components/layout/NavProgress";
+import { Analytics } from "@/components/seo/Analytics";
 import "./globals.css";
 
 const geist = Geist({
@@ -15,6 +16,7 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://thegoatmovers.net"),
   title: {
     default: "Movers in Vancouver, WA & Portland, OR | $125/hr — GOAT Movers",
     template: "%s | GOAT Movers",
@@ -39,6 +41,11 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
   },
+  /* Populate via env var: NEXT_PUBLIC_GSC_VERIFICATION=<code from Search Console>.
+     When unset, the meta tag is simply omitted. */
+  verification: process.env.NEXT_PUBLIC_GSC_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GSC_VERIFICATION }
+    : undefined,
 };
 
 export default function RootLayout({
@@ -54,6 +61,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <NavProgress />
         {children}
+        <Analytics />
       </body>
     </html>
   );

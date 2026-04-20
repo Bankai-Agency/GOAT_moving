@@ -91,8 +91,9 @@ const localFaqs = [
 
 export default function LocalMovingClient() {
   return (
-    <>
+    <div className="page-zoom">
       <Header />
+      <main>
       <LocalHero />
       <WhatsIncludedSection />
       <HowItWorksSection />
@@ -100,19 +101,16 @@ export default function LocalMovingClient() {
         title="Local Moving Rates"
         subtitle="$125/hour flat rate — most local moves cost $400–$900 depending on size, stairs, and distance."
         hideCta
-        estimates={[
-          { title: "Studio / 1 Bedroom", price: "$400 – $700", crew: "2 movers + truck" },
-          { title: "2 Bedroom", price: "$600 – $900", crew: "2–3 movers", popular: true },
-          { title: "3+ Bedroom", price: "$900+", crew: "3–4 movers" },
-        ]}
+        estimates={[]}
       />
       <ServiceAreaSection />
       <ReviewsSection />
       <FAQSection title="Local Moving FAQ" items={localFaqs} />
       <OtherServicesSection />
+      </main>
       <ContactFooter />
       <Touchbar />
       <QuoteModal />
-    </>
+    </div>
   );
 }
