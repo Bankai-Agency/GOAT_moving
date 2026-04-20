@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { locationConfigs } from "@/app/_locations/locationConfigs";
 
 const servicesDropdown = [
@@ -35,28 +35,15 @@ const navLinks: NavLink[] = [
 
 export function Header() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSubmenu, setMobileSubmenu] = useState<string | null>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const buttonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   // Sticky header state
   const [isSticky, setIsSticky] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
-
-  const updateDropdownPos = useCallback((label: string) => {
-    const btn = buttonRefs.current[label];
-    if (btn) {
-      const rect = btn.getBoundingClientRect();
-      setDropdownPos({
-        top: rect.bottom + 8,
-        left: rect.left,
-      });
-    }
-  }, []);
 
   // Click outside to close dropdown
   useEffect(() => {
@@ -114,10 +101,6 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const activeDropdownItems = openDropdown
-    ? navLinks.find((l) => l.label === openDropdown)?.items
-    : null;
-
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
   return (
@@ -152,41 +135,56 @@ export function Header() {
             }`}>
               {navLinks.map((link) =>
                 link.hasDropdown ? (
-                  <button
-                    key={link.label}
-                    ref={(el) => { buttonRefs.current[link.label] = el; }}
-                    onClick={() => {
-                      if (openDropdown === link.label) {
-                        setOpenDropdown(null);
-                      } else {
-                        setOpenDropdown(link.label);
-                        updateDropdownPos(link.label);
+                  /* `relative` wrapper so the dropdown positions absolutely
+                     relative to this button — follows the header on scroll,
+                     immune to CSS `zoom` ancestor breaking fixed/gBCR math. */
+                  <div key={link.label} className="relative">
+                    <button
+                      onClick={() =>
+                        setOpenDropdown(openDropdown === link.label ? null : link.label)
                       }
-                    }}
-                    className="flex items-center gap-1 px-4 py-3 rounded-[4px] font-mono text-sm font-medium uppercase tracking-[-0.56px] leading-[1.2] transition-all duration-200 ease-out whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 cursor-pointer"
-                  >
-                    {link.label}
-                    {link.badge && (
-                      <span className="ml-1 bg-[#FFE533] text-[#0c0c0c] font-mono font-bold text-[10px] uppercase leading-none tracking-[0] rounded-[3px] px-1.5 py-0.5">
-                        {link.badge}
-                      </span>
-                    )}
-                    <svg
-                      className={`w-5 h-5 text-current opacity-70 transition-transform duration-200 ${
-                        openDropdown === link.label ? "rotate-180" : ""
-                      }`}
-                      viewBox="0 0 20 20"
-                      fill="none"
+                      className="flex items-center gap-1 px-4 py-3 rounded-[4px] font-mono text-sm font-medium uppercase tracking-[-0.56px] leading-[1.2] transition-all duration-200 ease-out whitespace-nowrap text-white/70 hover:text-white hover:bg-white/10 cursor-pointer"
                     >
-                      <path
-                        d="M5 7.5L10 12.5L15 7.5"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
+                      {link.label}
+                      {link.badge && (
+                        <span className="ml-1 bg-[#FFE533] text-[#0c0c0c] font-mono font-bold text-[10px] uppercase leading-none tracking-[0] rounded-[3px] px-1.5 py-0.5">
+                          {link.badge}
+                        </span>
+                      )}
+                      <svg
+                        className={`w-5 h-5 text-current opacity-70 transition-transform duration-200 ${
+                          openDropdown === link.label ? "rotate-180" : ""
+                        }`}
+                        viewBox="0 0 20 20"
+                        fill="none"
+                      >
+                        <path
+                          d="M5 7.5L10 12.5L15 7.5"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+
+                    {openDropdown === link.label && link.items && (
+                      <div
+                        className="absolute top-full left-0 mt-2 z-[60] rounded-[7px] p-2 flex flex-col gap-1 animate-dropdown-in backdrop-blur-[20px] bg-[rgba(13,13,13,0.9)] shadow-[0_8px_32px_rgba(0,0,0,0.4)] min-w-[200px]"
+                      >
+                        {link.items.map((item) => (
+                          <Link
+                            key={item.label}
+                            href={item.href}
+                            onClick={() => setOpenDropdown(null)}
+                            className="px-4 py-3 rounded-[4px] font-mono text-sm font-medium uppercase tracking-[-0.56px] leading-[1.2] text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200 ease-out whitespace-nowrap"
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <Link
                     key={link.label}
@@ -254,24 +252,6 @@ export function Header() {
           </div>
         </div>
 
-        {/* Desktop Dropdown */}
-        {activeDropdownItems && (
-          <div
-            className="hidden lg:flex fixed z-[60] rounded-[7px] p-2 flex-col gap-1 animate-dropdown-in backdrop-blur-[20px] bg-[rgba(13,13,13,0.7)] shadow-[0_8px_32px_rgba(0,0,0,0.3)]"
-            style={{ top: dropdownPos.top, left: dropdownPos.left }}
-          >
-            {activeDropdownItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                onClick={() => setOpenDropdown(null)}
-                className="px-4 py-3 rounded-[4px] font-mono text-sm font-medium uppercase tracking-[-0.56px] leading-[1.2] text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200 ease-out whitespace-nowrap"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        )}
       </header>
 
       {/* Fullscreen Mobile Menu */}

@@ -95,14 +95,15 @@ function SummaryCardDesktop() {
             <span className="font-sans font-bold text-[64px] leading-[1.2] tracking-[-2.56px] text-white">4,9</span>
             <span className="font-sans font-bold text-[32px] leading-[1.2] tracking-[-0.96px] text-white/60">/5</span>
           </div>
+          {/* Brand-colored hover: Yelp → red, Google → blue.
+              Fixed w-14 size — page-zoom scales the whole card proportionally,
+              so the ratio to the 4,9/5 text is preserved at every resolution. */}
           <div className="flex gap-3 items-center shrink-0">
-            <a href={YELP_URL} target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full bg-[#303030] hover:bg-[#FFE533] flex items-center justify-center transition-all duration-300 ease-out hover:scale-110 group/yelp">
-              <Image src="/icons/yelp-white.svg" alt="Yelp" width={17} height={22} className="group-hover/yelp:hidden" />
-              <Image src="/icons/yelp-black.svg" alt="Yelp" width={17} height={22} className="hidden group-hover/yelp:block" />
+            <a href={YELP_URL} target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full bg-[#303030] hover:bg-[#FF2828] flex items-center justify-center transition-all duration-300 ease-out hover:scale-110">
+              <Image src="/icons/yelp-white.svg" alt="Yelp" width={17} height={22} />
             </a>
-            <a href={GOOGLE_URL} target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full bg-[#303030] hover:bg-[#FFE533] flex items-center justify-center transition-all duration-300 ease-out hover:scale-110 group/google">
-              <Image src="/icons/google.svg" alt="Google" width={20} height={21} className="group-hover/google:hidden" />
-              <Image src="/icons/google-black.svg" alt="Google" width={20} height={21} className="hidden group-hover/google:block" />
+            <a href={GOOGLE_URL} target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full bg-[#303030] hover:bg-[#357DFF] flex items-center justify-center transition-all duration-300 ease-out hover:scale-110">
+              <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
             </a>
           </div>
         </div>
@@ -138,11 +139,11 @@ function SummaryCardMobile() {
             <span className="font-sans font-bold text-2xl leading-[1.2] tracking-[-0.72px] text-white/60">/5</span>
           </div>
           <div className="flex gap-3 items-center">
-            <a href={YELP_URL} target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full bg-[#303030] flex items-center justify-center">
+            <a href={YELP_URL} target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full bg-[#303030] active:bg-[#FF2828] flex items-center justify-center transition-colors duration-200">
               <Image src="/icons/yelp-white.svg" alt="Yelp" width={17} height={22} />
             </a>
-            <a href={GOOGLE_URL} target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full bg-[#303030] flex items-center justify-center">
-              <Image src="/icons/google.svg" alt="Google" width={20} height={21} />
+            <a href={GOOGLE_URL} target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full bg-[#303030] active:bg-[#357DFF] flex items-center justify-center transition-colors duration-200">
+              <Image src="/icons/google.svg" alt="Google" width={20} height={20} />
             </a>
           </div>
         </div>

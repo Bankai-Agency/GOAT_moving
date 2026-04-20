@@ -241,38 +241,42 @@ export function GallerySection() {
           {/* Mobile: paginated carousel (1 big + 2 small per slide) */}
           <MobileGalleryCarousel onImageClick={openLightbox} />
 
-          {/* Desktop grid */}
-          <div className="hidden lg:flex gap-2.5 h-[615px]">
-            {/* Left column — flex-wrap, content aligned to bottom */}
-            <div className="flex-1 flex flex-wrap gap-2.5 content-end">
-              <button onClick={() => openLightbox(0)} className="relative w-full h-[340px] rounded-xl overflow-hidden gallery-zoom cursor-pointer">
-                <Image src="/images/gallery-1.jpg" alt="GOAT Movers carrying sofa" fill className="object-cover" />
+          {/* Desktop grid — CSS Grid with flexible columns so it scales cleanly
+              across 1024px → 1728px without hard-coded column widths breaking. */}
+          <div
+            className="hidden lg:grid gap-2.5 h-[615px]"
+            style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1.45fr) minmax(0,1.65fr)", gridTemplateRows: "1fr 1fr" }}
+          >
+            {/* Col 1: sofa (top, spans 2/3 of height) + trucks (bottom) */}
+            <button onClick={() => openLightbox(0)} className="relative rounded-xl overflow-hidden gallery-zoom cursor-pointer" style={{ gridColumn: 1, gridRow: "1 / span 1" }}>
+              <Image src="/images/gallery-1.jpg" alt="GOAT Movers carrying sofa" fill className="object-cover" sizes="25vw" />
+            </button>
+            <div className="grid grid-cols-2 gap-2.5" style={{ gridColumn: 1, gridRow: 2 }}>
+              <button onClick={() => openLightbox(1)} className="relative rounded-xl overflow-hidden gallery-zoom cursor-pointer">
+                <Image src="/images/gallery-2.jpg" alt="Moving crew at doorway" fill className="object-cover" sizes="12vw" />
               </button>
-              <button onClick={() => openLightbox(1)} className="relative flex-1 h-[265px] rounded-xl overflow-hidden gallery-zoom cursor-pointer">
-                <Image src="/images/gallery-2.jpg" alt="Moving crew at doorway" fill className="object-cover" />
-              </button>
-              <button onClick={() => openLightbox(2)} className="relative flex-1 h-[265px] rounded-xl overflow-hidden gallery-zoom cursor-pointer">
-                <Image src="/images/gallery-3.jpg" alt="Moving truck loaded" fill className="object-cover" />
+              <button onClick={() => openLightbox(2)} className="relative rounded-xl overflow-hidden gallery-zoom cursor-pointer">
+                <Image src="/images/gallery-3.jpg" alt="Moving truck loaded" fill className="object-cover" sizes="12vw" />
               </button>
             </div>
 
-            {/* Center — tall image */}
-            <button onClick={() => openLightbox(3)} className="relative w-[480px] h-[615px] rounded-xl overflow-hidden shrink-0 gallery-zoom cursor-pointer">
-              <Image src="/images/gallery-4.jpg" alt="GOAT Movers team on stairs" fill className="object-cover" />
+            {/* Col 2: center tall image spans both rows */}
+            <button onClick={() => openLightbox(3)} className="relative rounded-xl overflow-hidden gallery-zoom cursor-pointer" style={{ gridColumn: 2, gridRow: "1 / span 2" }}>
+              <Image src="/images/gallery-4.jpg" alt="GOAT Movers team on stairs" fill className="object-cover" sizes="35vw" />
             </button>
 
-            {/* Right column — flex-wrap, content aligned to top */}
-            <div className="flex flex-wrap gap-2.5 content-start w-[540px] shrink-0">
-              <button onClick={() => openLightbox(4)} className="relative w-[265px] h-[265px] rounded-xl overflow-hidden gallery-zoom cursor-pointer">
-                <Image src="/images/gallery-5.jpg" alt="Mover carrying wrapped furniture" fill className="object-cover" />
+            {/* Col 3: two small (top) + one wide bottom */}
+            <div className="grid grid-cols-2 gap-2.5" style={{ gridColumn: 3, gridRow: 1 }}>
+              <button onClick={() => openLightbox(4)} className="relative rounded-xl overflow-hidden gallery-zoom cursor-pointer">
+                <Image src="/images/gallery-5.jpg" alt="Mover carrying wrapped furniture" fill className="object-cover" sizes="20vw" />
               </button>
-              <button onClick={() => openLightbox(5)} className="relative w-[265px] h-[265px] rounded-xl overflow-hidden gallery-zoom cursor-pointer">
-                <Image src="/images/gallery-6.jpg" alt="GOAT Movers branded cap and box" fill className="object-cover" />
-              </button>
-              <button onClick={() => openLightbox(6)} className="relative w-full h-[340px] rounded-xl overflow-hidden gallery-zoom cursor-pointer">
-                <Image src="/images/gallery-7.jpg" alt="Mover wrapping mattress" fill className="object-cover" />
+              <button onClick={() => openLightbox(5)} className="relative rounded-xl overflow-hidden gallery-zoom cursor-pointer">
+                <Image src="/images/gallery-6.jpg" alt="GOAT Movers branded cap and box" fill className="object-cover" sizes="20vw" />
               </button>
             </div>
+            <button onClick={() => openLightbox(6)} className="relative rounded-xl overflow-hidden gallery-zoom cursor-pointer" style={{ gridColumn: 3, gridRow: 2 }}>
+              <Image src="/images/gallery-7.jpg" alt="Mover wrapping mattress" fill className="object-cover" sizes="40vw" />
+            </button>
           </div>
         </div>
       </section>
