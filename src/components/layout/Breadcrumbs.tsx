@@ -32,7 +32,7 @@ export function Breadcrumbs({ items, schemaOnly = false }: BreadcrumbsProps) {
   return (
     <>
       <JsonLd data={breadcrumbSchema(schemaItems)} />
-      <nav aria-label="Breadcrumb" className="bg-[#0c0c0c] px-4 pt-[88px] lg:pt-[96px] pb-3 lg:pb-4">
+      <nav aria-label="Breadcrumb" className="bg-[#0c0c0c] px-4 pt-[100px] lg:pt-[120px] pb-3 lg:pb-4">
         <ol className="max-w-[1408px] mx-auto flex flex-wrap items-center gap-2 font-mono font-medium text-xs lg:text-sm tracking-[-0.48px] uppercase text-white/50">
           {items.map((item, i) => {
             const isLast = i === items.length - 1;

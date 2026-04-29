@@ -152,11 +152,11 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
               <div className="inline-flex items-center gap-2 backdrop-blur-[15px] bg-[rgba(13,13,13,0.5)] rounded-full pl-2.5 pr-3 py-1.5 lg:px-4 lg:py-2 w-fit">
                 <a href="https://www.yelp.com/biz/goat-movers-vancouver" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pr-2.5 lg:pr-3 border-r border-white/15 hover:opacity-80 transition-opacity">
                   <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#FF2828] shrink-0"><Image src="/icons/yelp.svg" alt="Yelp" width={12} height={12} /></div>
-                  <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className="hidden lg:inline">Yelp </span><span className="text-[#FFE533]">4.93</span><span className="text-white/40">/5</span></span>
+                  <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className="hidden lg:inline">Yelp </span><span className="text-[#FFE533]">4.79</span><span className="text-white/40">/5</span></span>
                 </a>
                 <a href="https://www.google.com/maps/place/GOAT+MOVERS/@45.5454821,-122.635238,10z/data=!3m1!4b1!4m6!3m5!1s0xa4790ebd1e7ffb07:0x697d406165de98a5!8m2!3d45.5454821!4d-122.635238!16s%2Fg%2F11wbt8363h?entry=ttu" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pl-0.5 lg:pl-1 hover:opacity-80 transition-opacity">
                   <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#357DFF] shrink-0"><Image src="/icons/google.svg" alt="Google" width={12} height={12} /></div>
-                  <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className="hidden lg:inline">Google </span><span className="text-[#FFE533]">4.82</span><span className="text-white/40">/5</span></span>
+                  <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className="hidden lg:inline">Google </span><span className="text-[#FFE533]">4.98</span><span className="text-white/40">/5</span></span>
                 </a>
                 <span className="inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-mono font-bold text-[10px] lg:text-xs uppercase tracking-[-0.48px] text-white/70 whitespace-nowrap">437+<span className="hidden lg:inline"> Verified</span> Reviews</span>
               </div>

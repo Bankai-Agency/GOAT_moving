@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { Header } from "@/components/layout/Header";
 import { ContactFooter } from "@/components/sections/ContactFooter";
@@ -47,8 +47,6 @@ const reviews: { name: string; location: string; rating: number; text: string; s
   { name: "Eric N.", location: "Portland, OR", rating: 5, text: "Moved my mom out of her house of 35 years into assisted living. Sensitive situation, lots of emotion. The crew was patient, respectful, and genuinely kind to her. I can’t thank them enough for how they handled it.", source: "google" },
   { name: "Rebecca T.", location: "Vancouver, WA", rating: 5, text: "Relocated from Boston and used GOAT for the final-leg delivery and setup. They met the semi at the warehouse, brought everything to the house, and put the beds back together. White-glove experience at a fair price.", source: "yelp", avatar: "/images/avatars/w-89.jpg" },
   { name: "Derrick J.", location: "Hillsboro, OR", rating: 5, text: "Moved our small tech office — 20 monitors, docking stations, network gear. They coordinated with our IT lead on shutdown order, boxed each workstation by employee name, and we unboxed Monday in 2 hours. Smoothest commercial move I’ve done.", source: "google", avatar: "/images/avatars/m-91.jpg" },
-  { name: "Sophia V.", location: "Portland, OR", rating: 5, text: "Hired them for packing services only — I was flying out and needed the apartment boxed before the truck came two days later. They did a perfect job, labeled by room, and even broke down my IKEA bed so the next crew could load it flat.", source: "yelp" },
-  { name: "Matt A.", location: "Camas, WA", rating: 5, text: "These guys don’t just move stuff — they reassemble it too. Bed frames, dining table, bookshelves, TV mount. Everything was up and set by the time they left. Most movers just dump and go. GOAT finishes the job.", source: "google" },
   { name: "Jennifer O.", location: "Tacoma, WA", rating: 5, text: "Had original artwork, framed prints, and a ceramic collection that I was terrified about. They brought their own custom picture boxes, wrapped each piece individually, and loaded them last so they came off first. Not a single chip or scratch.", source: "yelp" },
   { name: "Kyle B.", location: "Portland, OR", rating: 5, text: "Moved into a place with a notoriously tight staircase. Other movers told me they’d charge extra or couldn’t guarantee the couch would fit. GOAT’s crew measured, angled it through on the second try, zero damage to walls or furniture.", source: "google" },
   { name: "Natalie H.", location: "Beaverton, OR", rating: 5, text: "Second move with GOAT in two years. This time it was a full 3-bedroom with a garage full of tools. Same professionalism, same fair pricing, same respect for our stuff. Already recommended them to three coworkers.", source: "yelp" },
@@ -172,9 +170,9 @@ function RatingBadge({ href, logo, logoAlt, logoW, logoH, bg, platform, rating, 
 
 function ReviewsHero() {
   return (
-    <section className="bg-[#0c0c0c] min-h-[260px] lg:min-h-[340px] flex items-end">
-      <div className="max-w-[1408px] mx-auto px-4 w-full pb-8 lg:pb-12">
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 lg:gap-10 pt-4 lg:pt-6">
+    <section className="bg-[#0c0c0c]">
+      <div className="max-w-[1408px] mx-auto px-4 w-full pt-6 lg:pt-10 pb-[40px] lg:pb-[60px]">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8 lg:gap-10">
           <div className="flex flex-col gap-4 lg:gap-5">
             <h1 className="font-sans font-bold text-[36px] lg:text-[72px] leading-none tracking-[-1.08px] lg:tracking-[-2.16px]">
               <span className="text-white/60">What Our </span>
@@ -185,38 +183,42 @@ function ReviewsHero() {
             </p>
           </div>
 
-          {/* Right: overall + per-platform ratings.
-              items-end so badges bottom-align with the big 4.9 number. */}
-          <div className="flex items-end gap-6 lg:gap-8 shrink-0">
-            <div className="flex flex-col gap-1">
+          {/* Mobile: card-style block — 4.9/5 + stars at top, divider, then
+                      Google and Yelp badges stacked one per row (no horizontal squeeze).
+              Desktop: 4.9/5 on the left, badges stacked on the right with a divider. */}
+          <div className="rounded-2xl bg-[#181818] lg:bg-transparent ring-1 ring-white/5 lg:ring-0 p-5 lg:p-0 flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-8 shrink-0">
+            <div className="flex flex-col gap-2 pb-5 lg:pb-0 lg:pr-8 border-b border-white/10 lg:border-b-0 lg:border-r">
               <div className="flex items-baseline gap-0.5">
-                <span className="font-sans font-bold text-[48px] lg:text-[64px] leading-[1] tracking-[-1.92px] lg:tracking-[-2.56px] text-white">4.9</span>
+                <span className="font-sans font-bold text-[48px] lg:text-[72px] leading-[1] tracking-[-1.92px] lg:tracking-[-2.88px] text-white">4.9</span>
                 <span className="font-sans font-bold text-2xl lg:text-3xl leading-[1] tracking-[-0.72px] text-white/50">/5</span>
               </div>
-              <span className="font-mono font-medium text-[10px] lg:text-[11px] uppercase tracking-[-0.44px] text-white/40 whitespace-nowrap">850+ total reviews</span>
+              <Stars count={5} size={16} />
+              <span className="font-mono font-medium text-[11px] uppercase tracking-[-0.44px] text-white/40 whitespace-nowrap">850+ total reviews</span>
             </div>
-            <RatingBadge
-              href={GOOGLE_URL}
-              logo="/icons/google.svg"
-              logoAlt="Google"
-              logoW={22}
-              logoH={22}
-              bg="#357DFF"
-              platform="Google"
-              rating="4.82"
-              count="520+"
-            />
-            <RatingBadge
-              href={YELP_URL}
-              logo="/icons/yelp.svg"
-              logoAlt="Yelp"
-              logoW={18}
-              logoH={22}
-              bg="#FF2828"
-              platform="Yelp"
-              rating="4.93"
-              count="330+"
-            />
+            <div className="flex flex-col gap-4 lg:gap-6">
+              <RatingBadge
+                href={GOOGLE_URL}
+                logo="/icons/google.svg"
+                logoAlt="Google"
+                logoW={22}
+                logoH={22}
+                bg="#357DFF"
+                platform="Google"
+                rating="4.98"
+                count="520+"
+              />
+              <RatingBadge
+                href={YELP_URL}
+                logo="/icons/yelp.svg"
+                logoAlt="Yelp"
+                logoW={18}
+                logoH={22}
+                bg="#FF2828"
+                platform="Yelp"
+                rating="4.79"
+                count="330+"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -270,8 +272,23 @@ function Pagination({ page, totalPages, onChange }: {
 
 export default function ReviewsClient() {
   const [page, setPage] = useState(1);
+  const gridRef = useRef<HTMLDivElement>(null);
   const totalPages = Math.ceil(reviews.length / PAGE_SIZE);
   const pageReviews = reviews.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  /* Switch page + scroll to the top of the grid. We use getBoundingClientRect
+     + window.scrollTo with a header offset because scrollIntoView under the
+     `page-zoom` CSS transform was landing in the middle of the section. */
+  const handlePageChange = (next: number) => {
+    setPage(next);
+    requestAnimationFrame(() => {
+      const el = gridRef.current;
+      if (!el) return;
+      const HEADER_OFFSET = 88; // sticky header + breathing room
+      const top = el.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
+      window.scrollTo({ top, behavior: "smooth" });
+    });
+  };
 
   return (
     <div className="page-zoom">
@@ -280,13 +297,13 @@ export default function ReviewsClient() {
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Reviews" }]} />
         <ReviewsHero />
         <section className="bg-[#0c0c0c] px-4 pb-[60px] lg:pb-[100px]">
-          <div className="max-w-[1408px] mx-auto">
+          <div className="max-w-[1408px] mx-auto" ref={gridRef}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
               {pageReviews.map((review, i) => (
                 <ReviewCard key={`${review.name}-${(page - 1) * PAGE_SIZE + i}`} {...review} />
               ))}
             </div>
-            <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+            <Pagination page={page} totalPages={totalPages} onChange={handlePageChange} />
           </div>
         </section>
       </main>

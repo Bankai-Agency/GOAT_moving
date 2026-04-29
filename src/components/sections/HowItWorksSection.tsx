@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 export type HowItWorksStep = {
   icon: React.ReactNode;
@@ -17,7 +17,8 @@ export type HowItWorksSectionProps = {
 function HowItWorksCard({ step }: { step: HowItWorksStep }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const hasHoverRef = useRef(true);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -28,17 +29,42 @@ function HowItWorksCard({ step }: { step: HowItWorksStep }) {
     });
   }, []);
 
+  /* On touch devices: trigger active state by scroll (card sits in middle
+     viewport band). Center the cursor-following spotlight in the card.
+     On hover-capable devices (desktop), keep the original mouse-driven UX. */
+  useEffect(() => {
+    hasHoverRef.current = typeof window !== "undefined"
+      && window.matchMedia("(hover: hover)").matches;
+    if (hasHoverRef.current) return;
+
+    const el = cardRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsActive(entry.isIntersecting);
+        if (entry.isIntersecting) {
+          // Center the spotlight in the card on mobile.
+          setMousePos({ x: el.offsetWidth / 2, y: el.offsetHeight / 2 });
+        }
+      },
+      { rootMargin: "-40% 0px -40% 0px", threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="flex flex-col gap-5">
       {/* Icon card with cursor-following spotlight */}
       <div
         ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseMove={(e) => { if (hasHoverRef.current) handleMouseMove(e); }}
+        onMouseEnter={() => { if (hasHoverRef.current) setIsActive(true); }}
+        onMouseLeave={() => { if (hasHoverRef.current) setIsActive(false); }}
         className="relative rounded-2xl overflow-hidden flex flex-col lg:items-center lg:justify-center transition-[background-color] duration-500 aspect-[5/4] lg:aspect-[74/91]"
         style={{
-          backgroundColor: isHovered ? "#2a2718" : "#242424",
+          backgroundColor: isActive ? "#2a2718" : "#242424",
           backgroundImage: "radial-gradient(circle, #373737 1px, transparent 1px)",
           backgroundSize: "16px 16px",
           boxShadow: "inset 0 4px 144px 50px #242424",
@@ -48,7 +74,7 @@ function HowItWorksCard({ step }: { step: HowItWorksStep }) {
         <div
           className="absolute inset-0 pointer-events-none transition-opacity duration-500"
           style={{
-            opacity: isHovered ? 1 : 0,
+            opacity: isActive ? 1 : 0,
             background: `radial-gradient(360px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255, 229, 51, 0.28), rgba(255, 229, 51, 0.08) 40%, transparent 70%)`,
           }}
         />
@@ -57,7 +83,7 @@ function HowItWorksCard({ step }: { step: HowItWorksStep }) {
         <div
           className="absolute inset-0 pointer-events-none rounded-2xl transition-opacity duration-500"
           style={{
-            opacity: isHovered ? 1 : 0,
+            opacity: isActive ? 1 : 0,
             background: `radial-gradient(420px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255, 229, 51, 0.55), transparent 55%)`,
             mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
             maskComposite: "exclude",
@@ -73,11 +99,11 @@ function HowItWorksCard({ step }: { step: HowItWorksStep }) {
             className="flex items-center justify-center transition-all duration-500 relative z-10 w-[60px] h-[60px] lg:w-20 lg:h-20"
             style={{
               borderRadius: 10,
-              backgroundColor: isHovered ? "#FFE533" : "#303030",
-              boxShadow: isHovered
+              backgroundColor: isActive ? "#FFE533" : "#303030",
+              boxShadow: isActive
                 ? "0 8px 24px rgba(255,229,51,0.35), 0 0 60px rgba(255,229,51,0.25), 0 0 0 8px rgba(255,229,51,0.18)"
                 : "0 2.5px 5px rgba(255,255,255,0.08), 0 0 7.5px rgba(255,255,255,0.02), 0 0 0 6px rgba(255,255,255,0.06)",
-              transform: isHovered
+              transform: isActive
                 ? `translate(${(mousePos.x - (cardRef.current?.offsetWidth || 0) / 2) * 0.03}px, ${(mousePos.y - (cardRef.current?.offsetHeight || 0) / 2) * 0.03}px) scale(1.08)`
                 : "translate(0, 0) scale(1)",
             }}
@@ -86,7 +112,7 @@ function HowItWorksCard({ step }: { step: HowItWorksStep }) {
               className="transition-[filter] duration-500 [&>svg]:w-[29px] [&>svg]:h-[29px] lg:[&>svg]:w-9 lg:[&>svg]:h-9 flex items-center justify-center"
               style={{
                 // SVG icons are yellow on dark; invert them to dark on yellow on hover
-                filter: isHovered ? "brightness(0)" : "brightness(1)",
+                filter: isActive ? "brightness(0)" : "brightness(1)",
               }}
             >
               {step.icon}

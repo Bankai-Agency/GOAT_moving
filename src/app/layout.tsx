@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Roboto_Mono } from "next/font/google";
 import { NavProgress } from "@/components/layout/NavProgress";
+import { ScrollReset } from "@/components/layout/ScrollReset";
 import { Analytics } from "@/components/seo/Analytics";
 import "./globals.css";
 
@@ -59,6 +60,7 @@ export default function RootLayout({
       className={`${geist.variable} ${robotoMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
+        <ScrollReset />
         <NavProgress />
         {children}
         <Analytics />

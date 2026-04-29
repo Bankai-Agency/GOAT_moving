@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { FormInput } from "@/components/ui/FormInput";
-import { SuccessState } from "@/components/ui/SuccessState";
 
 export const MOVE_SIZES = [
   "Room or Less",
@@ -58,8 +58,8 @@ export function QuoteForm({
   footnote,
   onSubmit,
 }: QuoteFormProps) {
+  const router = useRouter();
   const [values, setValues] = useState<QuoteFormValues>(empty);
-  const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,26 +75,14 @@ export function QuoteForm({
     } catch (err) {
       console.error("Submit failed:", err);
     }
+    /* Reset and navigate to /thank-you so analytics can record the conversion. */
+    setValues(empty);
     setSubmitting(false);
-    setSubmitted(true);
+    router.push("/thank-you");
   };
 
   const set = <K extends keyof QuoteFormValues>(key: K, v: QuoteFormValues[K]) =>
     setValues((prev) => ({ ...prev, [key]: v }));
-
-  if (submitted) {
-    return (
-      <SuccessState
-        heading="Request Submitted Successfully!"
-        body="Our team will review your request and get back to you with a personalized quote within 24 hours."
-        buttonLabel="Send Another Request"
-        onButtonClick={() => {
-          setValues(empty);
-          setSubmitted(false);
-        }}
-      />
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">

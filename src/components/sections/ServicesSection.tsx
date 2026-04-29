@@ -173,7 +173,7 @@ export function ServicesSection({
 
           {/* Heading + subtitle */}
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 lg:gap-0">
-            <h2 className="font-sans font-bold text-[32px] lg:text-[64px] leading-[1.2] tracking-[-1.28px] lg:tracking-[-2.56px] text-white max-w-[644px]">
+            <h2 className="font-sans font-bold text-[32px] lg:text-[64px] leading-[1.2] tracking-[-1.28px] lg:tracking-[-2.56px] text-white max-w-[900px]">
               {title}
             </h2>
             <p className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white/60 max-w-[450px]">

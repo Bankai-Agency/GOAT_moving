@@ -52,14 +52,19 @@ function Lightbox({
     return () => { document.body.style.overflow = ""; };
   }, []);
 
-  return (
-    <div className="fixed inset-0 z-[100] flex flex-col animate-fade-in">
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" onClick={onClose} />
+  /* Click anywhere on the backdrop (outside image / controls) closes the
+     lightbox. The image, arrows, close button, and thumbnail strip stop
+     propagation so clicks on them are never interpreted as "outside". */
+  const stop = (e: React.MouseEvent) => e.stopPropagation();
 
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex flex-col animate-fade-in bg-black/90 backdrop-blur-sm cursor-zoom-out"
+      onClick={onClose}
+    >
       {/* Close button */}
       <button
-        onClick={onClose}
+        onClick={(e) => { stop(e); onClose(); }}
         className="absolute top-6 right-6 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-200 ease-out cursor-pointer hover:scale-110 hover:rotate-90"
       >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -71,7 +76,7 @@ function Lightbox({
       <div className="flex-1 flex items-center justify-center relative px-2 lg:px-20 pt-6 pb-4">
         {/* Left arrow */}
         <button
-          onClick={onPrev}
+          onClick={(e) => { stop(e); onPrev(); }}
           className="absolute left-2 lg:left-6 z-10 w-10 h-10 lg:w-14 lg:h-14 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-200 ease-out cursor-pointer hover:scale-110"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -79,8 +84,11 @@ function Lightbox({
           </svg>
         </button>
 
-        {/* Image */}
-        <div className="relative w-full max-w-[1200px] aspect-[4/3] lg:aspect-auto lg:h-full lg:max-h-[70vh] mx-auto">
+        {/* Image — clicking on it shouldn't close the lightbox */}
+        <div
+          className="relative w-full max-w-[1200px] aspect-[4/3] lg:aspect-auto lg:h-full lg:max-h-[70vh] mx-auto cursor-default"
+          onClick={stop}
+        >
           <Image
             src={images[currentIndex].src}
             alt={images[currentIndex].alt}
@@ -93,7 +101,7 @@ function Lightbox({
 
         {/* Right arrow */}
         <button
-          onClick={onNext}
+          onClick={(e) => { stop(e); onNext(); }}
           className="absolute right-2 lg:right-6 z-10 w-10 h-10 lg:w-14 lg:h-14 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all duration-200 ease-out cursor-pointer hover:scale-110"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -102,8 +110,11 @@ function Lightbox({
         </button>
       </div>
 
-      {/* Thumbnail strip */}
-      <div className="relative z-10 flex justify-center gap-1.5 lg:gap-2 pb-6 px-4 lg:px-6 overflow-x-auto">
+      {/* Thumbnail strip — clicks should select, not close */}
+      <div
+        className="relative z-10 flex justify-center gap-1.5 lg:gap-2 pb-6 px-4 lg:px-6 overflow-x-auto cursor-default"
+        onClick={stop}
+      >
         {images.map((img, i) => (
           <button
             key={i}
@@ -149,9 +160,12 @@ function MobileGalleryCarousel({ onImageClick }: { onImageClick: (index: number)
 
   return (
     <div className="flex flex-col gap-6 lg:hidden items-center">
+      {/* self-stretch overrides parent items-center so the scroll container
+          is full-width — otherwise children w-full collapse to content width
+          and you see multiple slides squished side-by-side. */}
       <div
         ref={scrollRef}
-        className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+        className="flex w-full self-stretch gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {mobileSlides.map((slide, si) => (

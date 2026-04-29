@@ -59,19 +59,25 @@ function FooterContent() {
               Navigation
             </span>
             <div className="flex flex-wrap gap-4 lg:gap-6 items-center">
-              <Link href="#about" className="hover-underline font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
-                About Us
+              <Link href="/local-moving" className="hover-underline font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
+                Local Moving
               </Link>
-              <Link href="#services" className="hover-underline font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
-                Services
+              <Link href="/long-distance-moving" className="hover-underline font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
+                Long Distance
               </Link>
-              <Link href="#reviews" className="hover-underline font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
+              <Link href="/commercial-moving" className="hover-underline font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
+                Commercial
+              </Link>
+              <Link href="/packing-services" className="hover-underline font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
+                Packing
+              </Link>
+              <Link href="/reviews" className="hover-underline font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
                 Reviews
               </Link>
-              <Link href="#faq" className="hover-underline font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
+              <Link href="/faq" className="hover-underline font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
                 FAQ
               </Link>
-              <Link href="#contact" className="hover-underline font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
+              <Link href="/contacts" className="hover-underline font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
                 Contacts
               </Link>
             </div>
@@ -94,9 +100,23 @@ function FooterContent() {
           <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
             Address
           </span>
-          <div className="font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white">
-            <p>1178 Dock St, Tacoma, WA 98402</p>
-            <p>8101 NE 14th Pl, Portland, OR 97211</p>
+          <div className="font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white flex flex-col gap-1">
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=1178+Dock+St,+Tacoma,+WA+98402"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover-underline w-fit hover:text-[#FFE533] transition-colors duration-200"
+            >
+              1178 Dock St, Tacoma, WA 98402
+            </a>
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=8101+NE+14th+Pl,+Portland,+OR+97211"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover-underline w-fit hover:text-[#FFE533] transition-colors duration-200"
+            >
+              8101 NE 14th Pl, Portland, OR 97211
+            </a>
           </div>
         </div>
 

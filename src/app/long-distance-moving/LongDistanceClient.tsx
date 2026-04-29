@@ -33,7 +33,7 @@ function LDHero() {
       <div className="relative h-full max-w-[1408px] mx-auto px-4 flex items-end pb-8 lg:pb-[72px]">
         <div className="flex flex-col gap-4 lg:gap-6">
           <h1 className="font-sans font-bold text-[40px] lg:text-[96px] leading-none tracking-[-1.2px] lg:tracking-[-2.88px]">
-            <span className="text-white/60">Long Distance Moving </span>
+            <span className="text-[#FFE533]">Long Distance Moving </span>
             <br />
             <span className="text-white">from Vancouver, WA & Portland, OR</span>
           </h1>

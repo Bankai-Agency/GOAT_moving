@@ -117,7 +117,7 @@ export function WhyTrustSection({
         style={{ transform: `translate3d(0, ${offset}px, 0)` }}
       >
         <Image src={image} alt={imageAlt} fill sizes="(max-width: 1024px) 200vw, 100vw" quality={90} className="object-cover" />
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/50" />
       </div>
       <div className="relative w-full max-w-[1408px] mx-auto flex flex-col justify-between gap-10 lg:gap-16">
         <div className="flex flex-col gap-6 lg:gap-8">
@@ -144,7 +144,7 @@ export function WhyTrustSection({
               <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-lg lg:rounded-xl bg-white flex items-center justify-center shrink-0">{p.icon}</div>
               <div className="flex flex-col gap-1 min-w-0">
                 <h3 className="font-sans font-bold text-base lg:text-lg leading-[1.2] tracking-[-0.48px] text-white">{p.title}</h3>
-                <p className="font-sans font-normal text-sm leading-[1.3] tracking-[-0.42px] text-white/70">{p.subtitle}</p>
+                <p className="font-sans font-normal text-sm lg:text-base leading-[1.3] tracking-[-0.42px] text-white/70">{p.subtitle}</p>
               </div>
             </div>
           ))}

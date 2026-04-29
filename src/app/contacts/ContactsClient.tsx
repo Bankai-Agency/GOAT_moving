@@ -65,14 +65,11 @@ function ContactsHeroWithCards() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
           {contacts.map((c, i) => {
             const inner = (
-              <div className="bg-[#181818] rounded-xl lg:rounded-2xl p-5 lg:p-6 flex flex-col gap-4 group hover:bg-[#1e1e1e] transition-colors duration-300 h-full">
+              <div className="bg-[#181818] rounded-xl lg:rounded-2xl p-5 lg:p-6 flex flex-col gap-4 group hover:bg-[#1e1e1e] transition-colors duration-300 h-full min-h-[180px] lg:min-h-[220px]">
                 <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-lg lg:rounded-xl bg-[#242424] flex items-center justify-center shadow-[0px_0px_6px_0px_rgba(0,0,0,0.02),0px_2px_4px_0px_rgba(0,0,0,0.08)] group-hover:scale-105 transition-transform duration-300">
                   {c.icon}
                 </div>
-                <span className="font-mono font-bold text-xs uppercase tracking-[-0.56px] text-white/30">
-                  {c.label}
-                </span>
-                <span className="font-sans font-semibold text-lg lg:text-xl leading-[1.2] tracking-[-0.54px] lg:tracking-[-0.6px] text-white whitespace-pre-line">
+                <span className="mt-auto font-sans font-semibold text-lg lg:text-xl leading-[1.2] tracking-[-0.54px] lg:tracking-[-0.6px] text-white whitespace-pre-line">
                   {c.value}
                 </span>
               </div>

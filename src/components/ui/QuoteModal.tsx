@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { formatUsPhone } from "@/components/ui/FormInput";
-import { SuccessState } from "@/components/ui/SuccessState";
 
 const EMAIL_PATTERN = "[^@\\s]+@[^@\\s]+\\.[^@\\s]+";
 
@@ -64,8 +64,8 @@ const emptyForm: ModalFormData = {
 };
 
 export function QuoteModal() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<ModalFormData>(emptyForm);
 
@@ -94,7 +94,6 @@ export function QuoteModal() {
 
   const handleClose = () => {
     setIsOpen(false);
-    setSubmitted(false);
     setFormData(emptyForm);
   };
 
@@ -110,8 +109,12 @@ export function QuoteModal() {
     } catch (err) {
       console.error("Submit failed:", err);
     }
+    /* Close modal + navigate to the dedicated thank-you page so analytics
+       (GA4 / Ads conversions) can fire on a real URL change. */
+    setIsOpen(false);
+    setFormData(emptyForm);
     setSubmitting(false);
-    setSubmitted(true);
+    router.push("/thank-you");
   };
 
   if (!isOpen) return null;
@@ -120,95 +123,93 @@ export function QuoteModal() {
     <div className="fixed inset-0 z-[200] flex items-center justify-center animate-fade-in">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={handleClose} />
 
-      <div className="relative z-10 w-full max-w-[440px] mx-4 bg-[#141414] rounded-2xl border border-white/10 overflow-hidden max-h-[90vh] overflow-y-auto">
-        {/* Close button */}
+      <div className="relative z-10 w-full max-w-[440px] lg:max-w-[760px] mx-4 bg-[#141414] rounded-2xl border border-white/10 overflow-hidden max-h-[90vh] overflow-y-auto">
+        {/* Close button — top-right corner */}
         <button
           onClick={handleClose}
-          className="flex items-center gap-2 px-6 pt-5 pb-3 text-white/60 hover:text-white transition-colors font-mono font-bold text-sm uppercase tracking-[-0.48px]"
+          aria-label="Close"
+          className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center text-white/60 hover:text-white hover:scale-110 transition-all duration-200"
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
-          Close
         </button>
 
-        <div className="px-6 pb-8">
-          {submitted ? (
-            <SuccessState
-              heading="Request Submitted Successfully!"
-              body="Our team will review your information and get back to you with a personalized quote within 24 hours."
-              buttonLabel="Continue"
-              onButtonClick={handleClose}
-            />
-          ) : (
-            <>
-              {/* Heading */}
-              <h2 className="font-sans font-semibold text-[28px] leading-[1.2] tracking-[-0.84px] text-white mb-3">
-                Move information
-              </h2>
-              <p className="font-sans font-normal text-lg leading-[1.4] tracking-[-0.54px] text-white/60 mb-6">
-                Fill out a few quick details about your move and we&apos;ll send you a personalized estimate &mdash; no hidden fees, no obligations.
-              </p>
-            </>
-          )}
+        <div className="px-6 lg:px-8 pt-8 pb-8">
+          {/* Heading */}
+          <h2 className="font-sans font-semibold text-[28px] leading-[1.2] tracking-[-0.84px] text-white mb-3">
+            Move information
+          </h2>
+          <p className="font-sans font-normal text-lg leading-[1.4] tracking-[-0.54px] text-white/60 mb-6">
+            Fill out a few quick details about your move and we&apos;ll send you a personalized estimate &mdash; no hidden fees, no obligations.
+          </p>
 
-          {!submitted && (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-              <ModalInput
-                label="Full name"
-                placeholder="Enter your name"
-                value={formData.fullName}
-                onChange={(val) => setFormData({ ...formData, fullName: val })}
-                required
-              />
-              <ModalInput
-                label="Phone number"
-                placeholder="+1 (555) 123-4567"
-                type="tel"
-                value={formData.phone}
-                onChange={(val) => setFormData({ ...formData, phone: val })}
-                required
-              />
-              <ModalInput
-                label="Email"
-                placeholder="your@email.com"
-                type="email"
-                value={formData.email}
-                onChange={(val) => setFormData({ ...formData, email: val })}
-              />
-              <ModalInput
-                label="Moving from"
-                placeholder="Address"
-                value={formData.movingFrom}
-                onChange={(val) => setFormData({ ...formData, movingFrom: val })}
-                required
-              />
-              <ModalInput
-                label="Moving to"
-                placeholder="Address"
-                value={formData.movingTo}
-                onChange={(val) => setFormData({ ...formData, movingTo: val })}
-                required
-              />
-              <DatePicker
-                label="Move date"
-                placeholder="Choose date"
-                value={formData.moveDate}
-                onChange={(val) => setFormData({ ...formData, moveDate: val })}
-              />
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+              {/* Row 1: name + phone */}
+              <div className="flex flex-col lg:flex-row gap-5">
+                <ModalInput
+                  label="Full name"
+                  placeholder="Enter your name"
+                  value={formData.fullName}
+                  onChange={(val) => setFormData({ ...formData, fullName: val })}
+                  required
+                />
+                <ModalInput
+                  label="Phone number"
+                  placeholder="+1 (555) 123-4567"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(val) => setFormData({ ...formData, phone: val })}
+                  required
+                />
+              </div>
+
+              {/* Row 2: email + date */}
+              <div className="flex flex-col lg:flex-row gap-5">
+                <ModalInput
+                  label="Email"
+                  placeholder="your@email.com"
+                  type="email"
+                  value={formData.email}
+                  onChange={(val) => setFormData({ ...formData, email: val })}
+                />
+                <DatePicker
+                  label="Move date"
+                  placeholder="Choose date"
+                  value={formData.moveDate}
+                  onChange={(val) => setFormData({ ...formData, moveDate: val })}
+                />
+              </div>
+
+              {/* Row 3: from + to */}
+              <div className="flex flex-col lg:flex-row gap-5">
+                <ModalInput
+                  label="Moving from"
+                  placeholder="Address"
+                  value={formData.movingFrom}
+                  onChange={(val) => setFormData({ ...formData, movingFrom: val })}
+                  required
+                />
+                <ModalInput
+                  label="Moving to"
+                  placeholder="Address"
+                  value={formData.movingTo}
+                  onChange={(val) => setFormData({ ...formData, movingTo: val })}
+                  required
+                />
+              </div>
 
               <button
                 type="submit"
                 disabled={submitting}
-                className="btn-shine bg-white lg:bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-shine bg-white lg:bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed mt-2"
               >
                 <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
                   {submitting ? "Sending..." : "Submit Request"}
                 </span>
               </button>
             </form>
-          )}
         </div>
       </div>
     </div>

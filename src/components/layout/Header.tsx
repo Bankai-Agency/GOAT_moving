@@ -43,6 +43,7 @@ export function Header() {
   const [isSticky, setIsSticky] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
+  const accumUp = useRef(0); // consecutive scroll-up distance, resets on scroll-down
   const ticking = useRef(false);
 
   // Click outside to close dropdown
@@ -67,9 +68,12 @@ export function Header() {
     return () => { document.body.style.overflow = ""; };
   }, [mobileMenuOpen]);
 
-  // Scroll listener for sticky header
+  // Scroll listener — sticky from the first pixel of scroll. Hide on any
+  // scroll-down. Show only on a *sustained* scroll-up (>= REVEAL_THRESHOLD
+  // of consecutive upward movement) so micro-jitter and short up-scrolls
+  // don't keep flashing the header.
   useEffect(() => {
-    const HERO_HEIGHT = 200;
+    const REVEAL_THRESHOLD = 80; // px of consecutive up-scroll before showing
 
     function onScroll() {
       if (ticking.current) return;
@@ -77,18 +81,24 @@ export function Header() {
 
       requestAnimationFrame(() => {
         const currentScrollY = window.scrollY;
+        const delta = currentScrollY - lastScrollY.current;
 
-        if (currentScrollY <= HERO_HEIGHT) {
-          setIsSticky(false);
+        setIsSticky(currentScrollY > 0);
+
+        if (currentScrollY <= 0) {
+          // At the very top — always show.
           setIsVisible(true);
-        } else {
-          setIsSticky(true);
-
-          if (currentScrollY < lastScrollY.current) {
+          accumUp.current = 0;
+        } else if (delta > 0) {
+          // Any scroll down — hide and reset upward accumulator.
+          accumUp.current = 0;
+          setIsVisible(false);
+          setOpenDropdown(null);
+        } else if (delta < 0) {
+          // Scrolling up — accumulate. Reveal only after a sustained pull.
+          accumUp.current += -delta;
+          if (accumUp.current >= REVEAL_THRESHOLD) {
             setIsVisible(true);
-          } else {
-            setIsVisible(false);
-            setOpenDropdown(null);
           }
         }
 
@@ -97,6 +107,7 @@ export function Header() {
       });
     }
 
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -114,8 +125,8 @@ export function Header() {
         }`}
         style={isSticky ? { backdropFilter: "blur(15px)", backgroundColor: "rgba(12,12,12,0.85)" } : undefined}
       >
-        <div className="max-w-[1408px] mx-auto px-4 flex items-center justify-between h-[84px] lg:h-[84px] border-b border-white/10 lg:border-b-0">
-          {/* Logo */}
+        <div className="max-w-[1408px] mx-auto px-4 flex items-center justify-between h-[64px] lg:h-[84px] border-b border-white/10 lg:border-b-0">
+          {/* Logo — smaller on mobile (w-[68px]), original on desktop (lg:w-[82px]) */}
           <Link href="/" className="shrink-0 group/logo relative">
             <Image
               src="/icons/logo.svg"
@@ -123,7 +134,7 @@ export function Header() {
               width={82}
               height={39}
               priority
-              className="transition-all duration-300 ease-out group-hover/logo:scale-110 group-hover/logo:brightness-125 group-hover/logo:drop-shadow-[0_0_12px_rgba(255,229,51,0.5)]"
+              className="w-[68px] lg:w-[82px] h-auto transition-all duration-300 ease-out group-hover/logo:scale-110 group-hover/logo:brightness-125 group-hover/logo:drop-shadow-[0_0_12px_rgba(255,229,51,0.5)]"
             />
           </Link>
 
@@ -170,7 +181,13 @@ export function Header() {
 
                     {openDropdown === link.label && link.items && (
                       <div
-                        className="absolute top-full left-0 mt-2 z-[60] rounded-[7px] p-2 flex flex-col gap-1 animate-dropdown-in backdrop-blur-[20px] bg-[rgba(13,13,13,0.9)] shadow-[0_8px_32px_rgba(0,0,0,0.4)] min-w-[200px]"
+                        className={`absolute top-full left-0 mt-2 z-[60] rounded-[7px] p-2 animate-dropdown-in backdrop-blur-[20px] bg-[rgba(13,13,13,0.9)] shadow-[0_8px_32px_rgba(0,0,0,0.4)] ${
+                          /* Locations has 10 cities — render in 2 columns to keep
+                             the dropdown compact instead of a 10-item tall list. */
+                          link.label === "Locations"
+                            ? "grid grid-cols-2 gap-x-1 gap-y-1 min-w-[400px]"
+                            : "flex flex-col gap-1 min-w-[200px]"
+                        }`}
                       >
                         {link.items.map((item) => (
                           <Link
@@ -220,7 +237,7 @@ export function Header() {
               </a>
               <button
                 onClick={() => window.dispatchEvent(new Event("open-quote-modal"))}
-                className="btn-shine bg-[#FFE533] px-4 py-3 rounded-[4px] font-mono text-sm font-medium uppercase tracking-[-0.56px] leading-[1.2] text-[#0c0c0c] whitespace-nowrap hover:bg-[#f0d820] hover:shadow-[0_4px_16px_rgba(255,229,51,0.3)] transition-all duration-200 ease-out"
+                className="btn-shine bg-[#FFE533] px-4 py-3 rounded-[4px] font-mono text-sm font-bold uppercase tracking-[-0.64px] leading-[1.2] text-[#0c0c0c] whitespace-nowrap hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer"
               >
                 Request a Quote
               </button>
@@ -237,17 +254,13 @@ export function Header() {
             </a>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               className="w-10 h-10 rounded-full backdrop-blur-[15px] bg-[rgba(13,13,13,0.4)] flex items-center justify-center cursor-pointer"
             >
-              {mobileMenuOpen ? (
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M14 4L4 14M4 4L14 14" stroke="white" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              ) : (
-                <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
-                  <path d="M1 1H17M1 7H17M1 13H17" stroke="white" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              )}
+              {/* Always show the hamburger — the open menu has its own "Close" button. */}
+              <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
+                <path d="M1 1H17M1 7H17M1 13H17" stroke="white" strokeWidth="2" strokeLinecap="round" />
+              </svg>
             </button>
           </div>
         </div>
@@ -288,18 +301,13 @@ export function Header() {
           </button>
         </div>
 
-        {/* Nav links — pushed to bottom with flex-1 spacer */}
-        <div className="flex-1 flex flex-col justify-end px-4 pb-6 overflow-y-auto">
+        {/* Nav links — top-anchored so expanding the Locations submenu (10 cities)
+            doesn't push content off-screen. The container scrolls when content
+            overflows. */}
+        <div className="flex-1 flex flex-col px-4 pt-4 pb-6 overflow-y-auto">
           <nav className="flex flex-col">
-            {[...navLinks, { label: "Contacts", href: "/contacts", hasDropdown: false, items: undefined }].map((link, i) => (
-              <div
-                key={link.label}
-                style={{
-                  opacity: mobileMenuOpen ? 1 : 0,
-                  transform: mobileMenuOpen ? "translateY(0)" : "translateY(20px)",
-                  transition: `opacity 0.3s ease-out ${0.1 + i * 0.05}s, transform 0.3s ease-out ${0.1 + i * 0.05}s`,
-                }}
-              >
+            {navLinks.map((link) => (
+              <div key={link.label}>
                 {link.hasDropdown ? (
                   <>
                     <button
@@ -318,8 +326,14 @@ export function Header() {
                       </svg>
                     </button>
                     <div
-                      className={`flex flex-col gap-1 pl-1 overflow-hidden transition-all duration-300 ease-out ${
-                        mobileSubmenu === link.label ? "max-h-[300px] opacity-100 pb-2" : "max-h-0 opacity-0"
+                      className={`pl-1 overflow-hidden transition-all duration-300 ease-out ${
+                        /* Locations: 10 cities → 2-column grid to keep menu compact.
+                           Services: 4 items → single column. */
+                        link.label === "Locations"
+                          ? "grid grid-cols-2 gap-x-4 gap-y-1"
+                          : "flex flex-col gap-1"
+                      } ${
+                        mobileSubmenu === link.label ? "max-h-[800px] opacity-100 pb-2" : "max-h-0 opacity-0"
                       }`}
                     >
                       {link.items?.map((item) => (

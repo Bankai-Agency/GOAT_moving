@@ -88,17 +88,20 @@ export function AboutSection({
             ))}
           </video>
 
-          {/* Poster overlay + play button */}
+          {/* Click anywhere on the poster overlay to start playback —
+              the centered pill is a visual cue, not the only hit target. */}
           {!isPlaying && (
-            <>
-              <div className="absolute inset-0 bg-black/40" />
-              <button
-                onClick={() => {
-                  setIsPlaying(true);
-                  videoRef.current?.play();
-                }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop-blur-[15px] bg-[rgba(13,13,13,0.4)] flex items-center gap-2 px-5 lg:px-6 py-2.5 lg:py-3 rounded-[7px] cursor-pointer hover:bg-[rgba(13,13,13,0.6)] hover:scale-105 transition-all duration-300 ease-out"
-              >
+            <button
+              type="button"
+              aria-label="Play video"
+              onClick={() => {
+                setIsPlaying(true);
+                videoRef.current?.play();
+              }}
+              className="absolute inset-0 group/play cursor-pointer"
+            >
+              <span className="absolute inset-0 bg-black/40 group-hover/play:bg-black/30 transition-colors duration-300" />
+              <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop-blur-[15px] bg-[rgba(13,13,13,0.4)] flex items-center gap-2 px-5 lg:px-6 py-2.5 lg:py-3 rounded-[7px] group-hover/play:bg-[rgba(13,13,13,0.6)] group-hover/play:scale-105 transition-all duration-300 ease-out">
                 <Image
                   src="/icons/play.svg"
                   alt=""
@@ -109,8 +112,8 @@ export function AboutSection({
                 <span className="font-mono font-medium text-sm lg:text-base uppercase tracking-[-0.64px] leading-[1.2] text-white">
                   Watch Video
                 </span>
-              </button>
-            </>
+              </span>
+            </button>
           )}
         </div>
 

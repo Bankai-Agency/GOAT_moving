@@ -27,6 +27,10 @@
 html {
   background: #0c0c0c;
   overscroll-behavior: none;
+  /* Prevent any rogue full-bleed element from causing horizontal scroll
+     on the page. `clip` is preferred over `hidden` so position:sticky
+     descendants still work. */
+  overflow-x: clip;
 }
 
 /* Proportional page zoom — reference design is 1728px (16" MacBook).

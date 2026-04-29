@@ -1,19 +1,42 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 function IncludedCard({ item, index }: { item: { icon: React.ReactNode; title: string; description: string }; index: number }) {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const hasHoverRef = useRef(true);
 
   // Different delays/positions per card so the blobs don't move in sync
   const a = index % 3;
   const b = index % 5;
   const c = (index + 2) % 4;
 
+  /* On touch devices (no hover), trigger the lit state by scroll position:
+     when the card sits in the middle band of the viewport, light up; when it
+     leaves that band, fade. Only one card is "active" at a time as the user
+     scrolls. On hover-capable devices (desktop) we keep the hover behaviour. */
+  useEffect(() => {
+    hasHoverRef.current = typeof window !== "undefined"
+      && window.matchMedia("(hover: hover)").matches;
+    if (hasHoverRef.current) return;
+
+    const el = cardRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsActive(entry.isIntersecting),
+      { rootMargin: "-40% 0px -40% 0px", threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      ref={cardRef}
+      onMouseEnter={() => { if (hasHoverRef.current) setIsActive(true); }}
+      onMouseLeave={() => { if (hasHoverRef.current) setIsActive(false); }}
       className="group relative rounded-xl lg:rounded-2xl min-h-[180px] lg:min-h-[280px] overflow-hidden bg-[#181818]"
     >
       {/* Animated yellow glow blobs — always floating, but hidden behind opaque layer until hover */}
@@ -56,9 +79,9 @@ function IncludedCard({ item, index }: { item: { icon: React.ReactNode; title: s
         aria-hidden
         className="absolute inset-0 pointer-events-none transition-[background,backdrop-filter] duration-700 ease-out"
         style={{
-          background: isHovered ? "rgba(24, 24, 24, 0.4)" : "rgba(24, 24, 24, 1)",
-          backdropFilter: isHovered ? "blur(22px)" : "blur(0px)",
-          WebkitBackdropFilter: isHovered ? "blur(22px)" : "blur(0px)",
+          background: isActive ? "rgba(24, 24, 24, 0.4)" : "rgba(24, 24, 24, 1)",
+          backdropFilter: isActive ? "blur(22px)" : "blur(0px)",
+          WebkitBackdropFilter: isActive ? "blur(22px)" : "blur(0px)",
         }}
       />
 
@@ -71,7 +94,7 @@ function IncludedCard({ item, index }: { item: { icon: React.ReactNode; title: s
           </h3>
           <div
             className="shrink-0 transition-opacity duration-500"
-            style={{ opacity: isHovered ? 0.9 : 0.55 }}
+            style={{ opacity: isActive ? 0.9 : 0.55 }}
           >
             {item.icon}
           </div>

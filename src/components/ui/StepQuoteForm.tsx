@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { FormInput } from "@/components/ui/FormInput";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { SelectDropdown } from "@/components/ui/SelectDropdown";
-import { SuccessState } from "@/components/ui/SuccessState";
 import { MOVE_SIZES } from "@/components/ui/QuoteForm";
 import type { QuoteFormValues } from "@/components/ui/QuoteForm";
 
@@ -95,6 +95,7 @@ export function StepQuoteForm({
   city,
   horizontal = false,
 }: StepQuoteFormProps) {
+  const router = useRouter();
   const [values, setValues] = useState<QuoteFormValues>(empty);
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -129,25 +130,14 @@ export function StepQuoteForm({
     } catch (err) {
       console.error("Submit failed:", err);
     }
+    /* Reset local state and navigate to the dedicated thank-you page so
+       analytics can fire on a real URL change. */
+    setValues(empty);
+    setErrors({});
+    setStep(1);
     setSubmitting(false);
-    setStep(4);
+    router.push("/thank-you");
   };
-
-  /* ── Step 4: Success ── */
-  if (step === 4) {
-    return (
-      <SuccessState
-        heading="Request Submitted!"
-        body="Our team will review your request and get back to you with a personalized quote within 24 hours."
-        buttonLabel="Send Another Request"
-        onButtonClick={() => {
-          setValues(empty);
-          setErrors({});
-          setStep(1);
-        }}
-      />
-    );
-  }
 
   /* ── Horizontal layout (desktop hero bar) ── */
   if (horizontal) {

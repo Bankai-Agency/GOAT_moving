@@ -25,7 +25,7 @@ function PKHero() {
       <div className="relative h-full max-w-[1408px] mx-auto px-4 flex items-end pb-8 lg:pb-[72px]">
         <div className="flex flex-col gap-4 lg:gap-6">
           <h1 className="font-sans font-bold text-[40px] lg:text-[96px] leading-none tracking-[-1.2px] lg:tracking-[-2.88px]">
-            <span className="text-white/60">Packing & Labor </span>
+            <span className="text-[#FFE533]">Packing & Labor </span>
             <br />
             <span className="text-white">in Vancouver, WA &&nbsp;Portland,&nbsp;OR</span>
           </h1>

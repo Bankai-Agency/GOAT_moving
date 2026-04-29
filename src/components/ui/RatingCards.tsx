@@ -54,13 +54,14 @@ function MobileRatingBar({
   yelpUrl,
   googleUrl,
 }: Required<Pick<RatingCardsProps, "yelpRating" | "googleRating" | "yelpUrl" | "googleUrl">>) {
+  /* Two separate pills with a gap between — mirrors the desktop layout. */
   return (
-    <div className="flex lg:hidden backdrop-blur-[15px] bg-[rgba(13,13,13,0.4)] rounded-[7px] overflow-hidden">
+    <div className="flex lg:hidden gap-2">
       <a
         href={yelpUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex-1 flex items-center gap-3 p-3 hover:bg-[rgba(13,13,13,0.55)] transition-colors"
+        className="flex-1 flex items-center gap-3 p-3 backdrop-blur-[15px] bg-[rgba(13,13,13,0.4)] rounded-[7px] hover:bg-[rgba(13,13,13,0.55)] transition-colors"
       >
         <div className="flex items-center justify-center p-2 rounded-[4px] shrink-0 bg-[#FF2828]">
           <Image src="/icons/yelp.svg" alt="Yelp" width={24} height={24} />
@@ -77,7 +78,7 @@ function MobileRatingBar({
         href={googleUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex-1 flex items-center gap-3 p-3 hover:bg-[rgba(13,13,13,0.55)] transition-colors"
+        className="flex-1 flex items-center gap-3 p-3 backdrop-blur-[15px] bg-[rgba(13,13,13,0.4)] rounded-[7px] hover:bg-[rgba(13,13,13,0.55)] transition-colors"
       >
         <div className="flex items-center justify-center p-2 rounded-[4px] shrink-0 bg-[#357DFF]">
           <Image src="/icons/google.svg" alt="Google Maps" width={24} height={24} />
@@ -95,8 +96,8 @@ function MobileRatingBar({
 }
 
 export function RatingCards({
-  yelpRating = "4,93",
-  googleRating = "4,82",
+  yelpRating = "4,79",
+  googleRating = "4,98",
   yelpUrl = YELP_URL,
   googleUrl = GOOGLE_URL,
 }: RatingCardsProps = {}) {

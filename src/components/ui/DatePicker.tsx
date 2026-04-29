@@ -29,12 +29,14 @@ export function DatePicker({
   onChange?: (formatted: string) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [openUpward, setOpenUpward] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
     value ? new Date(value) : null
   );
   const [viewYear, setViewYear] = useState(new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(new Date().getMonth());
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -113,8 +115,18 @@ export function DatePicker({
         {label}
       </label>
       <button
+        ref={triggerRef}
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          /* Decide flip direction the moment we open: if there isn't enough
+             room below the trigger for the calendar (~360px), open upward. */
+          if (!isOpen) {
+            const rect = triggerRef.current?.getBoundingClientRect();
+            const spaceBelow = rect ? window.innerHeight - rect.bottom : 0;
+            setOpenUpward(spaceBelow < 380);
+          }
+          setIsOpen(!isOpen);
+        }}
         className="backdrop-blur-[20px] bg-white/10 rounded-[10px] h-[56px] lg:h-[57px] px-4 flex items-center justify-between cursor-pointer hover:bg-white/15 transition-all duration-200 ease-out text-left"
       >
         <span
@@ -140,7 +152,11 @@ export function DatePicker({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 z-[100] w-[300px] backdrop-blur-[20px] bg-[rgba(20,20,20,0.96)] ring-1 ring-white/10 rounded-[10px] p-4 shadow-2xl animate-dropdown-in">
+        <div
+          className={`absolute left-0 z-[100] w-[300px] backdrop-blur-[20px] bg-[rgba(20,20,20,0.96)] ring-1 ring-white/10 rounded-[10px] p-4 shadow-2xl animate-dropdown-in ${
+            openUpward ? "bottom-full mb-2" : "top-full mt-2"
+          }`}
+        >
           {/* Header: month/year + arrows */}
           <div className="flex items-center justify-between mb-3">
             <span className="font-sans font-semibold text-base text-white">
