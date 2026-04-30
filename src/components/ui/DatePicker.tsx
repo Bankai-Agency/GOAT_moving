@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 const DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const MONTHS = [
@@ -29,7 +30,7 @@ export function DatePicker({
   onChange?: (formatted: string) => void;
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [openUpward, setOpenUpward] = useState(false);
+  const [popoverPos, setPopoverPos] = useState<{ top: number; left: number } | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(
     value ? new Date(value) : null
   );
@@ -37,15 +38,57 @@ export function DatePicker({
   const [viewMonth, setViewMonth] = useState(new Date().getMonth());
   const ref = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+
+  /* Compute viewport-fixed position for the calendar popover so it can escape
+     parents with overflow:hidden / overflow:auto (modals, the LP hero, etc.).
+     Auto-flips up when there isn't ~360px of space below the trigger. */
+  const computePosition = () => {
+    const rect = triggerRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const POPOVER_HEIGHT = 360;
+    const POPOVER_WIDTH = 300;
+    const margin = 8;
+    const spaceBelow = window.innerHeight - rect.bottom;
+    const top =
+      spaceBelow < POPOVER_HEIGHT + margin
+        ? rect.top - POPOVER_HEIGHT - margin
+        : rect.bottom + margin;
+    /* Clamp left so the popover never overflows the viewport edges. */
+    const left = Math.min(
+      Math.max(margin, rect.left),
+      window.innerWidth - POPOVER_WIDTH - margin
+    );
+    setPopoverPos({ top, left });
+  };
+
+  /* Re-position on open + on scroll/resize while open. */
+  useEffect(() => {
+    if (!isOpen) return;
+    computePosition();
+    const handler = () => computePosition();
+    window.addEventListener("scroll", handler, { passive: true, capture: true });
+    window.addEventListener("resize", handler);
+    return () => {
+      window.removeEventListener("scroll", handler, { capture: true });
+      window.removeEventListener("resize", handler);
+    };
+  }, [isOpen]);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setIsOpen(false);
+      const target = e.target as Node;
+      /* Allow clicks inside the trigger area AND inside the portal popover. */
+      if (
+        (ref.current && ref.current.contains(target)) ||
+        (popoverRef.current && popoverRef.current.contains(target))
+      ) {
+        return;
       }
+      setIsOpen(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -117,16 +160,7 @@ export function DatePicker({
       <button
         ref={triggerRef}
         type="button"
-        onClick={() => {
-          /* Decide flip direction the moment we open: if there isn't enough
-             room below the trigger for the calendar (~360px), open upward. */
-          if (!isOpen) {
-            const rect = triggerRef.current?.getBoundingClientRect();
-            const spaceBelow = rect ? window.innerHeight - rect.bottom : 0;
-            setOpenUpward(spaceBelow < 380);
-          }
-          setIsOpen(!isOpen);
-        }}
+        onClick={() => setIsOpen(!isOpen)}
         className="backdrop-blur-[20px] bg-white/10 rounded-[10px] h-[56px] lg:h-[57px] px-4 flex items-center justify-between cursor-pointer hover:bg-white/15 transition-all duration-200 ease-out text-left"
       >
         <span
@@ -151,11 +185,11 @@ export function DatePicker({
         </svg>
       </button>
 
-      {isOpen && (
+      {isOpen && popoverPos && typeof window !== "undefined" && createPortal(
         <div
-          className={`absolute left-0 z-[100] w-[300px] backdrop-blur-[20px] bg-[rgba(20,20,20,0.96)] ring-1 ring-white/10 rounded-[10px] p-4 shadow-2xl animate-dropdown-in ${
-            openUpward ? "bottom-full mb-2" : "top-full mt-2"
-          }`}
+          ref={popoverRef}
+          className="fixed z-[300] w-[300px] backdrop-blur-[20px] bg-[rgba(20,20,20,0.96)] ring-1 ring-white/10 rounded-[10px] p-4 shadow-2xl animate-dropdown-in"
+          style={{ top: popoverPos.top, left: popoverPos.left }}
         >
           {/* Header: month/year + arrows */}
           <div className="flex items-center justify-between mb-3">
@@ -275,7 +309,8 @@ export function DatePicker({
               Today
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

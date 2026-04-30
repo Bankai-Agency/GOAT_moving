@@ -52,6 +52,7 @@ type ModalFormData = {
   movingFrom: string;
   movingTo: string;
   moveDate: string;
+  message: string;
 };
 
 const emptyForm: ModalFormData = {
@@ -61,13 +62,29 @@ const emptyForm: ModalFormData = {
   movingFrom: "",
   movingTo: "",
   moveDate: "",
+  message: "",
 };
+
+/* ── Validation helpers ── */
+const isValidPhone = (v: string) => v.replace(/\D/g, "").length >= 10;
+const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
 export function QuoteModal() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [step, setStep] = useState<1 | 2>(1);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<ModalFormData>(emptyForm);
+
+  const validateStep1 = () => {
+    const errs: Record<string, string> = {};
+    if (!formData.fullName.trim()) errs.fullName = "Name is required";
+    if (!isValidPhone(formData.phone)) errs.phone = "Enter a valid 10-digit phone number";
+    if (formData.email && !isValidEmail(formData.email)) errs.email = "Enter a valid email";
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -95,6 +112,12 @@ export function QuoteModal() {
   const handleClose = () => {
     setIsOpen(false);
     setFormData(emptyForm);
+    setStep(1);
+    setErrors({});
+  };
+
+  const handleContinue = () => {
+    if (validateStep1()) setStep(2);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -113,6 +136,8 @@ export function QuoteModal() {
        (GA4 / Ads conversions) can fire on a real URL change. */
     setIsOpen(false);
     setFormData(emptyForm);
+    setStep(1);
+    setErrors({});
     setSubmitting(false);
     router.push("/thank-you");
   };
@@ -137,79 +162,128 @@ export function QuoteModal() {
         </button>
 
         <div className="px-6 lg:px-8 pt-8 pb-8">
+          {/* Step indicator */}
+          <div className="flex gap-1.5 mb-3">
+            <span className={`h-1.5 rounded-full transition-all duration-300 ${step === 1 ? "w-8 bg-[#FFE533]" : "w-2 bg-[#FFE533]/60"}`} />
+            <span className={`h-1.5 rounded-full transition-all duration-300 ${step === 2 ? "w-8 bg-[#FFE533]" : "w-2 bg-white/20"}`} />
+          </div>
+
           {/* Heading */}
           <h2 className="font-sans font-semibold text-[28px] leading-[1.2] tracking-[-0.84px] text-white mb-3">
-            Move information
+            {step === 1 ? "Your contact info" : "Move details"}
           </h2>
           <p className="font-sans font-normal text-lg leading-[1.4] tracking-[-0.54px] text-white/60 mb-6">
-            Fill out a few quick details about your move and we&apos;ll send you a personalized estimate &mdash; no hidden fees, no obligations.
+            {step === 1
+              ? "Tell us how to reach you with a personalized quote — no hidden fees, no obligations."
+              : "A few details about the move so we can put together your estimate."}
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-              {/* Row 1: name + phone */}
-              <div className="flex flex-col lg:flex-row gap-5">
-                <ModalInput
-                  label="Full name"
-                  placeholder="Enter your name"
-                  value={formData.fullName}
-                  onChange={(val) => setFormData({ ...formData, fullName: val })}
-                  required
-                />
-                <ModalInput
-                  label="Phone number"
-                  placeholder="+1 (555) 123-4567"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(val) => setFormData({ ...formData, phone: val })}
-                  required
-                />
-              </div>
+            {step === 1 && (
+              <>
+                <div className="flex flex-col lg:flex-row gap-5">
+                  <div className="flex-1 flex flex-col gap-2">
+                    <ModalInput
+                      label="Full name"
+                      placeholder="Enter your name"
+                      value={formData.fullName}
+                      onChange={(val) => setFormData({ ...formData, fullName: val })}
+                      required
+                    />
+                    {errors.fullName && <span className="text-sm text-red-400">{errors.fullName}</span>}
+                  </div>
+                  <div className="flex-1 flex flex-col gap-2">
+                    <ModalInput
+                      label="Phone number"
+                      placeholder="+1 (555) 123-4567"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(val) => setFormData({ ...formData, phone: val })}
+                      required
+                    />
+                    {errors.phone && <span className="text-sm text-red-400">{errors.phone}</span>}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <ModalInput
+                    label="Email"
+                    placeholder="your@email.com"
+                    type="email"
+                    value={formData.email}
+                    onChange={(val) => setFormData({ ...formData, email: val })}
+                  />
+                  {errors.email && <span className="text-sm text-red-400">{errors.email}</span>}
+                </div>
 
-              {/* Row 2: email + date */}
-              <div className="flex flex-col lg:flex-row gap-5">
-                <ModalInput
-                  label="Email"
-                  placeholder="your@email.com"
-                  type="email"
-                  value={formData.email}
-                  onChange={(val) => setFormData({ ...formData, email: val })}
-                />
+                <button
+                  type="button"
+                  onClick={handleContinue}
+                  className="btn-shine bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out mt-2"
+                >
+                  <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
+                    Continue
+                  </span>
+                </button>
+              </>
+            )}
+
+            {step === 2 && (
+              <>
+                <div className="flex flex-col lg:flex-row gap-5">
+                  <ModalInput
+                    label="Moving from"
+                    placeholder="Address"
+                    value={formData.movingFrom}
+                    onChange={(val) => setFormData({ ...formData, movingFrom: val })}
+                    required
+                  />
+                  <ModalInput
+                    label="Moving to"
+                    placeholder="Address"
+                    value={formData.movingTo}
+                    onChange={(val) => setFormData({ ...formData, movingTo: val })}
+                    required
+                  />
+                </div>
                 <DatePicker
                   label="Move date"
                   placeholder="Choose date"
                   value={formData.moveDate}
                   onChange={(val) => setFormData({ ...formData, moveDate: val })}
                 />
-              </div>
 
-              {/* Row 3: from + to */}
-              <div className="flex flex-col lg:flex-row gap-5">
-                <ModalInput
-                  label="Moving from"
-                  placeholder="Address"
-                  value={formData.movingFrom}
-                  onChange={(val) => setFormData({ ...formData, movingFrom: val })}
-                  required
-                />
-                <ModalInput
-                  label="Moving to"
-                  placeholder="Address"
-                  value={formData.movingTo}
-                  onChange={(val) => setFormData({ ...formData, movingTo: val })}
-                  required
-                />
-              </div>
+                {/* Optional message */}
+                <div className="flex flex-col gap-2">
+                  <label className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
+                    Additional Information (Optional)
+                  </label>
+                  <textarea
+                    placeholder="Any special requests or details..."
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="backdrop-blur-[20px] bg-white/10 rounded-[10px] p-4 h-[120px] font-sans font-normal text-base lg:text-lg leading-[1.5] lg:leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.36px] text-white placeholder:text-white/60 outline-none focus:bg-white/15 input-glow transition-all duration-200 resize-none"
+                  />
+                </div>
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="btn-shine bg-white lg:bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-              >
-                <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
-                  {submitting ? "Sending..." : "Submit Request"}
-                </span>
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="btn-shine bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                >
+                  <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
+                    {submitting ? "Sending..." : "Submit Request"}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  className="font-mono font-bold text-sm uppercase tracking-[-0.48px] text-white/40 hover:text-white/70 transition-colors cursor-pointer self-center"
+                >
+                  Back
+                </button>
+              </>
+            )}
+          </form>
         </div>
       </div>
     </div>
