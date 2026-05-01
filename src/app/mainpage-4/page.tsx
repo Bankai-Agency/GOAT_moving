@@ -1,29 +1,32 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/layout/Header";
-import { HeroMotionSection } from "@/components/sections/HeroMotionSection";
+import { HeroArrivalSection } from "@/components/sections/HeroArrivalSection";
 import { AboutMotionSection } from "@/components/sections/AboutMotionSection";
-import { BigStatsPinnedSection } from "@/components/sections/BigStatsPinnedSection";
-import { ServicesPinnedSection } from "@/components/sections/ServicesPinnedSection";
-import { ServiceAreaSection } from "@/components/sections/ServiceAreaSection";
+import { StoryPinSection } from "@/components/sections/StoryPinSection";
+import { ServiceAreaMapSection } from "@/components/sections/ServiceAreaMapSection";
 import { ReviewsSection } from "@/components/sections/ReviewsSection";
 import { GallerySection } from "@/components/sections/GallerySection";
-import { CTAMotionBanner } from "@/components/sections/CTAMotionBanner";
+import { CTAArrivalBanner } from "@/components/sections/CTAArrivalBanner";
 import { FAQSection } from "@/components/sections/FAQSection";
 import { ContactFooter } from "@/components/sections/ContactFooter";
 import { Touchbar } from "@/components/layout/Touchbar";
 import { QuoteModal } from "@/components/ui/QuoteModal";
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
+import { GlobalScrollProvider } from "@/components/motion/GlobalScrollProvider";
+import { MoverCompanion } from "@/components/motion/MoverCompanion";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
-import { MarqueeBand } from "@/components/motion/MarqueeBand";
 
-/* Working draft — built on top of /mainpage-2 (light theme) with
-   scroll-driven animations (Lenis smooth scroll + Framer Motion).
-   Adds a pinned big-stats section, marquee bands, dramatic hero
-   stagger, scroll-jacked Services, and parallax CTA. Noindex. */
+/* "The Move Journey" draft. Hero (truck arrives) → About (full-bleed
+   video pin) → StoryPin (truck drives beside the 4 services) →
+   Service Area map (truck rides the I-5 line, cities pop) → Reviews →
+   Gallery → CTA arrival (truck pulls up to the house). MoverCompanion
+   sits OUTSIDE `.page-zoom` so its 100vw / 100vh references stay true.
+   GlobalScrollProvider gives it (and any future consumer) a single
+   shared `useScroll` observer. Noindex. */
 export const metadata: Metadata = {
   title: "Mainpage 4 — Motion Draft | GOAT Movers",
   description:
-    "Working draft of the homepage with scroll-driven animations for GOAT Movers.",
+    "Working draft of the homepage with scroll-driven moving-truck narrative for GOAT Movers.",
   alternates: { canonical: "/mainpage-4" },
   robots: { index: false, follow: false },
 };
@@ -31,52 +34,36 @@ export const metadata: Metadata = {
 export default function MainpageFour() {
   return (
     <SmoothScrollProvider>
-      <div className="page-zoom theme-light">
-        <Header />
-        <main>
-          <HeroMotionSection />
-          <MarqueeBand
-            items={[
-              "GOAT Movers",
-              "Licensed & Insured",
-              "USDOT #4232069",
-              "850+ Five-star Reviews",
-              "Family-owned Since 2019",
-              "Vancouver · Portland · Tacoma · Seattle",
-            ]}
-          />
-          <AboutMotionSection />
-          <BigStatsPinnedSection />
-          <ServicesPinnedSection />
+      <GlobalScrollProvider>
+        {/* Truck companion lives OUTSIDE .page-zoom so it uses real
+            viewport units. */}
+        <MoverCompanion />
+
+        <div className="page-zoom">
+          <Header />
+          <main>
+            <HeroArrivalSection />
+            <AboutMotionSection />
+            <StoryPinSection />
+            <ServiceAreaMapSection />
+            <RevealOnScroll>
+              <ReviewsSection />
+            </RevealOnScroll>
+            <RevealOnScroll>
+              <GallerySection />
+            </RevealOnScroll>
+            <CTAArrivalBanner />
+            <RevealOnScroll>
+              <FAQSection />
+            </RevealOnScroll>
+          </main>
           <RevealOnScroll>
-            <ServiceAreaSection />
+            <ContactFooter />
           </RevealOnScroll>
-          <MarqueeBand
-            items={[
-              "Free Quote in 5 Minutes",
-              "No Hidden Fees",
-              "No Charge for Stairs",
-              "Fully Insured Crews",
-            ]}
-            speed={45}
-          />
-          <RevealOnScroll>
-            <ReviewsSection />
-          </RevealOnScroll>
-          <RevealOnScroll>
-            <GallerySection />
-          </RevealOnScroll>
-          <CTAMotionBanner />
-          <RevealOnScroll>
-            <FAQSection />
-          </RevealOnScroll>
-        </main>
-        <RevealOnScroll>
-          <ContactFooter />
-        </RevealOnScroll>
-        <Touchbar />
-        <QuoteModal />
-      </div>
+          <Touchbar />
+          <QuoteModal />
+        </div>
+      </GlobalScrollProvider>
     </SmoothScrollProvider>
   );
 }

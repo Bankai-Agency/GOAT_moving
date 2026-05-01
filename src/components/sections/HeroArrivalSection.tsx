@@ -15,7 +15,7 @@ const letter: Variants = {
     opacity: 1,
     y: 0,
     rotateX: 0,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.05 + i * 0.025 },
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 + i * 0.025 },
   }),
 };
 
@@ -39,21 +39,21 @@ function LetterStagger({ text, className, baseIndex = 0 }: { text: string; class
   );
 }
 
-export function HeroMotionSection() {
+export function HeroArrivalSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
-  const photoY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
-  const photoScale = useTransform(scrollYProgress, [0, 1], [1.1, 1.3]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0.3, 0.75]);
-  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]);
-  const contentOpacity = useTransform(scrollYProgress, [0.3, 0.85], [1, 0]);
+  const photoY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const photoScale = useTransform(scrollYProgress, [0, 1], [1.08, 1.22]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0.32, 0.7]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0.4, 0.9], [1, 0]);
 
   return (
     <section ref={sectionRef} className="relative h-screen min-h-[700px] lg:min-h-[900px] overflow-hidden">
-      {/* Background image + overlay (heavy parallax) */}
+      {/* Background photo + dark overlay (parallax). */}
       <motion.div className="absolute inset-0" style={{ y: photoY, scale: photoScale }}>
         <Image
           src="/images/home-hero.jpg"
@@ -67,13 +67,12 @@ export function HeroMotionSection() {
       </motion.div>
       <motion.div className="absolute inset-0 bg-black" style={{ opacity: overlayOpacity }} />
 
-      {/* Content */}
+      {/* Headline + CTA + ratings. */}
       <motion.div
         className="relative h-full max-w-[1408px] mx-auto px-4 flex items-end pb-8 lg:pb-[72px]"
         style={{ y: contentY, opacity: contentOpacity }}
       >
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between w-full gap-6">
-          {/* Left — heading + CTA */}
           <div className="flex flex-col gap-4 lg:gap-6">
             <h1 className="font-sans font-bold text-[40px] lg:text-[96px] leading-none tracking-[-1.2px] lg:tracking-[-2.88px]">
               <LetterStagger text={headlineLine1} className="text-white/60" />
@@ -102,21 +101,13 @@ export function HeroMotionSection() {
               </motion.p>
 
               <motion.div
-                variants={{
-                  hidden: {},
-                  show: { transition: { staggerChildren: 0.12 } },
-                }}
+                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.12 } } }}
                 className="flex flex-col lg:flex-row gap-3 lg:gap-6"
               >
                 <motion.button
                   variants={{
                     hidden: { opacity: 0, y: 20, scale: 0.9 },
-                    show: {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
-                    },
+                    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
                   }}
                   type="button"
                   onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
@@ -127,12 +118,7 @@ export function HeroMotionSection() {
                 <motion.div
                   variants={{
                     hidden: { opacity: 0, y: 20, scale: 0.9 },
-                    show: {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
-                    },
+                    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
                   }}
                 >
                   <Link
@@ -146,7 +132,7 @@ export function HeroMotionSection() {
             </motion.div>
           </div>
 
-          {/* Rating cards */}
+          {/* Ratings — slide in once headline finishes. */}
           <motion.div
             initial={{ opacity: 0, x: 80 }}
             animate={{ opacity: 1, x: 0, transition: { duration: 0.8, delay: 1.9, ease: [0.16, 1, 0.3, 1] } }}
