@@ -43,6 +43,10 @@ yarn-error.log*
 .vscode/
 .idea/
 
+# Local Claude config + per-session notes (may contain tokens)
+.claude/
+SESSION_CONTEXT.md
+
 # Raw source photos (too large for git — ~20-30 MB each PNG)
 /materials/
 

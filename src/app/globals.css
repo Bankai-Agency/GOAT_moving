@@ -62,6 +62,506 @@ html {
   color-scheme: light;
 }
 
+/* ===== Blue-accent override (mainpage-3 draft) ==========================
+   Keeps the live dark theme intact and ONLY swaps the brand yellow
+   #FFE533 for brand blue #005BFF wherever it appears. No bg/text
+   inversions — same surfaces, same readability, just blue accents. */
+.theme-blue .bg-\[\#FFE533\]                  { background-color: #005BFF !important; }
+.theme-blue .hover\:bg-\[\#FFE533\]:hover     { background-color: #005BFF !important; }
+.theme-blue .group:hover .group-hover\:bg-\[\#FFE533\],
+.theme-blue .group\/card:hover .group-hover\/card\:bg-\[\#FFE533\] {
+  background-color: #005BFF !important;
+}
+.theme-blue .hover\:bg-\[\#f0d820\]:hover     { background-color: #0049cc !important; }
+.theme-blue .text-\[\#FFE533\]                { color: #005BFF !important; }
+.theme-blue .hover\:text-\[\#FFE533\]:hover   { color: #005BFF !important; }
+.theme-blue .group:hover .group-hover\:text-\[\#FFE533\] { color: #005BFF !important; }
+.theme-blue .border-\[\#FFE533\]              { border-color: #005BFF !important; }
+.theme-blue .ring-\[\#FFE533\]                { --tw-ring-color: #005BFF !important; }
+
+/* SVG fills (yellow → blue) — both attribute and inline styles. */
+.theme-blue svg [fill="#FFE533"],
+.theme-blue [fill="#FFE533"] path,
+.theme-blue [fill="#FFE533"] ellipse,
+.theme-blue [fill="#FFE533"] rect { fill: #005BFF !important; }
+.theme-blue path[fill="#FFE533"],
+.theme-blue ellipse[fill="#FFE533"],
+.theme-blue rect[fill="#FFE533"]   { fill: #005BFF !important; }
+.theme-blue path[stroke="#FFE533"] { stroke: #005BFF !important; }
+
+/* Inline-style yellow backgrounds. */
+.theme-blue [style*="#FFE533"] { background-color: #005BFF !important; }
+
+/* Yellow shadows / glows → blue equivalents. */
+.theme-blue .hover\:shadow-\[0_12px_32px_rgba\(255\,229\,51\,0\.15\)\]:hover {
+  box-shadow: 0 12px 32px rgba(0, 91, 255, 0.15) !important;
+}
+.theme-blue .drop-shadow-\[0_12px_30px_rgba\(255\,229\,51\,0\.35\)\] {
+  filter: drop-shadow(0 12px 30px rgba(0, 91, 255, 0.35)) !important;
+}
+.theme-blue .drop-shadow-\[0_16px_50px_rgba\(255\,229\,51\,0\.35\)\] {
+  filter: drop-shadow(0 16px 50px rgba(0, 91, 255, 0.35)) !important;
+}
+.theme-blue .hover\:shadow-\[0_4px_20px_rgba\(255\,229\,51\,0\.35\)\]:hover {
+  box-shadow: 0 4px 20px rgba(0, 91, 255, 0.35) !important;
+}
+.theme-blue .hover\:shadow-\[0_4px_16px_rgba\(255\,229\,51\,0\.3\)\]:hover {
+  box-shadow: 0 4px 16px rgba(0, 91, 255, 0.3) !important;
+}
+
+/* Yellow-baked SVG / PNG icons recolored via filter chain (matches
+   #FFE533 → #005BFF). Uses [src$="..."] so unrelated logo files like
+   bankai-logo.svg aren't pulled in by the substring match. */
+.theme-blue img[src*="star-yellow"],
+.theme-blue img[src*="phone-yellow"],
+.theme-blue img[src*="goat-fav"],
+.theme-blue img[src$="/logo.svg"],
+.theme-blue img[src$="/year.svg"],
+.theme-blue img[src$="/review.svg"],
+.theme-blue img[src$="/star.svg"],
+.theme-blue img[src$="/license.svg"],
+.theme-blue img[src$="/certificate.svg"],
+.theme-blue img[src$="/memo-check.svg"],
+.theme-blue img[src$="/shield-heart.svg"],
+.theme-blue img[src$="/handshake.svg"] {
+  filter: brightness(0) saturate(100%) invert(22%) sepia(96%) saturate(4720%) hue-rotate(216deg) brightness(102%) contrast(105%) !important;
+}
+
+/* Header logo (yellow logo.svg) gets recolored to blue by the chain
+   above — but it lives on the dark header backdrop where blue-on-dark
+   is too low-contrast. Override to pure white inside the header. */
+.theme-blue header img[src$="/logo.svg"] {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* Hover-underline yellow stripe → blue. */
+.theme-blue .hover-underline::after { background: #005BFF !important; }
+
+/* Responsive `lg:bg-[#FFE533]` variant (used by footer / mobile CTAs). */
+.theme-blue .lg\:bg-\[\#FFE533\] { background-color: transparent; }
+@media (min-width: 1024px) {
+  .theme-blue .lg\:bg-\[\#FFE533\] { background-color: #005BFF !important; }
+}
+
+/* Dark-on-yellow text becomes dark-on-blue → unreadable. Flip to white
+   wherever it appears (CTA buttons, form labels on yellow chips, the
+   CTA banner's tagline, DatePicker selected day, Reviews on-hover
+   text, ServiceArea on-hover arrow). */
+.theme-blue .text-\[\#0c0c0c\]      { color: #ffffff !important; }
+.theme-blue .text-\[\#0c0c0c\]\/80,
+.theme-blue .text-\[\#0c0c0c\]\/60  { color: rgba(255, 255, 255, 0.85) !important; }
+.theme-blue .text-black             { color: #ffffff !important; }
+.theme-blue .group:hover .group-hover\:text-\[\#0c0c0c\],
+.theme-blue .group\/card:hover .group-hover\/card\:text-black {
+  color: #ffffff !important;
+}
+.theme-blue .group\/card:hover .group-hover\/card\:text-black\/60 {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+.theme-blue .group:hover .group-hover\:fill-\[\#0c0c0c\] {
+  fill: #ffffff !important;
+}
+
+/* Reviews card on hover: card bg flips yellow→blue, the swap-in
+   `star-black.svg` becomes near-invisible on blue. Invert to white. */
+.theme-blue #reviews .group\/card:hover img[src*="star-black"] {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* Yellow opacity tiers used on dot indicators / step pills. */
+.theme-blue .bg-\[\#FFE533\]\/60  { background-color: rgba(0, 91, 255, 0.6) !important; }
+.theme-blue .bg-\[\#FFE533\]\/50  { background-color: rgba(0, 91, 255, 0.5) !important; }
+.theme-blue .bg-\[\#FFE533\]\/40  { background-color: rgba(0, 91, 255, 0.4) !important; }
+.theme-blue .bg-\[\#FFE533\]\/30  { background-color: rgba(0, 91, 255, 0.3) !important; }
+.theme-blue .bg-\[\#FFE533\]\/20  { background-color: rgba(0, 91, 255, 0.2) !important; }
+.theme-blue .bg-\[\#FFE533\]\/15  { background-color: rgba(0, 91, 255, 0.15) !important; }
+.theme-blue .bg-\[\#FFE533\]\/10  { background-color: rgba(0, 91, 255, 0.1) !important; }
+.theme-blue .text-\[\#FFE533\]\/80,
+.theme-blue .hover\:text-\[\#FFE533\]\/80:hover { color: rgba(0, 91, 255, 0.8) !important; }
+
+/* ===== Light theme override (mainpage-2 draft only) =====================
+   Scoped to `.theme-light` so the live `/` keeps its dark theme. Maps the
+   site's hardcoded color tokens (bg-[#0c0c0c], text-white, accent yellow…)
+   to a light palette: white background, black text, blue accent #005BFF.
+   Uses !important because the source classes are inline arbitrary values
+   that have the same specificity as our overrides. */
+.theme-light {
+  background: #ffffff;
+  color: #0c0c0c;
+}
+
+/* Surfaces — base + cards + footer + small variations. */
+.theme-light .bg-\[\#0c0c0c\]      { background-color: #ffffff !important; }
+.theme-light .bg-\[\#141414\]      { background-color: #f5f6f8 !important; }
+.theme-light .bg-\[\#181818\]      { background-color: #f1f3f6 !important; }
+.theme-light .bg-\[\#1a1a1a\],
+.theme-light .bg-\[\#1e1e1e\]      { background-color: #eceff3 !important; }
+.theme-light .bg-\[\#242424\],
+.theme-light .bg-\[\#2a2a2a\]      { background-color: #e2e6ec !important; }
+.theme-light .bg-\[\#282828\],
+.theme-light .bg-\[\#303030\]      { background-color: #d6dbe2 !important; }
+
+/* Yellow accent → brand blue. Covers base + hover + group-hover variants
+   plus inline SVG fills and inline-style backgrounds. */
+.theme-light .bg-\[\#FFE533\]                  { background-color: #005BFF !important; }
+.theme-light .hover\:bg-\[\#FFE533\]:hover     { background-color: #005BFF !important; }
+.theme-light .group:hover .group-hover\:bg-\[\#FFE533\],
+.theme-light .group\/card:hover .group-hover\/card\:bg-\[\#FFE533\] {
+  background-color: #005BFF !important;
+}
+.theme-light .hover\:bg-\[\#f0d820\]:hover     { background-color: #0049cc !important; }
+.theme-light .text-\[\#FFE533\]                { color: #005BFF !important; }
+.theme-light .hover\:text-\[\#FFE533\]:hover   { color: #005BFF !important; }
+.theme-light .group:hover .group-hover\:text-\[\#FFE533\] { color: #005BFF !important; }
+.theme-light .border-\[\#FFE533\]              { border-color: #005BFF !important; }
+.theme-light .ring-\[\#FFE533\]                { --tw-ring-color: #005BFF !important; }
+
+/* Inline SVG fills — used in HowItWorks step icons + small chevrons. */
+.theme-light svg [fill="#FFE533"],
+.theme-light [fill="#FFE533"] path,
+.theme-light [fill="#FFE533"] ellipse,
+.theme-light [fill="#FFE533"] rect { fill: #005BFF !important; }
+.theme-light path[fill="#FFE533"],
+.theme-light ellipse[fill="#FFE533"],
+.theme-light rect[fill="#FFE533"]   { fill: #005BFF !important; }
+.theme-light path[stroke="#FFE533"] { stroke: #005BFF !important; }
+
+/* Inline-style backgrounds (e.g. HowItWorks isActive icon flips bg to #FFE533).
+   `[style*=]` matches any element whose inline style mentions the yellow hex. */
+.theme-light [style*="#FFE533"] { background-color: #005BFF !important; }
+
+/* Yellow hover-shadow glow in review cards → blue. */
+.theme-light .hover\:shadow-\[0_12px_32px_rgba\(255\,229\,51\,0\.15\)\]:hover {
+  box-shadow: 0 12px 32px rgba(0, 91, 255, 0.18) !important;
+}
+
+/* Drop-shadow halo used on the SuccessState icon — yellow → blue. */
+.theme-light .drop-shadow-\[0_12px_30px_rgba\(255\,229\,51\,0\.35\)\] {
+  filter: drop-shadow(0 12px 30px rgba(0, 91, 255, 0.35)) !important;
+}
+.theme-light .drop-shadow-\[0_16px_50px_rgba\(255\,229\,51\,0\.35\)\] {
+  filter: drop-shadow(0 16px 50px rgba(0, 91, 255, 0.35)) !important;
+}
+
+/* Yellow PNG/SVG icon files baked with the brand yellow — recolor to blue
+   via filter chain (computed for #FFE533 → #005BFF). Also covers logo files
+   (yellow + white variants) so they read on a light background. */
+.theme-light img[src*="star-yellow"],
+.theme-light img[src*="phone-yellow"],
+.theme-light img[src*="goat-fav"],
+.theme-light img[src$="/logo.svg"],
+.theme-light img[src$="/logo-white.svg"],
+.theme-light img[src$="/year.svg"],
+.theme-light img[src$="/review.svg"],
+.theme-light img[src$="/star.svg"],
+.theme-light img[src$="/license.svg"],
+.theme-light img[src$="/certificate.svg"],
+.theme-light img[src$="/memo-check.svg"],
+.theme-light img[src$="/shield-heart.svg"],
+.theme-light img[src$="/handshake.svg"] {
+  filter: brightness(0) saturate(100%) invert(22%) sepia(96%) saturate(4720%) hue-rotate(216deg) brightness(102%) contrast(105%) !important;
+}
+
+/* Hover underline strip is yellow site-wide; recolor only inside the light theme. */
+.theme-light .hover-underline::after { background: #005BFF !important; }
+
+/* Footer / responsive yellow CTA — covers `lg:bg-[#FFE533]` variant which
+   is a different class name from the base. Same blue hover state. */
+.theme-light .lg\:bg-\[\#FFE533\] { background-color: transparent; }
+@media (min-width: 1024px) {
+  .theme-light .lg\:bg-\[\#FFE533\] { background-color: #005BFF !important; }
+}
+
+/* About-section stat cards: drop the hover-shadow on the light theme. */
+.theme-light .group\/stat:hover .group-hover\/stat\:shadow-\[0_4px_16px_rgba\(0\,0\,0\,0\.3\)\] {
+  box-shadow: none !important;
+}
+
+/* Yellow dot indicators / accents — opacity variants used in section labels
+   and step pills. */
+.theme-light .bg-\[\#FFE533\]\/60  { background-color: rgba(0, 91, 255, 0.55) !important; }
+.theme-light .bg-\[\#FFE533\]\/50,
+.theme-light .bg-\[\#FFE533\]\/40,
+.theme-light .bg-\[\#FFE533\]\/30,
+.theme-light .bg-\[\#FFE533\]\/20,
+.theme-light .bg-\[\#FFE533\]\/15,
+.theme-light .bg-\[\#FFE533\]\/10  { background-color: rgba(0, 91, 255, 0.18) !important; }
+.theme-light .text-\[\#FFE533\]\/80,
+.theme-light .hover\:text-\[\#FFE533\]\/80:hover { color: rgba(0, 91, 255, 0.8) !important; }
+
+/* Text: white → near-black, with same opacity tiers. */
+.theme-light .text-white           { color: #0c0c0c !important; }
+.theme-light .text-white\/90       { color: rgba(12, 12, 12, 0.9) !important; }
+.theme-light .text-white\/80       { color: rgba(12, 12, 12, 0.8) !important; }
+.theme-light .text-white\/70       { color: rgba(12, 12, 12, 0.65) !important; }
+.theme-light .text-white\/60       { color: rgba(12, 12, 12, 0.6) !important; }
+.theme-light .text-white\/50       { color: rgba(12, 12, 12, 0.5) !important; }
+.theme-light .text-white\/40       { color: rgba(12, 12, 12, 0.45) !important; }
+.theme-light .text-white\/30       { color: rgba(12, 12, 12, 0.35) !important; }
+.theme-light .text-white\/25       { color: rgba(12, 12, 12, 0.3) !important; }
+.theme-light .text-white\/20       { color: rgba(12, 12, 12, 0.25) !important; }
+.theme-light .text-white\/15       { color: rgba(12, 12, 12, 0.2) !important; }
+
+/* Dark text on yellow CTAs flips to white on blue. */
+.theme-light .text-\[\#0c0c0c\]    { color: #ffffff !important; }
+.theme-light .text-\[\#0c0c0c\]\/80,
+.theme-light .text-\[\#0c0c0c\]\/60 { color: rgba(255, 255, 255, 0.85) !important; }
+
+/* Borders & rings: white → near-black with reduced opacity. */
+.theme-light .border-white\/30     { border-color: rgba(12, 12, 12, 0.18) !important; }
+.theme-light .border-white\/20     { border-color: rgba(12, 12, 12, 0.14) !important; }
+.theme-light .border-white\/16     { border-color: rgba(12, 12, 12, 0.1) !important; }
+.theme-light .border-white\/10     { border-color: rgba(12, 12, 12, 0.08) !important; }
+.theme-light .border-white\/\[0\.06\] { border-color: rgba(12, 12, 12, 0.06) !important; }
+.theme-light .border-white\/\[0\.08\] { border-color: rgba(12, 12, 12, 0.08) !important; }
+.theme-light .border-white         { border-color: #0c0c0c !important; }
+.theme-light .ring-white\/10       { --tw-ring-color: rgba(12, 12, 12, 0.08) !important; }
+.theme-light .ring-white\/5        { --tw-ring-color: rgba(12, 12, 12, 0.05) !important; }
+
+/* Glass / overlay surfaces (semi-transparent blacks → translucent darks-on-light). */
+.theme-light .bg-white\/10         { background-color: rgba(12, 12, 12, 0.05) !important; }
+.theme-light .bg-white\/5          { background-color: rgba(12, 12, 12, 0.03) !important; }
+.theme-light .bg-white\/15         { background-color: rgba(12, 12, 12, 0.08) !important; }
+.theme-light .bg-white\/20         { background-color: rgba(12, 12, 12, 0.1) !important; }
+
+/* CTA hover-shadow yellow glow → blue glow. */
+.theme-light .hover\:shadow-\[0_4px_20px_rgba\(255\,229\,51\,0\.35\)\]:hover {
+  box-shadow: 0 4px 20px rgba(0, 91, 255, 0.35) !important;
+}
+.theme-light .hover\:shadow-\[0_4px_16px_rgba\(255\,229\,51\,0\.3\)\]:hover {
+  box-shadow: 0 4px 16px rgba(0, 91, 255, 0.3) !important;
+}
+
+/* Header and Hero are "dark islands" in the light theme — both sit on a
+   dark backdrop (sticky blur / hero image) so their text stays white,
+   not the inverted near-black. */
+.theme-light header .text-white,
+.theme-light section.h-screen .text-white {
+  color: #ffffff !important;
+}
+.theme-light header .text-white\/90,
+.theme-light section.h-screen .text-white\/90 { color: rgba(255, 255, 255, 0.9) !important; }
+.theme-light header .text-white\/80,
+.theme-light section.h-screen .text-white\/80 { color: rgba(255, 255, 255, 0.8) !important; }
+.theme-light header .text-white\/70,
+.theme-light section.h-screen .text-white\/70 { color: rgba(255, 255, 255, 0.7) !important; }
+.theme-light header .text-white\/60,
+.theme-light section.h-screen .text-white\/60 { color: rgba(255, 255, 255, 0.6) !important; }
+.theme-light header .text-white\/50,
+.theme-light section.h-screen .text-white\/50 { color: rgba(255, 255, 255, 0.5) !important; }
+.theme-light header .text-white\/40,
+.theme-light section.h-screen .text-white\/40 { color: rgba(255, 255, 255, 0.4) !important; }
+.theme-light header .text-white\/30,
+.theme-light section.h-screen .text-white\/30 { color: rgba(255, 255, 255, 0.3) !important; }
+
+/* Header logo is the yellow `logo.svg` — global filter chain recolors
+   it to blue in the light theme, but the header is a dark island so
+   the logo should stay white. brightness(0) → black, invert(1) → white. */
+.theme-light header img[src$="/logo.svg"] {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* Header glass nav surfaces in the light theme: ease the darkness so
+   the navbar reads "lighter" (more transparent) over the hero photo
+   and over the white page when sticky. Non-sticky pills go from 0.4
+   → 0.2 alpha; sticky bar (set inline as rgba(12,12,12,0.85)) drops
+   to 0.45 — still legible, no longer a heavy black slab. */
+.theme-light header .bg-\[rgba\(13\,13\,13\,0\.4\)\] { background-color: rgba(255, 255, 255, 0.12) !important; }
+.theme-light header[style*="rgba(12,12,12,0.85)"] {
+  background-color: rgba(255, 255, 255, 0.25) !important;
+}
+.theme-light header .border-white\/10 { border-color: rgba(255, 255, 255, 0.1) !important; }
+
+/* Hero rating-card glass + outline keep dark-translucent. */
+.theme-light section.h-screen .bg-\[rgba\(13\,13\,13\,0\.4\)\],
+.theme-light section.h-screen .bg-\[rgba\(13\,13\,13\,0\.55\)\] {
+  background-color: rgba(13, 13, 13, 0.4) !important;
+}
+
+/* Borders on the dark islands stay white — otherwise the global
+   `.theme-light .border-white → #0c0c0c` rule paints CTA outlines black
+   on the dark hero backdrop (e.g. the "Our Services" button border). */
+.theme-light header .border-white,
+.theme-light section.h-screen .border-white { border-color: #ffffff !important; }
+.theme-light header .border-white\/30,
+.theme-light section.h-screen .border-white\/30 { border-color: rgba(255, 255, 255, 0.3) !important; }
+.theme-light header .border-white\/20,
+.theme-light section.h-screen .border-white\/20 { border-color: rgba(255, 255, 255, 0.2) !important; }
+.theme-light header .border-white\/16,
+.theme-light section.h-screen .border-white\/16 { border-color: rgba(255, 255, 255, 0.16) !important; }
+.theme-light header .border-white\/10,
+.theme-light section.h-screen .border-white\/10 { border-color: rgba(255, 255, 255, 0.1) !important; }
+
+/* Dark-glass pills (translucent #0d0d0d surfaces) sit on dark imagery —
+   AboutSection "Watch Video" play button is the main case. Keep their
+   text white instead of the global near-black inversion. */
+.theme-light .bg-\[rgba\(13\,13\,13\,0\.4\)\] .text-white,
+.theme-light .bg-\[rgba\(13\,13\,13\,0\.55\)\] .text-white,
+.theme-light .bg-\[rgba\(13\,13\,13\,0\.6\)\] .text-white {
+  color: #ffffff !important;
+}
+
+/* Service cards: on hover the photo + dark gradient overlay reveals,
+   making the inverted near-black title/description illegible. Flip
+   text back to white while the card is hovered. */
+.theme-light #services .group:hover .text-white {
+  color: #ffffff !important;
+}
+
+/* ServiceArea row hover: arrow lives in a circle that flips to blue on
+   hover (yellow→blue via theme map). Original arrow goes #0c0c0c on
+   hover — invisible on blue, so flip to white. */
+.theme-light #service-area .group:hover .group-hover\:fill-\[\#0c0c0c\] {
+  fill: #ffffff !important;
+}
+
+/* Reviews card hover: card bg flips yellow→blue. Built-in hover swaps
+   text/icons to black for the yellow background, but on blue they need
+   to be white. Same for the secondary "review link" pill (was #0c0c0c)
+   and the star sprite (uses /icons/star-black.svg → invert to white). */
+.theme-light #reviews .group\/card:hover .group-hover\/card\:text-black {
+  color: #ffffff !important;
+}
+.theme-light #reviews .group\/card:hover .group-hover\/card\:text-black\/60 {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+.theme-light #reviews .group\/card:hover .group-hover\/card\:bg-\[\#0c0c0c\] {
+  background-color: #ffffff !important;
+}
+/* Arrow icon inside that pill is already invert-on-hover by default
+   (group-hover/card:invert) — fine on white background. */
+.theme-light #reviews .group\/card:hover img[src*="star-black"] {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* CTA banner heading sits on top of a dark photo — keep it white in
+   the light theme rather than the global near-black inversion. */
+.theme-light #cta h2.text-white { color: #ffffff !important; }
+
+/* FAQ +/- icons are inline SVG strokes (white). On the light grey icon
+   chip they become invisible — flip stroke to near-black. */
+.theme-light #faq button svg path[stroke="white"] {
+  stroke: #0c0c0c !important;
+}
+
+/* Reviews summary card: Yelp/Google brand pills. SVG icons ship as
+   `fill="white"`. In light theme the resting bg (#303030 → pale grey)
+   hides them, so invert to near-black at rest. On hover the bg flips
+   to brand color (red / blue) — restore native white.
+   NB: also re-assert the brand bg with !important, otherwise the
+   `.theme-light .bg-[#303030]` rule above (which is !important) beats
+   Tailwind's plain `hover:bg-[#FF2828]` and the hover never shows. */
+.theme-light #reviews a[href*="yelp"] img,
+.theme-light #reviews a[href*="google.com/maps"] img {
+  filter: brightness(0) !important;
+}
+.theme-light #reviews a[href*="yelp"]:hover {
+  background-color: #FF2828 !important;
+}
+.theme-light #reviews a[href*="google.com/maps"]:hover {
+  background-color: #357DFF !important;
+}
+.theme-light #reviews a[href*="yelp"]:hover img,
+.theme-light #reviews a[href*="google.com/maps"]:hover img {
+  filter: none !important;
+}
+/* Inside a hovered review card, the pill bg gets re-flipped to white by
+   the `.group-hover/card:bg-[#0c0c0c] → white` rule above (higher
+   specificity than the brand-hover above). Re-assert brand color when
+   the pill itself is hovered AND it lives inside a review card. */
+.theme-light #reviews .group\/card a[href*="yelp"]:hover {
+  background-color: #FF2828 !important;
+}
+.theme-light #reviews .group\/card a[href*="google.com/maps"]:hover {
+  background-color: #357DFF !important;
+}
+
+/* Reviews carousel prev/next buttons: arrow SVGs ship `fill="white"`,
+   buttons live on light-grey chips in light theme — invert to dark. */
+.theme-light #reviews button img[src*="arrow-left"],
+.theme-light #reviews button img[src*="arrow-right"] {
+  filter: brightness(0) !important;
+}
+
+/* Services card arrow circle: at rest the white arrow disappears on the
+   light-grey circle. Force it dark — also stays visible on the white
+   hover circle (overrides the built-in `group-hover:invert`). */
+.theme-light #services img[src*="arrow-right"] {
+  filter: brightness(0) !important;
+}
+
+/* Card shadows in the light theme look heavy/muddy on the pale-grey
+   surfaces — strip them on the in-page card sections, both at rest and
+   on hover (covers `shadow-[..]`, `hover:shadow-[..]`, `group-hover/...`,
+   and the `.hover-lift:hover` shared lift). Buttons / CTAs keep their
+   own glows since they live in different ID scopes. */
+.theme-light #about [class*="shadow-["],
+.theme-light #services [class*="shadow-["],
+.theme-light #service-area [class*="shadow-["],
+.theme-light #reviews [class*="shadow-["],
+.theme-light #faq [class*="shadow-["] {
+  box-shadow: none !important;
+}
+.theme-light #services .hover-lift:hover,
+.theme-light #reviews .hover-lift:hover,
+.theme-light #about .hover-lift:hover {
+  box-shadow: none !important;
+}
+
+/* ───── Footer is the brand-blue island in the light theme.
+   Background = #005BFF, all text/icons go white, accents that would be
+   blue (and disappear) flip to white instead.
+   NB: chain `footer.bg-[#141414]` so this beats the generic
+   `.theme-light .bg-[#141414] → #f5f6f8` rule above on specificity. */
+.theme-light footer,
+.theme-light footer.bg-\[\#141414\] {
+  background-color: #005BFF !important;
+  color: #ffffff !important;
+}
+.theme-light footer .bg-\[\#141414\],
+.theme-light footer .bg-\[\#181818\],
+.theme-light footer .bg-\[\#1e1e1e\],
+.theme-light footer .bg-\[\#242424\] { background-color: #005BFF !important; }
+
+.theme-light footer .text-white          { color: #ffffff !important; }
+.theme-light footer .text-white\/90      { color: rgba(255, 255, 255, 0.9) !important; }
+.theme-light footer .text-white\/80      { color: rgba(255, 255, 255, 0.8) !important; }
+.theme-light footer .text-white\/70      { color: rgba(255, 255, 255, 0.7) !important; }
+.theme-light footer .text-white\/60      { color: rgba(255, 255, 255, 0.7) !important; }
+.theme-light footer .text-white\/50      { color: rgba(255, 255, 255, 0.6) !important; }
+.theme-light footer .text-white\/40      { color: rgba(255, 255, 255, 0.55) !important; }
+.theme-light footer .text-white\/30      { color: rgba(255, 255, 255, 0.45) !important; }
+.theme-light footer .text-white\/20      { color: rgba(255, 255, 255, 0.35) !important; }
+
+.theme-light footer .border-white\/30    { border-color: rgba(255, 255, 255, 0.3) !important; }
+.theme-light footer .border-white\/16    { border-color: rgba(255, 255, 255, 0.22) !important; }
+.theme-light footer .border-white\/10    { border-color: rgba(255, 255, 255, 0.16) !important; }
+.theme-light footer .border-white\/\[0\.06\] { border-color: rgba(255, 255, 255, 0.12) !important; }
+.theme-light footer .border-white\/\[0\.08\] { border-color: rgba(255, 255, 255, 0.14) !important; }
+
+.theme-light footer .bg-white\/10        { background-color: rgba(255, 255, 255, 0.15) !important; }
+.theme-light footer .bg-white\/5         { background-color: rgba(255, 255, 255, 0.08) !important; }
+.theme-light footer .bg-white\/15        { background-color: rgba(255, 255, 255, 0.2) !important; }
+
+/* Inside the blue footer, accents that turned blue (yellow→blue) would
+   disappear on blue bg — flip them to white. */
+.theme-light footer .bg-\[\#FFE533\],
+.theme-light footer .lg\:bg-\[\#FFE533\] { background-color: #ffffff !important; }
+@media (min-width: 1024px) {
+  .theme-light footer .lg\:bg-\[\#FFE533\] { background-color: #ffffff !important; }
+}
+.theme-light footer .text-\[\#FFE533\],
+.theme-light footer .hover\:text-\[\#FFE533\]:hover { color: #ffffff !important; }
+.theme-light footer .hover-underline::after { background: #ffffff !important; }
+
+/* Footer button text (was dark on yellow → became white on blue → now blue
+   on white inside footer for contrast). */
+.theme-light footer .text-\[\#0c0c0c\] { color: #005BFF !important; }
+
+/* Footer logo + footer-only icons stay white. */
+.theme-light footer img[src*="logo-white"],
+.theme-light footer img[src*="-footer.svg"] { filter: none !important; }
+
 /* Hide scrollbar for drag-scroll containers */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
@@ -314,13 +814,9 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   transform: scale(1.05);
 }
 
-/* FAQ item hover glow */
+/* FAQ items: no hover effect (was a glow shadow). */
 .faq-item {
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.faq-item:hover {
-  box-shadow: 0 0 0 1px rgba(255, 229, 51, 0.1), 0 4px 16px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
 }
 
 /* Floating yellow glow blobs for What's Included cards */
@@ -347,3 +843,4 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .input-glow:focus {
   box-shadow: 0 0 0 2px rgba(255, 229, 51, 0.2);
 }
+

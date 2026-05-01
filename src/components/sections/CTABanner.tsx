@@ -23,7 +23,7 @@ export function CTABanner({
   image = defaults.image,
 }: CTABannerProps = {}) {
   return (
-    <section className="bg-[#0c0c0c] px-4 py-[60px] lg:py-[80px]">
+    <section id="cta" className="bg-[#0c0c0c] px-4 py-[60px] lg:py-[80px]">
       <div className="max-w-[1408px] mx-auto">
         <div className="relative rounded-2xl lg:rounded-3xl overflow-hidden">
           {/* Full-height image background — taller */}

@@ -97,7 +97,7 @@ function FAQItem({
         <span className="font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white text-left flex-1">
           {question}
         </span>
-        <div className="w-8 h-8 lg:w-12 lg:h-12 rounded-lg lg:rounded-xl bg-[#242424] flex items-center justify-center shrink-0 shadow-[0px_0px_6px_0px_rgba(0,0,0,0.02),0px_2px_4px_0px_rgba(0,0,0,0.08)] transition-all duration-300 ease-out group-hover:scale-110 group-hover:bg-[#2a2a2a]">
+        <div className="w-8 h-8 lg:w-12 lg:h-12 rounded-lg lg:rounded-xl bg-[#242424] flex items-center justify-center shrink-0 shadow-[0px_0px_6px_0px_rgba(0,0,0,0.02),0px_2px_4px_0px_rgba(0,0,0,0.08)]">
           {isOpen ? <MinusIcon /> : <PlusIcon />}
         </div>
       </button>

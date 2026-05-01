@@ -91,7 +91,7 @@ export function ServiceAreaSection({
       : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
 
   return (
-    <section className="bg-[#0c0c0c] px-4 pb-[60px] lg:pb-[100px]">
+    <section id="service-area" className="bg-[#0c0c0c] px-4 pb-[60px] lg:pb-[100px]">
       <div className="max-w-[1408px] mx-auto flex flex-col gap-8 lg:gap-12">
         {/* Section header */}
         <div className="flex flex-col gap-6 lg:gap-12">
