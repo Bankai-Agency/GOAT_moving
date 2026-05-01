@@ -115,22 +115,22 @@ html {
 .theme-blue img[src*="star-yellow"],
 .theme-blue img[src*="phone-yellow"],
 .theme-blue img[src*="goat-fav"],
-.theme-blue img[src$="/logo.svg"],
-.theme-blue img[src$="/year.svg"],
-.theme-blue img[src$="/review.svg"],
-.theme-blue img[src$="/star.svg"],
-.theme-blue img[src$="/license.svg"],
-.theme-blue img[src$="/certificate.svg"],
-.theme-blue img[src$="/memo-check.svg"],
-.theme-blue img[src$="/shield-heart.svg"],
-.theme-blue img[src$="/handshake.svg"] {
+.theme-blue img[src*="/logo.svg"]:not([src*="bankai"]),
+.theme-blue img[src*="/year.svg"],
+.theme-blue img[src*="/review.svg"],
+.theme-blue img[src*="/star.svg"],
+.theme-blue img[src*="/license.svg"],
+.theme-blue img[src*="/certificate.svg"],
+.theme-blue img[src*="/memo-check.svg"],
+.theme-blue img[src*="/shield-heart.svg"],
+.theme-blue img[src*="/handshake.svg"] {
   filter: brightness(0) saturate(100%) invert(22%) sepia(96%) saturate(4720%) hue-rotate(216deg) brightness(102%) contrast(105%) !important;
 }
 
 /* Header logo (yellow logo.svg) gets recolored to blue by the chain
    above — but it lives on the dark header backdrop where blue-on-dark
    is too low-contrast. Override to pure white inside the header. */
-.theme-blue header img[src$="/logo.svg"] {
+.theme-blue header img[src*="/logo.svg"]:not([src*="bankai"]) {
   filter: brightness(0) invert(1) !important;
 }
 
@@ -246,19 +246,24 @@ html {
 /* Yellow PNG/SVG icon files baked with the brand yellow — recolor to blue
    via filter chain (computed for #FFE533 → #005BFF). Also covers logo files
    (yellow + white variants) so they read on a light background. */
+/* NB: use `[src*="/file.svg"]` (substring with leading slash) instead of
+   `[src$="..."]` — Vercel appends `?dpl=...` cache-busting query in
+   prod, breaking the ends-with match. The leading slash keeps the
+   match anchored to the path segment. `:not([src*="bankai"])` on
+   logo.svg keeps bankai-logo.svg from being recolored. */
 .theme-light img[src*="star-yellow"],
 .theme-light img[src*="phone-yellow"],
 .theme-light img[src*="goat-fav"],
-.theme-light img[src$="/logo.svg"],
-.theme-light img[src$="/logo-white.svg"],
-.theme-light img[src$="/year.svg"],
-.theme-light img[src$="/review.svg"],
-.theme-light img[src$="/star.svg"],
-.theme-light img[src$="/license.svg"],
-.theme-light img[src$="/certificate.svg"],
-.theme-light img[src$="/memo-check.svg"],
-.theme-light img[src$="/shield-heart.svg"],
-.theme-light img[src$="/handshake.svg"] {
+.theme-light img[src*="/logo.svg"]:not([src*="bankai"]),
+.theme-light img[src*="/logo-white.svg"],
+.theme-light img[src*="/year.svg"],
+.theme-light img[src*="/review.svg"],
+.theme-light img[src*="/star.svg"],
+.theme-light img[src*="/license.svg"],
+.theme-light img[src*="/certificate.svg"],
+.theme-light img[src*="/memo-check.svg"],
+.theme-light img[src*="/shield-heart.svg"],
+.theme-light img[src*="/handshake.svg"] {
   filter: brightness(0) saturate(100%) invert(22%) sepia(96%) saturate(4720%) hue-rotate(216deg) brightness(102%) contrast(105%) !important;
 }
 
@@ -357,7 +362,7 @@ html {
 /* Header logo is the yellow `logo.svg` — global filter chain recolors
    it to blue in the light theme, but the header is a dark island so
    the logo should stay white. brightness(0) → black, invert(1) → white. */
-.theme-light header img[src$="/logo.svg"] {
+.theme-light header img[src*="/logo.svg"]:not([src*="bankai"]) {
   filter: brightness(0) invert(1) !important;
 }
 
