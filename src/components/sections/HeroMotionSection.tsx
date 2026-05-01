@@ -3,27 +3,39 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { RatingCards } from "@/components/ui/RatingCards";
-import { fadeUp, slideInRight, popIn, staggerContainer } from "@/components/motion/variants";
 
-const headline1 = "Top-Rated Movers";
-const headline2 = "in Vancouver, WA & Portland, OR";
+const headlineLine1 = "Top-Rated Movers";
+const headlineLine2 = "in Vancouver, WA & Portland, OR";
 
-function WordStagger({ text, className }: { text: string; className: string }) {
+const letter: Variants = {
+  hidden: { opacity: 0, y: 80, rotateX: -45 },
+  show: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    rotateX: 0,
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.05 + i * 0.025 },
+  }),
+};
+
+function LetterStagger({ text, className, baseIndex = 0 }: { text: string; className: string; baseIndex?: number }) {
   return (
-    <motion.span
-      className={className}
-      variants={staggerContainer(0.08)}
-      initial="hidden"
-      animate="show"
-    >
-      {text.split(" ").map((word, i) => (
-        <motion.span key={i} variants={fadeUp} className="inline-block mr-[0.25em]">
-          {word}
+    <span className={className} style={{ display: "inline-block", perspective: "1000px" }}>
+      {text.split("").map((ch, i) => (
+        <motion.span
+          key={i}
+          custom={baseIndex + i}
+          variants={letter}
+          initial="hidden"
+          animate="show"
+          className="inline-block"
+          style={{ whiteSpace: ch === " " ? "pre" : "normal" }}
+        >
+          {ch}
         </motion.span>
       ))}
-    </motion.span>
+    </span>
   );
 }
 
@@ -33,13 +45,15 @@ export function HeroMotionSection() {
     target: sectionRef,
     offset: ["start start", "end start"],
   });
-  const photoY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const photoScale = useTransform(scrollYProgress, [0, 1], [1.05, 1.15]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0.3, 0.6]);
+  const photoY = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
+  const photoScale = useTransform(scrollYProgress, [0, 1], [1.1, 1.3]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0.3, 0.75]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]);
+  const contentOpacity = useTransform(scrollYProgress, [0.3, 0.85], [1, 0]);
 
   return (
     <section ref={sectionRef} className="relative h-screen min-h-[700px] lg:min-h-[900px] overflow-hidden">
-      {/* Background image + overlay (parallax) */}
+      {/* Background image + overlay (heavy parallax) */}
       <motion.div className="absolute inset-0" style={{ y: photoY, scale: photoScale }}>
         <Image
           src="/images/home-hero.jpg"
@@ -53,41 +67,84 @@ export function HeroMotionSection() {
       </motion.div>
       <motion.div className="absolute inset-0 bg-black" style={{ opacity: overlayOpacity }} />
 
+      {/* Top-left numeric tag — terminal-style */}
+      <motion.div
+        className="absolute top-24 left-4 lg:top-28 lg:left-12 z-10 text-white/60 font-mono text-sm uppercase tracking-[-0.5px] flex items-center gap-2"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0, transition: { duration: 0.8, delay: 1.4 } }}
+      >
+        <span className="w-2 h-2 rounded-full bg-[#FFE533] animate-pulse" />
+        <span>01 / SERVING THE I-5 CORRIDOR</span>
+      </motion.div>
+
       {/* Content */}
-      <div className="relative h-full max-w-[1408px] mx-auto px-4 flex items-end pb-8 lg:pb-[72px]">
+      <motion.div
+        className="relative h-full max-w-[1408px] mx-auto px-4 flex items-end pb-8 lg:pb-[72px]"
+        style={{ y: contentY, opacity: contentOpacity }}
+      >
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between w-full gap-6">
           {/* Left — heading + CTA */}
           <div className="flex flex-col gap-4 lg:gap-6">
             <h1 className="font-sans font-bold text-[40px] lg:text-[96px] leading-none tracking-[-1.2px] lg:tracking-[-2.88px]">
-              <WordStagger text={headline1} className="text-white/60" />
+              <LetterStagger text={headlineLine1} className="text-white/60" />
               <br />
-              <WordStagger text={headline2} className="text-white" />
+              <LetterStagger text={headlineLine2} className="text-white" baseIndex={headlineLine1.length} />
             </h1>
 
             <motion.div
               className="flex flex-col gap-5 lg:gap-7 max-w-[569px]"
-              variants={staggerContainer(0.12, 0.6)}
               initial="hidden"
               animate="show"
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: 0.15, delayChildren: 1.6 } },
+              }}
             >
               <motion.p
-                variants={fadeUp}
+                variants={{
+                  hidden: { opacity: 0, y: 30 },
+                  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
+                }}
                 className="font-sans font-normal text-base lg:text-2xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.72px] text-white"
               >
                 Local, long-distance, and commercial moves — 850+ five-star
                 reviews, fully licensed & insured
               </motion.p>
 
-              <motion.div variants={staggerContainer(0.1)} className="flex flex-col lg:flex-row gap-3 lg:gap-6">
+              <motion.div
+                variants={{
+                  hidden: {},
+                  show: { transition: { staggerChildren: 0.12 } },
+                }}
+                className="flex flex-col lg:flex-row gap-3 lg:gap-6"
+              >
                 <motion.button
-                  variants={popIn}
+                  variants={{
+                    hidden: { opacity: 0, y: 20, scale: 0.9 },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                    },
+                  }}
                   type="button"
                   onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
                   className="btn-shine bg-[#FFE533] h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-[#0c0c0c] uppercase tracking-[-0.64px] leading-[1.2] hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer"
                 >
                   Get Free Estimate
                 </motion.button>
-                <motion.div variants={popIn}>
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, y: 20, scale: 0.9 },
+                    show: {
+                      opacity: 1,
+                      y: 0,
+                      scale: 1,
+                      transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+                    },
+                  }}
+                >
                   <Link
                     href="#services"
                     className="border border-white h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-white uppercase tracking-[-0.64px] leading-[1.2] hover:bg-white/10 hover:shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:scale-[1.02] transition-all duration-300 ease-out"
@@ -100,11 +157,28 @@ export function HeroMotionSection() {
           </div>
 
           {/* Rating cards */}
-          <motion.div variants={slideInRight} initial="hidden" animate="show" transition={{ delay: 0.5 }}>
+          <motion.div
+            initial={{ opacity: 0, x: 80 }}
+            animate={{ opacity: 1, x: 0, transition: { duration: 0.8, delay: 1.9, ease: [0.16, 1, 0.3, 1] } }}
+          >
             <RatingCards />
           </motion.div>
         </div>
-      </div>
+      </motion.div>
+
+      {/* Scroll cue */}
+      <motion.div
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/60"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0, transition: { delay: 2.4, duration: 0.6 } }}
+      >
+        <span className="font-mono font-bold text-xs uppercase tracking-[2px]">Scroll</span>
+        <motion.span
+          className="w-[1px] h-10 bg-white/40"
+          animate={{ scaleY: [0.4, 1, 0.4], originY: 0 }}
+          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </motion.div>
     </section>
   );
 }
