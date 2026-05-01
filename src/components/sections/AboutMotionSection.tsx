@@ -28,12 +28,12 @@ const defaults = {
 };
 
 /* The pinned video sits inside `.page-zoom` which scales every
-   descendant. We compensate with a hard-coded 1.45× transform scale on
-   the sticky inner so 100vw / 100vh visually reaches viewport edges at
-   the typical 0.7-zoom breakpoint (and over-shoots a touch on larger
-   ones — the wrapping `overflow-hidden` clips the excess, so it always
-   reads as full-bleed). */
-const ZOOM_COMPENSATE = 1.45;
+   descendant by 0.7-1.0 depending on breakpoint. We use a 100vw/100vh
+   base box and over-scale (1.6×) at peak so the video visually fills
+   the viewport at every breakpoint — the overflow-hidden parent clips
+   the excess on the larger (zoom: 1.0) breakpoints. */
+const PEAK_SCALE = 1.6;
+const REST_SCALE = 0.55;
 
 export function AboutMotionSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -49,7 +49,7 @@ export function AboutMotionSection() {
   const innerScale = useTransform(
     scrollYProgress,
     [0.05, 0.22, 0.78, 0.92],
-    [0.55, ZOOM_COMPENSATE, ZOOM_COMPENSATE, 0.55]
+    [REST_SCALE, PEAK_SCALE, PEAK_SCALE, REST_SCALE]
   );
   const radius = useTransform(scrollYProgress, [0.05, 0.22, 0.78, 0.92], [16, 0, 0, 16]);
   const overlayOpacity = useTransform(scrollYProgress, [0.18, 0.28, 0.7, 0.82], [0, 0.18, 0.18, 0]);
@@ -123,8 +123,8 @@ export function AboutMotionSection() {
           <motion.div
             className="relative bg-black overflow-hidden"
             style={{
-              width: "70vw",
-              height: "55vh",
+              width: "100vw",
+              height: "100vh",
               borderRadius: radius,
               scale: innerScale,
             }}

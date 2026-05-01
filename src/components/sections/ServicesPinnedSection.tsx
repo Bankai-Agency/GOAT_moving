@@ -69,10 +69,14 @@ function StackingCard({
   total: number;
   progress: MotionValue<number>;
 }) {
-  /* Slot for cards 1..N-1: split the full track among them. Card 0 is
-     always at rest. Web Animations API requires monotonically
-     non-decreasing offsets, so card 0 needs a [0, 0+ε] degenerate
-     range that maps to the resting [0%, 0%] output. */
+  /* Lightship-style deck: each subsequent card lands SLIGHTLY BELOW
+     the previous one so the previous card's top edge stays visible
+     above the new arrival (a vertical "fan of papers" look). The
+     resting offset is set via CSS `top: peekPx*index`; the y transform
+     animates only between the off-screen "110%" entry and the resting
+     "0%" — unit-consistent so framer-motion interpolates cleanly. */
+  const peekPx = 56;
+  const restingTopPx = index * peekPx;
   const slot = total > 1 ? 1 / (total - 1) : 1;
   const enterStart = Math.max(0, (index - 1) * slot);
   const enterEnd = Math.max(enterStart + 0.0001, index * slot);
@@ -108,8 +112,8 @@ function StackingCard({
 
   return (
     <motion.div
-      style={{ y, zIndex: index + 1 }}
-      className="absolute inset-x-0 top-0 h-full rounded-2xl overflow-hidden bg-[#181818]"
+      style={{ y, zIndex: index + 1, top: `${restingTopPx}px` }}
+      className="absolute inset-x-0 h-full rounded-2xl overflow-hidden bg-[#181818]"
     >
       <motion.div
         className="absolute inset-0 rounded-2xl pointer-events-none"
