@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { CountUp } from "@/components/motion/CountUp";
 import { fadeUp, staggerContainer } from "@/components/motion/variants";
 
@@ -29,11 +29,37 @@ const defaults = {
 
 export function AboutMotionSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const videoWrapRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const [autoPlayed, setAutoPlayed] = useState(false);
 
+  /* Outer scroll container is ~300vh tall: gives us budget for grow
+     (0→0.18), hold full-bleed (0.18→0.78), release (0.78→1). */
+  const { scrollYProgress } = useScroll({
+    target: trackRef,
+    offset: ["start end", "end start"],
+  });
+
+  /* Inside the boxed phase the video matches the original layout
+     (max-w-[1408px] container, ~80% of viewport width). At full-bleed
+     it is the entire viewport. Border radius collapses to 0. */
+  const widthVw = useTransform(scrollYProgress, [0.05, 0.22, 0.78, 0.92], [80, 100, 100, 80]);
+  const heightVh = useTransform(scrollYProgress, [0.05, 0.22, 0.78, 0.92], [55, 100, 100, 55]);
+  const radius = useTransform(scrollYProgress, [0.05, 0.22, 0.78, 0.92], [16, 0, 0, 16]);
+  const overlayOpacity = useTransform(
+    scrollYProgress,
+    [0.18, 0.28, 0.7, 0.82],
+    [0, 0.15, 0.15, 0]
+  );
+  const captionOpacity = useTransform(
+    scrollYProgress,
+    [0.22, 0.32, 0.7, 0.78],
+    [0, 1, 1, 0]
+  );
+  const captionY = useTransform(scrollYProgress, [0.22, 0.32], [40, 0]);
+
+  /* Auto-play muted as soon as the section enters the viewport. */
   useEffect(() => {
-    const node = videoWrapRef.current;
+    const node = trackRef.current;
     if (!node || autoPlayed) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -45,129 +71,151 @@ export function AboutMotionSection() {
               setAutoPlayed(true);
               observer.disconnect();
             })
-            .catch(() => {/* autoplay blocked — leave the click overlay */});
+            .catch(() => {/* autoplay blocked */});
         }
       },
-      { threshold: 0.5 }
+      { threshold: 0.1 }
     );
     observer.observe(node);
     return () => observer.disconnect();
   }, [autoPlayed]);
 
   return (
-    <section id="about" className="bg-[#0c0c0c] px-4 py-[60px] lg:py-[100px]">
-      <div className="max-w-[1408px] mx-auto flex flex-col gap-8 lg:gap-16">
-        {/* Section label */}
-        <motion.div
-          className="flex flex-col gap-6 lg:gap-12"
-          variants={staggerContainer(0.12)}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.4 }}
-        >
-          <motion.div variants={fadeUp} className="border-b border-white/16 pb-4 lg:pb-6">
-            <div className="flex items-center gap-2.5">
-              <span className="w-2 h-2 rounded-full bg-[#FFE533]" />
-              <span className="font-mono font-bold text-sm lg:text-base uppercase tracking-[-0.64px] leading-[1.2] text-white/60">
-                {defaults.label}
-              </span>
-            </div>
-          </motion.div>
-
-          {/* Heading + description */}
-          <div className="flex flex-col gap-3 lg:gap-4">
-            <motion.h2
-              variants={fadeUp}
-              className="font-sans font-bold text-[32px] lg:text-[64px] leading-[1.2] tracking-[-1.28px] lg:tracking-[-2.56px] text-white"
-            >
-              {defaults.title}
-            </motion.h2>
-            <motion.p
-              variants={fadeUp}
-              className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white/60"
-            >
-              {defaults.description}
-            </motion.p>
-          </div>
-        </motion.div>
-
-        {/* Video — auto-plays muted on enter */}
-        <motion.div
-          ref={videoWrapRef}
-          className="relative w-full h-[240px] lg:h-[577px] rounded-xl lg:rounded-2xl overflow-hidden"
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }}
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            poster={defaults.videoPoster}
-            controls={autoPlayed}
-            playsInline
-            preload="metadata"
-            loop
+    <section id="about" className="bg-[#0c0c0c]">
+      {/* Header — natural flow */}
+      <div className="px-4 pt-[60px] lg:pt-[100px]">
+        <div className="max-w-[1408px] mx-auto">
+          <motion.div
+            className="flex flex-col gap-6 lg:gap-12"
+            variants={staggerContainer(0.12)}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.4 }}
           >
-            {defaults.videoSources.map((s, i) => (
-              <source key={i} src={s.src} type={s.type} />
-            ))}
-          </video>
-          {!autoPlayed && (
-            <button
-              type="button"
-              aria-label="Play video"
-              onClick={() => {
-                videoRef.current?.play();
-                setAutoPlayed(true);
-              }}
-              className="absolute inset-0 group/play cursor-pointer"
-            >
-              <span className="absolute inset-0 bg-black/40 group-hover/play:bg-black/30 transition-colors duration-300" />
-              <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 backdrop-blur-[15px] bg-[rgba(13,13,13,0.4)] flex items-center gap-2 px-5 lg:px-6 py-2.5 lg:py-3 rounded-[7px] group-hover/play:bg-[rgba(13,13,13,0.6)] group-hover/play:scale-105 transition-all duration-300 ease-out">
-                <Image
-                  src="/icons/play.svg"
-                  alt=""
-                  width={20}
-                  height={20}
-                  className="brightness-0 invert"
-                />
-                <span className="font-mono font-medium text-sm lg:text-base uppercase tracking-[-0.64px] leading-[1.2] text-white">
-                  Watch Video
-                </span>
-              </span>
-            </button>
-          )}
-        </motion.div>
-
-        {/* Stats — count-up + stagger */}
-        <motion.div
-          className="flex flex-col lg:flex-row gap-4 lg:gap-5"
-          variants={staggerContainer(0.1)}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          {defaultStats.map((stat) => (
-            <motion.div
-              key={stat.label}
-              variants={fadeUp}
-              className="flex items-center gap-4 lg:gap-6 lg:flex-1 group/stat"
-            >
-              <div className="bg-[#181818] rounded-lg w-14 h-14 lg:w-20 lg:h-20 flex items-center justify-center shrink-0 shadow-[0px_0px_6px_0px_rgba(0,0,0,0.02),0px_2px_4px_0px_rgba(0,0,0,0.08)] group-hover/stat:bg-[#1e1e1e] group-hover/stat:shadow-[0_4px_16px_rgba(0,0,0,0.3)] group-hover/stat:scale-105 transition-all duration-300 ease-out">
-                <Image src={stat.icon} alt="" width={36} height={36} className="w-6 h-6 lg:w-9 lg:h-9" />
-              </div>
-              <div className="flex flex-col gap-1">
-                <CountUp
-                  value={stat.value}
-                  className="font-sans font-bold text-2xl lg:text-[32px] leading-[1.2] tracking-[-0.72px] lg:tracking-[-0.96px] text-white"
-                />
-                <span className="font-sans font-normal text-lg lg:text-xl leading-[1.4] tracking-[-0.54px] lg:tracking-[-0.6px] text-white/60">
-                  {stat.label}
+            <motion.div variants={fadeUp} className="border-b border-white/16 pb-4 lg:pb-6">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-[#FFE533]" />
+                <span className="font-mono font-bold text-sm lg:text-base uppercase tracking-[-0.64px] leading-[1.2] text-white/60">
+                  {defaults.label}
                 </span>
               </div>
             </motion.div>
-          ))}
-        </motion.div>
+            <div className="flex flex-col gap-3 lg:gap-4">
+              <motion.h2
+                variants={fadeUp}
+                className="font-sans font-bold text-[32px] lg:text-[64px] leading-[1.2] tracking-[-1.28px] lg:tracking-[-2.56px] text-white"
+              >
+                {defaults.title}
+              </motion.h2>
+              <motion.p
+                variants={fadeUp}
+                className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white/60"
+              >
+                {defaults.description}
+              </motion.p>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Pinned video moment — only on lg+. Mobile gets a normal boxed video. */}
+      <div ref={trackRef} className="hidden lg:block relative" style={{ height: "300vh" }}>
+        <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+          <motion.div
+            className="relative overflow-hidden bg-black"
+            style={{
+              width: useTransform(widthVw, (v) => `${v}vw`),
+              height: useTransform(heightVh, (v) => `${v}vh`),
+              borderRadius: useTransform(radius, (v) => `${v}px`),
+            }}
+          >
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              poster={defaults.videoPoster}
+              playsInline
+              preload="metadata"
+              loop
+              muted
+              autoPlay
+            >
+              {defaults.videoSources.map((s, i) => (
+                <source key={i} src={s.src} type={s.type} />
+              ))}
+            </video>
+            {/* Soft darken while pinned full-bleed */}
+            <motion.div
+              className="absolute inset-0 bg-black pointer-events-none"
+              style={{ opacity: overlayOpacity }}
+            />
+            {/* Caption overlay during the held phase */}
+            <motion.div
+              className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none"
+              style={{ opacity: captionOpacity, y: captionY }}
+            >
+              <span className="font-mono font-bold text-sm uppercase tracking-[2px] text-white/70">
+                Inside a GOAT Movers crew
+              </span>
+              <span className="font-sans font-semibold text-2xl lg:text-3xl text-white">
+                850+ five-star moves and counting
+              </span>
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Mobile: original boxed video (no pin) */}
+      <div className="lg:hidden px-4 pt-8">
+        <div className="max-w-[1408px] mx-auto">
+          <div className="relative w-full h-[240px] rounded-xl overflow-hidden">
+            <video
+              className="w-full h-full object-cover"
+              poster={defaults.videoPoster}
+              controls
+              playsInline
+              preload="metadata"
+              muted
+            >
+              {defaults.videoSources.map((s, i) => (
+                <source key={i} src={s.src} type={s.type} />
+              ))}
+            </video>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats — count-up + stagger */}
+      <div className="px-4 pt-8 lg:pt-16 pb-[60px] lg:pb-[100px]">
+        <div className="max-w-[1408px] mx-auto">
+          <motion.div
+            className="flex flex-col lg:flex-row gap-4 lg:gap-5"
+            variants={staggerContainer(0.1)}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.3 }}
+          >
+            {defaultStats.map((stat) => (
+              <motion.div
+                key={stat.label}
+                variants={fadeUp}
+                className="flex items-center gap-4 lg:gap-6 lg:flex-1 group/stat"
+              >
+                <div className="bg-[#181818] rounded-lg w-14 h-14 lg:w-20 lg:h-20 flex items-center justify-center shrink-0 shadow-[0px_0px_6px_0px_rgba(0,0,0,0.02),0px_2px_4px_0px_rgba(0,0,0,0.08)] group-hover/stat:bg-[#1e1e1e] group-hover/stat:shadow-[0_4px_16px_rgba(0,0,0,0.3)] group-hover/stat:scale-105 transition-all duration-300 ease-out">
+                  <Image src={stat.icon} alt="" width={36} height={36} className="w-6 h-6 lg:w-9 lg:h-9" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <CountUp
+                    value={stat.value}
+                    className="font-sans font-bold text-2xl lg:text-[32px] leading-[1.2] tracking-[-0.72px] lg:tracking-[-0.96px] text-white"
+                  />
+                  <span className="font-sans font-normal text-lg lg:text-xl leading-[1.4] tracking-[-0.54px] lg:tracking-[-0.6px] text-white/60">
+                    {stat.label}
+                  </span>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
       </div>
     </section>
   );
