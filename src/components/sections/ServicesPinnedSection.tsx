@@ -53,10 +53,11 @@ const label = "Our Services";
 const title = "Affordable Moving Services in Vancouver, WA & Portland, OR";
 const subtitle = "Full-service moving — from packing to unloading. No hidden fees, no charge for stairs.";
 
-/* A "deck-stack" card. Below its enter window the card sits hidden far
-   below the viewport. As the global scroll progresses through this
-   card's slot, the card slides up and lands on top of the previous one,
-   slightly offset so the underlying cards remain visible at the top. */
+/* Deck-stack card. The first card (index 0) is visible from the very
+   beginning. Each subsequent card slides in from below the sticky frame
+   and lands fully on top of the previous one as scroll progresses
+   through that card's slot. After landing the card stays put. z-index
+   increases per index so the latest card always covers the older ones. */
 function StackingCard({
   service,
   index,
@@ -68,17 +69,17 @@ function StackingCard({
   total: number;
   progress: MotionValue<number>;
 }) {
-  const slot = 0.85 / total; // reserve 15% trailing scroll for the final hold
-  const enterStart = index * slot;
-  const enterEnd = enterStart + slot;
+  /* Slot for cards 1..N-1: split the full track among them. Card 0 is
+     always at rest. Web Animations API requires monotonically
+     non-decreasing offsets, so card 0 needs a [0, 0+ε] degenerate
+     range that maps to the resting [0%, 0%] output. */
+  const slot = total > 1 ? 1 / (total - 1) : 1;
+  const enterStart = Math.max(0, (index - 1) * slot);
+  const enterEnd = Math.max(enterStart + 0.0001, index * slot);
+  const fromY = index === 0 ? "0%" : "110%";
 
-  /* y goes from 110% (just below the sticky frame) to a stacked
-     resting offset of `index * 24px`. Earlier cards sit slightly
-     higher so their top edge peeks out behind the new arrival. */
-  const restingTop = index * 24;
-  const y = useTransform(progress, [enterStart, enterEnd], ["110%", `${restingTop}px`]);
-  const scale = useTransform(progress, [enterStart, enterEnd], [0.95, 1]);
-  const shadowOpacity = useTransform(progress, [enterStart, enterEnd], [0, 0.45]);
+  const y = useTransform(progress, [enterStart, enterEnd], [fromY, "0%"]);
+  const shadowOpacity = useTransform(progress, [enterStart, enterEnd], [0, index === 0 ? 0 : 0.5]);
 
   const cardBody = (
     <>
@@ -107,7 +108,7 @@ function StackingCard({
 
   return (
     <motion.div
-      style={{ y, scale, zIndex: index + 1 }}
+      style={{ y, zIndex: index + 1 }}
       className="absolute inset-x-0 top-0 h-full rounded-2xl overflow-hidden bg-[#181818]"
     >
       <motion.div
