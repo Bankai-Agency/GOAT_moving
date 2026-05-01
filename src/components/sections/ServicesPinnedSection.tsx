@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import { fadeUp, staggerContainer } from "@/components/motion/variants";
 
 type ServiceItem = {
@@ -53,9 +53,11 @@ const label = "Our Services";
 const title = "Affordable Moving Services in Vancouver, WA & Portland, OR";
 const subtitle = "Full-service moving — from packing to unloading. No hidden fees, no charge for stairs.";
 
-/* Pinned card — only the slice of [progress] in [0..1] when this slot is
-   active is fully opaque; outside that window it fades + drifts. */
-function PinnedCard({
+/* A "deck-stack" card. Below its enter window the card sits hidden far
+   below the viewport. As the global scroll progresses through this
+   card's slot, the card slides up and lands on top of the previous one,
+   slightly offset so the underlying cards remain visible at the top. */
+function StackingCard({
   service,
   index,
   total,
@@ -64,20 +66,24 @@ function PinnedCard({
   service: ServiceItem;
   index: number;
   total: number;
-  progress: ReturnType<typeof useScroll>["scrollYProgress"];
+  progress: MotionValue<number>;
 }) {
-  const slot = 1 / total;
-  const start = index * slot;
-  const peak = start + slot * 0.5;
-  const end = (index + 1) * slot;
-  const opacity = useTransform(progress, [Math.max(0, start - 0.05), peak, Math.min(1, end + 0.05)], [0, 1, 0]);
-  const y = useTransform(progress, [start, peak, end], [60, 0, -60]);
-  const scale = useTransform(progress, [start, peak, end], [0.96, 1, 0.96]);
+  const slot = 0.85 / total; // reserve 15% trailing scroll for the final hold
+  const enterStart = index * slot;
+  const enterEnd = enterStart + slot;
+
+  /* y goes from 110% (just below the sticky frame) to a stacked
+     resting offset of `index * 24px`. Earlier cards sit slightly
+     higher so their top edge peeks out behind the new arrival. */
+  const restingTop = index * 24;
+  const y = useTransform(progress, [enterStart, enterEnd], ["110%", `${restingTop}px`]);
+  const scale = useTransform(progress, [enterStart, enterEnd], [0.95, 1]);
+  const shadowOpacity = useTransform(progress, [enterStart, enterEnd], [0, 0.45]);
 
   const cardBody = (
     <>
       <Image src={service.image} alt={service.title} fill className="object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/10" />
       <div className="absolute inset-0 flex flex-col justify-between p-8 lg:p-12">
         <div className="flex items-start justify-between">
           <span className="font-mono font-bold text-base uppercase tracking-[-0.64px] leading-[1.2] text-[#FFE533]">
@@ -91,7 +97,7 @@ function PinnedCard({
           <h3 className="font-sans font-semibold text-[32px] lg:text-[56px] leading-[1.1] tracking-[-1.12px] lg:tracking-[-1.68px] text-white">
             {service.title}
           </h3>
-          <p className="font-sans font-normal text-base lg:text-lg leading-[1.4] text-white/80">
+          <p className="font-sans font-normal text-base lg:text-lg leading-[1.4] text-white/85">
             {service.description}
           </p>
         </div>
@@ -101,9 +107,16 @@ function PinnedCard({
 
   return (
     <motion.div
-      style={{ opacity, y, scale }}
-      className="absolute inset-0 rounded-2xl overflow-hidden bg-[#181818]"
+      style={{ y, scale, zIndex: index + 1 }}
+      className="absolute inset-x-0 top-0 h-full rounded-2xl overflow-hidden bg-[#181818]"
     >
+      <motion.div
+        className="absolute inset-0 rounded-2xl pointer-events-none"
+        style={{
+          boxShadow: "0 -20px 40px -10px rgba(0,0,0,0.45)",
+          opacity: shadowOpacity,
+        }}
+      />
       {service.href ? (
         <Link href={service.href} className="block w-full h-full">
           {cardBody}
@@ -158,15 +171,22 @@ export function ServicesPinnedSection() {
           </div>
         </motion.div>
 
-        {/* Desktop: pinned scroll-driven track. Mobile: stacked stagger. */}
+        {/* Desktop: stacking-deck scroll track. */}
         <div ref={trackRef} className="hidden lg:block relative" style={{ height: `${services.length * 100}vh` }}>
-          <div className="sticky top-[10vh] h-[80vh]">
+          <div className="sticky top-[10vh] h-[80vh] relative">
             {services.map((s, i) => (
-              <PinnedCard key={s.title} service={s} index={i} total={services.length} progress={scrollYProgress} />
+              <StackingCard
+                key={s.title}
+                service={s}
+                index={i}
+                total={services.length}
+                progress={scrollYProgress}
+              />
             ))}
           </div>
         </div>
 
+        {/* Mobile: simple stack with stagger reveal */}
         <motion.div
           className="grid grid-cols-1 gap-3 lg:hidden"
           variants={staggerContainer(0.1)}

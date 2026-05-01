@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { CountUp } from "@/components/motion/CountUp";
 import { fadeUp, staggerContainer } from "@/components/motion/variants";
@@ -27,35 +28,96 @@ const defaults = {
   ],
 };
 
+/* The pinned video lives in a `position: fixed` portal mounted to
+   document.body — outside the `.page-zoom` wrapper that scales every
+   in-flow descendant. That keeps `100vw / 100vh` true viewport-size
+   regardless of breakpoint zoom. Visibility / dimensions are driven
+   by the in-page scroll track's progress. */
+function PinnedVideoPortal({
+  videoRef,
+  progress,
+}: {
+  videoRef: React.RefObject<HTMLVideoElement | null>;
+  progress: ReturnType<typeof useScroll>["scrollYProgress"];
+}) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  /* Boxed → full-bleed → boxed.
+     0.05–0.22 grow, 0.22–0.78 hold, 0.78–0.92 shrink. */
+  const widthVw = useTransform(progress, [0, 0.05, 0.22, 0.78, 0.92, 1], [70, 70, 100, 100, 70, 70]);
+  const heightVh = useTransform(progress, [0, 0.05, 0.22, 0.78, 0.92, 1], [55, 55, 100, 100, 55, 55]);
+  const radius = useTransform(progress, [0, 0.05, 0.22, 0.78, 0.92, 1], [16, 16, 0, 0, 16, 16]);
+  const opacity = useTransform(progress, [0, 0.04, 0.96, 1], [0, 1, 1, 0]);
+  const overlayOpacity = useTransform(progress, [0.18, 0.28, 0.7, 0.82], [0, 0.18, 0.18, 0]);
+  const captionOpacity = useTransform(progress, [0.22, 0.32, 0.7, 0.78], [0, 1, 1, 0]);
+  const captionY = useTransform(progress, [0.22, 0.32], [40, 0]);
+
+  /* String-formatted versions for CSS values — declared at top to satisfy
+     rules of hooks (useTransform is a hook and must be unconditional). */
+  const widthCss = useTransform(widthVw, (v) => `${v}vw`);
+  const heightCss = useTransform(heightVh, (v) => `${v}vh`);
+  const radiusCss = useTransform(radius, (v) => `${v}px`);
+
+  if (!mounted) return null;
+
+  return createPortal(
+    <motion.div
+      style={{
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        translate: "-50% -50%",
+        width: widthCss,
+        height: heightCss,
+        borderRadius: radiusCss,
+        opacity,
+        overflow: "hidden",
+        backgroundColor: "#000",
+        zIndex: 5,
+        pointerEvents: "none",
+      }}
+    >
+      <video
+        ref={videoRef}
+        className="w-full h-full object-cover"
+        poster={defaults.videoPoster}
+        playsInline
+        preload="metadata"
+        loop
+        muted
+        autoPlay
+      >
+        {defaults.videoSources.map((s, i) => (
+          <source key={i} src={s.src} type={s.type} />
+        ))}
+      </video>
+      <motion.div className="absolute inset-0 bg-black pointer-events-none" style={{ opacity: overlayOpacity }} />
+      <motion.div
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none text-center px-4"
+        style={{ opacity: captionOpacity, y: captionY }}
+      >
+        <span className="font-mono font-bold text-sm uppercase tracking-[2px] text-white/70">
+          Inside a GOAT Movers crew
+        </span>
+        <span className="font-sans font-semibold text-2xl lg:text-3xl text-white">
+          850+ five-star moves and counting
+        </span>
+      </motion.div>
+    </motion.div>,
+    document.body,
+  );
+}
+
 export function AboutMotionSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [autoPlayed, setAutoPlayed] = useState(false);
 
-  /* Outer scroll container is ~300vh tall: gives us budget for grow
-     (0→0.18), hold full-bleed (0.18→0.78), release (0.78→1). */
   const { scrollYProgress } = useScroll({
     target: trackRef,
     offset: ["start end", "end start"],
   });
-
-  /* Inside the boxed phase the video matches the original layout
-     (max-w-[1408px] container, ~80% of viewport width). At full-bleed
-     it is the entire viewport. Border radius collapses to 0. */
-  const widthVw = useTransform(scrollYProgress, [0.05, 0.22, 0.78, 0.92], [80, 100, 100, 80]);
-  const heightVh = useTransform(scrollYProgress, [0.05, 0.22, 0.78, 0.92], [55, 100, 100, 55]);
-  const radius = useTransform(scrollYProgress, [0.05, 0.22, 0.78, 0.92], [16, 0, 0, 16]);
-  const overlayOpacity = useTransform(
-    scrollYProgress,
-    [0.18, 0.28, 0.7, 0.82],
-    [0, 0.15, 0.15, 0]
-  );
-  const captionOpacity = useTransform(
-    scrollYProgress,
-    [0.22, 0.32, 0.7, 0.78],
-    [0, 1, 1, 0]
-  );
-  const captionY = useTransform(scrollYProgress, [0.22, 0.32], [40, 0]);
 
   /* Auto-play muted as soon as the section enters the viewport. */
   useEffect(() => {
@@ -118,50 +180,12 @@ export function AboutMotionSection() {
         </div>
       </div>
 
-      {/* Pinned video moment — only on lg+. Mobile gets a normal boxed video. */}
-      <div ref={trackRef} className="hidden lg:block relative" style={{ height: "300vh" }}>
-        <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
-          <motion.div
-            className="relative overflow-hidden bg-black"
-            style={{
-              width: useTransform(widthVw, (v) => `${v}vw`),
-              height: useTransform(heightVh, (v) => `${v}vh`),
-              borderRadius: useTransform(radius, (v) => `${v}px`),
-            }}
-          >
-            <video
-              ref={videoRef}
-              className="w-full h-full object-cover"
-              poster={defaults.videoPoster}
-              playsInline
-              preload="metadata"
-              loop
-              muted
-              autoPlay
-            >
-              {defaults.videoSources.map((s, i) => (
-                <source key={i} src={s.src} type={s.type} />
-              ))}
-            </video>
-            {/* Soft darken while pinned full-bleed */}
-            <motion.div
-              className="absolute inset-0 bg-black pointer-events-none"
-              style={{ opacity: overlayOpacity }}
-            />
-            {/* Caption overlay during the held phase */}
-            <motion.div
-              className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none"
-              style={{ opacity: captionOpacity, y: captionY }}
-            >
-              <span className="font-mono font-bold text-sm uppercase tracking-[2px] text-white/70">
-                Inside a GOAT Movers crew
-              </span>
-              <span className="font-sans font-semibold text-2xl lg:text-3xl text-white">
-                850+ five-star moves and counting
-              </span>
-            </motion.div>
-          </motion.div>
-        </div>
+      {/* Desktop: empty 300vh scroll track that drives the portal video. */}
+      <div ref={trackRef} className="hidden lg:block" style={{ height: "300vh" }} />
+
+      {/* Portaled fixed-position video — only desktop. */}
+      <div className="hidden lg:block">
+        <PinnedVideoPortal videoRef={videoRef} progress={scrollYProgress} />
       </div>
 
       {/* Mobile: original boxed video (no pin) */}
