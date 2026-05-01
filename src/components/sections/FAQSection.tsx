@@ -145,7 +145,7 @@ export function FAQSection({
             </h2>
 
             {/* Desktop accordion (inline with heading) */}
-            <div className="hidden lg:flex flex-col gap-5 w-[638px] shrink-0">
+            <div className="faq-list hidden lg:flex flex-col gap-5 w-[638px] shrink-0">
               {items.map((faq, i) => (
                 <FAQItem
                   key={i}
@@ -160,7 +160,7 @@ export function FAQSection({
         </div>
 
         {/* Mobile accordion (below heading) */}
-        <div className="flex flex-col gap-2 w-full lg:hidden">
+        <div className="faq-list flex flex-col gap-2 w-full lg:hidden">
           {items.map((faq, i) => (
             <FAQItem
               key={i}

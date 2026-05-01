@@ -449,6 +449,26 @@ html {
   stroke: #0c0c0c !important;
 }
 
+/* FAQ list "tray" treatment in the light theme — wraps all FAQ items
+   in a soft grey panel (the "плашка" look from artone.studio). The
+   item chips themselves keep their original sizes; we only add the
+   surrounding tray + a thin outline on each chip. */
+.theme-light #faq .faq-list {
+  background-color: #f1f3f6 !important;
+  border-radius: 24px !important;
+  padding: 12px !important;
+  gap: 6px !important;
+}
+.theme-light #faq .faq-list .faq-item {
+  background-color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px rgba(12, 12, 12, 0.06) !important;
+}
+/* The icon chip on white card needs a slightly darker grey so it stays
+   visible against the new white surface. */
+.theme-light #faq .faq-list .faq-item .bg-\[\#242424\] {
+  background-color: #f1f3f6 !important;
+}
+
 /* Reviews summary card: Yelp/Google brand pills. SVG icons ship as
    `fill="white"`. In light theme the resting bg (#303030 → pale grey)
    hides them, so invert to near-black at rest. On hover the bg flips
