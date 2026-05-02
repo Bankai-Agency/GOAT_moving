@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { TruckSvg } from "@/components/motion/TruckSvg";
+import { useDirectionalHover } from "@/components/motion/useDirectionalHover";
 
 const defaults = {
   heading: "Ready to experience the difference?",
@@ -14,6 +15,7 @@ const defaults = {
 
 export function CTAArrivalBanner() {
   const sectionRef = useRef<HTMLElement>(null);
+  const ctaButtonRef = useDirectionalHover<HTMLButtonElement>();
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start end", "end start"],
@@ -93,9 +95,12 @@ export function CTAArrivalBanner() {
                   {defaults.tagline}
                 </p>
                 <button
+                  ref={ctaButtonRef}
                   onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
-                  className="bg-[#0c0c0c] text-white h-[40px] lg:h-[44px] px-5 lg:px-7 rounded-lg font-mono font-bold text-sm lg:text-base uppercase tracking-[-0.64px] leading-[1.2] flex items-center justify-center hover:bg-[#1a1a1a] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer whitespace-nowrap shrink-0"
+                  style={{ "--dir-circle-bg": "#FFE533" } as React.CSSProperties}
+                  className="dir-btn bg-[#0c0c0c] text-white h-[40px] lg:h-[44px] px-5 lg:px-7 rounded-lg font-mono font-bold text-sm lg:text-base uppercase tracking-[-0.64px] leading-[1.2] flex items-center justify-center hover:scale-[1.02] hover:text-[#0c0c0c] transition-all duration-300 ease-out cursor-pointer whitespace-nowrap shrink-0"
                 >
+                  <span className="dir-circle-wrap"><span className="dir-circle" /></span>
                   {defaults.buttonText}
                 </button>
               </div>

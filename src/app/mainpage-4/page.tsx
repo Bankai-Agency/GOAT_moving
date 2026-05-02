@@ -13,7 +13,6 @@ import { Touchbar } from "@/components/layout/Touchbar";
 import { QuoteModal } from "@/components/ui/QuoteModal";
 import { SmoothScrollProvider } from "@/components/motion/SmoothScrollProvider";
 import { GlobalScrollProvider } from "@/components/motion/GlobalScrollProvider";
-import { MoverCompanion } from "@/components/motion/MoverCompanion";
 import { RevealOnScroll } from "@/components/motion/RevealOnScroll";
 
 /* "The Move Journey" draft. Hero (truck arrives) → About (full-bleed
@@ -35,11 +34,7 @@ export default function MainpageFour() {
   return (
     <SmoothScrollProvider>
       <GlobalScrollProvider>
-        {/* Truck companion lives OUTSIDE .page-zoom so it uses real
-            viewport units. */}
-        <MoverCompanion />
-
-        <div className="page-zoom">
+        <div className="page-zoom theme-light">
           <Header />
           <main>
             <HeroArrivalSection />

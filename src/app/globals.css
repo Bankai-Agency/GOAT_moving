@@ -869,3 +869,47 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   box-shadow: 0 0 0 2px rgba(255, 229, 51, 0.2);
 }
 
+/* ───── Directional button hover (Osmo port).
+   Inserted INSIDE existing buttons — does not change their outer
+   shape/colors. The wrap clips a circular fill that scales from 0 to
+   1 on hover; the JS hook positions it under the cursor and sizes it
+   based on horizontal offset from center. The button's own children
+   need `position: relative; z-index: 1` so they sit above the circle.
+   `--dir-circle-bg` defaults to white but can be overridden per
+   button via inline style or a Tailwind arbitrary class. */
+.dir-circle-wrap {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.dir-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  border-radius: 50%;
+  background-color: var(--dir-circle-bg, #ffffff);
+  transform: translate(-50%, -50%) scale(0) rotate(0.001deg);
+  transition: transform 0.7s cubic-bezier(0.625, 0.05, 0, 1),
+              background-color 0.4s cubic-bezier(0.625, 0.05, 0, 1);
+}
+.dir-circle::before {
+  content: "";
+  display: block;
+  padding-top: 100%;
+}
+.dir-btn {
+  position: relative;
+  overflow: hidden;
+}
+.dir-btn:hover .dir-circle {
+  transform: translate(-50%, -50%) scale(1) rotate(0.001deg);
+}
+.dir-btn > *:not(.dir-circle-wrap) {
+  position: relative;
+  z-index: 1;
+}
+

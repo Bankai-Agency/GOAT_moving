@@ -4,6 +4,7 @@ import { Roboto_Mono } from "next/font/google";
 import { NavProgress } from "@/components/layout/NavProgress";
 import { ScrollReset } from "@/components/layout/ScrollReset";
 import { Analytics } from "@/components/seo/Analytics";
+import { ShutterTransition } from "@/components/motion/ShutterTransition";
 import "./globals.css";
 
 const geist = Geist({
@@ -62,6 +63,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <ScrollReset />
         <NavProgress />
+        <ShutterTransition />
         {children}
         <Analytics />
       </body>

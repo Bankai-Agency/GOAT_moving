@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRef } from "react";
 import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { RatingCards } from "@/components/ui/RatingCards";
+import { useDirectionalHover } from "@/components/motion/useDirectionalHover";
 
 const headlineLine1 = "Top-Rated Movers";
 const headlineLine2 = "in Vancouver, WA & Portland, OR";
@@ -41,6 +42,8 @@ function LetterStagger({ text, className, baseIndex = 0 }: { text: string; class
 
 export function HeroArrivalSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const ctaRef = useDirectionalHover<HTMLButtonElement>();
+  const outlineRef = useDirectionalHover<HTMLAnchorElement>();
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
@@ -105,14 +108,17 @@ export function HeroArrivalSection() {
                 className="flex flex-col lg:flex-row gap-3 lg:gap-6"
               >
                 <motion.button
+                  ref={ctaRef}
                   variants={{
                     hidden: { opacity: 0, y: 20, scale: 0.9 },
                     show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
                   }}
                   type="button"
                   onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
-                  className="btn-shine bg-[#FFE533] h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-[#0c0c0c] uppercase tracking-[-0.64px] leading-[1.2] hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer"
+                  style={{ "--dir-circle-bg": "#0c0c0c" } as React.CSSProperties}
+                  className="dir-btn btn-shine bg-[#FFE533] h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-[#0c0c0c] uppercase tracking-[-0.64px] leading-[1.2] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] hover:text-white transition-all duration-300 ease-out cursor-pointer"
                 >
+                  <span className="dir-circle-wrap"><span className="dir-circle" /></span>
                   Get Free Estimate
                 </motion.button>
                 <motion.div
@@ -122,9 +128,12 @@ export function HeroArrivalSection() {
                   }}
                 >
                   <Link
+                    ref={outlineRef}
                     href="#services"
-                    className="border border-white h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-white uppercase tracking-[-0.64px] leading-[1.2] hover:bg-white/10 hover:shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:scale-[1.02] transition-all duration-300 ease-out"
+                    style={{ "--dir-circle-bg": "#ffffff" } as React.CSSProperties}
+                    className="dir-btn border border-white h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-white uppercase tracking-[-0.64px] leading-[1.2] hover:shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:scale-[1.02] hover:text-[#0c0c0c] transition-all duration-300 ease-out"
                   >
+                    <span className="dir-circle-wrap"><span className="dir-circle" /></span>
                     Our Services
                   </Link>
                 </motion.div>
