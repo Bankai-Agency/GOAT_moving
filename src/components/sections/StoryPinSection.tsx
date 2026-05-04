@@ -72,10 +72,17 @@ const label = "What We Do";
 const heading = "Four ways we move your life";
 const subtitle = "Pick the service that fits — every move comes with the same crew, same insurance, same flat-rate honesty.";
 
+/* Slot height per card (in viewport units). Cards have a slight
+   negative margin so each new card's top peek over the previous.   */
+const CARD_VH = 90;
+const OVERLAP_VH = 12;
+
 export function StoryPinSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
+  const bgLayerRef = useRef<HTMLDivElement>(null);
+  const bgRefs = useRef<HTMLDivElement[]>([]);
+  const cardRefs = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -92,12 +99,21 @@ export function StoryPinSection() {
         });
       }
 
-      /* Each card: as it enters viewport, stagger its three columns
-         in. The center image rises slightly with a small parallax tied
-         to scroll so it feels like it floats over the card while you
-         pass it. */
-      const cards = cardsRef.current?.querySelectorAll<HTMLElement>("[data-service-card]") ?? [];
-      cards.forEach((card) => {
+      /* Background cross-fade — driven by which card is currently
+         centered in the viewport. Each card has a corresponding bg
+         layer; we tween its opacity to 1 when its card enters the
+         viewport center, and to 0 when leaves. */
+      cardRefs.current.forEach((card, i) => {
+        const bg = bgRefs.current[i];
+        if (!card || !bg) return;
+        gsap.set(bg, { opacity: i === 0 ? 1 : 0 });
+
+        ScrollTriggerActivator(card, bg, bgRefs.current);
+      });
+
+      /* Card reveal — three columns stagger in as each card hits the
+         viewport. */
+      cardRefs.current.forEach((card) => {
         const left = card.querySelector<HTMLElement>("[data-card-left]");
         const center = card.querySelector<HTMLElement>("[data-card-center]");
         const right = card.querySelector<HTMLElement>("[data-card-right]");
@@ -122,7 +138,6 @@ export function StoryPinSection() {
           });
         }
 
-        /* Image float — moves slightly up as the card scrolls past. */
         const img = card.querySelector<HTMLElement>("[data-card-img]");
         if (img) {
           gsap.fromTo(
@@ -142,8 +157,34 @@ export function StoryPinSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="services" className="bg-[#0c0c0c] px-4 py-[60px] lg:py-[100px]">
-      <div className="max-w-[1408px] mx-auto flex flex-col gap-8 lg:gap-16">
+    <section ref={sectionRef} id="services" className="relative bg-[#0c0c0c] px-4 py-[60px] lg:py-[100px] overflow-hidden">
+      {/* Sticky blurred background layer — each service has its own
+          bg image stacked here, fading in when its card is in view. */}
+      <div ref={bgLayerRef} className="absolute inset-0 pointer-events-none">
+        <div className="sticky top-0 h-screen w-full">
+          {services.map((s, i) => (
+            <div
+              key={s.title}
+              ref={(el) => {
+                if (el) bgRefs.current[i] = el;
+              }}
+              className="absolute inset-0 will-change-[opacity]"
+            >
+              <Image
+                src={s.image}
+                alt=""
+                fill
+                priority={i === 0}
+                className="object-cover scale-110"
+                style={{ filter: "blur(60px) saturate(1.05) brightness(0.85)" }}
+              />
+              <div className="absolute inset-0 bg-black/40" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="relative max-w-[1408px] mx-auto flex flex-col gap-8 lg:gap-16">
         <div ref={headerRef} className="flex flex-col gap-6 lg:gap-12">
           <div className="border-b border-white/16 pb-4 lg:pb-6">
             <div className="flex items-center gap-2.5">
@@ -163,9 +204,21 @@ export function StoryPinSection() {
           </div>
         </div>
 
-        <div ref={cardsRef} className="flex flex-col gap-8 lg:gap-16">
-          {services.map((s) => (
-            <ServiceCard key={s.title} service={s} />
+        <div className="flex flex-col">
+          {services.map((s, i) => (
+            <div
+              key={s.title}
+              ref={(el) => {
+                if (el) cardRefs.current[i] = el;
+              }}
+              className="relative"
+              style={{
+                marginTop: i === 0 ? 0 : `-${OVERLAP_VH}vh`,
+                minHeight: `${CARD_VH}vh`,
+              }}
+            >
+              <ServiceCard service={s} />
+            </div>
           ))}
         </div>
       </div>
@@ -173,13 +226,35 @@ export function StoryPinSection() {
   );
 }
 
+/* Wires a card to its background image: bg fades in as the card
+   reaches viewport center, and fades back out as it leaves. Other
+   bgs are not touched here — each card has its own activator, so a
+   later card's "fade in" naturally overlays the earlier one. */
+function ScrollTriggerActivator(card: HTMLElement, bg: HTMLElement, allBgs: HTMLElement[]) {
+  gsap.to(bg, {
+    opacity: 1,
+    ease: "none",
+    scrollTrigger: {
+      trigger: card,
+      start: "top 60%",
+      end: "top 30%",
+      scrub: true,
+      onEnter: () => fadeOthers(bg, allBgs),
+      onEnterBack: () => fadeOthers(bg, allBgs),
+    },
+  });
+}
+
+function fadeOthers(active: HTMLElement, all: HTMLElement[]) {
+  all.forEach((bg) => {
+    if (bg === active) return;
+    gsap.to(bg, { opacity: 0, duration: 0.6, ease: "power2.out" });
+  });
+}
+
 function ServiceCard({ service }: { service: Service }) {
   return (
-    <article
-      data-service-card
-      className="relative bg-[#181818] rounded-2xl overflow-visible grid grid-cols-1 lg:grid-cols-12 gap-0 min-h-[520px]"
-    >
-      {/* Left — big editorial heading + service tag */}
+    <article className="relative bg-[#181818] rounded-2xl overflow-visible grid grid-cols-1 lg:grid-cols-12 gap-0 min-h-[520px]">
       <div
         data-card-left
         className="lg:col-span-3 flex flex-col justify-between p-8 lg:p-12 gap-12 lg:gap-0 min-h-[260px]"
@@ -195,7 +270,6 @@ function ServiceCard({ service }: { service: Service }) {
         </div>
       </div>
 
-      {/* Center — oversized image that overflows the card top + bottom */}
       <div
         data-card-center
         className="lg:col-span-5 relative overflow-visible min-h-[320px] lg:min-h-[520px]"
@@ -214,11 +288,7 @@ function ServiceCard({ service }: { service: Service }) {
         </div>
       </div>
 
-      {/* Right — title, description, price, CTAs */}
-      <div
-        data-card-right
-        className="lg:col-span-4 flex flex-col gap-6 p-8 lg:p-12"
-      >
+      <div data-card-right className="lg:col-span-4 flex flex-col gap-6 p-8 lg:p-12">
         <h4 className="font-sans font-semibold text-[28px] lg:text-[36px] leading-[1.1] tracking-[-1px] text-white">
           {service.title}
         </h4>

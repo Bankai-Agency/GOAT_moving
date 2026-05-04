@@ -39,47 +39,7 @@ export function HeroArrivalSection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      /* Letter stagger reveal */
-      const letters = headlineRef.current?.querySelectorAll<HTMLElement>("[data-letter]") ?? [];
-      gsap.set(letters, { opacity: 0, y: 80, rotateX: -45 });
-      gsap.to(letters, {
-        opacity: 1,
-        y: 0,
-        rotateX: 0,
-        duration: 0.7,
-        ease: "power3.out",
-        stagger: 0.025,
-        delay: 0.1,
-      });
-
-      /* Subtitle + buttons + rating cards (sequential) */
-      gsap.from(subRef.current, {
-        opacity: 0,
-        y: 30,
-        duration: 0.7,
-        ease: "power3.out",
-        delay: 1.55,
-      });
-      const btnEls = buttonsRef.current?.querySelectorAll<HTMLElement>(":scope > *") ?? [];
-      gsap.from(btnEls, {
-        opacity: 0,
-        y: 20,
-        scale: 0.9,
-        duration: 0.5,
-        ease: "power3.out",
-        stagger: 0.12,
-        delay: 1.7,
-      });
-      gsap.from(ratingRef.current, {
-        opacity: 0,
-        x: 80,
-        duration: 0.8,
-        ease: "power3.out",
-        delay: 1.9,
-      });
-
-      /* Scroll cue (delayed reveal + bouncing line) */
-      gsap.from(cueRef.current, { opacity: 0, y: -10, duration: 0.6, delay: 2.4 });
+      /* Scroll cue (just the bouncing line — no entrance animation). */
       const cueLine = cueRef.current?.querySelector<HTMLElement>("[data-cue-line]");
       if (cueLine) {
         gsap.fromTo(
@@ -90,7 +50,9 @@ export function HeroArrivalSection() {
       }
 
       /* Scroll-driven parallax (photo Y / scale, overlay opacity,
-         content y + opacity for the exit). */
+         content y + opacity for the exit). All on-load entrance
+         animations have been removed per user request — the hero
+         lands instantly and only animates as the user scrolls. */
       gsap.to(photoRef.current, {
         yPercent: 30,
         scale: 1.22,
