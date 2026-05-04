@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import { gsap } from "@/components/motion/gsap";
+import { gsap, registerGsapPlugins } from "@/components/motion/gsap";
 
 type Service = {
   number: string;
@@ -72,19 +72,16 @@ const label = "What We Do";
 const heading = "Four ways we move your life";
 const subtitle = "Pick the service that fits — every move comes with the same crew, same insurance, same flat-rate honesty.";
 
-/* Slot height per card (in viewport units). Cards have a slight
-   negative margin so each new card's top peek over the previous.   */
-const CARD_VH = 90;
-const OVERLAP_VH = 12;
-
 export function StoryPinSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const bgLayerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
   const bgRefs = useRef<HTMLDivElement[]>([]);
   const cardRefs = useRef<HTMLDivElement[]>([]);
 
   useEffect(() => {
+    registerGsapPlugins();
     const ctx = gsap.context(() => {
       /* Header reveal */
       if (headerRef.current) {
@@ -99,93 +96,62 @@ export function StoryPinSection() {
         });
       }
 
-      /* Background cross-fade — driven by which card is currently
-         centered in the viewport. Each card has a corresponding bg
-         layer; we tween its opacity to 1 when its card enters the
-         viewport center, and to 0 when leaves. */
-      cardRefs.current.forEach((card, i) => {
-        const bg = bgRefs.current[i];
-        if (!card || !bg) return;
-        gsap.set(bg, { opacity: i === 0 ? 1 : 0 });
+      const mql = window.matchMedia("(min-width: 1024px)");
+      if (!mql.matches || !trackRef.current || !pinRef.current) return;
 
-        ScrollTriggerActivator(card, bg, bgRefs.current);
+      const total = services.length;
+      const cards = cardRefs.current.filter(Boolean);
+      const bgs = bgRefs.current.filter(Boolean);
+      if (cards.length !== total || bgs.length !== total) return;
+
+      /* Initial state — only the first card visible, others stacked
+         off-screen below. First bg visible, rest at 0. */
+      gsap.set(cards, { yPercent: 100, autoAlpha: 1 });
+      gsap.set(cards[0], { yPercent: 0 });
+      gsap.set(bgs, { autoAlpha: 0 });
+      gsap.set(bgs[0], { autoAlpha: 1 });
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: trackRef.current,
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 0.4,
+          pin: pinRef.current,
+          pinSpacing: true,
+          anticipatePin: 1,
+        },
       });
 
-      /* Card reveal — three columns stagger in as each card hits the
-         viewport. */
-      cardRefs.current.forEach((card) => {
-        const left = card.querySelector<HTMLElement>("[data-card-left]");
-        const center = card.querySelector<HTMLElement>("[data-card-center]");
-        const right = card.querySelector<HTMLElement>("[data-card-right]");
-
-        if (left && center && right) {
-          gsap.from([left, right], {
-            scrollTrigger: { trigger: card, start: "top 75%" },
-            y: 60,
-            opacity: 0,
-            duration: 0.9,
-            stagger: 0.15,
-            ease: "power3.out",
-          });
-          gsap.from(center, {
-            scrollTrigger: { trigger: card, start: "top 75%" },
-            y: 80,
-            scale: 0.92,
-            opacity: 0,
-            duration: 1,
-            ease: "power3.out",
-            delay: 0.05,
-          });
-        }
-
-        const img = card.querySelector<HTMLElement>("[data-card-img]");
-        if (img) {
-          gsap.fromTo(
-            img,
-            { yPercent: 6 },
-            {
-              yPercent: -6,
-              ease: "none",
-              scrollTrigger: { trigger: card, start: "top bottom", end: "bottom top", scrub: true },
-            }
-          );
-        }
-      });
+      /* For each transition i → i+1, the previous card slides up out
+         of view while the next card slides in from below; bg
+         cross-fades. Each transition takes 1 unit of timeline (the
+         track is sized so the pin holds for `total` viewport heights,
+         giving each transition roughly one viewport of scroll). */
+      for (let i = 1; i < total; i++) {
+        const at = i - 1;
+        tl.to(cards[i - 1], { yPercent: -100, ease: "power2.in", duration: 1 }, at);
+        tl.fromTo(
+          cards[i],
+          { yPercent: 100 },
+          { yPercent: 0, ease: "power2.out", duration: 1 },
+          at
+        );
+        tl.to(bgs[i - 1], { autoAlpha: 0, ease: "power2.in", duration: 1 }, at);
+        tl.to(bgs[i], { autoAlpha: 1, ease: "power2.out", duration: 1 }, at);
+      }
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  return (
-    <section ref={sectionRef} id="services" className="relative bg-[#0c0c0c] px-4 py-[60px] lg:py-[100px] overflow-hidden">
-      {/* Sticky blurred background layer — each service has its own
-          bg image stacked here, fading in when its card is in view. */}
-      <div ref={bgLayerRef} className="absolute inset-0 pointer-events-none">
-        <div className="sticky top-0 h-screen w-full">
-          {services.map((s, i) => (
-            <div
-              key={s.title}
-              ref={(el) => {
-                if (el) bgRefs.current[i] = el;
-              }}
-              className="absolute inset-0 will-change-[opacity]"
-            >
-              <Image
-                src={s.image}
-                alt=""
-                fill
-                priority={i === 0}
-                className="object-cover scale-110"
-                style={{ filter: "blur(60px) saturate(1.05) brightness(0.85)" }}
-              />
-              <div className="absolute inset-0 bg-black/40" />
-            </div>
-          ))}
-        </div>
-      </div>
+  const total = services.length;
 
-      <div className="relative max-w-[1408px] mx-auto flex flex-col gap-8 lg:gap-16">
-        <div ref={headerRef} className="flex flex-col gap-6 lg:gap-12">
+  return (
+    <section ref={sectionRef} id="services" className="bg-[#0c0c0c] overflow-hidden">
+      {/* Header (normal flow above the pinned moment) */}
+      <div className="px-4 pt-[60px] lg:pt-[100px] pb-8 lg:pb-16">
+        <div ref={headerRef} className="max-w-[1408px] mx-auto flex flex-col gap-6 lg:gap-12">
           <div className="border-b border-white/16 pb-4 lg:pb-6">
             <div className="flex items-center gap-2.5">
               <span className="w-2 h-2 rounded-full bg-[#FFE533]" />
@@ -203,58 +169,89 @@ export function StoryPinSection() {
             </p>
           </div>
         </div>
+      </div>
 
-        <div className="flex flex-col">
+      {/* Mobile: simple stack of cards (no pin). */}
+      <div className="lg:hidden px-4 pb-[60px] flex flex-col gap-6">
+        {services.map((s) => (
+          <div key={s.title} className="relative">
+            <ServiceCard service={s} />
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: scroll-pinned card carousel. The outer track is N
+          viewport-heights tall; while it scrolls, the sticky inner
+          stays in view and the timeline above swaps cards + bg. */}
+      <div
+        ref={trackRef}
+        className="hidden lg:block relative"
+        style={{ height: `${total * 100}vh` }}
+      >
+        <div
+          ref={pinRef}
+          className="h-screen w-full relative overflow-hidden"
+        >
+          {/* Stacked blurred backgrounds — one per service. */}
           {services.map((s, i) => (
             <div
-              key={s.title}
+              key={`bg-${s.title}`}
               ref={(el) => {
-                if (el) cardRefs.current[i] = el;
+                if (el) bgRefs.current[i] = el;
               }}
-              className="relative"
-              style={{
-                marginTop: i === 0 ? 0 : `-${OVERLAP_VH}vh`,
-                minHeight: `${CARD_VH}vh`,
-              }}
+              className="absolute inset-0 will-change-[opacity]"
             >
-              <ServiceCard service={s} />
+              <Image
+                src={s.image}
+                alt=""
+                fill
+                priority={i === 0}
+                sizes="100vw"
+                className="object-cover scale-125"
+                style={{ filter: "blur(64px) saturate(1.05) brightness(0.7)" }}
+              />
+              <div className="absolute inset-0 bg-black/35" />
             </div>
           ))}
+
+          {/* Stacked cards — only one is in view at a time. */}
+          <div className="relative h-full flex items-center justify-center px-4">
+            <div className="relative w-full max-w-[1408px] h-[80vh]">
+              {services.map((s, i) => (
+                <div
+                  key={`card-${s.title}`}
+                  ref={(el) => {
+                    if (el) cardRefs.current[i] = el;
+                  }}
+                  className="absolute inset-0 will-change-transform"
+                >
+                  <ServiceCard service={s} />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Progress indicator (top-right) */}
+          <ProgressIndicator total={total} />
         </div>
       </div>
     </section>
   );
 }
 
-/* Wires a card to its background image: bg fades in as the card
-   reaches viewport center, and fades back out as it leaves. Other
-   bgs are not touched here — each card has its own activator, so a
-   later card's "fade in" naturally overlays the earlier one. */
-function ScrollTriggerActivator(card: HTMLElement, bg: HTMLElement, allBgs: HTMLElement[]) {
-  gsap.to(bg, {
-    opacity: 1,
-    ease: "none",
-    scrollTrigger: {
-      trigger: card,
-      start: "top 60%",
-      end: "top 30%",
-      scrub: true,
-      onEnter: () => fadeOthers(bg, allBgs),
-      onEnterBack: () => fadeOthers(bg, allBgs),
-    },
-  });
-}
-
-function fadeOthers(active: HTMLElement, all: HTMLElement[]) {
-  all.forEach((bg) => {
-    if (bg === active) return;
-    gsap.to(bg, { opacity: 0, duration: 0.6, ease: "power2.out" });
-  });
+function ProgressIndicator({ total }: { total: number }) {
+  return (
+    <div className="absolute top-6 right-8 flex items-center gap-2 font-mono text-xs uppercase tracking-[2px] text-white/70">
+      <span>0{1}</span>
+      <span className="w-12 h-px bg-white/30" />
+      <span>0{total}</span>
+    </div>
+  );
 }
 
 function ServiceCard({ service }: { service: Service }) {
   return (
-    <article className="relative bg-[#181818] rounded-2xl overflow-visible grid grid-cols-1 lg:grid-cols-12 gap-0 min-h-[520px]">
+    <article className="relative h-full bg-[#181818] rounded-2xl overflow-visible grid grid-cols-1 lg:grid-cols-12 gap-0 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]">
       <div
         data-card-left
         className="lg:col-span-3 flex flex-col justify-between p-8 lg:p-12 gap-12 lg:gap-0 min-h-[260px]"
@@ -272,20 +269,15 @@ function ServiceCard({ service }: { service: Service }) {
 
       <div
         data-card-center
-        className="lg:col-span-5 relative overflow-visible min-h-[320px] lg:min-h-[520px]"
+        className="lg:col-span-5 relative overflow-hidden min-h-[320px] lg:min-h-0"
       >
-        <div
-          data-card-img
-          className="absolute inset-x-4 lg:inset-x-0 lg:-top-12 lg:-bottom-8 top-0 bottom-0 will-change-transform"
-        >
-          <Image
-            src={service.image}
-            alt={service.imageAlt}
-            fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover rounded-xl lg:rounded-2xl"
-          />
-        </div>
+        <Image
+          src={service.image}
+          alt={service.imageAlt}
+          fill
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          className="object-cover"
+        />
       </div>
 
       <div data-card-right className="lg:col-span-4 flex flex-col gap-6 p-8 lg:p-12">

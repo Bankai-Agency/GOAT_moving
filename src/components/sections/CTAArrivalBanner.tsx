@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import { gsap } from "@/components/motion/gsap";
+import { gsap, registerGsapPlugins } from "@/components/motion/gsap";
 import { TruckSvg } from "@/components/motion/TruckSvg";
 import { useDirectionalHover } from "@/components/motion/useDirectionalHover";
 
@@ -23,6 +23,7 @@ export function CTAArrivalBanner() {
   const ctaButtonRef = useDirectionalHover<HTMLButtonElement>();
 
   useEffect(() => {
+    registerGsapPlugins();
     const ctx = gsap.context(() => {
       /* Photo parallax — full section scroll. */
       gsap.fromTo(

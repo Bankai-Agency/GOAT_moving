@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { gsap, ScrollTrigger } from "@/components/motion/gsap";
+import { gsap, registerGsapPlugins } from "@/components/motion/gsap";
 
 type AboutStat = { icon: string; value: string; label: string };
 
@@ -64,6 +64,7 @@ export function AboutMotionSection() {
   /* Header reveal + count-up + pinned video moment, all in one
      gsap.context so cleanup is one call. */
   useEffect(() => {
+    registerGsapPlugins();
     const ctx = gsap.context(() => {
       /* Header stagger reveal */
       gsap.from([labelRef.current, headingRef.current, descRef.current], {

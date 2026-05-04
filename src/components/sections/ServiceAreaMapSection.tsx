@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { gsap } from "@/components/motion/gsap";
+import { gsap, registerGsapPlugins } from "@/components/motion/gsap";
 import { TruckSvg } from "@/components/motion/TruckSvg";
 
 type City = { name: string; sub?: string; t: number; x: number; y: number };
@@ -35,6 +35,7 @@ export function ServiceAreaMapSection() {
   const pinsRef = useRef<SVGGElement[]>([]);
 
   useEffect(() => {
+    registerGsapPlugins();
     const ctx = gsap.context(() => {
       /* Header reveal */
       if (headerRef.current) {

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import { gsap } from "@/components/motion/gsap";
+import { gsap, registerGsapPlugins } from "@/components/motion/gsap";
 import { RatingCards } from "@/components/ui/RatingCards";
 import { useDirectionalHover } from "@/components/motion/useDirectionalHover";
 
@@ -38,6 +38,7 @@ export function HeroArrivalSection() {
   const outlineRef = useDirectionalHover<HTMLAnchorElement>();
 
   useEffect(() => {
+    registerGsapPlugins();
     const ctx = gsap.context(() => {
       /* Scroll cue (just the bouncing line — no entrance animation). */
       const cueLine = cueRef.current?.querySelector<HTMLElement>("[data-cue-line]");
