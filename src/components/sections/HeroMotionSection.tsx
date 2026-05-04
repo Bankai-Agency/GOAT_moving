@@ -76,7 +76,7 @@ export function HeroMotionSection() {
           {/* Left — heading + CTA */}
           <div className="flex flex-col gap-4 lg:gap-6">
             <h1 className="font-sans font-bold text-[40px] lg:text-[96px] leading-none tracking-[-1.2px] lg:tracking-[-2.88px]">
-              <LetterStagger text={headlineLine1} className="text-white/60" />
+              <LetterStagger text={headlineLine1} className="text-[#FFE533]" />
               <br />
               <LetterStagger text={headlineLine2} className="text-white" baseIndex={headlineLine1.length} />
             </h1>

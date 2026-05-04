@@ -55,7 +55,7 @@ function ContactsHeroWithCards() {
       <div className="max-w-[1408px] mx-auto flex flex-col gap-10 lg:gap-14">
         <div className="flex flex-col gap-4 lg:gap-5">
           <h1 className="font-sans font-bold text-[36px] lg:text-[72px] leading-none tracking-[-1.08px] lg:tracking-[-2.16px]">
-            <span className="text-white/60">Get In </span>
+            <span className="text-[#FFE533]">Get In </span>
             <span className="text-white">Touch</span>
           </h1>
           <p className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white/60 max-w-[540px]">

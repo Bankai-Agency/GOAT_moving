@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { gsap, registerGsapPlugins } from "@/components/motion/gsap";
-import { TruckSvg } from "@/components/motion/TruckSvg";
 import { useDirectionalHover } from "@/components/motion/useDirectionalHover";
 
 const defaults = {
@@ -17,8 +16,6 @@ export function CTAArrivalBanner() {
   const sectionRef = useRef<HTMLElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
-  const truckRef = useRef<HTMLDivElement>(null);
-  const headlightRef = useRef<HTMLDivElement>(null);
   const islandRef = useRef<HTMLDivElement>(null);
   const ctaButtonRef = useDirectionalHover<HTMLButtonElement>();
 
@@ -49,39 +46,7 @@ export function CTAArrivalBanner() {
         }
       );
 
-      /* Truck arrives + parks (desktop only). */
-      const mql = window.matchMedia("(min-width: 1024px)");
-      if (mql.matches && truckRef.current) {
-        gsap.fromTo(
-          truckRef.current,
-          { xPercent: 120, opacity: 0 },
-          {
-            xPercent: 0,
-            opacity: 1,
-            ease: "power3.out",
-            scrollTrigger: { trigger: sectionRef.current, start: "top 70%", end: "center 60%", scrub: true },
-          }
-        );
-        gsap.to(truckRef.current, {
-          xPercent: -8,
-          opacity: 0,
-          ease: "power2.in",
-          scrollTrigger: { trigger: sectionRef.current, start: "center 50%", end: "bottom top", scrub: true },
-        });
-        if (headlightRef.current) {
-          gsap.fromTo(
-            headlightRef.current,
-            { opacity: 0 },
-            {
-              opacity: 1,
-              ease: "power3.out",
-              scrollTrigger: { trigger: sectionRef.current, start: "top 50%", end: "center 50%", scrub: true },
-            }
-          );
-        }
-      }
-
-      /* Yellow island slides up after the truck has parked. */
+      /* Yellow island slides up. */
       gsap.fromTo(
         islandRef.current,
         { yPercent: 120, opacity: 0 },
@@ -117,15 +82,6 @@ export function CTAArrivalBanner() {
               <h2 className="font-sans font-bold text-[32px] lg:text-[56px] leading-[1.1] tracking-[-0.96px] lg:tracking-[-2.24px] text-white max-w-[600px]">
                 {defaults.heading}
               </h2>
-            </div>
-
-            <div ref={truckRef} className="hidden lg:block absolute bottom-[120px] left-[12%] origin-bottom-left">
-              <TruckSvg width={260} height={130} headlightsOn />
-              <div
-                ref={headlightRef}
-                className="absolute left-[-180px] bottom-[20px] w-[180px] h-[40px] rounded-full"
-                style={{ background: "radial-gradient(closest-side, rgba(255,229,51,0.55), transparent)" }}
-              />
             </div>
 
             <div ref={islandRef} className="absolute bottom-4 lg:bottom-6 left-4 lg:left-6 right-4 lg:right-6">

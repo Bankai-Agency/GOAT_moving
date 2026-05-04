@@ -38,7 +38,7 @@ export default function ThankYouPage() {
             </div>
 
             <h1 className="font-sans font-bold text-[28px] sm:text-[34px] lg:text-[48px] leading-[1.1] tracking-[-1.12px] lg:tracking-[-1.92px] text-white whitespace-nowrap">
-              <span className="text-white/60">Thanks! </span>
+              <span className="text-[#FFE533]">Thanks! </span>
               <span className="text-white">Your request is in.</span>
             </h1>
 

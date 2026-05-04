@@ -40,7 +40,7 @@ export default function PrivacyPolicyPage() {
         <section className="bg-[#0c0c0c] px-4 pt-6 lg:pt-10 pb-10 lg:pb-12">
           <div className="max-w-[840px] mx-auto flex flex-col gap-4 lg:gap-5">
             <h1 className="font-sans font-bold text-[36px] lg:text-[64px] leading-[1.1] tracking-[-1.44px] lg:tracking-[-2.56px]">
-              <span className="text-white/60">Privacy </span>
+              <span className="text-[#FFE533]">Privacy </span>
               <span className="text-white">Policy</span>
             </h1>
             <p className="font-mono font-medium text-xs lg:text-sm uppercase tracking-[-0.48px] text-white/40">

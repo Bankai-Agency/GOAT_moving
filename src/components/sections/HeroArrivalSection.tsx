@@ -104,7 +104,7 @@ export function HeroArrivalSection() {
               className="font-sans font-bold text-[40px] lg:text-[96px] leading-none tracking-[-1.2px] lg:tracking-[-2.88px]"
               style={{ perspective: "1000px" }}
             >
-              <span className="text-white/60">{splitToLetters(headlineLine1)}</span>
+              <span className="text-[#FFE533]">{splitToLetters(headlineLine1)}</span>
               <br />
               <span className="text-white">{splitToLetters(headlineLine2)}</span>
             </h1>

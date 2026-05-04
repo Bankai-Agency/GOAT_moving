@@ -35,6 +35,7 @@ html {
 
 /* Proportional page zoom — reference design is 1728px (16" MacBook).
    Smaller desktops get a uniform scale-down so everything looks identical. */
+.page-zoom { --zoom-comp: 1; } /* fallback for < 1024 — must come before media queries so they can override */
 @media (min-width: 1024px) {
   .page-zoom { zoom: 0.7;  --zoom-comp: 1.4286; }
 }
@@ -50,7 +51,6 @@ html {
 @media (min-width: 1728px) {
   .page-zoom { zoom: 1;    --zoom-comp: 1; }
 }
-.page-zoom { --zoom-comp: 1; } /* fallback for < 1024 */
 
 /* (Removed `.unzoom` helper — CSS zoom doesn't compound cleanly
    in Chrome, the visual sizes were off by ~5-15%. Sections that

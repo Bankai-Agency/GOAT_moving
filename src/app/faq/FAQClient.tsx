@@ -73,7 +73,7 @@ function FAQHero() {
     <section className="relative bg-[#0c0c0c] overflow-hidden">
       <div className="max-w-[1408px] mx-auto px-4 pt-6 lg:pt-10 pb-[40px] lg:pb-[60px]">
         <h1 className="font-sans font-bold text-[36px] lg:text-[64px] leading-[1.1] tracking-[-1.44px] lg:tracking-[-2.56px]">
-          <span className="text-white/60">Frequently Asked </span>
+          <span className="text-[#FFE533]">Frequently Asked </span>
           <span className="text-white">Questions</span>
         </h1>
       </div>

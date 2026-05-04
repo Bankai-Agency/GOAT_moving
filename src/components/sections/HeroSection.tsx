@@ -10,7 +10,7 @@ export function HeroSection() {
       {/* Background image + overlay */}
       <div className="absolute inset-0">
         <Image
-          src="/images/home-hero.jpg"
+          src="/images/home-hero.png"
           alt="Professional movers at work"
           fill
           sizes="(max-width: 1024px) 200vw, 100vw"
@@ -28,7 +28,7 @@ export function HeroSection() {
           <div className="flex flex-col gap-4 lg:gap-6">
             {/* H1 */}
             <h1 className="font-sans font-bold text-[40px] lg:text-[96px] leading-none tracking-[-1.2px] lg:tracking-[-2.88px]">
-              <span className="text-white/60">Top-Rated Movers </span>
+              <span className="text-[#FFE533]">Top-Rated Movers </span>
               <br />
               <span className="text-white">in Vancouver, WA & Portland, OR</span>
             </h1>
