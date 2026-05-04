@@ -121,6 +121,7 @@ export function AboutMotionSection() {
             scrub: true,
             pin: stickyRef.current,
             pinSpacing: false,
+            pinType: "transform",
           },
         });
         /* Scale 0.55 → 1.6 → 0.55, radius 16 → 0 → 16 over the track. */

@@ -119,6 +119,7 @@ export function StoryPinSection() {
           scrub: 0.4,
           pin: pinRef.current,
           pinSpacing: true,
+          pinType: "transform",
           anticipatePin: 1,
         },
       });
