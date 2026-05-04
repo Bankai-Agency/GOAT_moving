@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { gsap } from "@/components/motion/gsap";
 import { TruckSvg } from "@/components/motion/TruckSvg";
 import { useDirectionalHover } from "@/components/motion/useDirectionalHover";
 
@@ -15,37 +15,92 @@ const defaults = {
 
 export function CTAArrivalBanner() {
   const sectionRef = useRef<HTMLElement>(null);
+  const photoRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
+  const truckRef = useRef<HTMLDivElement>(null);
+  const headlightRef = useRef<HTMLDivElement>(null);
+  const islandRef = useRef<HTMLDivElement>(null);
   const ctaButtonRef = useDirectionalHover<HTMLButtonElement>();
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
 
-  /* Photo parallax */
-  const photoY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
-  const photoScale = useTransform(scrollYProgress, [0, 1], [1.08, 1.02]);
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      /* Photo parallax — full section scroll. */
+      gsap.fromTo(
+        photoRef.current,
+        { yPercent: -8, scale: 1.08 },
+        {
+          yPercent: 8,
+          scale: 1.02,
+          ease: "none",
+          scrollTrigger: { trigger: sectionRef.current, start: "top bottom", end: "bottom top", scrub: true },
+        }
+      );
 
-  /* Truck arrives from off-screen right and parks at ~25% from left
-     of the panel as the section crosses the viewport center. */
-  const truckX = useTransform(scrollYProgress, [0.15, 0.55, 0.85], ["120%", "0%", "-8%"]);
-  const truckOpacity = useTransform(scrollYProgress, [0.1, 0.2, 0.85, 0.95], [0, 1, 1, 0]);
-  const headlightsOn = useTransform(scrollYProgress, [0.4, 0.55], [0, 1]);
+      /* Heading rises in early. */
+      gsap.fromTo(
+        headingRef.current,
+        { y: 40, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: sectionRef.current, start: "top 80%", end: "top 50%", scrub: true },
+        }
+      );
 
-  /* Yellow island slides up once the truck has parked. */
-  const islandY = useTransform(scrollYProgress, [0.5, 0.7], ["120%", "0%"]);
-  const islandOpacity = useTransform(scrollYProgress, [0.5, 0.65], [0, 1]);
+      /* Truck arrives + parks (desktop only). */
+      const mql = window.matchMedia("(min-width: 1024px)");
+      if (mql.matches && truckRef.current) {
+        gsap.fromTo(
+          truckRef.current,
+          { xPercent: 120, opacity: 0 },
+          {
+            xPercent: 0,
+            opacity: 1,
+            ease: "power3.out",
+            scrollTrigger: { trigger: sectionRef.current, start: "top 70%", end: "center 60%", scrub: true },
+          }
+        );
+        gsap.to(truckRef.current, {
+          xPercent: -8,
+          opacity: 0,
+          ease: "power2.in",
+          scrollTrigger: { trigger: sectionRef.current, start: "center 50%", end: "bottom top", scrub: true },
+        });
+        if (headlightRef.current) {
+          gsap.fromTo(
+            headlightRef.current,
+            { opacity: 0 },
+            {
+              opacity: 1,
+              ease: "power3.out",
+              scrollTrigger: { trigger: sectionRef.current, start: "top 50%", end: "center 50%", scrub: true },
+            }
+          );
+        }
+      }
 
-  /* Heading fades in early. */
-  const headingY = useTransform(scrollYProgress, [0.15, 0.35], [40, 0]);
-  const headingOpacity = useTransform(scrollYProgress, [0.15, 0.35], [0, 1]);
+      /* Yellow island slides up after the truck has parked. */
+      gsap.fromTo(
+        islandRef.current,
+        { yPercent: 120, opacity: 0 },
+        {
+          yPercent: 0,
+          opacity: 1,
+          ease: "power3.out",
+          scrollTrigger: { trigger: sectionRef.current, start: "center 60%", end: "bottom 70%", scrub: true },
+        }
+      );
+    }, sectionRef);
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section ref={sectionRef} id="cta" className="bg-[#0c0c0c] px-4 py-[60px] lg:py-[80px]">
       <div className="max-w-[1408px] mx-auto">
         <div className="relative rounded-2xl lg:rounded-3xl overflow-hidden">
           <div className="relative h-[600px] lg:h-[640px]">
-            {/* Background photo with subtle parallax */}
-            <motion.div className="absolute inset-0" style={{ y: photoY, scale: photoScale }}>
+            <div ref={photoRef} className="absolute inset-0 will-change-transform">
               <Image
                 src={defaults.image}
                 alt="GOAT Movers crew arriving"
@@ -54,42 +109,25 @@ export function CTAArrivalBanner() {
                 quality={90}
                 className="object-cover"
               />
-            </motion.div>
+            </div>
             <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/15 to-black/35 lg:from-black/35 lg:via-black/5 lg:to-black/25" />
 
-            {/* Heading top-left */}
-            <motion.div
-              className="absolute top-0 left-0 right-0 px-6 lg:px-12 pt-8 lg:pt-12"
-              style={{ y: headingY, opacity: headingOpacity }}
-            >
+            <div ref={headingRef} className="absolute top-0 left-0 right-0 px-6 lg:px-12 pt-8 lg:pt-12">
               <h2 className="font-sans font-bold text-[32px] lg:text-[56px] leading-[1.1] tracking-[-0.96px] lg:tracking-[-2.24px] text-white max-w-[600px]">
                 {defaults.heading}
               </h2>
-            </motion.div>
+            </div>
 
-            {/* Truck pulls up — desktop only (the arrival beat). */}
-            <motion.div
-              className="hidden lg:block absolute bottom-[120px] left-[12%] origin-bottom-left"
-              style={{ x: truckX, opacity: truckOpacity }}
-            >
-              <motion.div style={{ opacity: 1 }}>
-                <TruckSvg width={260} height={130} headlightsOn />
-              </motion.div>
-              {/* Headlight glow on the wall to the left */}
-              <motion.div
+            <div ref={truckRef} className="hidden lg:block absolute bottom-[120px] left-[12%] origin-bottom-left">
+              <TruckSvg width={260} height={130} headlightsOn />
+              <div
+                ref={headlightRef}
                 className="absolute left-[-180px] bottom-[20px] w-[180px] h-[40px] rounded-full"
-                style={{
-                  background: "radial-gradient(closest-side, rgba(255,229,51,0.55), transparent)",
-                  opacity: headlightsOn,
-                }}
+                style={{ background: "radial-gradient(closest-side, rgba(255,229,51,0.55), transparent)" }}
               />
-            </motion.div>
+            </div>
 
-            {/* Yellow island bar drops down */}
-            <motion.div
-              className="absolute bottom-4 lg:bottom-6 left-4 lg:left-6 right-4 lg:right-6"
-              style={{ y: islandY, opacity: islandOpacity }}
-            >
+            <div ref={islandRef} className="absolute bottom-4 lg:bottom-6 left-4 lg:left-6 right-4 lg:right-6">
               <div className="bg-[#FFE533] rounded-xl lg:rounded-2xl px-5 lg:px-8 py-3 lg:py-3.5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
                 <p className="font-sans font-normal text-sm lg:text-base leading-[1.4] text-[#0c0c0c]/80 lg:whitespace-nowrap">
                   {defaults.tagline}
@@ -104,7 +142,7 @@ export function CTAArrivalBanner() {
                   {defaults.buttonText}
                 </button>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </div>

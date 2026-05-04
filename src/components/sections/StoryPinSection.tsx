@@ -2,49 +2,68 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRef } from "react";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
-import { fadeUp, staggerContainer } from "@/components/motion/variants";
+import { useEffect, useRef } from "react";
+import { gsap } from "@/components/motion/gsap";
 
-type ServicePanel = {
+type Service = {
   number: string;
+  tag: string;
+  leftHeading: string;
   title: string;
   description: string;
+  price: string;
   image: string;
+  imageAlt: string;
   href?: string;
 };
 
-const panels: ServicePanel[] = [
+const services: Service[] = [
   {
     number: "01",
+    tag: "Local Moving",
+    leftHeading: "Same crew, same hands, every box.",
     title: "Local Moving",
     description:
       "Residential moves within Vancouver, WA, Portland, OR, and surrounding areas. Packing, loading, transportation, unloading, and unpacking — all included with no hidden fees.",
+    price: "from $125 / hr",
     image: "/images/service-local.png",
+    imageAlt: "Local moving crew loading a truck",
     href: "/local-moving",
   },
   {
     number: "02",
+    tag: "Long Distance Moving",
+    leftHeading: "Across state lines without the small print.",
     title: "Long Distance Moving",
     description:
       "Interstate moves across the US from the Pacific Northwest. Fully licensed (USDOT #4232069) and insured for cross-state relocations of any size.",
+    price: "flat-rate quote",
     image: "/images/service-longdistance.jpg",
+    imageAlt: "Long distance truck on the highway",
     href: "/long-distance-moving",
   },
   {
     number: "03",
+    tag: "Commercial Moving",
+    leftHeading: "Move offices on the weekend, open Monday.",
     title: "Commercial Moving",
     description:
       "Office and commercial relocations in Vancouver and Portland with minimal downtime. We handle equipment, furniture, and sensitive documents safely and on schedule.",
+    price: "scheduled around you",
     image: "/images/service-commercial.png",
+    imageAlt: "Commercial movers transporting office furniture",
     href: "/commercial-moving",
   },
   {
     number: "04",
+    tag: "Packing & Labor",
+    leftHeading: "Pack like it's your grandmother's china.",
     title: "Packing & Labor",
     description:
       "Professional packing with quality materials for any size move. Same-building moves, loading/unloading labor, and expert handling of fragile and specialty items.",
+    price: "by-the-hour",
     image: "/images/service-packing.png",
+    imageAlt: "Packing crew wrapping fragile items",
     href: "/packing-services",
   },
 ];
@@ -53,159 +72,185 @@ const label = "What We Do";
 const heading = "Four ways we move your life";
 const subtitle = "Pick the service that fits — every move comes with the same crew, same insurance, same flat-rate honesty.";
 
-/* Lightship-style stacking card. CSS `top` sets the resting peek; the
-   y transform animates between off-screen "110%" entry and "0%"
-   resting. z-index per index keeps newer cards on top. */
-function PanelCard({
-  panel,
-  index,
-  total,
-  progress,
-}: {
-  panel: ServicePanel;
-  index: number;
-  total: number;
-  progress: MotionValue<number>;
-}) {
-  const peekPx = 56;
-  const restingTopPx = index * peekPx;
-  const slot = total > 1 ? 1 / (total - 1) : 1;
-  const enterStart = Math.max(0, (index - 1) * slot);
-  const enterEnd = Math.max(enterStart + 0.0001, index * slot);
-  const fromY = index === 0 ? "0%" : "110%";
-  const y = useTransform(progress, [enterStart, enterEnd], [fromY, "0%"]);
-  const shadowOpacity = useTransform(progress, [enterStart, enterEnd], [0, index === 0 ? 0 : 0.5]);
-
-  const body = (
-    <>
-      <Image src={panel.image} alt={panel.title} fill className="object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/10" />
-      <div className="absolute inset-0 flex flex-col justify-between p-8 lg:p-12">
-        <div className="flex items-start justify-between">
-          <span className="font-mono font-bold text-base uppercase tracking-[-0.64px] leading-[1.2] text-[#FFE533]">
-            {panel.number} / 0{total}
-          </span>
-          <span className="font-sans font-light text-[120px] lg:text-[200px] leading-none tracking-[-6px] text-white/[0.08] select-none">
-            {panel.number}
-          </span>
-        </div>
-        <div className="flex flex-col gap-4 max-w-[640px]">
-          <h3 className="font-sans font-semibold text-[32px] lg:text-[56px] leading-[1.1] tracking-[-1.12px] lg:tracking-[-1.68px] text-white">
-            {panel.title}
-          </h3>
-          <p className="font-sans font-normal text-base lg:text-lg leading-[1.4] text-white/85">
-            {panel.description}
-          </p>
-        </div>
-      </div>
-    </>
-  );
-
-  return (
-    <motion.div
-      style={{ y, zIndex: index + 1, top: `${restingTopPx}px` }}
-      className="absolute inset-x-0 h-full rounded-2xl overflow-hidden bg-[#181818]"
-    >
-      <motion.div
-        className="absolute inset-0 rounded-2xl pointer-events-none"
-        style={{ boxShadow: "0 -20px 40px -10px rgba(0,0,0,0.45)", opacity: shadowOpacity }}
-      />
-      {panel.href ? (
-        <Link href={panel.href} className="block w-full h-full">{body}</Link>
-      ) : (
-        <div className="block w-full h-full">{body}</div>
-      )}
-    </motion.div>
-  );
-}
-
 export function StoryPinSection() {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: trackRef,
-    offset: ["start start", "end end"],
-  });
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      /* Header reveal */
+      if (headerRef.current) {
+        const items = headerRef.current.querySelectorAll<HTMLElement>(":scope > *");
+        gsap.from(items, {
+          scrollTrigger: { trigger: headerRef.current, start: "top 80%" },
+          y: 40,
+          opacity: 0,
+          duration: 0.7,
+          stagger: 0.12,
+          ease: "power3.out",
+        });
+      }
+
+      /* Each card: as it enters viewport, stagger its three columns
+         in. The center image rises slightly with a small parallax tied
+         to scroll so it feels like it floats over the card while you
+         pass it. */
+      const cards = cardsRef.current?.querySelectorAll<HTMLElement>("[data-service-card]") ?? [];
+      cards.forEach((card) => {
+        const left = card.querySelector<HTMLElement>("[data-card-left]");
+        const center = card.querySelector<HTMLElement>("[data-card-center]");
+        const right = card.querySelector<HTMLElement>("[data-card-right]");
+
+        if (left && center && right) {
+          gsap.from([left, right], {
+            scrollTrigger: { trigger: card, start: "top 75%" },
+            y: 60,
+            opacity: 0,
+            duration: 0.9,
+            stagger: 0.15,
+            ease: "power3.out",
+          });
+          gsap.from(center, {
+            scrollTrigger: { trigger: card, start: "top 75%" },
+            y: 80,
+            scale: 0.92,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out",
+            delay: 0.05,
+          });
+        }
+
+        /* Image float — moves slightly up as the card scrolls past. */
+        const img = card.querySelector<HTMLElement>("[data-card-img]");
+        if (img) {
+          gsap.fromTo(
+            img,
+            { yPercent: 6 },
+            {
+              yPercent: -6,
+              ease: "none",
+              scrollTrigger: { trigger: card, start: "top bottom", end: "bottom top", scrub: true },
+            }
+          );
+        }
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section id="services" className="bg-[#0c0c0c] px-4 py-[60px] lg:py-[100px]">
+    <section ref={sectionRef} id="services" className="bg-[#0c0c0c] px-4 py-[60px] lg:py-[100px]">
       <div className="max-w-[1408px] mx-auto flex flex-col gap-8 lg:gap-16">
-        {/* Section header */}
-        <motion.div
-          className="flex flex-col gap-6 lg:gap-12"
-          variants={staggerContainer(0.12)}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.4 }}
-        >
-          <motion.div variants={fadeUp} className="border-b border-white/16 pb-4 lg:pb-6">
+        <div ref={headerRef} className="flex flex-col gap-6 lg:gap-12">
+          <div className="border-b border-white/16 pb-4 lg:pb-6">
             <div className="flex items-center gap-2.5">
               <span className="w-2 h-2 rounded-full bg-[#FFE533]" />
               <span className="font-mono font-bold text-sm lg:text-base uppercase tracking-[-0.64px] leading-[1.2] text-white/60">
                 {label}
               </span>
             </div>
-          </motion.div>
-
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 lg:gap-0">
-            <motion.h2
-              variants={fadeUp}
-              className="font-sans font-bold text-[32px] lg:text-[64px] leading-[1.2] tracking-[-1.28px] lg:tracking-[-2.56px] text-white max-w-[900px]"
-            >
-              {heading}
-            </motion.h2>
-            <motion.p
-              variants={fadeUp}
-              className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white/60 max-w-[450px]"
-            >
-              {subtitle}
-            </motion.p>
           </div>
-        </motion.div>
-
-        {/* Desktop: stacking-deck scroll track. */}
-        <div ref={trackRef} className="hidden lg:block relative" style={{ height: `${panels.length * 100}vh` }}>
-          <div className="sticky top-[10vh] h-[80vh] relative">
-            {panels.map((p, i) => (
-              <PanelCard key={p.title} panel={p} index={i} total={panels.length} progress={scrollYProgress} />
-            ))}
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-3 lg:gap-0">
+            <h2 className="font-sans font-bold text-[32px] lg:text-[64px] leading-[1.2] tracking-[-1.28px] lg:tracking-[-2.56px] text-white max-w-[900px]">
+              {heading}
+            </h2>
+            <p className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white/60 max-w-[450px]">
+              {subtitle}
+            </p>
           </div>
         </div>
 
-        {/* Mobile: simple stagger reveal. */}
-        <motion.div
-          className="grid grid-cols-1 gap-3 lg:hidden"
-          variants={staggerContainer(0.1)}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.2 }}
-        >
-          {panels.map((p) => (
-            <motion.div
-              key={p.title}
-              variants={fadeUp}
-              className="relative bg-[#181818] h-[360px] rounded-2xl overflow-hidden"
-            >
-              {p.href ? (
-                <Link href={p.href} className="block w-full h-full">
-                  <Image src={p.image} alt={p.title} fill className="object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-                  <div className="absolute inset-0 flex flex-col justify-end p-5 gap-2">
-                    <span className="font-mono font-bold text-sm uppercase tracking-[-0.64px] text-[#FFE533]">
-                      {p.number}
-                    </span>
-                    <h3 className="font-sans font-semibold text-[28px] leading-[1.2] tracking-[-0.84px] text-white">
-                      {p.title}
-                    </h3>
-                    <p className="font-sans font-normal text-base leading-[1.4] text-white/80">
-                      {p.description}
-                    </p>
-                  </div>
-                </Link>
-              ) : null}
-            </motion.div>
+        <div ref={cardsRef} className="flex flex-col gap-8 lg:gap-16">
+          {services.map((s) => (
+            <ServiceCard key={s.title} service={s} />
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
+  );
+}
+
+function ServiceCard({ service }: { service: Service }) {
+  return (
+    <article
+      data-service-card
+      className="relative bg-[#181818] rounded-2xl overflow-visible grid grid-cols-1 lg:grid-cols-12 gap-0 min-h-[520px]"
+    >
+      {/* Left — big editorial heading + service tag */}
+      <div
+        data-card-left
+        className="lg:col-span-3 flex flex-col justify-between p-8 lg:p-12 gap-12 lg:gap-0 min-h-[260px]"
+      >
+        <h3 className="font-sans font-bold text-[28px] lg:text-[44px] leading-[1.05] tracking-[-1px] lg:tracking-[-1.8px] text-white">
+          {service.leftHeading}
+        </h3>
+        <div className="flex items-center gap-2 text-white/60">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#FFE533]" />
+          <span className="font-mono font-bold text-xs lg:text-sm uppercase tracking-[2px]">
+            {service.number} · {service.tag}
+          </span>
+        </div>
+      </div>
+
+      {/* Center — oversized image that overflows the card top + bottom */}
+      <div
+        data-card-center
+        className="lg:col-span-5 relative overflow-visible min-h-[320px] lg:min-h-[520px]"
+      >
+        <div
+          data-card-img
+          className="absolute inset-x-4 lg:inset-x-0 lg:-top-12 lg:-bottom-8 top-0 bottom-0 will-change-transform"
+        >
+          <Image
+            src={service.image}
+            alt={service.imageAlt}
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-cover rounded-xl lg:rounded-2xl"
+          />
+        </div>
+      </div>
+
+      {/* Right — title, description, price, CTAs */}
+      <div
+        data-card-right
+        className="lg:col-span-4 flex flex-col gap-6 p-8 lg:p-12"
+      >
+        <h4 className="font-sans font-semibold text-[28px] lg:text-[36px] leading-[1.1] tracking-[-1px] text-white">
+          {service.title}
+        </h4>
+        <p className="font-sans font-normal text-base lg:text-lg leading-[1.5] text-white/65">
+          {service.description}
+        </p>
+        <div className="border-t border-white/10 pt-5 flex items-center justify-between">
+          <span className="font-mono font-bold text-sm lg:text-base uppercase tracking-[-0.5px] text-white">
+            {service.price}
+          </span>
+          <span className="font-mono font-bold text-xs uppercase tracking-[1.5px] text-[#FFE533]">
+            in stock
+          </span>
+        </div>
+        <div className="flex gap-3 mt-2">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
+            className="flex-1 bg-white text-[#0c0c0c] h-11 lg:h-12 px-5 rounded-lg font-mono font-bold text-xs lg:text-sm uppercase tracking-[1px] hover:bg-[#FFE533] transition-colors duration-300 cursor-pointer"
+          >
+            Get Quote
+          </button>
+          {service.href && (
+            <Link
+              href={service.href}
+              className="flex-1 border border-white/20 text-white h-11 lg:h-12 px-5 rounded-lg font-mono font-bold text-xs lg:text-sm uppercase tracking-[1px] hover:border-white hover:bg-white/5 transition-all duration-300 inline-flex items-center justify-center gap-1.5"
+            >
+              Learn more <span aria-hidden>↗</span>
+            </Link>
+          )}
+        </div>
+      </div>
+    </article>
   );
 }

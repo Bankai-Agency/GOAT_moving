@@ -2,12 +2,15 @@
 
 import { useEffect } from "react";
 import Lenis from "lenis";
+import { bindScrollTriggerToLenis } from "./gsap";
 
 /* Lenis-driven momentum smooth-scroll. Mounted only inside the
    /mainpage-4 draft so the live `/` keeps native scroll. Lenis
    instruments the native scroll, so any code reading window.scrollY
-   (Header sticky listener, IntersectionObserver, framer-motion
-   useScroll) keeps working unchanged. */
+   (Header sticky listener, IntersectionObserver, ScrollTrigger,
+   framer-motion useScroll) keeps working unchanged. We also bind
+   GSAP's ScrollTrigger to Lenis's scroll event so pinned + scrub
+   animations stay perfectly in sync. */
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const lenis = new Lenis({
@@ -15,6 +18,8 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     });
+
+    bindScrollTriggerToLenis(lenis);
 
     let rafId = 0;
     const raf = (time: number) => {

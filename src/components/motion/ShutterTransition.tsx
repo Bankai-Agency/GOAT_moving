@@ -1,45 +1,20 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { gsap } from "@/components/motion/gsap";
 
 const SHUTTER_COUNT = 10;
 const SHUTTER_COLOR = "#005BFF";
 const COVER_DURATION = 0.5;
 const REVEAL_DURATION = 0.75;
-const STAGGER = 0.03;
+const STAGGER_AMOUNT = 0.3;
 
-const shutterVariants: Variants = {
-  /* Hidden above viewport */
-  hidden: { y: "-100%" },
-  /* Phase 1 — slide down to cover */
-  cover: (i: number) => ({
-    y: "0%",
-    transition: {
-      duration: COVER_DURATION,
-      ease: [0.7, 0, 0.84, 0],
-      delay: (SHUTTER_COUNT - 1 - i) * STAGGER,
-    },
-  }),
-  /* Phase 2 — slide up to reveal new page */
-  reveal: (i: number) => ({
-    y: "-100%",
-    transition: {
-      duration: REVEAL_DURATION,
-      ease: [0.16, 1, 0.3, 1],
-      delay: (SHUTTER_COUNT - 1 - i) * STAGGER,
-    },
-  }),
-};
-
-type Phase = "hidden" | "cover" | "reveal";
-
-/* Port of the Osmo "Shutter Page Transition" resource adapted for the
-   Next.js App Router. We don't use Barba — instead we intercept
-   internal link clicks at the document level, run the cover animation,
-   then trigger router.push. usePathname tells us when the new page has
-   mounted, at which point we run the reveal.
+/* GSAP port of the Osmo "Shutter Page Transition" resource adapted
+   for the Next.js App Router. We don't use Barba — instead we
+   intercept internal `<a>` clicks at the document level, run the
+   cover GSAP timeline, then trigger router.push. usePathname tells us
+   when the new page has mounted, at which point we run the reveal.
 
    Scope: only active while the user is on a `/mainpage-4*` route.
    Other routes (live `/`, drafts) keep their default instant
@@ -54,13 +29,23 @@ export function ShutterTransition() {
 function ShutterTransitionInner() {
   const router = useRouter();
   const pathname = usePathname();
-  const reduced = useReducedMotion();
-  const [phase, setPhase] = useState<Phase>("hidden");
-  const pendingNavRef = useRef<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const shutterRefs = useRef<HTMLDivElement[]>([]);
   const lastPathnameRef = useRef(pathname);
+  const pendingNavRef = useRef<string | null>(null);
+  const [phase, setPhase] = useState<"hidden" | "cover" | "reveal">("hidden");
+  const reduced =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* Click hijack: any internal `<a>` triggers the cover animation,
-     then we navigate. */
+  /* Place shutters above the viewport on mount. */
+  useEffect(() => {
+    if (shutterRefs.current.length) {
+      gsap.set(shutterRefs.current, { yPercent: -100 });
+    }
+  }, []);
+
+  /* Document-level click hijack on internal links. */
   useEffect(() => {
     if (reduced) return;
     const onClick = (e: MouseEvent) => {
@@ -70,7 +55,6 @@ function ShutterTransitionInner() {
       if (!link) return;
       const href = link.getAttribute("href");
       if (!href) return;
-      /* Skip in-page anchors, externals, mailto/tel, downloads, new-tab links. */
       if (href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:")) return;
       if (link.target === "_blank") return;
       if (link.hasAttribute("download")) return;
@@ -80,60 +64,68 @@ function ShutterTransitionInner() {
         if (url.pathname === window.location.pathname) return;
         e.preventDefault();
         pendingNavRef.current = url.pathname + url.search + url.hash;
-        setPhase("cover");
+        runCover();
       } catch {
         /* ignore malformed URLs */
       }
     };
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reduced]);
-
-  /* Once cover finishes, push the route. The reveal is triggered by
-     the pathname change effect below. */
-  const onCoverComplete = useCallback(() => {
-    const target = pendingNavRef.current;
-    if (target) {
-      pendingNavRef.current = null;
-      router.push(target);
-    }
-  }, [router]);
 
   /* When pathname changes after a triggered cover, run the reveal. */
   useEffect(() => {
     if (pathname !== lastPathnameRef.current && phase === "cover") {
       lastPathnameRef.current = pathname;
-      /* Small delay so the new page has a chance to render under the cover. */
-      const t = setTimeout(() => setPhase("reveal"), 80);
+      const t = setTimeout(() => runReveal(), 80);
       return () => clearTimeout(t);
     }
     lastPathnameRef.current = pathname;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, phase]);
 
-  const onRevealComplete = useCallback(() => setPhase("hidden"), []);
+  function runCover() {
+    setPhase("cover");
+    gsap.to(shutterRefs.current, {
+      yPercent: 0,
+      duration: COVER_DURATION,
+      ease: "power3.in",
+      stagger: { amount: STAGGER_AMOUNT, from: "end" },
+      onComplete: () => {
+        const target = pendingNavRef.current;
+        if (target) {
+          pendingNavRef.current = null;
+          router.push(target);
+        }
+      },
+    });
+  }
+
+  function runReveal() {
+    setPhase("reveal");
+    gsap.to(shutterRefs.current, {
+      yPercent: -100,
+      duration: REVEAL_DURATION,
+      ease: "expo.out",
+      stagger: { amount: STAGGER_AMOUNT, from: "end" },
+      onComplete: () => setPhase("hidden"),
+    });
+  }
 
   return (
     <div
+      ref={containerRef}
       aria-hidden
       className="pointer-events-none fixed inset-0 z-[100] grid grid-cols-10 overflow-clip"
       style={{ display: phase === "hidden" ? "none" : "grid" }}
     >
       {Array.from({ length: SHUTTER_COUNT }).map((_, i) => (
-        <motion.div
+        <div
           key={i}
-          custom={i}
-          variants={shutterVariants}
-          initial="hidden"
-          animate={phase}
-          onAnimationComplete={
-            i === SHUTTER_COUNT - 1
-              ? phase === "cover"
-                ? onCoverComplete
-                : phase === "reveal"
-                  ? onRevealComplete
-                  : undefined
-              : undefined
-          }
+          ref={(el) => {
+            if (el) shutterRefs.current[i] = el;
+          }}
           style={{ backgroundColor: SHUTTER_COLOR, willChange: "transform" }}
         />
       ))}

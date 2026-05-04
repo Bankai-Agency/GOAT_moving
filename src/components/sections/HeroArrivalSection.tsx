@@ -2,62 +2,121 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useRef } from "react";
-import { motion, useScroll, useTransform, type Variants } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { gsap } from "@/components/motion/gsap";
 import { RatingCards } from "@/components/ui/RatingCards";
 import { useDirectionalHover } from "@/components/motion/useDirectionalHover";
 
 const headlineLine1 = "Top-Rated Movers";
 const headlineLine2 = "in Vancouver, WA & Portland, OR";
 
-const letter: Variants = {
-  hidden: { opacity: 0, y: 80, rotateX: -45 },
-  show: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    rotateX: 0,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 + i * 0.025 },
-  }),
-};
-
-function LetterStagger({ text, className, baseIndex = 0 }: { text: string; className: string; baseIndex?: number }) {
-  return (
-    <span className={className} style={{ display: "inline-block", perspective: "1000px" }}>
-      {text.split("").map((ch, i) => (
-        <motion.span
-          key={i}
-          custom={baseIndex + i}
-          variants={letter}
-          initial="hidden"
-          animate="show"
-          className="inline-block"
-          style={{ whiteSpace: ch === " " ? "pre" : "normal" }}
-        >
-          {ch}
-        </motion.span>
-      ))}
+function splitToLetters(text: string) {
+  return text.split("").map((ch, i) => (
+    <span
+      key={i}
+      data-letter
+      className="inline-block"
+      style={{ whiteSpace: ch === " " ? "pre" : "normal" }}
+    >
+      {ch}
     </span>
-  );
+  ));
 }
 
 export function HeroArrivalSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const photoRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const subRef = useRef<HTMLParagraphElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
+  const ratingRef = useRef<HTMLDivElement>(null);
+  const cueRef = useRef<HTMLDivElement>(null);
+
   const ctaRef = useDirectionalHover<HTMLButtonElement>();
   const outlineRef = useDirectionalHover<HTMLAnchorElement>();
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-  const photoY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const photoScale = useTransform(scrollYProgress, [0, 1], [1.08, 1.22]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0.32, 0.7]);
-  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"]);
-  const contentOpacity = useTransform(scrollYProgress, [0.4, 0.9], [1, 0]);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      /* Letter stagger reveal */
+      const letters = headlineRef.current?.querySelectorAll<HTMLElement>("[data-letter]") ?? [];
+      gsap.set(letters, { opacity: 0, y: 80, rotateX: -45 });
+      gsap.to(letters, {
+        opacity: 1,
+        y: 0,
+        rotateX: 0,
+        duration: 0.7,
+        ease: "power3.out",
+        stagger: 0.025,
+        delay: 0.1,
+      });
+
+      /* Subtitle + buttons + rating cards (sequential) */
+      gsap.from(subRef.current, {
+        opacity: 0,
+        y: 30,
+        duration: 0.7,
+        ease: "power3.out",
+        delay: 1.55,
+      });
+      const btnEls = buttonsRef.current?.querySelectorAll<HTMLElement>(":scope > *") ?? [];
+      gsap.from(btnEls, {
+        opacity: 0,
+        y: 20,
+        scale: 0.9,
+        duration: 0.5,
+        ease: "power3.out",
+        stagger: 0.12,
+        delay: 1.7,
+      });
+      gsap.from(ratingRef.current, {
+        opacity: 0,
+        x: 80,
+        duration: 0.8,
+        ease: "power3.out",
+        delay: 1.9,
+      });
+
+      /* Scroll cue (delayed reveal + bouncing line) */
+      gsap.from(cueRef.current, { opacity: 0, y: -10, duration: 0.6, delay: 2.4 });
+      const cueLine = cueRef.current?.querySelector<HTMLElement>("[data-cue-line]");
+      if (cueLine) {
+        gsap.fromTo(
+          cueLine,
+          { scaleY: 0.4 },
+          { scaleY: 1, duration: 1.8, ease: "sine.inOut", repeat: -1, yoyo: true, transformOrigin: "top center" }
+        );
+      }
+
+      /* Scroll-driven parallax (photo Y / scale, overlay opacity,
+         content y + opacity for the exit). */
+      gsap.to(photoRef.current, {
+        yPercent: 30,
+        scale: 1.22,
+        ease: "none",
+        scrollTrigger: { trigger: sectionRef.current, start: "top top", end: "bottom top", scrub: true },
+      });
+      gsap.to(overlayRef.current, {
+        opacity: 0.7,
+        ease: "none",
+        scrollTrigger: { trigger: sectionRef.current, start: "top top", end: "bottom top", scrub: true },
+      });
+      gsap.to(contentRef.current, {
+        yPercent: -12,
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: { trigger: sectionRef.current, start: "30% top", end: "bottom top", scrub: true },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
     <section ref={sectionRef} className="relative h-screen min-h-[700px] lg:min-h-[900px] overflow-hidden">
-      {/* Background photo + dark overlay (parallax). */}
-      <motion.div className="absolute inset-0" style={{ y: photoY, scale: photoScale }}>
+      {/* Background photo */}
+      <div ref={photoRef} className="absolute inset-0 will-change-transform">
         <Image
           src="/images/home-hero.jpg"
           alt="Professional movers at work"
@@ -67,52 +126,38 @@ export function HeroArrivalSection() {
           className="object-cover"
           priority
         />
-      </motion.div>
-      <motion.div className="absolute inset-0 bg-black" style={{ opacity: overlayOpacity }} />
+      </div>
+      <div ref={overlayRef} className="absolute inset-0 bg-black" style={{ opacity: 0.32 }} />
 
-      {/* Headline + CTA + ratings. */}
-      <motion.div
+      {/* Content */}
+      <div
+        ref={contentRef}
         className="relative h-full max-w-[1408px] mx-auto px-4 flex items-end pb-8 lg:pb-[72px]"
-        style={{ y: contentY, opacity: contentOpacity }}
       >
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between w-full gap-6">
           <div className="flex flex-col gap-4 lg:gap-6">
-            <h1 className="font-sans font-bold text-[40px] lg:text-[96px] leading-none tracking-[-1.2px] lg:tracking-[-2.88px]">
-              <LetterStagger text={headlineLine1} className="text-white/60" />
+            <h1
+              ref={headlineRef}
+              className="font-sans font-bold text-[40px] lg:text-[96px] leading-none tracking-[-1.2px] lg:tracking-[-2.88px]"
+              style={{ perspective: "1000px" }}
+            >
+              <span className="text-white/60">{splitToLetters(headlineLine1)}</span>
               <br />
-              <LetterStagger text={headlineLine2} className="text-white" baseIndex={headlineLine1.length} />
+              <span className="text-white">{splitToLetters(headlineLine2)}</span>
             </h1>
 
-            <motion.div
-              className="flex flex-col gap-5 lg:gap-7 max-w-[569px]"
-              initial="hidden"
-              animate="show"
-              variants={{
-                hidden: {},
-                show: { transition: { staggerChildren: 0.15, delayChildren: 1.6 } },
-              }}
-            >
-              <motion.p
-                variants={{
-                  hidden: { opacity: 0, y: 30 },
-                  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } },
-                }}
+            <div className="flex flex-col gap-5 lg:gap-7 max-w-[569px]">
+              <p
+                ref={subRef}
                 className="font-sans font-normal text-base lg:text-2xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.72px] text-white"
               >
                 Local, long-distance, and commercial moves — 850+ five-star
                 reviews, fully licensed & insured
-              </motion.p>
+              </p>
 
-              <motion.div
-                variants={{ hidden: {}, show: { transition: { staggerChildren: 0.12 } } }}
-                className="flex flex-col lg:flex-row gap-3 lg:gap-6"
-              >
-                <motion.button
+              <div ref={buttonsRef} className="flex flex-col lg:flex-row gap-3 lg:gap-6">
+                <button
                   ref={ctaRef}
-                  variants={{
-                    hidden: { opacity: 0, y: 20, scale: 0.9 },
-                    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-                  }}
                   type="button"
                   onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
                   style={{ "--dir-circle-bg": "#0c0c0c" } as React.CSSProperties}
@@ -120,50 +165,34 @@ export function HeroArrivalSection() {
                 >
                   <span className="dir-circle-wrap"><span className="dir-circle" /></span>
                   Get Free Estimate
-                </motion.button>
-                <motion.div
-                  variants={{
-                    hidden: { opacity: 0, y: 20, scale: 0.9 },
-                    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-                  }}
+                </button>
+                <Link
+                  ref={outlineRef}
+                  href="#services"
+                  style={{ "--dir-circle-bg": "#ffffff" } as React.CSSProperties}
+                  className="dir-btn border border-white h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-white uppercase tracking-[-0.64px] leading-[1.2] hover:shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:scale-[1.02] hover:text-[#0c0c0c] transition-all duration-300 ease-out"
                 >
-                  <Link
-                    ref={outlineRef}
-                    href="#services"
-                    style={{ "--dir-circle-bg": "#ffffff" } as React.CSSProperties}
-                    className="dir-btn border border-white h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-white uppercase tracking-[-0.64px] leading-[1.2] hover:shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:scale-[1.02] hover:text-[#0c0c0c] transition-all duration-300 ease-out"
-                  >
-                    <span className="dir-circle-wrap"><span className="dir-circle" /></span>
-                    Our Services
-                  </Link>
-                </motion.div>
-              </motion.div>
-            </motion.div>
+                  <span className="dir-circle-wrap"><span className="dir-circle" /></span>
+                  Our Services
+                </Link>
+              </div>
+            </div>
           </div>
 
-          {/* Ratings — slide in once headline finishes. */}
-          <motion.div
-            initial={{ opacity: 0, x: 80 }}
-            animate={{ opacity: 1, x: 0, transition: { duration: 0.8, delay: 1.9, ease: [0.16, 1, 0.3, 1] } }}
-          >
+          <div ref={ratingRef}>
             <RatingCards />
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Scroll cue */}
-      <motion.div
+      <div
+        ref={cueRef}
         className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/60"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0, transition: { delay: 2.4, duration: 0.6 } }}
       >
         <span className="font-mono font-bold text-xs uppercase tracking-[2px]">Scroll</span>
-        <motion.span
-          className="w-[1px] h-10 bg-white/40"
-          animate={{ scaleY: [0.4, 1, 0.4], originY: 0 }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </motion.div>
+        <span data-cue-line className="block w-[1px] h-10 bg-white/40" />
+      </div>
     </section>
   );
 }
