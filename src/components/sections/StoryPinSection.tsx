@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
-import { gsap, registerGsapPlugins } from "@/components/motion/gsap";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { gsap, ScrollTrigger, registerGsapPlugins } from "@/components/motion/gsap";
 
 type Service = {
   number: string;
@@ -76,11 +77,15 @@ export function StoryPinSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
-  const pinRef = useRef<HTMLDivElement>(null);
+  const portalRef = useRef<HTMLDivElement>(null);
   const bgRefs = useRef<HTMLDivElement[]>([]);
   const cardRefs = useRef<HTMLDivElement[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
+    if (!mounted) return;
     registerGsapPlugins();
     const ctx = gsap.context(() => {
       /* Header reveal */
@@ -97,19 +102,35 @@ export function StoryPinSection() {
       }
 
       const mql = window.matchMedia("(min-width: 1024px)");
-      if (!mql.matches || !trackRef.current || !pinRef.current) return;
+      if (!mql.matches || !trackRef.current || !portalRef.current) return;
 
       const total = services.length;
       const cards = cardRefs.current.filter(Boolean);
       const bgs = bgRefs.current.filter(Boolean);
       if (cards.length !== total || bgs.length !== total) return;
 
-      /* Initial state — only the first card visible, others stacked
-         off-screen below. First bg visible, rest at 0. */
-      gsap.set(cards, { yPercent: 100, autoAlpha: 1 });
+      gsap.set(portalRef.current, { autoAlpha: 0 });
+      gsap.set(cards, { yPercent: 100 });
       gsap.set(cards[0], { yPercent: 0 });
       gsap.set(bgs, { autoAlpha: 0 });
       gsap.set(bgs[0], { autoAlpha: 1 });
+
+      /* Separate visibility trigger — toggles the portal in sync with
+         the track. Using `onToggle` (instead of onEnter/onLeave on
+         the scrub trigger) so it fires correctly when ScrollTrigger
+         refreshes mid-pin. */
+      const portalEl = portalRef.current;
+      const setVisibility = (visible: boolean) => {
+        gsap.to(portalEl, { autoAlpha: visible ? 1 : 0, duration: 0.3, overwrite: true });
+      };
+      gsap.set(portalEl, { autoAlpha: 0 });
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top 50%",
+        end: "bottom 50%",
+        onToggle: ({ isActive }) => setVisibility(isActive),
+        onRefresh: ({ isActive }) => setVisibility(isActive),
+      });
 
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -117,18 +138,9 @@ export function StoryPinSection() {
           start: "top top",
           end: "bottom bottom",
           scrub: 0.4,
-          pin: pinRef.current,
-          pinSpacing: true,
-          pinType: "transform",
-          anticipatePin: 1,
         },
       });
 
-      /* For each transition i → i+1, the previous card slides up out
-         of view while the next card slides in from below; bg
-         cross-fades. Each transition takes 1 unit of timeline (the
-         track is sized so the pin holds for `total` viewport heights,
-         giving each transition roughly one viewport of scroll). */
       for (let i = 1; i < total; i++) {
         const at = i - 1;
         tl.to(cards[i - 1], { yPercent: -100, ease: "power2.in", duration: 1 }, at);
@@ -144,13 +156,13 @@ export function StoryPinSection() {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [mounted]);
 
   const total = services.length;
 
   return (
     <section ref={sectionRef} id="services" className="bg-[#0c0c0c] overflow-hidden">
-      {/* Header (normal flow above the pinned moment) */}
+      {/* Header — natural flow */}
       <div className="px-4 pt-[60px] lg:pt-[100px] pb-8 lg:pb-16">
         <div ref={headerRef} className="max-w-[1408px] mx-auto flex flex-col gap-6 lg:gap-12">
           <div className="border-b border-white/16 pb-4 lg:pb-6">
@@ -172,87 +184,79 @@ export function StoryPinSection() {
         </div>
       </div>
 
-      {/* Mobile: simple stack of cards (no pin). */}
+      {/* Mobile: simple stacked list */}
       <div className="lg:hidden px-4 pb-[60px] flex flex-col gap-6">
         {services.map((s) => (
-          <div key={s.title} className="relative">
-            <ServiceCard service={s} />
-          </div>
+          <ServiceCard key={s.title} service={s} />
         ))}
       </div>
 
-      {/* Desktop: scroll-pinned card carousel. The outer track is N
-          viewport-heights tall; while it scrolls, the sticky inner
-          stays in view and the timeline above swaps cards + bg. */}
-      <div
-        ref={trackRef}
-        className="hidden lg:block relative"
-        style={{ height: `${total * 100}vh` }}
-      >
-        <div
-          ref={pinRef}
-          className="h-screen w-full relative overflow-hidden"
-        >
-          {/* Stacked blurred backgrounds — one per service. */}
-          {services.map((s, i) => (
-            <div
-              key={`bg-${s.title}`}
-              ref={(el) => {
-                if (el) bgRefs.current[i] = el;
-              }}
-              className="absolute inset-0 will-change-[opacity]"
-            >
-              <Image
-                src={s.image}
-                alt=""
-                fill
-                priority={i === 0}
-                sizes="100vw"
-                className="object-cover scale-125"
-                style={{ filter: "blur(64px) saturate(1.05) brightness(0.7)" }}
-              />
-              <div className="absolute inset-0 bg-black/35" />
-            </div>
-          ))}
+      {/* Desktop: empty scroll-track that drives the portal carousel.
+          The actual visual lives in `document.body` (mounted via the
+          portal below), `position: fixed` to escape `.page-zoom` and
+          fill the real viewport. */}
+      <div ref={trackRef} className="hidden lg:block" style={{ height: `${total * 100}vh` }} />
 
-          {/* Stacked cards — only one is in view at a time. */}
-          <div className="relative h-full flex items-center justify-center px-4">
-            <div className="relative w-full max-w-[1408px] h-[80vh]">
-              {services.map((s, i) => (
-                <div
-                  key={`card-${s.title}`}
-                  ref={(el) => {
-                    if (el) cardRefs.current[i] = el;
-                  }}
-                  className="absolute inset-0 will-change-transform"
-                >
-                  <ServiceCard service={s} />
-                </div>
-              ))}
-            </div>
-          </div>
+      {/* Portal carousel — only mounted client-side. */}
+      {mounted &&
+        createPortal(
+          <div
+            ref={portalRef}
+            aria-hidden
+            className="hidden lg:block fixed inset-0 z-[40] overflow-hidden invisible"
+          >
+            {services.map((s, i) => (
+              <div
+                key={`bg-${s.title}`}
+                ref={(el) => {
+                  if (el) bgRefs.current[i] = el;
+                }}
+                className="absolute inset-0 will-change-[opacity]"
+              >
+                <Image
+                  src={s.image}
+                  alt=""
+                  fill
+                  priority={i === 0}
+                  sizes="100vw"
+                  className="object-cover scale-125"
+                  style={{ filter: "blur(64px) saturate(1.05) brightness(0.7)" }}
+                />
+                <div className="absolute inset-0 bg-black/40" />
+              </div>
+            ))}
 
-          {/* Progress indicator (top-right) */}
-          <ProgressIndicator total={total} />
-        </div>
-      </div>
+            <div className="relative h-full w-full flex items-center justify-center px-12">
+              <div className="relative w-full max-w-[1408px] h-[80vh]">
+                {services.map((s, i) => (
+                  <div
+                    key={`card-${s.title}`}
+                    ref={(el) => {
+                      if (el) cardRefs.current[i] = el;
+                    }}
+                    className="absolute inset-0 will-change-transform"
+                  >
+                    <ServiceCard service={s} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="absolute top-6 right-8 flex items-center gap-2 font-mono text-xs uppercase tracking-[2px] text-white/70">
+              <span>01</span>
+              <span className="w-12 h-px bg-white/30" />
+              <span>0{total}</span>
+            </div>
+          </div>,
+          document.body
+        )}
     </section>
-  );
-}
-
-function ProgressIndicator({ total }: { total: number }) {
-  return (
-    <div className="absolute top-6 right-8 flex items-center gap-2 font-mono text-xs uppercase tracking-[2px] text-white/70">
-      <span>0{1}</span>
-      <span className="w-12 h-px bg-white/30" />
-      <span>0{total}</span>
-    </div>
   );
 }
 
 function ServiceCard({ service }: { service: Service }) {
   return (
-    <article className="relative h-full bg-[#181818] rounded-2xl overflow-visible grid grid-cols-1 lg:grid-cols-12 gap-0 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]">
+    <article className="relative h-full bg-[#181818] rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)]">
       <div
         data-card-left
         className="lg:col-span-3 flex flex-col justify-between p-8 lg:p-12 gap-12 lg:gap-0 min-h-[260px]"
@@ -268,10 +272,7 @@ function ServiceCard({ service }: { service: Service }) {
         </div>
       </div>
 
-      <div
-        data-card-center
-        className="lg:col-span-5 relative overflow-hidden min-h-[320px] lg:min-h-0"
-      >
+      <div className="lg:col-span-5 relative overflow-hidden min-h-[320px] lg:min-h-0">
         <Image
           src={service.image}
           alt={service.imageAlt}

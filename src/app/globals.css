@@ -36,20 +36,26 @@ html {
 /* Proportional page zoom — reference design is 1728px (16" MacBook).
    Smaller desktops get a uniform scale-down so everything looks identical. */
 @media (min-width: 1024px) {
-  .page-zoom { zoom: 0.7; }
+  .page-zoom { zoom: 0.7;  --zoom-comp: 1.4286; }
 }
 @media (min-width: 1280px) {
-  .page-zoom { zoom: 0.78; }
+  .page-zoom { zoom: 0.78; --zoom-comp: 1.2821; }
 }
 @media (min-width: 1440px) {
-  .page-zoom { zoom: 0.84; }
+  .page-zoom { zoom: 0.84; --zoom-comp: 1.1905; }
 }
 @media (min-width: 1600px) {
-  .page-zoom { zoom: 0.9; }
+  .page-zoom { zoom: 0.9;  --zoom-comp: 1.1111; }
 }
 @media (min-width: 1728px) {
-  .page-zoom { zoom: 1; }
+  .page-zoom { zoom: 1;    --zoom-comp: 1; }
 }
+.page-zoom { --zoom-comp: 1; } /* fallback for < 1024 */
+
+/* (Removed `.unzoom` helper — CSS zoom doesn't compound cleanly
+   in Chrome, the visual sizes were off by ~5-15%. Sections that
+   need true viewport coverage now render their pinned visuals via
+   React Portal to document.body — escapes `.page-zoom` entirely. */
 
 body {
   background: var(--background);
