@@ -137,12 +137,6 @@ export function StoryPinSection() {
             start: "top top",
             end: "bottom bottom",
             scrub: 0.6,
-            snap: {
-              snapTo: (value) => Math.round(value * (total - 1)) / (total - 1),
-              duration: { min: 0.2, max: 0.5 },
-              delay: 0.05,
-              ease: "power2.inOut",
-            },
             onUpdate: (self) => {
               if (!counterRef.current) return;
               const idx = Math.min(total - 1, Math.floor(self.progress * total + 0.0001));
