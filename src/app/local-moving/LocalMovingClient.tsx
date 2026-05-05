@@ -19,7 +19,7 @@ function LocalHero() {
     <section className="relative h-screen min-h-[700px] lg:min-h-[900px] overflow-hidden">
       <div className="absolute inset-0">
         <Image
-          src="/images/local-moving-hero.jpg"
+          src="/images/local-moving-hero.png"
           alt="Local moving services in Vancouver WA"
           fill
           sizes="(max-width: 1024px) 200vw, 100vw"
@@ -27,7 +27,7 @@ function LocalHero() {
           className="object-cover object-right lg:object-center"
           priority
         />
-        <div className="absolute inset-0 bg-[rgba(7,7,7,0.3)]" />
+        <div className="absolute inset-0 bg-[rgba(7,7,7,0.55)]" />
       </div>
       <div className="relative h-full max-w-[1408px] mx-auto px-4 flex items-end pb-8 lg:pb-[72px]">
         <div className="flex flex-col gap-4 lg:gap-6">

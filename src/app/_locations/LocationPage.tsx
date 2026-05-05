@@ -135,7 +135,7 @@ export function LocationPage({ config }: { config: LocationConfig }) {
         label={`Why ${city}`}
         title={config.whyTitle}
         description={config.whyDescription}
-        image="/images/home-hero.jpg"
+        image="/images/long-distance-why-trust.png"
         imageAlt={`GOAT Movers crew working in ${cityDisplay}`}
       />
 

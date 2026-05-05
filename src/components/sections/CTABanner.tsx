@@ -13,7 +13,7 @@ const defaults = {
   heading: "Ready to experience the difference?",
   tagline: "Get your free, no-obligation quote today and let our family move yours",
   buttonText: "Get a Free Quote",
-  image: "/images/cta-bg.jpg",
+  image: "/images/cta-bg.png",
 };
 
 export function CTABanner({

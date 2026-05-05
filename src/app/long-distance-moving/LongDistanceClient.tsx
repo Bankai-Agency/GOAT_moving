@@ -91,7 +91,7 @@ function LDWhyTrust() {
     <WhyTrustSection
       title="Why Trust GOAT Movers with Your Long Distance Move"
       description="Long distance moves have more variables — more miles, more regulations, more ways for things to go sideways. We handle interstate relocations from the Pacific Northwest with federal authority, one dedicated crew, and pricing you can actually plan around."
-      image="/images/home-hero.jpg"
+      image="/images/long-distance-why-trust.png"
       imageAlt="GOAT movers long distance crew"
       items={ldTrustPoints}
       hideLabelDivider
