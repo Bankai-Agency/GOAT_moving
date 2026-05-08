@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function MainpageFive() {
   return (
-    <div className="bg-[#0c0c0c] min-h-screen">
+    <div className="bg-[#ffffff] min-h-screen">
       <Header />
       <main>
         <TerminalDraftClient />
