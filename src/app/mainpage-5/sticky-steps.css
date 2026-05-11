@@ -1,0 +1,219 @@
+/* Sticky Steps (Osmo Supply, Basic).
+   Adapted to GOAT brand:
+   - rectangle image with rounded corners (no pill shape)
+   - INK text (#001f4d) on white bg
+   - blue (#0066ff) accent for eyebrow
+   - our font tokens (Geist sans + Roboto Mono).
+
+   The sticky / status-driven opacity behaviour is unchanged from the
+   source; the per-character reveal is layered on top via inline JSX
+   spans + GSAP (see TerminalDraftClient.tsx). */
+
+.sticky-steps {
+  min-height: 100dvh;
+  position: relative;
+  overflow: clip;
+  background-color: #ffffff;
+  color: #001f4d;
+  font-family: var(--font-sans, system-ui, sans-serif);
+}
+
+.sticky-steps__container {
+  max-width: 88em;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+}
+
+.sticky-steps__collection {
+  min-height: 100dvh;
+  display: flex;
+  position: relative;
+}
+
+.sticky-steps__list {
+  flex-flow: column;
+  flex: 1;
+  gap: 30dvh;
+  padding-top: calc(50dvh - 7.5em);
+  padding-bottom: calc(50dvh - 7.5em);
+  display: flex;
+}
+
+.sticky-steps__text {
+  flex-flow: column;
+  width: 50%;
+  padding-right: 6em;
+  gap: 1.25em;
+  display: flex;
+}
+
+.sticky-steps__eyebrow {
+  text-transform: uppercase;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: .8125em;
+  letter-spacing: .14em;
+  font-weight: 500;
+  color: #0066ff;
+  opacity: 0.85;
+}
+
+.sticky-steps__h2 {
+  letter-spacing: -.035em;
+  margin: 0;
+  font-size: min(5em, 13.5vw);
+  font-weight: 500;
+  line-height: .92;
+  color: #001f4d;
+}
+
+.sticky-steps__p {
+  margin: 0;
+  font-size: min(1.25em, 4.5vw);
+  line-height: 1.4;
+  color: #001f4d;
+  opacity: .65;
+  max-width: 32ch;
+}
+
+.sticky-steps__media {
+  width: 50%;
+  height: 100%;
+  padding-left: 3em;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.sticky-steps__sticky {
+  align-items: center;
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  position: sticky;
+  top: 0;
+}
+
+
+.sticky-steps__visual {
+  aspect-ratio: 4 / 5;
+  border-radius: 1.5em;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 31, 77, 0.15);
+  /* Always-open visual — the Services Video auto-loops in the canvas
+     beneath, so the container never collapses between steps. The
+     previous Osmo Sticky Features clip-path collapse/reveal has been
+     removed; the text on the left changes per step, the visual on
+     the right stays present and the video changes. */
+  clip-path: inset(0% round 1.5em);
+  -webkit-clip-path: inset(0% round 1.5em);
+}
+
+.sticky-steps__cover-image {
+  object-fit: cover;
+  border-radius: inherit;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Character-wave target. Chars are visible by default in muted grey;
+   when the parent step becomes "active", JS plays a colour wave that
+   sweeps each char from grey → blue → ink, then leaves it at ink for
+   as long as the step is active. When the step leaves the active
+   slot, chars ease back to grey. */
+.sticky-steps__char {
+  display: inline-block;
+  opacity: 1;
+  color: #a8adb8;
+  will-change: color;
+}
+
+@media screen and (min-width: 992px) {
+  [data-sticky-steps-item-status] .sticky-steps__text {
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0.55;
+  }
+
+  [data-sticky-steps-item-status="active"] .sticky-steps__text {
+    opacity: 1;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .sticky-steps__list {
+    gap: 4em;
+    padding-top: 6em;
+    padding-bottom: 6em;
+  }
+
+  /* Per-item: title + description FIRST, then a sticky image pinned
+     to the lower portion of the viewport. As user scrolls, the
+     image stays anchored at the bottom while text scrolls past
+     above it — all item canvases draw the same shared frame so the
+     handoff between items reads as one continuous video pinned in
+     place. */
+  .sticky-steps__item {
+    display: flex;
+    flex-direction: column;
+  }
+  .sticky-steps__media {
+    width: 100%;
+    height: auto;
+    padding-left: 0;
+    position: sticky;
+    bottom: 88px; /* above Touchbar (≈76px) + small gap */
+    right: auto;
+    z-index: 4;
+    margin-top: 1em;
+  }
+  .sticky-steps__sticky {
+    min-height: auto;
+    position: relative;
+    top: auto;
+    width: 100%;
+  }
+  .sticky-steps__visual {
+    aspect-ratio: 16 / 11;
+    border-radius: 1.25em;
+    max-height: 36vh;
+  }
+  .sticky-steps__text {
+    width: 100%;
+    padding-top: 1em;
+    padding-right: 0;
+    padding-bottom: 1em;
+  }
+  /* Bigger text on mobile so it's readable next to the pinned video. */
+  .sticky-steps__h2 {
+    font-size: min(3.6em, 11vw);
+  }
+  .sticky-steps__p {
+    font-size: min(1.4em, 4.8vw);
+    line-height: 1.45;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .sticky-steps__text {
+    gap: 1em;
+  }
+}
+
+/* Marquee infinite-scroll band (Variant 1). Track contains two
+   identical halves; we slide -50% to seamlessly loop. */
+.marquee-track {
+  animation: mp5-marquee 38s linear infinite;
+}
+@keyframes mp5-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
+}

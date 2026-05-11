@@ -1,0 +1,492 @@
+/* Mainpage-5 accent override: replace brand yellow (#FFE533) with the
+   page's accent blue (#0066ff) across header, touchbar, modal, the
+   global NavProgress bar and any other shared component rendered while
+   this page is mounted.
+
+   Scope: body:has([data-accent="blue"]) — works for descendants of the
+   page wrapper AND for elements rendered higher up (NavProgress lives
+   in the root layout, outside this page's tree). On every other page
+   the data-accent attribute is absent, so the rules don't apply. */
+
+body:has([data-accent="blue"]) .bg-\[\#FFE533\] {
+  background-color: #0066ff !important;
+}
+body:has([data-accent="blue"]) .bg-\[\#FFE533\]\/60 {
+  background-color: rgba(0, 102, 255, 0.6) !important;
+}
+body:has([data-accent="blue"]) .text-\[\#FFE533\] {
+  color: #0066ff !important;
+}
+body:has([data-accent="blue"]) .text-\[\#FFE533\]\/80 {
+  color: rgba(0, 102, 255, 0.8) !important;
+}
+body:has([data-accent="blue"]) .border-\[\#FFE533\] {
+  border-color: #0066ff !important;
+}
+body:has([data-accent="blue"]) .hover\:bg-\[\#FFE533\]:hover {
+  background-color: #0066ff !important;
+}
+body:has([data-accent="blue"]) .hover\:bg-\[\#f0d820\]:hover {
+  background-color: #0052cc !important;
+}
+body:has([data-accent="blue"]) .hover\:text-\[\#FFE533\]:hover {
+  color: #0066ff !important;
+}
+
+/* Footer sits on a blue island (#005BFF), so hover-to-blue would make
+   text vanish into the bg. Inside #contact, swap hover colour to a
+   soft warm white so the hover state stays visible on blue. */
+body:has([data-accent="blue"]) #contact .hover\:text-\[\#FFE533\]:hover {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Glow shadow tinted from yellow to blue (e.g. NavProgress, hover effects). */
+body:has([data-accent="blue"]) .shadow-\[0_0_10px_rgba\(255\2c 229\2c 51\2c 0\.7\)\] {
+  box-shadow: 0 0 10px rgba(0, 102, 255, 0.7) !important;
+}
+body:has([data-accent="blue"]) .hover\:shadow-\[0_4px_20px_rgba\(255\2c 229\2c 51\2c 0\.35\)\]:hover {
+  box-shadow: 0 4px 20px rgba(0, 102, 255, 0.35) !important;
+}
+
+/* Inline SVG fills/strokes hard-coded to yellow. */
+body:has([data-accent="blue"]) svg [fill="#FFE533"],
+body:has([data-accent="blue"]) svg[fill="#FFE533"] {
+  fill: #0066ff !important;
+}
+body:has([data-accent="blue"]) svg [stroke="#FFE533"],
+body:has([data-accent="blue"]) svg[stroke="#FFE533"] {
+  stroke: #0066ff !important;
+}
+
+/* Yellow star raster icon — swap to a blue tint via filter. */
+body:has([data-accent="blue"]) img[src*="star-yellow"] {
+  filter: hue-rotate(210deg) saturate(1.4) brightness(0.95);
+}
+
+/* Header logo — force white. theme-light's global svg-recolor rule
+   in globals.css would otherwise tint the logo blue; we override
+   with `brightness(0) invert(1)` so the source yellow becomes pure
+   white. Works on the dark glass header where blue logo lacked
+   contrast against the MagicRings backdrop. */
+.theme-light[data-accent="blue"] [data-menu-logo] img[src*="logo"] {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* mainpage-5 FAQ — drop the project's dot+stripe eyebrow row and
+   bring the heading weight down to medium (500) so the section
+   matches the lighter typography of the rest of the page (rather
+   than the project default font-bold 700 used elsewhere). */
+body:has([data-accent="blue"]) #faq .border-b.border-white\/16 {
+  display: none !important;
+}
+body:has([data-accent="blue"]) #faq h2 {
+  font-weight: 500 !important;
+}
+
+/* Terminal-industries-style FAQ. Convert the shared FAQSection's
+   chunky card-grid into a clean flat-list with hairline ink dividers,
+   plain plus/minus icons (no chunky button containers), generous
+   vertical padding, and large normal-weight questions. ─────── */
+
+/* List + container: no grey wrapper bg, no padding, no radius — let
+   the items hang flush against the section's white. */
+body:has([data-accent="blue"]) #faq .faq-list {
+  background-color: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  gap: 0 !important;
+}
+
+/* Items: transparent, border-radius reset, thin ink divider between
+   each row. Last item has no divider — section's natural bottom edge
+   handles that. */
+body:has([data-accent="blue"]) #faq .faq-list .faq-item {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid rgba(0, 31, 77, 0.12) !important;
+  overflow: visible !important;
+}
+body:has([data-accent="blue"]) #faq .faq-list .faq-item:first-child {
+  border-top: 1px solid rgba(0, 31, 77, 0.12) !important;
+}
+
+/* Button row: generous vertical breathing room, no horizontal padding
+   (let the item take full width of its column). */
+body:has([data-accent="blue"]) #faq .faq-list .faq-item button {
+  padding: 24px 0 !important;
+  align-items: center !important;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #faq .faq-list .faq-item button {
+    padding: 30px 0 !important;
+  }
+}
+
+/* Question text: large normal weight, ink, tight tracking. Same
+   typography rhythm as the rest of the page (matches sticky-steps
+   h2 + morph headline weights). */
+body:has([data-accent="blue"]) #faq .faq-list .faq-item button > span {
+  font-weight: 400 !important;
+  font-size: 18px !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.4px !important;
+  color: #001f4d !important;
+  transition: color .25s ease;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #faq .faq-list .faq-item button > span {
+    font-size: 24px !important;
+    letter-spacing: -0.6px !important;
+  }
+}
+body:has([data-accent="blue"]) #faq .faq-list .faq-item button:hover > span {
+  color: #0066ff !important;
+}
+
+/* Icon container: drop the chunky grey square, become a tiny inline
+   plus/minus glyph in ink, no shadow, no border, no padding. */
+body:has([data-accent="blue"]) #faq .faq-list .faq-item .bg-\[\#242424\] {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #faq .faq-list .faq-item .bg-\[\#242424\] {
+    width: 22px !important;
+    height: 22px !important;
+  }
+}
+body:has([data-accent="blue"]) #faq .faq-list .faq-item button > div svg {
+  width: 100% !important;
+  height: 100% !important;
+  transition: transform .25s ease;
+}
+body:has([data-accent="blue"]) #faq .faq-list .faq-item button > div svg path {
+  stroke: #001f4d !important;
+  stroke-width: 1.8 !important;
+  transition: stroke .25s ease;
+}
+body:has([data-accent="blue"]) #faq .faq-list .faq-item button:hover > div svg path {
+  stroke: #0066ff !important;
+}
+
+/* Answer paragraph: ink/65, normal type scale, padding-bottom for
+   breathing room before the next item's divider. */
+body:has([data-accent="blue"]) #faq .faq-list .faq-item p {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-bottom: 24px !important;
+  font-size: 16px !important;
+  line-height: 1.55 !important;
+  letter-spacing: -0.2px !important;
+  color: rgba(0, 31, 77, 0.65) !important;
+  max-width: 720px;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #faq .faq-list .faq-item p {
+    padding-bottom: 30px !important;
+    font-size: 18px !important;
+  }
+}
+
+/* mainpage-5 ContactFooter typography — fully realigned to the
+   page's design system used across hero/sticky-steps/intro/CTA
+   sections. Weights drop from semibold/bold to normal/medium;
+   eyebrow labels switch to the standard 11px mono uppercase with
+   2px letter-spacing; link items downsize to body-text scale. */
+
+/* Section heading "Get a free moving estimate in just 5 minutes".
+   The h3 in the footer also carries a .font-semibold class, which
+   the link rule below catches at a higher specificity — so we
+   double the heading rule with that class to keep the heading
+   sized correctly. */
+body:has([data-accent="blue"]) #contact h3,
+body:has([data-accent="blue"]) #contact h3.font-semibold {
+  font-weight: 400 !important;
+  font-size: 28px !important;
+  letter-spacing: -1px !important;
+  line-height: 1.05 !important;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #contact h3,
+  body:has([data-accent="blue"]) #contact h3.font-semibold {
+    font-size: 48px !important;
+    letter-spacing: -1.6px !important;
+  }
+}
+
+/* Eyebrow labels — "About", "Navigation", "Phone", "Email", etc.
+   Project standard: 11px mono uppercase tracking 2px, medium weight. */
+body:has([data-accent="blue"]) #contact .font-mono.font-bold.uppercase {
+  font-weight: 500 !important;
+  font-size: 11px !important;
+  letter-spacing: 2px !important;
+  line-height: 1.2 !important;
+}
+
+/* Link / list items — nav links, phone, email, address. Drop from
+   semibold text-xl/2xl to normal base/lg (the body-text scale used
+   across mainpage-5). */
+body:has([data-accent="blue"]) #contact .font-semibold {
+  font-weight: 400 !important;
+  font-size: 16px !important;
+  letter-spacing: -0.3px !important;
+  line-height: 1.5 !important;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #contact .font-semibold {
+    font-size: 18px !important;
+  }
+}
+
+/* About paragraph — normalise tracking to project standard. */
+body:has([data-accent="blue"]) #contact p {
+  letter-spacing: -0.3px !important;
+}
+
+/* General catch — any remaining font-bold defaults to medium. */
+body:has([data-accent="blue"]) #contact .font-bold {
+  font-weight: 500 !important;
+}
+
+/* Benefits/Steps block (Step 01-04) mobile layout — image was eating
+   ~80% of viewport in the native layout. Re-balance so image gets
+   the upper ~55vh and text gets the rest (still bumped + lifted
+   above the Touchbar). */
+@media (max-width: 991px) {
+  body:has([data-accent="blue"]) section.grid-rows-\[1fr_auto\] {
+    grid-template-rows: 55vh 1fr !important;
+    padding-bottom: 5em !important;
+  }
+  body:has([data-accent="blue"]) section.grid-rows-\[1fr_auto\] h3 {
+    font-size: 26px !important;
+    letter-spacing: -0.8px !important;
+    line-height: 1.1 !important;
+  }
+  body:has([data-accent="blue"]) section.grid-rows-\[1fr_auto\] p {
+    font-size: 17px !important;
+    line-height: 1.5 !important;
+  }
+  body:has([data-accent="blue"]) section.grid-rows-\[1fr_auto\] .font-mono {
+    font-size: 11px !important;
+    letter-spacing: 2px !important;
+  }
+}
+
+/* QuoteForm step indicator — small pills sitting on the blue form
+   card. Default brand mapping flips yellow → blue, but blue-on-blue
+   is invisible. Force them to white instead, with the inactive pill
+   at reduced opacity. */
+body:has([data-accent="blue"]) #contact .h-1\.5.rounded-full {
+  background-color: rgba(255, 255, 255, 0.45) !important;
+}
+body:has([data-accent="blue"]) #contact .h-1\.5.rounded-full.w-8 {
+  background-color: #ffffff !important;
+}
+
+/* QuoteModal inputs — on the light-flipped modal the original
+   `bg-white/10 text-white placeholder:text-white/60` reads as
+   invisible-white-placeholder on near-white input bg. Re-tune for
+   clear contrast on light theme:
+   - Input bg: distinct grey so the field is visible against the
+     light-grey modal card. Bg stays the same on hover + focus
+     (user feedback: focus-flipping to white felt jarring).
+   - Text: ink colour both at rest and when typing. */
+body:has([data-accent="blue"]) .input-glow {
+  background-color: #e8ebf1 !important;
+  color: #001f4d !important;
+  border: 1px solid transparent !important;
+  transition: border-color .2s ease !important;
+}
+body:has([data-accent="blue"]) .input-glow::placeholder {
+  color: rgba(0, 31, 77, 0.5) !important;
+  opacity: 1 !important;
+}
+body:has([data-accent="blue"]) .input-glow:hover,
+body:has([data-accent="blue"]) .input-glow:focus {
+  background-color: #e8ebf1 !important;
+}
+body:has([data-accent="blue"]) .input-glow:focus {
+  border-color: rgba(0, 31, 77, 0.18) !important;
+  /* Kill the yellow `0 0 0 2px rgba(255, 229, 51, 0.2)` ring from
+     globals.css :874 — it doesn't fit the page's blue accent. */
+  box-shadow: none !important;
+}
+
+/* QuoteModal Continue / Submit buttons — globals/JSX renders them as
+   `btn-shine bg-[#FFE533] rounded-lg` with a mono-uppercase label.
+   Restyle to match the page's AccentPill aesthetic: rounded-full
+   blue pill, sans medium white label. Hover keeps the bg-darken
+   from JSX but loses the yellow glow shadow. */
+body:has([data-accent="blue"]) [class*="z-[200]"] button.btn-shine {
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+body:has([data-accent="blue"]) [class*="z-[200]"] button.btn-shine:hover {
+  box-shadow: none !important;
+  transform: none !important;
+}
+body:has([data-accent="blue"]) [class*="z-[200]"] button.btn-shine > span {
+  font-family: var(--font-sans, system-ui, sans-serif) !important;
+  font-weight: 500 !important;
+  font-size: 16px !important;
+  text-transform: none !important;
+  letter-spacing: -0.3px !important;
+  color: #ffffff !important;
+}
+
+/* Modal field labels: theme-light flips text-white/40 to ink/45 —
+   that's readable but a bit muted. Bump to ink/65 + slightly bolder
+   so labels read clearly above each input on the light card. */
+body:has([data-accent="blue"]) .fixed.z-\[200\] label,
+body:has([data-accent="blue"]) [class*="z-[200]"] label {
+  color: rgba(0, 31, 77, 0.7) !important;
+}
+
+/* mainpage-5: hide the contact form section + its trailing divider.
+   The footer keeps only the FooterContent (logo, about, nav, phone,
+   email) and the bottom bar. Shared ContactFooter component is
+   untouched — these rules are scoped via body:has([data-accent="blue"])
+   so other pages still render the full footer. */
+body:has([data-accent="blue"]) #contact > div > div:first-child {
+  display: none !important;
+}
+body:has([data-accent="blue"]) #contact > div > div:nth-child(2) {
+  display: none !important;
+}
+
+/* Hide the FAQ nav link in the footer — mainpage-5 doesn't surface
+   FAQ as a primary footer destination. Shared ContactFooter renders
+   it for other pages; this scoped rule hides it just here. */
+body:has([data-accent="blue"]) #contact a[href="/faq"] {
+  display: none !important;
+}
+
+/* Footer left/right column gap — default lg:gap-5 (20px) reads as
+   too tight on mainpage-5 since the left "logo + about + nav" stack
+   and the right "phone/address/email/social" stack sit on the wide
+   blue island. Widen to 8rem (128px) on desktop. Excludes the
+   bottom bar (which uses `lg:items-center` — different selector
+   shape — so the copyright/privacy/credit line keeps its own gap). */
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row:not(.lg\:items-center) {
+    gap: 8rem !important;
+  }
+}
+
+/* Bottom bar (copyright, Privacy policy, "Design & development by")
+   — globals.css sets the text to text-lg (18px) which reads BIGGER
+   than the phone/email/address links above (16-18px after our other
+   overrides) — wrong visual hierarchy. Footnote text should be the
+   smallest type on the page. Drop to 13/14px. */
+body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row.lg\:items-center p,
+body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row.lg\:items-center a,
+body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row.lg\:items-center span {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  letter-spacing: -0.1px !important;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row.lg\:items-center p,
+  body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row.lg\:items-center a,
+  body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row.lg\:items-center span {
+    font-size: 14px !important;
+  }
+}
+
+/* Footer: slightly tightened padding (no wordmark backdrop now). */
+body:has([data-accent="blue"]) #contact {
+  padding-top: 80px !important;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #contact {
+    padding-top: 120px !important;
+  }
+}
+
+/* Social icons — force white via filter. They ship as coloured SVGs
+   (yelp red, google multi-colour, instagram gradient, etc.); on the
+   blue footer island we want unified white versions. `brightness(0)
+   invert(1)` turns any source colour to pure white. Override the
+   globals.css `.social-icon img { opacity: 0.6 }` so the rest state
+   is full-white; hover keeps the existing slide-in animation from
+   globals.css. */
+body:has([data-accent="blue"]) #contact .social-icon img {
+  filter: brightness(0) invert(1) !important;
+  opacity: 1 !important;
+}
+
+/* Hover keeps the colour shift (yelp red / google blue / instagram
+   gradient) but locks the shape to a full circle AND prevents the
+   icon from scaling up — globals.css applies `transform: scale(1.35)`
+   + `border-radius: 15px` on hover, both of which we want disabled
+   so the icon just smoothly changes colour. */
+body:has([data-accent="blue"]) #contact .social-icon--yelp:hover,
+body:has([data-accent="blue"]) #contact .social-icon--google:hover,
+body:has([data-accent="blue"]) #contact .social-icon--instagram:hover {
+  border-radius: 9999px !important;
+  transform: none !important;
+}
+
+/* Same applies to the sibling-dim effect from globals.css:728 which
+   pushes non-hovered siblings to scale(0.95) + opacity 0.15.
+   Disable both so the surrounding icons stay still. */
+body:has([data-accent="blue"]) #contact .social-card:has(.social-icon:hover) .social-icon:not(:hover) {
+  transform: none !important;
+  opacity: 1 !important;
+}
+
+/* FAQ desktop layout mirrors the footer's column grid: heading
+   column on the left + list column on the right, both flex-1 with
+   the same 8rem gap as the FooterContent below. Result: FAQ list's
+   left edge sits exactly under the start of the footer's right
+   column — same "силовая линия" running vertically through both. */
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #faq .lg\:flex-row {
+    gap: 8rem !important;
+  }
+  body:has([data-accent="blue"]) #faq .lg\:flex-row > h2 {
+    flex: 1 1 0 !important;
+    max-width: none !important;
+  }
+  body:has([data-accent="blue"]) #faq .faq-list.hidden.lg\:flex {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+/* Yellow phone icon (SVG referenced as <img src>) — recolor to brand
+   blue (#0066ff) with a precomputed filter chain. */
+body:has([data-accent="blue"]) img[src*="phone-yellow"] {
+  filter: brightness(0) saturate(100%) invert(28%) sepia(99%)
+    saturate(3500%) hue-rotate(216deg) brightness(99%) contrast(105%);
+}
+
+/* Contrast fix: anywhere we swapped yellow → blue, the original near-black
+   foreground text loses contrast (#0c0c0c on #0066ff ≈ 2.6:1). Force the
+   foreground to white on those elements so the AA contrast holds. */
+body:has([data-accent="blue"]) .bg-\[\#FFE533\].text-\[\#0c0c0c\],
+body:has([data-accent="blue"]) .bg-\[\#FFE533\] .text-\[\#0c0c0c\] {
+  color: #ffffff !important;
+}
+
+/* Header layout — desktop only: anchor the nav to the centre of the
+   header row, leaving phone + CTA on the right and logo on the left. */
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) header > div {
+    position: relative;
+  }
+  body:has([data-accent="blue"]) header > div nav {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+  }
+}

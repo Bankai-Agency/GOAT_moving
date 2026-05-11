@@ -6,9 +6,18 @@ import { useEffect, useState } from "react";
 export function Touchbar() {
   const [visible, setVisible] = useState(false);
 
-  // Show only after the user has scrolled past the hero (~80% of viewport height)
+  // Show only after the user has scrolled past the hero. If the page
+  // exposes a `[data-hero-region]` element (mainpage-5 sticky-pin
+  // hero), wait until scroll passes its end. Otherwise fall back to
+  // the original ~80vh threshold used on the rest of the site.
   useEffect(() => {
-    const threshold = () => Math.max(window.innerHeight * 0.8, 600);
+    const threshold = () => {
+      const hero = document.querySelector<HTMLElement>("[data-hero-region]");
+      if (hero) {
+        return hero.offsetTop + hero.offsetHeight - window.innerHeight;
+      }
+      return Math.max(window.innerHeight * 0.8, 600);
+    };
     const onScroll = () => {
       setVisible(window.scrollY > threshold());
     };
