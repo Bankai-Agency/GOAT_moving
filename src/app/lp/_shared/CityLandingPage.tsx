@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
-import { HeaderLP } from "@/components/layout/HeaderLP";
+import { LPTerminalNav } from "./LPTerminalNav";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { CTABanner } from "@/components/sections/CTABanner";
 import { FAQSection } from "@/components/sections/FAQSection";
@@ -34,6 +35,36 @@ const pricingEstimates = [
 
 export function CityLandingPage({ config }: { config: CityLPConfig }) {
   const { city, heroImage, heroImagePosition = "object-center" } = config;
+
+  /* Footer Navigation column reuses ContactFooter's hard-coded
+     /local-moving / /reviews / /contacts <Link>s. On the LP those
+     would yank the user off-page — intercept the clicks and remap
+     to the LP's anchor sections instead. */
+  useEffect(() => {
+    const HREF_TO_ANCHOR: Record<string, string> = {
+      "/local-moving": "#services",
+      "/long-distance-moving": "#services",
+      "/commercial-moving": "#services",
+      "/packing-services": "#services",
+      "/reviews": "#reviews",
+      "/faq": "#faq",
+      "/contacts": "#contact",
+    };
+    const onClick = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement | null)?.closest("a");
+      if (!target) return;
+      const footer = target.closest("footer#contact");
+      if (!footer) return;
+      const href = target.getAttribute("href") || "";
+      const anchor = HREF_TO_ANCHOR[href];
+      if (!anchor) return;
+      e.preventDefault();
+      const el = document.querySelector(anchor);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
+  }, []);
 
   /* Solution items: start from defaults, override only descriptions that vary by city. */
   const includedItems = defaultIncludedItems.map((item) => {
@@ -114,24 +145,32 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
   const neighborhoodsAreas = config.neighborhoods.map((n) => ({ city: n }));
 
   return (
-    <div className="page-zoom">
-      <HeaderLP />
+    <>
+      {/* Floating nav lives OUTSIDE .page-zoom so it renders at the
+         same 1:1 scale as mainpage-5's TerminalNav (the rest of the
+         LP keeps its proportional `zoom` scale-down for visual
+         continuity with the existing pages). */}
+      <LPTerminalNav />
+      <div className="page-zoom">
       <main>
 
       {/* ───────────── 1. HERO ─────────────
-          Image container stretches to (viewport - 32px × 2) on desktop
-          for a cinematic look, while the inner content (title, form, rating
-          strip) stays aligned to the standard 1408px content grid. */}
-      <section className="bg-[#0c0c0c] pt-[100px] lg:pt-[108px] pb-[24px] lg:pb-[24px]">
-        <div className="mx-4 lg:mx-8 relative rounded-2xl bg-[#181818] min-h-[560px] lg:min-h-[calc(100dvh_-_132px)]">
-          {/* Image + overlays clipped to rounded corners, but content grid is NOT
-              clipped — so form dropdowns (date/size) can extend below the hero. */}
-          <div className="absolute inset-0 rounded-2xl overflow-hidden">
+          Full-bleed: image stretches to the viewport edges (no side
+          margins, no rounded corners) and fills 100dvh including the
+          area beneath the floating nav. Inner content stays aligned
+          to the standard 1408px content grid + horizontal padding. */}
+      <section className="bg-[#0c0c0c]">
+        {/* data-lp-hero marks this card as a "dark island" inside the
+           light theme — keeps text/border whites white over the photo
+           bg, see _shared/lp-theme.css. */}
+        <div data-lp-hero="" className="relative bg-[#181818] min-h-[100dvh]">
+          {/* Image + overlays fill the full hero box — no clip radius. */}
+          <div className="absolute inset-0 overflow-hidden">
             <Image
               src={heroImage}
               alt={`Professional movers in ${city}`}
               fill
-              sizes="(max-width: 1024px) 200vw, 100vw"
+              sizes="100vw"
               quality={90}
               className={`object-cover ${heroImagePosition} lg:object-[center_25%]`}
               priority
@@ -141,15 +180,26 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 40%, transparent 65%)' }} />
           </div>
 
-          {/* Inner content grid — constrained to 1408px, centered */}
-          <div className="relative z-10 min-h-[560px] lg:min-h-[calc(100dvh_-_132px)] max-w-[1408px] mx-auto">
+          {/* Content layer — sits over the absolutely-positioned image.
+             Two-level structure to align with other LP sections:
+               • Outer: full-viewport width + px-4 (matches the px-4
+                 every other section uses, e.g. About / Services).
+               • Inner: max-w-[1408px] mx-auto — same container width.
+             This way the hero's text edge sits at the same x as
+             every section below it (16px from viewport edge at any
+             width). Image stays full-bleed since it's in a sibling
+             absolute div, untouched by this padding. */}
+          <div className="relative z-10 min-h-[100dvh] px-4 pt-[100px] lg:pt-[108px]">
+          <div className="max-w-[1408px] mx-auto">
 
           {/* Hero content — pinned to bottom, hero grows if content overflows */}
-          <div className="relative flex flex-col justify-end min-h-[560px] lg:min-h-[calc(100dvh_-_132px)] p-6 lg:px-0 lg:pb-[48px] lg:pt-8 gap-5 lg:gap-5">
+          <div className="relative flex flex-col justify-end min-h-[calc(100dvh_-_100px)] lg:min-h-[calc(100dvh_-_108px)] py-6 lg:pb-[48px] lg:pt-8 gap-5 lg:gap-5">
             {/* Rating strip + title + description */}
             <div className="flex flex-col gap-4 lg:gap-5">
-              {/* Rating strip */}
-              <div className="inline-flex items-center gap-2 backdrop-blur-[15px] bg-[rgba(13,13,13,0.5)] rounded-full pl-2.5 pr-3 py-1.5 lg:px-4 lg:py-2 w-fit">
+              {/* Rating strip — same glass settings as the floating
+                 nav (rgba(0,0,0,0.3) + blur(30px)) so the bullets
+                 read as the same surface family. */}
+              <div className="inline-flex items-center gap-2 backdrop-blur-[30px] bg-[rgba(0,0,0,0.3)] rounded-full pl-2.5 pr-3 py-1.5 lg:px-4 lg:py-2 w-fit">
                 <a href="https://www.yelp.com/biz/goat-movers-vancouver" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pr-2.5 lg:pr-3 border-r border-white/15 hover:opacity-80 transition-opacity">
                   <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#FF2828] shrink-0"><Image src="/icons/yelp.svg" alt="Yelp" width={12} height={12} /></div>
                   <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className="hidden lg:inline">Yelp </span><span className="text-[#FFE533]">4.79</span><span className="text-white/40">/5</span></span>
@@ -160,26 +210,33 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                 </a>
                 <span className="inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-mono font-bold text-[10px] lg:text-xs uppercase tracking-[-0.48px] text-white/70 whitespace-nowrap">437+<span className="hidden lg:inline"> Verified</span> Reviews</span>
               </div>
-              <h1 className="font-sans font-bold text-[40px] lg:text-[80px] leading-[1.05] tracking-[-1.2px] lg:tracking-[-2.4px] text-white">
+              {/* Typography matched to mainpage-5: font-normal (not
+                 bold), larger sizes, tighter tracking, lower line-
+                 height for big text. */}
+              <h1 className="font-sans font-normal text-[56px] sm:text-[72px] lg:text-[112px] leading-[0.95] tracking-[-1.4px] sm:tracking-[-2px] lg:tracking-[-3.4px] text-white">
                 Stress-Free
                 <br />
                 Movers in
                 <br />
                 <span className="text-[#FFE533]">{city}</span>
               </h1>
-              <p className="font-sans font-bold text-[28px] lg:text-[40px] leading-[1.1] tracking-[-0.84px] lg:tracking-[-1.2px] text-white">
+              <p className="font-sans font-normal text-[28px] lg:text-[44px] leading-[1.0] tracking-[-0.8px] lg:tracking-[-1.4px] text-white">
                 $125/Hour
               </p>
-              <p className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white/80 max-w-[500px]">
+              <p className="font-sans font-normal text-base lg:text-lg leading-[1.5] tracking-[-0.3px] text-white/80 max-w-[560px]">
                 We show up on time, handle your belongings with care, and give you a clear quote upfront. Most moves in {city} cost $400–$900.
               </p>
 
-              {/* Desktop: horizontal form bar — right after description.
-                  Elevated z-index so date/size dropdowns overlay the next section. */}
-              <div className="hidden lg:block mt-4 backdrop-blur-[20px] bg-[rgba(24,24,24,0.85)] rounded-2xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)] relative z-40">
+              {/* Desktop: horizontal form bar — same glass settings
+                  as the floating nav (rgba(0,0,0,0.3) + blur(30px))
+                  so the form bar reads as the same surface family.
+                  Elevated z-index so date/size dropdowns overlay the
+                  next section. */}
+              <div className="hidden lg:block mt-4 backdrop-blur-[30px] bg-[rgba(0,0,0,0.3)] rounded-2xl p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)] relative z-40">
                 <StepQuoteForm heading="Get your free quote" city={city} horizontal />
               </div>
             </div>
+          </div>
           </div>
           </div>
         </div>
@@ -190,31 +247,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         </div>
       </section>
 
-      {/* 2. Social proof */}
-      <AboutSection
-        label="Social Proof"
-        title={`Trusted by Hundreds of ${city} Customers`}
-        description={config.aboutDescription}
-        stats={socialProofStats}
-      />
-
-      {/* 3. Solution / Benefits */}
-      <WhatsIncludedSection
-        label="Our Solution"
-        title={`How We Make Moving in ${city} Predictable and Stress-Free`}
-        subtitle={`One hourly rate — everything your ${city} move needs, included.`}
-        items={includedItems}
-      />
-
-
-      {/* CTA banner right after pricing */}
-      <CTABanner
-        heading={`Get Your Free Moving Quote in ${city} in 30 Seconds`}
-        tagline="No hidden fees. No hourly surprises. Fully licensed and insured."
-        buttonText="Get Your Free Quote"
-      />
-
-      {/* 6. Services */}
+      {/* 2. Services (moved up — was after CTABanner) */}
       <ServicesSection
         label="Our Services"
         title="Find the Right Moving Service for Your Situation"
@@ -222,13 +255,43 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         services={services}
       />
 
-      {/* 7. Process */}
+      {/* 3. Solution / Benefits (moved up — directly after Services) */}
+      <WhatsIncludedSection
+        label="Our Solution"
+        title={`How We Make Moving in ${city} Predictable and Stress-Free`}
+        subtitle={`One hourly rate — everything your ${city} move needs, included.`}
+        items={includedItems}
+      />
+
+      {/* 4. Social proof */}
+      <AboutSection
+        label="Social Proof"
+        title={
+          <>
+            Trusted by Hundreds
+            <br />
+            of {city} Customers
+          </>
+        }
+        description={config.aboutDescription}
+        stats={socialProofStats}
+      />
+
+
+      {/* 5. Process */}
       <div id="process">
         <HowItWorksSection
           title="How Your Move Works — Simple, Clear, Fully Controlled"
           steps={processSteps}
         />
       </div>
+
+      {/* 6. CTA banner (moved — was before Process) */}
+      <CTABanner
+        heading={`Get Your Free Moving Quote in ${city} in 30 Seconds`}
+        tagline="No hidden fees. No hourly surprises. Fully licensed and insured."
+        buttonText="Get Your Free Quote"
+      />
 
       {/* 8. Testimonials — default reviews carousel */}
       <ReviewsSection title="Real Moves. Real Reviews. No Surprises." />
@@ -249,6 +312,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       <ContactFooter />
       <Touchbar />
       <QuoteModal />
-    </div>
+      </div>
+    </>
   );
 }

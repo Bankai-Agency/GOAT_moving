@@ -8,7 +8,11 @@ import { SelectDropdown } from "@/components/ui/SelectDropdown";
 import { MOVE_SIZES } from "@/components/ui/QuoteForm";
 import type { QuoteFormValues } from "@/components/ui/QuoteForm";
 
-const TOTAL_STEPS = 3;
+/* 2-step form: contact details → move details. The previous step 3
+   ("Additional Information" / optional message) was removed — most LP
+   leads don't need a free-form notes field, and dropping it shortens
+   the funnel. */
+const TOTAL_STEPS = 2;
 
 const empty: QuoteFormValues = {
   fullName: "",
@@ -147,7 +151,6 @@ export function StepQuoteForm({
           <h3 className="font-sans font-semibold text-xl leading-[1.2] tracking-[-0.6px] text-white whitespace-nowrap">
             {step === 1 && heading}
             {step === 2 && "Move details"}
-            {step === 3 && "Almost done"}
           </h3>
           <StepIndicator current={step} />
         </div>
@@ -158,7 +161,9 @@ export function StepQuoteForm({
               <div className="flex-1"><FormInput label="Full name" placeholder="Enter your name" required value={values.fullName} onChange={(v) => set("fullName", v)} /></div>
               <div className="flex-1"><FormInput label="Phone number" placeholder="+1 (555) 123-4567" type="tel" required value={values.phone} onChange={(v) => set("phone", v)} /></div>
               <div className="flex-1"><FormInput label="Email" placeholder="your@email.com" type="email" value={values.email} onChange={(v) => set("email", v)} /></div>
-              <ContinueButton label="Get Your Free Quote" onClick={() => { if (validateStep1()) setStep(2); }} />
+              {/* Step-1 button label calls out the next step (move
+                 details) so users don't expect a submit on click. */}
+              <ContinueButton label="Continue to Move details" onClick={() => { if (validateStep1()) setStep(2); }} />
             </div>
             {Object.keys(errors).length > 0 && (
               <div className="flex gap-3">
@@ -177,35 +182,10 @@ export function StepQuoteForm({
             <div className="flex-1"><FormInput label="Moving to" placeholder="Address" value={values.movingTo} onChange={(v) => set("movingTo", v)} /></div>
             <div className="flex-1"><DatePicker label="Move date" placeholder="Choose date" value={values.moveDate} onChange={(v) => set("moveDate", v)} /></div>
             <div className="flex-1"><SelectDropdown label="Move size" placeholder="Select size" options={MOVE_SIZES} value={values.moveSize} onChange={(v) => set("moveSize", v)} /></div>
-            <ContinueButton label="Get Your Free Quote" onClick={() => setStep(3)} />
+            <ContinueButton label={submitting ? "Sending..." : "Submit Request"} onClick={handleSubmit} disabled={submitting} />
           </div>
         )}
         {step === 2 && <BackButton onClick={() => setStep(1)} />}
-
-        {step === 3 && (
-          <div className="flex items-stretch gap-3">
-            <div className="flex-1 flex">
-              <input
-                type="text"
-                placeholder="Any special requests or details... (optional)"
-                value={values.message}
-                onChange={(e) => set("message", e.target.value)}
-                className="w-full backdrop-blur-[20px] bg-white/10 rounded-[10px] px-4 h-[56px] font-sans font-normal text-base lg:text-lg leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.36px] text-white placeholder:text-white/60 outline-none focus:bg-white/15 input-glow transition-all duration-200"
-              />
-            </div>
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={submitting}
-              className="btn-shine bg-[#FFE533] rounded-lg h-[56px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out shrink-0 px-8 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
-                {submitting ? "Sending..." : "Submit Request"}
-              </span>
-            </button>
-          </div>
-        )}
-        {step === 3 && <BackButton onClick={() => setStep(2)} />}
       </div>
     );
   }
@@ -218,7 +198,6 @@ export function StepQuoteForm({
       <h3 className="font-sans font-semibold text-2xl lg:text-[28px] leading-[1.2] tracking-[-0.72px] lg:tracking-[-0.84px] text-white">
         {step === 1 && heading}
         {step === 2 && "Move details"}
-        {step === 3 && "Almost done"}
       </h3>
 
       {step === 1 && (
@@ -229,7 +208,9 @@ export function StepQuoteForm({
           {errors.phone && <ErrorMsg text={errors.phone} />}
           <FormInput label="Email" placeholder="your@email.com" type="email" value={values.email} onChange={(v) => set("email", v)} />
           {errors.email && <ErrorMsg text={errors.email} />}
-          <ContinueButton label="Get Your Free Quote" onClick={() => { if (validateStep1()) setStep(2); }} />
+          {/* Step-1 button → step 2 (not submit) — label calls out
+             the transition so users know there's another step. */}
+          <ContinueButton label="Continue to Move details" onClick={() => { if (validateStep1()) setStep(2); }} />
           <p className="font-sans text-sm text-white/40 text-center">
             Enter your name and phone so we can send you a quote.
           </p>
@@ -244,26 +225,8 @@ export function StepQuoteForm({
             <DatePicker label="Move date" placeholder="Choose date" value={values.moveDate} onChange={(v) => set("moveDate", v)} />
             <SelectDropdown label="Move size" placeholder="Select size" options={MOVE_SIZES} value={values.moveSize} onChange={(v) => set("moveSize", v)} />
           </div>
-          <ContinueButton label="Get Your Free Quote" onClick={() => setStep(3)} />
-          <BackButton onClick={() => setStep(1)} />
-        </div>
-      )}
-
-      {step === 3 && (
-        <div className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <label className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
-              Additional Information (Optional)
-            </label>
-            <textarea
-              placeholder="Any special requests or details..."
-              value={values.message}
-              onChange={(e) => set("message", e.target.value)}
-              className="backdrop-blur-[20px] bg-white/10 rounded-[10px] p-4 h-[140px] font-sans font-normal text-base lg:text-lg leading-[1.5] lg:leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.36px] text-white placeholder:text-white/60 outline-none focus:bg-white/15 input-glow transition-all duration-200 resize-none"
-            />
-          </div>
           <ContinueButton label={submitting ? "Sending..." : "Submit Request"} onClick={handleSubmit} disabled={submitting} />
-          <BackButton onClick={() => setStep(2)} />
+          <BackButton onClick={() => setStep(1)} />
         </div>
       )}
     </div>

@@ -11,7 +11,7 @@ export type AboutStat = {
 
 export type AboutSectionProps = {
   label?: string;
-  title?: string;
+  title?: React.ReactNode;
   description?: string;
   stats?: AboutStat[];
   videoPoster?: string;

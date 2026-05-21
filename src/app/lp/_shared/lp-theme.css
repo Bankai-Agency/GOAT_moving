@@ -1,0 +1,776 @@
+/* LP theme — mirrors mainpage-5 (white bg + #0066ff blue accent + ink
+   text) by wearing the global `theme-light` + `data-accent="blue"`
+   tokens. globals.css does the heavy lifting (dark→light surface
+   flips, yellow→blue, white→ink text). mainpage-5/accent.css refines
+   the blue from #005BFF → #0066ff via body:has([data-accent="blue"]).
+
+   The rules below cover two LP-specific gaps:
+
+   1. HERO IS A "DARK ISLAND". The hero card uses a photo background
+      with dark gradient overlays so the headline reads on top of
+      colour. theme-light would flip its `text-white` to ink — which
+      would vanish on the photo. We scope the LP hero with
+      [data-lp-hero] and force the white-family colours/borders back
+      to white inside it. (globals.css already does this for
+      `section.h-screen` and `header`; the LP hero is neither.)
+
+   2. INK COLOUR ALIGNMENT. Everywhere outside the hero island, body
+      copy and headings should read in the mainpage-5 ink (#001f4d)
+      instead of the generic near-black (#0c0c0c) that
+      theme-light uses by default. We re-tint the most common
+      text classes to ink. */
+
+body:has([data-accent="blue"][data-lp-root]) {
+  /* Match mainpage-5 base text colour. */
+  color: #001f4d;
+}
+
+/* Headings + body copy → ink, scoped so we don't leak past the LP root. */
+.theme-light[data-lp-root] .text-white,
+.theme-light[data-lp-root] .text-\[\#0c0c0c\] {
+  color: #001f4d !important;
+}
+.theme-light[data-lp-root] .text-white\/90 { color: rgba(0, 31, 77, 0.9) !important; }
+.theme-light[data-lp-root] .text-white\/80 { color: rgba(0, 31, 77, 0.8) !important; }
+.theme-light[data-lp-root] .text-white\/70 { color: rgba(0, 31, 77, 0.65) !important; }
+.theme-light[data-lp-root] .text-white\/60 { color: rgba(0, 31, 77, 0.55) !important; }
+.theme-light[data-lp-root] .text-white\/50 { color: rgba(0, 31, 77, 0.5) !important; }
+.theme-light[data-lp-root] .text-white\/40 { color: rgba(0, 31, 77, 0.4) !important; }
+.theme-light[data-lp-root] .text-white\/30 { color: rgba(0, 31, 77, 0.3) !important; }
+
+/* On a blue CTA, text was `text-[#0c0c0c]` (dark on yellow). Now bg
+   is blue (#0066ff) — text needs to be white for contrast. */
+.theme-light[data-lp-root] .bg-\[\#FFE533\] .text-\[\#0c0c0c\],
+.theme-light[data-lp-root] .bg-\[\#FFE533\] *,
+.theme-light[data-lp-root] [class*="bg-[#FFE533]"] .text-\[\#0c0c0c\] {
+  color: #ffffff !important;
+}
+
+/* ── DARK ISLANDS ──────────────────────────────────────────────
+   Cards/sections with a photo background + dark overlay need to keep
+   their original white-on-dark contrast — flipping that text to ink
+   would render it invisible against the photo. We protect three
+   such zones:
+
+     • Hero card        → [data-lp-hero] (CityLandingPage hero)
+     • Services cards   → #services .bg-[#181818] (each card has
+                          a photo bg + dark overlay)
+     • CTA banner       → #cta .relative.rounded-2xl (image-bg
+                          banner card)
+
+   The unified selector list below scopes the "keep white" rules to
+   any of those zones. */
+
+/* Each dark-island zone — text + border colour preservation. */
+.theme-light[data-lp-root] [data-lp-hero] .text-white,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .text-white,
+.theme-light[data-lp-root] #cta .text-white {
+  color: #ffffff !important;
+}
+.theme-light[data-lp-root] [data-lp-hero] .text-white\/90,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .text-white\/90,
+.theme-light[data-lp-root] #cta .text-white\/90 { color: rgba(255, 255, 255, 0.9) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .text-white\/80,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .text-white\/80,
+.theme-light[data-lp-root] #cta .text-white\/80 { color: rgba(255, 255, 255, 0.85) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .text-white\/70,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .text-white\/70,
+.theme-light[data-lp-root] #cta .text-white\/70 { color: rgba(255, 255, 255, 0.75) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .text-white\/60,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .text-white\/60,
+.theme-light[data-lp-root] #cta .text-white\/60 { color: rgba(255, 255, 255, 0.65) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .text-white\/50,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .text-white\/50,
+.theme-light[data-lp-root] #cta .text-white\/50 { color: rgba(255, 255, 255, 0.55) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .text-white\/40,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .text-white\/40,
+.theme-light[data-lp-root] #cta .text-white\/40 { color: rgba(255, 255, 255, 0.45) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .text-white\/30,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .text-white\/30,
+.theme-light[data-lp-root] #cta .text-white\/30 { color: rgba(255, 255, 255, 0.3) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .text-white\/20,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .text-white\/20,
+.theme-light[data-lp-root] #cta .text-white\/20 { color: rgba(255, 255, 255, 0.25) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .text-white\/15,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .text-white\/15,
+.theme-light[data-lp-root] #cta .text-white\/15 { color: rgba(255, 255, 255, 0.18) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .text-white\/\[0\.03\],
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .text-white\/\[0\.03\] { color: rgba(255, 255, 255, 0.03) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .border-white\/30,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .border-white\/30,
+.theme-light[data-lp-root] #cta .border-white\/30 { border-color: rgba(255, 255, 255, 0.3) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .border-white\/20,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .border-white\/20,
+.theme-light[data-lp-root] #cta .border-white\/20 { border-color: rgba(255, 255, 255, 0.2) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .border-white\/15,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .border-white\/15,
+.theme-light[data-lp-root] #cta .border-white\/15 { border-color: rgba(255, 255, 255, 0.18) !important; }
+.theme-light[data-lp-root] [data-lp-hero] .border-white\/10,
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .border-white\/10,
+.theme-light[data-lp-root] #cta .border-white\/10 { border-color: rgba(255, 255, 255, 0.12) !important; }
+
+/* The #cta yellow island bar has a button with `bg-[#0c0c0c]` +
+   `text-white`. theme-light flips bg → white, text → ink. The
+   yellow island flipped to blue. So now: ink text on a white
+   button INSIDE a blue island — readable. But if we want it to
+   match mainpage-5's AccentPill style (white text on blue button),
+   we'd need to flip the button bg back to blue. Keep the
+   default (light button, ink text) for now — it reads as a
+   secondary action inside the blue island. */
+
+/* ── SERVICES CARDS — keep dark base ────────────────────────────
+   Each service card is a photo-backed "dark island": bg-[#181818]
+   underneath + photo on top + dark overlay + white text. The
+   photo fades in via IntersectionObserver (threshold 0.3), so
+   before scroll triggers it the card is just its base colour. If
+   we let theme-light flip that base to #f1f3f6 (light grey),
+   text-white on light = invisible during the idle state. Revert
+   the bg back to #181818 so the dark base + white text always
+   read, with the photo + overlay layering on top once visible. */
+.theme-light[data-lp-root] #services .bg-\[\#181818\] {
+  background-color: #181818 !important;
+}
+
+/* ── WhatsIncluded CARDS ───────────────────────────────────────
+   Card structure: light bg (#f1f3f6 from theme-light flip), then
+   a stack of inline-styled decorative layers — yellow radial-
+   gradient "blobs" + a solid `rgba(24,24,24,1)` overlay sitting
+   on top of them — and finally the content (title + body). The
+   dark overlay would render the card as a dark island again,
+   killing readability for our flipped ink text. We RESTORE the
+   original hover mechanic (animated glow blobs hidden behind a
+   frosted-glass overlay that becomes translucent on hover), but
+   adapt it to the LP palette:
+     • Blobs: yellow → BLUE (filter hue-rotate ≈ 163°).
+     • Overlay default: solid LIGHT (matches card bg) so blobs
+       are invisible at rest. Hover: light + 40% opacity +
+       backdrop-blur — reveals the blue glow through frosted
+       white glass.
+
+   The original JSX paths still set inline-style rgba(24,24,24,...)
+   for the overlay; we re-paint those to light. The animated blobs
+   keep their inline radial-gradient — only their colour is
+   rotated. */
+
+/* Glow blobs: yellow → brand blue. The blob divs have an inline
+   `filter: blur(Xpx)` that we need to preserve while adding the
+   hue-rotate. React's inline filter beats CSS class filters
+   normally, but we can override via [style*=…] + !important —
+   AND chain `hue-rotate(...) blur(Xpx)` to preserve the soft glow
+   (3 blobs use blur 40/45/35px each). */
+.theme-light[data-lp-root] [style*="rgba(255,229,51,0.55)"] {
+  filter: hue-rotate(163deg) blur(40px) !important;
+}
+.theme-light[data-lp-root] [style*="rgba(255,229,51,0.45)"] {
+  filter: hue-rotate(163deg) blur(45px) !important;
+}
+.theme-light[data-lp-root] [style*="rgba(255,229,51,0.35)"] {
+  filter: hue-rotate(163deg) blur(35px) !important;
+}
+
+/* Overlay layer — paint LIGHT instead of black in BOTH states.
+   We pin the base to opaque-light via the class chain (works on
+   touch and desktop), then transition to light-translucent +
+   blurred under TWO triggers:
+     • Desktop: parent `:hover` (CSS-driven, smooth transitions)
+     • Touch: React swaps inline-style to "rgba(24, 24, 24, 0.4)"
+       on scroll-into-view via IntersectionObserver — match that
+       substring as a fallback hook.
+   Both rules paint the SAME values, so leaving hover (or
+   scrolling out) cleanly animates back to the base. */
+.theme-light[data-lp-root] .group.relative.rounded-xl.lg\:rounded-2xl .transition-\[background\,backdrop-filter\] {
+  background: rgba(241, 243, 246, 1) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.theme-light[data-lp-root] .group.relative.rounded-xl.lg\:rounded-2xl:hover .transition-\[background\,backdrop-filter\],
+.theme-light[data-lp-root] .group.relative.rounded-xl.lg\:rounded-2xl .transition-\[background\,backdrop-filter\][style*="rgba(24, 24, 24, 0.4)"] {
+  background: rgba(241, 243, 246, 0.55) !important;
+  backdrop-filter: blur(22px) !important;
+  -webkit-backdrop-filter: blur(22px) !important;
+}
+
+/* Card-icon containers in WhatsIncluded: original used yellow
+   icons sitting on a flat dark card. After flipping bg → light,
+   ensure the icon SVG strokes/fills (`text-[#FFE533]` and
+   inline-yellow) are recoloured to brand blue — globals.css
+   already handles `.text-[#FFE533]` but icons rendered via
+   <Image> remain unchanged unless their src matches the
+   `theme-light img[src*="..."]` filter chain. */
+
+
+/* Restore the rating-strip glass tint inside the hero — globals.css
+   doesn't flip rgba(13,13,13,0.5), but inline styles can lose their
+   intended dark glass when the surrounding theme is light. The
+   rating pill sits on the photo and reads as glass; keep it dark. */
+
+/* The yellow accent inside hero scoring badges flipped to blue via
+   theme-light's .text-\[\#FFE533\] rule. That's correct on a light
+   bg, but on the rating glass pill (sitting on the photo) #0066ff
+   on dark glass is fine too — no override needed. */
+
+/* ── HERO MOBILE QUOTE-FORM CARD ──────────────────────────────────
+   The mobile-only form sits BELOW the hero on a card. Its bg flips
+   from #181818 → #f1f3f6 (light grey) via theme-light. Text inside
+   may use text-white which would be invisible — force ink. Scoped
+   to .lg:hidden form card. */
+.theme-light[data-lp-root] section .lg\:hidden .text-white {
+  color: #001f4d !important;
+}
+
+/* ── BUTTON CONTRAST ON BLUE ────────────────────────────────────
+   Where a button has both `bg-[#FFE533]` AND `text-[#0c0c0c]`, the
+   bg flips to blue (#0066ff) but the text was already overridden by
+   globals.css `.text-\[\#0c0c0c\] → #ffffff`. So buttons read
+   white-on-blue. Good — no extra rule needed. */
+
+/* ─────────────────────────────────────────────────────────────────
+   Typography — match mainpage-5
+   ─────────────────────────────────────────────────────────────────
+   mainpage-5 uses font-NORMAL (400) on its big headlines (not bold
+   like the live site), with bigger sizes, tighter tracking and
+   lower line-heights for the big text. We bring the LP into the
+   same rhythm via scoped overrides.
+
+   Targets the exact Tailwind class combinations the shared
+   section components emit, keeping the overrides specific to
+   [data-lp-root] so the home page / other LPs aren't affected. */
+
+/* Section h2 main headings (About, WhatsIncluded, Services,
+   HowItWorks, FAQ, ServiceArea, Reviews) — were 32→64px bold;
+   mainpage-5 reads at 40→64→112px normal with much tighter line-
+   height (0.96) and tracking (-3.4px on desktop). */
+.theme-light[data-lp-root] section h2.font-bold {
+  font-weight: 400 !important;
+  letter-spacing: -1.4px;
+  line-height: 0.98;
+}
+@media (min-width: 640px) {
+  .theme-light[data-lp-root] section h2.font-bold {
+    font-size: 64px;
+    letter-spacing: -2px;
+  }
+}
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] section h2.font-bold {
+    font-size: 96px;
+    letter-spacing: -3px;
+    line-height: 0.96;
+  }
+}
+
+/* h3 inside cards (WhatsIncluded items) — semibold (600) so the
+   titles read with enough presence on both mobile (text-xl 20px)
+   and desktop (text-[26px]→32px) without going to bold (700). */
+.theme-light[data-lp-root] .font-sans.font-bold.text-xl {
+  font-weight: 600 !important;
+  letter-spacing: -0.6px !important;
+  line-height: 1.1 !important;
+}
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] .font-sans.font-bold.text-xl,
+  .theme-light[data-lp-root] .lg\:text-\[26px\].font-bold {
+    font-size: 32px !important;
+    letter-spacing: -1px !important;
+  }
+}
+
+/* h3 inside ServicesSection cards (Local Moving / Long Distance /
+   etc.) — was semibold. mainpage-5 keeps card titles at
+   normal/semibold but smaller relative to the section h2. */
+.theme-light[data-lp-root] #services h3.font-semibold {
+  font-weight: 400 !important;
+  letter-spacing: -1px !important;
+  line-height: 1.05 !important;
+}
+
+/* Eyebrow labels (font-mono font-bold uppercase) — flatten to
+   regular weight at 11px with WIDE positive tracking (mainpage-5
+   style: `font-mono text-[11px] uppercase tracking-[2px]`). */
+.theme-light[data-lp-root] section .font-mono.font-bold.uppercase {
+  font-weight: 500 !important;
+  font-size: 12px !important;
+  letter-spacing: 2px !important;
+  line-height: 1.2 !important;
+}
+
+/* Section body intro `p` (subtitle after h2) — slightly larger
+   line-height (1.5) and a touch lighter tracking. */
+.theme-light[data-lp-root] section h2 + p,
+.theme-light[data-lp-root] section .font-normal.text-base.lg\:text-xl {
+  letter-spacing: -0.3px !important;
+  line-height: 1.5 !important;
+}
+
+/* Reviews stat numbers ("4,9" big) — keep them attention-grabbing
+   but in font-normal to match mainpage-5's "big numerals look light"
+   feel. */
+.theme-light[data-lp-root] #reviews .font-bold.text-\[64px\],
+.theme-light[data-lp-root] #reviews .font-bold.text-\[32px\] {
+  font-weight: 400 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Footer — match mainpage-5 styling exactly
+   ─────────────────────────────────────────────────────────────────
+   mainpage-5/accent.css gives ContactFooter the blue-island look
+   (big white logo, white text, hidden form section, wider column
+   gap, white social icons). LPs inherit all of that automatically.
+
+   The Navigation column stays visible (identical to mainpage-5)
+   but its hard-coded /local-moving / /reviews / /contacts hrefs
+   would navigate away from the LP. CityLandingPage attaches a
+   delegated click interceptor that remaps those hrefs to in-page
+   sections (#services / #reviews / #contact) and smooth-scrolls
+   instead. No CSS hide here. */
+
+/* ── FOOTER text/borders — restore white ───────────────────────────
+   globals.css already paints text-white WHITE inside <footer> on
+   the light theme (it's the blue island). But our earlier
+   `[data-lp-root] .text-white → ink` rule beats those globals rules
+   on specificity (attribute selector outweighs a single class).
+   Re-apply the white colours here, scoped to LP + footer, so the
+   ABOUT / PHONE / ADDRESS / EMAIL / SOCIAL MEDIA blocks read
+   white-on-blue exactly like mainpage-5. */
+.theme-light[data-lp-root] footer .text-white { color: #ffffff !important; }
+.theme-light[data-lp-root] footer .text-white\/90 { color: rgba(255, 255, 255, 0.9) !important; }
+.theme-light[data-lp-root] footer .text-white\/80 { color: rgba(255, 255, 255, 0.8) !important; }
+.theme-light[data-lp-root] footer .text-white\/70 { color: rgba(255, 255, 255, 0.7) !important; }
+.theme-light[data-lp-root] footer .text-white\/60 { color: rgba(255, 255, 255, 0.7) !important; }
+.theme-light[data-lp-root] footer .text-white\/50 { color: rgba(255, 255, 255, 0.6) !important; }
+.theme-light[data-lp-root] footer .text-white\/40 { color: rgba(255, 255, 255, 0.55) !important; }
+.theme-light[data-lp-root] footer .text-white\/30 { color: rgba(255, 255, 255, 0.45) !important; }
+.theme-light[data-lp-root] footer .text-white\/20 { color: rgba(255, 255, 255, 0.35) !important; }
+.theme-light[data-lp-root] footer .border-white\/30 { border-color: rgba(255, 255, 255, 0.3) !important; }
+.theme-light[data-lp-root] footer .border-white\/16 { border-color: rgba(255, 255, 255, 0.22) !important; }
+.theme-light[data-lp-root] footer .border-white\/10 { border-color: rgba(255, 255, 255, 0.16) !important; }
+
+/* ── btn-shine buttons (StepQuoteForm / CTABanner) → AccentPill ─
+   Buttons rendered with `btn-shine bg-[#FFE533] rounded-lg` + a
+   mono-uppercase label look out of place next to the actual
+   AccentPill in the floating nav. Restyle to the same pill
+   aesthetic mainpage-5/accent.css applies inside QuoteModal:
+   rounded-full, sans medium, no uppercase, white text.
+   Theme-light already flips the bg from yellow → blue. */
+.theme-light[data-lp-root] button.btn-shine,
+.theme-light[data-lp-root] a.btn-shine {
+  border-radius: 999px !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.theme-light[data-lp-root] button.btn-shine:hover,
+.theme-light[data-lp-root] a.btn-shine:hover {
+  box-shadow: none !important;
+  transform: none !important;
+}
+/* Bump specificity past the section-eyebrow rule
+   `.theme-light[data-lp-root] section .font-mono.font-bold.uppercase`
+   (5 class/attr + 1 tag) by chaining the same three label classes
+   onto the span — gives us 6 class/attr + 2 tag. */
+.theme-light[data-lp-root] button.btn-shine > span.font-mono.font-bold.uppercase,
+.theme-light[data-lp-root] a.btn-shine > span.font-mono.font-bold.uppercase,
+.theme-light[data-lp-root] button.btn-shine > span,
+.theme-light[data-lp-root] a.btn-shine > span {
+  font-family: var(--font-sans, system-ui, sans-serif) !important;
+  font-weight: 500 !important;
+  font-size: 16px !important;
+  text-transform: none !important;
+  letter-spacing: -0.3px !important;
+  color: #ffffff !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Section-specific fixes — match mainpage-5 polish
+   ───────────────────────────────────────────────────────────────── */
+
+/* ── REVIEWS: yellow stars stay yellow (theme-light's filter chain
+   would recolour them blue, which loses contrast on the light card). */
+.theme-light[data-lp-root] #reviews img[src*="star-yellow"] {
+  filter: none !important;
+}
+
+/* ── SERVICES CARDS: always show the photo (no scroll-trigger fade)
+   so cards always read as full image cards. Hover stays as the
+   existing zoom/lift, but the base state shows the photo. */
+.theme-light[data-lp-root] #services .bg-\[\#181818\] > .absolute.transition-opacity {
+  opacity: 1 !important;
+}
+/* New hover micro-interaction: gentle zoom on the image, dark
+   overlay deepens for legibility, title and description shift up a
+   few pixels. */
+.theme-light[data-lp-root] #services .bg-\[\#181818\]:hover .absolute.transition-opacity img {
+  transform: scale(1.05);
+  transition: transform 0.6s ease-out;
+}
+.theme-light[data-lp-root] #services .bg-\[\#181818\]:hover .bg-black\/20 {
+  background-color: rgba(0, 0, 0, 0.4) !important;
+  transition: background-color 0.4s ease-out;
+}
+
+/* ── WhatsIncluded HOVER — original blob-reveal mechanic only.
+   The frosted-glass overlay + blue glow blob reveal (see the
+   rules above for the overlay/blob colour swap) IS the hover
+   effect. No outline, no transform, no shadows added on top. */
+
+/* ── HOW IT WORKS — mobile compactness. The default lg:py-[100px]
+   + tall cards balloons the section on mobile. Keep proper top
+   padding so the section doesn't slam into the previous block —
+   60px matches the other LP sections' default px-4 py-[60px]. */
+@media (max-width: 991px) {
+  .theme-light[data-lp-root] #process section {
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+  }
+}
+
+/* ── HOW IT WORKS — hover changes. Default behaviour flashes a
+   yellow→blue background on active step. Replace with a subtle
+   blue glow + slightly elevated step icon. */
+.theme-light[data-lp-root] #process [style*="#FFE533"] {
+  background: transparent !important;
+}
+
+/* ── CTA banner H2 — was scaled too large + too thin by the
+   typography overrides. Bring back a more legible size + a touch
+   more weight inside the CTA section specifically. */
+.theme-light[data-lp-root] #cta h2.font-bold {
+  font-size: 40px !important;
+  font-weight: 500 !important;
+  letter-spacing: -1.4px !important;
+  line-height: 1.05 !important;
+}
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #cta h2.font-bold {
+    font-size: 64px !important;
+    letter-spacing: -2px !important;
+  }
+}
+
+/* ── SERVICE AREA cards: less button-like, more "info card". Drop
+   the rounded-2xl button background to a flatter look with hairline
+   border + no hover bg change. */
+.theme-light[data-lp-root] #service-area .group.flex.items-center {
+  background-color: transparent !important;
+  border: 1px solid rgba(0, 31, 77, 0.1);
+  border-radius: 12px !important;
+  padding: 14px 18px !important;
+  cursor: default;
+}
+.theme-light[data-lp-root] #service-area .group.flex.items-center:hover {
+  background-color: rgba(0, 31, 77, 0.04) !important;
+  border-color: rgba(0, 31, 77, 0.16);
+}
+/* Hide the arrow icon — these aren't navigable buttons anymore. */
+.theme-light[data-lp-root] #service-area .group.flex.items-center > .shrink-0,
+.theme-light[data-lp-root] #service-area .group.flex.items-center img[src*="arrow"] {
+  display: none !important;
+}
+
+/* Compact ServiceArea on mobile: stack tighter, less padding. */
+@media (max-width: 991px) {
+  .theme-light[data-lp-root] #service-area {
+    padding-bottom: 40px !important;
+  }
+  .theme-light[data-lp-root] #service-area .grid {
+    gap: 8px !important;
+  }
+}
+
+/* ── SOCIAL PROOF (AboutSection): swap the embedded video for a
+   static image. Browser shows the poster attribute when the video
+   has no controls active, so we just hide the play button overlay
+   and disable click on the video — the poster image remains as a
+   still backdrop. */
+.theme-light[data-lp-root] #about video {
+  pointer-events: none !important;
+}
+.theme-light[data-lp-root] #about button[aria-label="Play video"] {
+  display: none !important;
+}
+
+/* ── HOW IT WORKS step cards — inline-style backgrounds ─────────
+   The step cards and icon circles set their backgroundColor via
+   inline `style={{ backgroundColor: ... }}` in JSX, which beats
+   theme-light's Tailwind-class flips. Match by inline-style
+   substring instead.
+
+   Default card bg #242424 → light surface #f1f3f6
+   Active card bg #2a2718 → soft blue tint
+   Default icon circle #303030 → light surface
+   Active icon circle #FFE533 → brand blue #0066ff */
+.theme-light[data-lp-root] #process [style*="#242424"] {
+  background-color: #f1f3f6 !important;
+}
+.theme-light[data-lp-root] #process [style*="#2a2718"] {
+  background-color: rgba(0, 102, 255, 0.08) !important;
+}
+.theme-light[data-lp-root] #process [style*="#303030"] {
+  background-color: #e2e6ec !important;
+}
+.theme-light[data-lp-root] #process [style*="#FFE533"] {
+  background-color: #0066ff !important;
+}
+
+/* (Removed earlier `brightness(1) → ink filter` rule — the SVG
+   icons are NOT white, they're `fill="#FFE533"` which theme-light
+   already flips to brand blue. Forcing an additional brightness/
+   hue-rotate filter on top double-stained the icons. The hover
+   override below kicks in for brightness(0) only.) */
+
+/* ── WhatsIncluded card icons → brand blue ──────────────────────
+   Each card's icon is rendered as an inline SVG with `fill="white"`
+   (or path[fill="white"]). theme-light's yellow-SVG recolor rule
+   doesn't touch white fills, so on a light card the icon vanishes.
+   Recolor the icon SVG fills to brand blue. Scoped to the
+   WhatsIncluded card chain (.bg-[#181818].min-h-[180px] is unique
+   to that section — Services cards use h-[360px] without min-h). */
+.theme-light[data-lp-root] .bg-\[\#181818\].min-h-\[180px\] svg[fill="white"],
+.theme-light[data-lp-root] .bg-\[\#181818\].min-h-\[180px\] svg [fill="white"],
+.theme-light[data-lp-root] .bg-\[\#181818\].min-h-\[180px\] svg path[fill="white"] {
+  fill: #0066ff !important;
+}
+
+/* ── HOW IT WORKS — kill the dark vignette ───────────────────────
+   Each step card has TWO design layers that paint dark even after
+   the bg flip:
+   1. inline `boxShadow: "inset 0 4px 144px 50px #242424"` — a huge
+      inset shadow that creates a dark vignette inside the card
+      edges. On light theme this reads as a dirty grey ring.
+   2. inline `backgroundImage: radial-gradient(circle, #373737 1px,
+      transparent 1px)` — a dotted noise grid in dark grey, which
+      becomes visible noise on the light surface.
+   Kill both via inline-style substring match. */
+.theme-light[data-lp-root] #process [style*="inset 0 4px 144px 50px"] {
+  box-shadow: none !important;
+}
+.theme-light[data-lp-root] #process [style*="radial-gradient(circle, #373737"] {
+  background-image: none !important;
+}
+
+/* ── HOW IT WORKS hover: catch the rgb() form too ─────────────
+   React keeps hex on initial render but serializes to rgb() after
+   state changes. The selectors above only matched the hex form,
+   so the dark vignette + yellow icon returned on hover. Mirror
+   each rule with the rgb() equivalent. */
+
+/* Card bg active state — was matched on "#2a2718" only; add
+   "rgb(42, 39, 24)" (= same hex) so it stays light on hover. */
+.theme-light[data-lp-root] #process [style*="rgb(42, 39, 24)"] {
+  background-color: rgba(0, 102, 255, 0.08) !important;
+}
+
+/* Card bg default — react may also serialize on re-render. */
+.theme-light[data-lp-root] #process [style*="rgb(36, 36, 36)"] {
+  background-color: #f1f3f6 !important;
+}
+
+/* Inset shadow — hover state serializes to
+   "rgb(36, 36, 36) 0px 4px 144px 50px inset" (color FIRST,
+   then offsets, then "inset"), different word-order than the hex
+   form "inset 0 4px 144px 50px #242424". */
+.theme-light[data-lp-root] #process [style*="rgb(36, 36, 36) 0px 4px 144px"] {
+  box-shadow: none !important;
+}
+
+/* Dot-pattern background image — react serializes #373737 to
+   rgb(55, 55, 55) on hover. */
+.theme-light[data-lp-root] #process [style*="rgb(55, 55, 55)"] {
+  background-image: none !important;
+}
+
+/* Icon circle ACTIVE state — was matched on "#FFE533" only.
+   After hover-trigger React keeps the hex but it's safer to
+   include the rgb() form too. */
+.theme-light[data-lp-root] #process [style*="rgb(255, 229, 51)"] {
+  background-color: #0066ff !important;
+}
+
+/* Icon circle default — match rgb(48, 48, 48) too. */
+.theme-light[data-lp-root] #process [style*="rgb(48, 48, 48)"] {
+  background-color: #e2e6ec !important;
+}
+
+/* ── HOW IT WORKS — kill yellow cursor-follower glow ────────────
+   Each step card has two divs with inline radial-gradient(...)
+   spotlights using rgba(255, 229, 51, ...). Hue-rotate them from
+   yellow (53°) to brand blue (216°) — 163° rotation.
+
+   IMPORTANT: chain `[style*="radial-gradient"]` so the rule ONLY
+   matches the empty spotlight divs, NOT the icon circle (which
+   also contains rgba(255, 229, 51, …) in its box-shadow on the
+   active state). Filter cascades to children, so without the
+   gradient-only chain the icon SVG inside the circle also got
+   hue-rotated — blue (220°) + 163° = 23° (red), which is why the
+   icon turned red on hover. */
+.theme-light[data-lp-root] #process [style*="radial-gradient"][style*="rgba(255, 229, 51"] {
+  filter: hue-rotate(163deg) !important;
+}
+
+/* Icon circle box-shadow on active state — JSX sets it via a
+   single inline string. React re-renders sometimes keep the
+   compact `rgba(255,229,51,0.35)` (no spaces) and sometimes
+   serialize to `rgba(255, 229, 51, 0.35)` (with spaces) — match
+   BOTH so the yellow ring/glow gets replaced in either case. */
+.theme-light[data-lp-root] #process [style*="rgba(255,229,51,0.35)"],
+.theme-light[data-lp-root] #process [style*="rgba(255, 229, 51, 0.35)"] {
+  box-shadow:
+    0 8px 24px rgba(0, 102, 255, 0.35),
+    0 0 60px rgba(0, 102, 255, 0.25),
+    0 0 0 8px rgba(0, 102, 255, 0.18) !important;
+}
+
+/* Active icon SVG: JSX sets `filter: brightness(0)` (black). On
+   theme-light the source SVG fill is already brand blue, so on
+   the active state we have BLUE icon on a (now) BLUE circle bg —
+   invisible. Apply `brightness(0) invert(1)` (black → white) so
+   the icon reads as WHITE on the blue active circle, matching
+   the original "inverted on active" intent. */
+.theme-light[data-lp-root] #process [style*="brightness(0)"] {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* ── HOW IT WORKS mobile — compact cards ────────────────────────
+   Default mobile card is `aspect-[5/4]` (1.25 ratio) which on a
+   343px wide column gives ~274px tall cards — way too much air
+   above/below the icon stack. Drop the fixed aspect ratio on
+   mobile and let content dictate height with a tight min-height. */
+@media (max-width: 991px) {
+  .theme-light[data-lp-root] #process .aspect-\[5\/4\] {
+    aspect-ratio: auto !important;
+    min-height: 160px !important;
+  }
+}
+
+/* ── WhatsIncluded — icons + description full strength ─────────
+   Default state inline-styles the icon container at opacity 0.55
+   (and bumps to 0.9 on hover) — fine on the original dark card
+   but reads as "faded" on the light theme. Force opacity 1 so
+   the brand-blue icon shows at full strength immediately.
+
+   Description (`text-white/60`) gets the lp-root flip to ink at
+   55% — also feels pale. Bump to 75%. */
+.theme-light[data-lp-root] .bg-\[\#181818\].min-h-\[180px\] [style*="opacity: 0.55"],
+.theme-light[data-lp-root] .bg-\[\#181818\].min-h-\[180px\] [style*="opacity:0.55"] {
+  opacity: 1 !important;
+}
+.theme-light[data-lp-root] .bg-\[\#181818\].min-h-\[180px\] p.text-white\/60 {
+  color: rgba(0, 31, 77, 0.75) !important;
+}
+
+/* ── CTA banner inner button → match AccentPill exactly ─────────
+   The original button is `bg-[#0c0c0c] text-white` inside the
+   `bg-[#FFE533]` (yellow→blue) island. Theme-light flips bg → white,
+   BUT the earlier "text inside the yellow island stays white" rule
+   (line ~43) also paints this button's text white — leaving us
+   with WHITE button + WHITE label = invisible.
+
+   Fix: render the button as a brand-blue AccentPill clone (blue bg
+   + white text + rounded-full + sans-medium label + hover lift
+   to #0052cc, mirroring AccentPill 1:1). Now reads as a clear blue
+   CTA on the lighter blue island bar. */
+.theme-light[data-lp-root] #cta button.bg-\[\#0c0c0c\] {
+  background-color: #0066ff !important;
+  color: #ffffff !important;
+  border-radius: 999px !important;
+  font-family: var(--font-sans, system-ui, sans-serif) !important;
+  font-weight: 500 !important;
+  font-size: 16px !important;
+  text-transform: none !important;
+  letter-spacing: -0.3px !important;
+  height: 48px !important;
+  padding-left: 22px !important;
+  padding-right: 22px !important;
+  transition: transform 0.25s ease, background-color 0.25s ease !important;
+  box-shadow: none !important;
+}
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #cta button.bg-\[\#0c0c0c\] {
+    height: 52px !important;
+    padding-left: 28px !important;
+    padding-right: 28px !important;
+  }
+}
+/* Hover — match AccentPill: bg darkens + small lift, no scale. */
+.theme-light[data-lp-root] #cta button.bg-\[\#0c0c0c\]:hover {
+  background-color: #0052cc !important;
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+
+/* ── btn-shine hover → match AccentPill exactly ─────────────────
+   AccentPill (used in header/footer/CTAs) hover behaviour:
+     • bg darkens #0066ff → #0052cc
+     • transform: translateY(-1px) (small lift)
+     • NO scale, NO shadow, NO uppercase shimmer.
+   Default `btn-shine` rendered "darker yellow + scale + yellow glow"
+   which after theme-light becomes a strange blue glow + 1.02 zoom.
+   Replace with the AccentPill hover values. */
+.theme-light[data-lp-root] button.btn-shine:hover,
+.theme-light[data-lp-root] a.btn-shine:hover {
+  background-color: #0052cc !important;
+  box-shadow: none !important;
+  transform: translateY(-1px) !important;
+}
+.theme-light[data-lp-root] button.btn-shine,
+.theme-light[data-lp-root] a.btn-shine {
+  transition: transform 0.25s ease, background-color 0.25s ease !important;
+}
+
+/* ── HERO mobile form card — pure white ─────────────────────────
+   The mobile-only quote form sits below the hero with bg-[#181818]
+   which theme-light flips to #f1f3f6 (light grey). User wants
+   plain white. Targets the .lg:hidden card under the hero. */
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl {
+  background-color: #ffffff !important;
+}
+
+/* ── Social Proof stat values → medium weight ──────────────────
+   AboutSection stat numbers (4.9, 437+, 500+, 100%) render at
+   font-bold (700) which feels heavy next to the mainpage-5
+   normal-weight section headings. Drop to medium (500). */
+.theme-light[data-lp-root] #about .font-sans.font-bold.text-2xl {
+  font-weight: 500 !important;
+}
+
+/* ── HOW IT WORKS cards — restore breathing room ───────────────
+   Mobile compactness override clamped min-height to 160px which
+   squashed the step icon + title + body. Bump to 200px so the
+   stack has room to breathe. */
+@media (max-width: 991px) {
+  .theme-light[data-lp-root] #process .aspect-\[5\/4\] {
+    min-height: 220px !important;
+    padding: 24px 20px !important;
+  }
+}
+
+/* ── HOW IT WORKS mobile cards — even more height ──────────────
+   Bump from 220px to 260px so the icon stack + body + spacer has
+   proper vertical room on small screens. */
+@media (max-width: 991px) {
+  .theme-light[data-lp-root] #process .aspect-\[5\/4\] {
+    min-height: 260px !important;
+  }
+}
+
+/* ── CTA banner button: white pill + blue text ─────────────────
+   Earlier we made it brand-blue on blue island = poor contrast.
+   Flip to white pill with blue text — reads as a clean "inverted"
+   CTA on the blue island. Hover: light blue tint of the bg, blue
+   text stays. */
+.theme-light[data-lp-root] #cta button.bg-\[\#0c0c0c\] {
+  background-color: #ffffff !important;
+  color: #0066ff !important;
+}
+.theme-light[data-lp-root] #cta button.bg-\[\#0c0c0c\]:hover {
+  background-color: #f0f5ff !important;
+  color: #0052cc !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Reviews stars — orange-yellow for contrast on light cards ─
+   Default star-yellow is #FFE533 which on a light grey card has
+   poor contrast. Filter chain converts to a warmer orange that
+   stays brand-friendly + readable on light surfaces. */
+.theme-light[data-lp-root] #reviews img[src*="star-yellow"] {
+  filter: brightness(0) saturate(100%) invert(70%) sepia(75%) saturate(2500%) hue-rotate(360deg) brightness(102%) contrast(102%) !important;
+}
