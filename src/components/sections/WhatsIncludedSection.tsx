@@ -12,14 +12,19 @@ function IncludedCard({ item, index }: { item: { icon: React.ReactNode; title: s
   const b = index % 5;
   const c = (index + 2) % 4;
 
-  /* On touch devices (no hover), trigger the lit state by scroll position:
-     when the card sits in the middle band of the viewport, light up; when it
-     leaves that band, fade. Only one card is "active" at a time as the user
-     scrolls. On hover-capable devices (desktop) we keep the hover behaviour. */
+  /* On touch / mobile: trigger the lit state by scroll position (card in
+     middle viewport band → light up; leaves band → fade). Sequential
+     because cards are taller than the mid-band. On desktop keep hover.
+
+     Detection: width ≤ 991px is the LP mobile breakpoint. Don't rely on
+     matchMedia("(hover: hover)") — some mobile browsers report true,
+     blocking the scroll trigger. */
   useEffect(() => {
-    hasHoverRef.current = typeof window !== "undefined"
-      && window.matchMedia("(hover: hover)").matches;
-    if (hasHoverRef.current) return;
+    const isMobile = typeof window !== "undefined"
+      && window.matchMedia("(max-width: 991px)").matches;
+    hasHoverRef.current = !isMobile;
+
+    if (!isMobile) return;
 
     const el = cardRef.current;
     if (!el) return;

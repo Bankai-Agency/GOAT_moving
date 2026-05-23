@@ -250,7 +250,13 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       {/* 2. Services (moved up — was after CTABanner) */}
       <ServicesSection
         label="Our Services"
-        title="Find the Right Moving Service for Your Situation"
+        title={
+          <>
+            Find the Right Moving Service
+            <br />
+            for Your Situation
+          </>
+        }
         subtitle={`Full-service moving across ${city} — from packing to unloading. No hidden fees, no charge for stairs.`}
         services={services}
       />
@@ -294,7 +300,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       />
 
       {/* 8. Testimonials — default reviews carousel */}
-      <ReviewsSection title="Real Moves. Real Reviews. No Surprises." />
+      <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} />
 
       {/* 9. Service area — neighborhoods */}
       <ServiceAreaSection

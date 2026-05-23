@@ -14,7 +14,7 @@ export type ServiceItem = {
 
 export type ServicesSectionProps = {
   label?: string;
-  title?: string;
+  title?: React.ReactNode;
   subtitle?: string;
   services?: ServiceItem[];
 };

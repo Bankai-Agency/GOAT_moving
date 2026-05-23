@@ -19,7 +19,7 @@ export type ReviewItem = {
 
 export type ReviewsSectionProps = {
   label?: string;
-  title?: string;
+  title?: React.ReactNode;
   reviews?: ReviewItem[];
 };
 

@@ -159,13 +159,13 @@ body:has([data-accent="blue"][data-lp-root]) {
    AND chain `hue-rotate(...) blur(Xpx)` to preserve the soft glow
    (3 blobs use blur 40/45/35px each). */
 .theme-light[data-lp-root] [style*="rgba(255,229,51,0.55)"] {
-  filter: hue-rotate(163deg) blur(40px) !important;
+  filter: hue-rotate(180deg) saturate(2.4) brightness(0.85) blur(40px) !important;
 }
 .theme-light[data-lp-root] [style*="rgba(255,229,51,0.45)"] {
-  filter: hue-rotate(163deg) blur(45px) !important;
+  filter: hue-rotate(180deg) saturate(2.4) brightness(0.85) blur(45px) !important;
 }
 .theme-light[data-lp-root] [style*="rgba(255,229,51,0.35)"] {
-  filter: hue-rotate(163deg) blur(35px) !important;
+  filter: hue-rotate(180deg) saturate(2.4) brightness(0.85) blur(35px) !important;
 }
 
 /* Overlay layer — paint LIGHT instead of black in BOTH states.
@@ -183,11 +183,21 @@ body:has([data-accent="blue"][data-lp-root]) {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
-.theme-light[data-lp-root] .group.relative.rounded-xl.lg\:rounded-2xl:hover .transition-\[background\,backdrop-filter\],
-.theme-light[data-lp-root] .group.relative.rounded-xl.lg\:rounded-2xl .transition-\[background\,backdrop-filter\][style*="rgba(24, 24, 24, 0.4)"] {
-  background: rgba(241, 243, 246, 0.55) !important;
-  backdrop-filter: blur(22px) !important;
-  -webkit-backdrop-filter: blur(22px) !important;
+.theme-light[data-lp-root] .group.relative.rounded-xl.lg\:rounded-2xl:hover .transition-\[background\,backdrop-filter\] {
+  background: rgba(241, 243, 246, 0.3) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+}
+/* Mobile: also fire via React isActive inline-style (no :hover on
+   touch). Scroll-based IntersectionObserver in WhatsIncludedSection
+   sets inline-style rgba(24, 24, 24, 0.4) when card enters middle
+   viewport band. Scoped to mobile so desktop's :hover handles it. */
+@media (max-width: 991px) {
+  .theme-light[data-lp-root] .group.relative.rounded-xl.lg\:rounded-2xl .transition-\[background\,backdrop-filter\][style*="rgba(24, 24, 24, 0.4)"] {
+    background: rgba(241, 243, 246, 0.3) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+  }
 }
 
 /* Card-icon containers in WhatsIncluded: original used yellow
@@ -241,21 +251,22 @@ body:has([data-accent="blue"][data-lp-root]) {
    mainpage-5 reads at 40→64→112px normal with much tighter line-
    height (0.96) and tracking (-3.4px on desktop). */
 .theme-light[data-lp-root] section h2.font-bold {
-  font-weight: 400 !important;
+  font-weight: 600 !important;
   letter-spacing: -1.4px;
-  line-height: 0.98;
+  line-height: 1.15;
 }
 @media (min-width: 640px) {
   .theme-light[data-lp-root] section h2.font-bold {
     font-size: 64px;
     letter-spacing: -2px;
+    line-height: 1.1;
   }
 }
 @media (min-width: 1024px) {
   .theme-light[data-lp-root] section h2.font-bold {
     font-size: 96px;
     letter-spacing: -3px;
-    line-height: 0.96;
+    line-height: 1.05;
   }
 }
 
@@ -389,22 +400,43 @@ body:has([data-accent="blue"][data-lp-root]) {
   filter: none !important;
 }
 
-/* ── SERVICES CARDS: always show the photo (no scroll-trigger fade)
-   so cards always read as full image cards. Hover stays as the
-   existing zoom/lift, but the base state shows the photo. */
+/* ── SERVICES CARDS: photo always visible + new hover effect ────
+   Default = previous "hover state" (photo visible, gradients
+   under text fully opaque). Hover triggers a different
+   micro-interaction: image zoom + blue tint sweep + arrow circle
+   pops to blue and slides right. */
 .theme-light[data-lp-root] #services .bg-\[\#181818\] > .absolute.transition-opacity {
   opacity: 1 !important;
 }
-/* New hover micro-interaction: gentle zoom on the image, dark
-   overlay deepens for legibility, title and description shift up a
-   few pixels. */
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .absolute.transition-opacity img {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* NEW HOVER */
+/* 1. Image zooms in slightly. */
 .theme-light[data-lp-root] #services .bg-\[\#181818\]:hover .absolute.transition-opacity img {
-  transform: scale(1.05);
-  transition: transform 0.6s ease-out;
+  transform: scale(1.08);
+}
+/* 2. Dark overlay deepens — keep colour neutral (no blue tint).
+   Subtle warm-dark cast so the photo gets richer on hover. */
+.theme-light[data-lp-root] #services .bg-\[\#181818\] .bg-black\/20 {
+  transition: background-color 0.4s ease-out;
 }
 .theme-light[data-lp-root] #services .bg-\[\#181818\]:hover .bg-black\/20 {
-  background-color: rgba(0, 0, 0, 0.4) !important;
-  transition: background-color 0.4s ease-out;
+  background-color: rgba(0, 0, 0, 0.45) !important;
+}
+/* 3. Arrow circle pops to white + soft white glow ring + lift
+   (no blue accents on the hover anymore). */
+.theme-light[data-lp-root] #services .group .bg-\[\#242424\] {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s ease-out,
+              background-color 0.3s ease-out !important;
+}
+.theme-light[data-lp-root] #services .group:hover .bg-\[\#242424\] {
+  transform: scale(1.15) translateX(6px) !important;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.18),
+              0 8px 24px rgba(0, 0, 0, 0.35) !important;
+  background-color: #ffffff !important;
 }
 
 /* ── WhatsIncluded HOVER — original blob-reveal mechanic only.
@@ -446,33 +478,79 @@ body:has([data-accent="blue"][data-lp-root]) {
   }
 }
 
-/* ── SERVICE AREA cards: less button-like, more "info card". Drop
-   the rounded-2xl button background to a flatter look with hairline
-   border + no hover bg change. */
+/* ── SERVICE AREA — clean 4-column chip grid ───────────────────
+   Replaces the original photo-list-with-arrow look with a tidy
+   uniform-cell grid: 4 cols desktop · 2 cols mobile, consistent
+   chip dimensions, subtle bg, pin icon prefix, no hover noise. */
 .theme-light[data-lp-root] #service-area .group.flex.items-center {
-  background-color: transparent !important;
-  border: 1px solid rgba(0, 31, 77, 0.1);
-  border-radius: 12px !important;
-  padding: 14px 18px !important;
-  cursor: default;
+  background-color: #f5f7fb !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  padding: 12px 16px !important;
+  cursor: default !important;
+  /* Disable click / hover — these are passive reference chips, not
+     CTAs; default JSX wires an `open-quote-modal` click handler we
+     want to neutralise on LP. */
+  pointer-events: none !important;
+  position: relative;
+  gap: 8px !important;
+  width: auto !important;
+  max-width: 100%;
+  justify-content: flex-start !important;
 }
 .theme-light[data-lp-root] #service-area .group.flex.items-center:hover {
-  background-color: rgba(0, 31, 77, 0.04) !important;
-  border-color: rgba(0, 31, 77, 0.16);
+  background-color: #f5f7fb !important;
 }
-/* Hide the arrow icon — these aren't navigable buttons anymore. */
+/* Hide trailing arrow circle (not a navigable card on LP). */
 .theme-light[data-lp-root] #service-area .group.flex.items-center > .shrink-0,
 .theme-light[data-lp-root] #service-area .group.flex.items-center img[src*="arrow"] {
   display: none !important;
 }
+/* City name h3 — compact, ink, weight 500 (less heavy than default
+   semibold text-xl), 16px floor. */
+.theme-light[data-lp-root] #service-area .group.flex.items-center h3 {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.3px !important;
+  line-height: 1.3 !important;
+}
+/* Location-pin icon BEFORE the neighborhood name. */
+.theme-light[data-lp-root] #service-area .group.flex.items-center::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230066ff'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z'/></svg>");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
 
-/* Compact ServiceArea on mobile: stack tighter, less padding. */
+/* Section bottom padding — keep compact. */
 @media (max-width: 991px) {
   .theme-light[data-lp-root] #service-area {
     padding-bottom: 40px !important;
   }
+}
+
+/* Desktop — bigger chips for better presence next to the 82px h2. */
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #service-area .group.flex.items-center {
+    padding: 18px 22px !important;
+    border-radius: 12px !important;
+    gap: 12px !important;
+  }
+  .theme-light[data-lp-root] #service-area .group.flex.items-center h3 {
+    font-size: 18px !important;
+    letter-spacing: -0.4px !important;
+  }
+  .theme-light[data-lp-root] #service-area .group.flex.items-center::before {
+    width: 20px;
+    height: 20px;
+  }
+  /* Tiny bump in grid gap to match the larger card scale. */
   .theme-light[data-lp-root] #service-area .grid {
-    gap: 8px !important;
+    gap: 10px !important;
   }
 }
 
@@ -773,4 +851,710 @@ body:has([data-accent="blue"][data-lp-root]) {
    stays brand-friendly + readable on light surfaces. */
 .theme-light[data-lp-root] #reviews img[src*="star-yellow"] {
   filter: brightness(0) saturate(100%) invert(70%) sepia(75%) saturate(2500%) hue-rotate(360deg) brightness(102%) contrast(102%) !important;
+}
+
+/* ── Services cards — gradient under text ALWAYS visible ────────
+   The cards have two gradient overlays (top-to-bottom under title,
+   bottom-to-top under description) but they default to opacity 0
+   and only show on hover. Without hover, the photo is partially
+   washed out by the bg-black/20 overlay but text-white can still
+   blend with bright spots in the photo.
+   Force the gradient overlays to be visible by default (lower
+   opacity than hover ~0.5) so the title/description always sit
+   on a dark gradient — readable on ANY photo. */
+.theme-light[data-lp-root] #services .group .opacity-0.group-hover\:opacity-100,
+.theme-light[data-lp-root] #services [style*="rgba(0,0,0,0.75)"],
+.theme-light[data-lp-root] #services [style*="rgba(0, 0, 0, 0.75)"] {
+  opacity: 1 !important;
+}
+
+/* ── Services cards mobile typography — bigger text ─────────────
+   Default title text-[28px] + body text-base (16px) feels small
+   on a full-width photo card. Bump on mobile to title 32px + body
+   18px so they breathe. Desktop unchanged. */
+@media (max-width: 991px) {
+  .theme-light[data-lp-root] #services .group h3 {
+    font-size: 30px !important;
+    letter-spacing: -1px !important;
+    line-height: 1.1 !important;
+  }
+  .theme-light[data-lp-root] #services .group p {
+    font-size: 18px !important;
+    line-height: 1.45 !important;
+    letter-spacing: -0.4px !important;
+  }
+}
+
+/* ── Global mobile body text bump ───────────────────────────────
+   Default text-base (16px) feels too small on mobile, especially
+   on the hero description and section subtitles. Bump to 18px on
+   mobile for all the body-text scale. Desktop scale (text-lg /
+   text-xl) untouched — that already reads at 18-20px. */
+@media (max-width: 991px) {
+  /* Hero description + section subtitles. */
+  .theme-light[data-lp-root] section p.text-base,
+  .theme-light[data-lp-root] section p.font-normal.text-base,
+  .theme-light[data-lp-root] [data-lp-hero] p.text-base {
+    font-size: 18px !important;
+    line-height: 1.5 !important;
+  }
+  /* text-[15px] (used in some sections) → 17px. */
+  .theme-light[data-lp-root] section p.text-\[15px\] {
+    font-size: 17px !important;
+  }
+}
+
+/* ── Hero text size floor: minimum 16px ─────────────────────────
+   The rating strip uses text-xs (12px) / text-[10px] / text-sm
+   (14px) for the small chips at the top of the hero card — feels
+   tiny on mobile + cramped on desktop. Force a floor of 16px
+   for ANY text element inside the hero island. */
+.theme-light[data-lp-root] [data-lp-hero] .text-xs,
+.theme-light[data-lp-root] [data-lp-hero] .text-sm,
+.theme-light[data-lp-root] [data-lp-hero] .text-\[10px\],
+.theme-light[data-lp-root] [data-lp-hero] .text-\[11px\],
+.theme-light[data-lp-root] [data-lp-hero] .text-\[12px\],
+.theme-light[data-lp-root] [data-lp-hero] .text-\[13px\] {
+  font-size: 16px !important;
+}
+
+/* ── Hero description = the "regular body" baseline at 18px ─────
+   Already bumped via the global mobile rule; also lock desktop
+   to 18px (not 20px) so hero copy matches the rest of the page's
+   body scale. */
+.theme-light[data-lp-root] [data-lp-hero] p.text-base.lg\:text-lg,
+.theme-light[data-lp-root] [data-lp-hero] p.lg\:text-lg {
+  font-size: 18px !important;
+  line-height: 1.5 !important;
+}
+
+/* ── Hero rating strip on mobile: split into separate chips ─────
+   Default markup is a single rounded-full pill with three items
+   (Yelp · Google · 437+ Reviews) separated by hairline dividers.
+   On mobile that pill gets cramped. Turn the wrapper transparent
+   + flex-wrap, paint each child as its own glass pill, drop the
+   divider borders. Desktop pill behaviour unchanged. */
+@media (max-width: 991px) {
+  /* Wrapper — transparent, flex-wrap so chips reflow. */
+  .theme-light[data-lp-root] [data-lp-hero] .inline-flex.backdrop-blur-\[30px\] {
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+  /* Each <a> / <span> child becomes its own dark glass pill. */
+  .theme-light[data-lp-root] [data-lp-hero] .inline-flex.backdrop-blur-\[30px\] > a,
+  .theme-light[data-lp-root] [data-lp-hero] .inline-flex.backdrop-blur-\[30px\] > span {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border-radius: 999px !important;
+    padding: 8px 14px !important;
+    /* Kill the inline hairline dividers (border-l / border-r) on
+       the inner separators since each chip is standalone now. */
+    border-left: 0 !important;
+    border-right: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+/* ── Mobile form card — soft tinted surface, no shadow ─────────
+   Pure white blended into the surrounding white section. Use a
+   subtle ink-tinted light surface (mainpage-5 palette) + a
+   hairline border so the card visually lifts off the page
+   without needing a shadow or gradient. */
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl {
+  background-color: #ffffff !important;
+  box-shadow: 0 12px 36px rgba(0, 31, 77, 0.08) !important;
+  border: 1px solid rgba(0, 31, 77, 0.06) !important;
+  padding: 28px 24px !important;
+}
+
+/* Form labels — bigger, ink. */
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl label {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  color: rgba(0, 31, 77, 0.7) !important;
+  margin-bottom: 8px !important;
+}
+/* Heading inside form ("Get your free quote") — bigger. */
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl h3 {
+  font-size: 26px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.6px !important;
+}
+/* Step indicator ("Step 1 of 2") — bump from 12px to 14px. */
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl .font-mono {
+  font-size: 14px !important;
+}
+/* Input text size + padding — 17px / taller. */
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl input,
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl textarea {
+  font-size: 17px !important;
+  height: 56px !important;
+  padding: 0 18px !important;
+  color: #001f4d !important;
+}
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl textarea {
+  height: auto !important;
+  padding: 14px 18px !important;
+}
+/* Placeholder text colour — ink at 40%. */
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl ::placeholder {
+  color: rgba(0, 31, 77, 0.4) !important;
+}
+
+/* ── Hero mobile form inputs — solid-filled, NO border ─────────
+   Card is white; inputs get a soft cool-grey tinted fill so they
+   read as distinct input fields against the white card without
+   needing a border. Focus shifts the tint slightly darker for
+   feedback. */
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl input,
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl textarea,
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl button[type="button"]:not(.btn-shine):not(.bg-\[\#FFE533\]) {
+  background-color: #eef2f8 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl input:focus,
+.theme-light[data-lp-root] section .lg\:hidden.bg-\[\#181818\].rounded-2xl textarea:focus {
+  background-color: #e4eaf3 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.15) !important;
+}
+
+/* ── Social Proof (AboutSection) desktop layout — 2-column ──────
+   Default stacks vertically (heading → video → stats row). On
+   desktop split into grid: heading spans top, video on the LEFT,
+   stats stacked vertically on the RIGHT. Mobile untouched. */
+@media (min-width: 992px) {
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] {
+    display: grid !important;
+    grid-template-columns: 1.2fr 1fr;
+    grid-template-areas:
+      "heading heading"
+      "video stats";
+    gap: 48px 56px !important;
+  }
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(1) {
+    grid-area: heading;
+  }
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(2) {
+    grid-area: video;
+  }
+  /* Stats column — stack vertically and fill the full image
+     height with `justify-content: space-between`. Each stat row
+     becomes a larger card with bigger icon, larger numerals,
+     and a clean separator line. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) {
+    grid-area: stats;
+    flex-direction: column !important;
+    gap: 0 !important;
+    justify-content: space-between !important;
+    height: 100%;
+  }
+  /* Each stat row — bigger padding + bottom border for separation
+     between rows. Last child no border. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div {
+    flex: 1 1 auto !important;
+    padding: 20px 0 !important;
+    border-bottom: 1px solid rgba(0, 31, 77, 0.08) !important;
+    gap: 24px !important;
+    align-items: center !important;
+  }
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div:first-child {
+    padding-top: 0 !important;
+  }
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div:last-child {
+    padding-bottom: 0 !important;
+    border-bottom: 0 !important;
+  }
+  /* Icon container — bigger square. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div > div:first-child {
+    width: 88px !important;
+    height: 88px !important;
+    border-radius: 12px !important;
+  }
+  /* Numerals — bigger. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) span.font-sans.font-bold {
+    font-size: 40px !important;
+  }
+  /* Label — keep mono uppercase but a touch bigger. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) span.font-mono {
+    font-size: 13px !important;
+  }
+}
+
+/* ── Services h2 — fit 2-line title without wrap ────────────────
+   "Find the Right Moving Service" at the page's section-h2 size
+   (96px on desktop via typography override) exceeds the default
+   max-w-[900px] → first half wraps into 2 lines + the <br> adds
+   a third. Widen the h2's max-width on desktop so the first line
+   stays on one row. */
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #services h2 {
+    max-width: none !important;
+    white-space: nowrap;
+  }
+}
+
+/* ── Hero DESKTOP form glass — dark-island carveout ─────────────
+   The desktop hero form bar uses the same dark-glass surface as
+   the floating nav (`rgba(0, 0, 0, 0.3) + blur(30px)`). All text
+   inside needs to be light (white family) — but theme-light's
+   text-white → ink flip + my ink override hit the labels +
+   placeholders + step indicator, making them invisible on the
+   dark glass.
+
+   Mark this wrapper as a dark-island via the unique class chain
+   `.hidden.lg:block.backdrop-blur-[30px].bg-[rgba(0,0,0,0.3)]`
+   and restore white-family colours for everything inside. */
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] .text-white,
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] input,
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] textarea,
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] h3 {
+  color: #ffffff !important;
+}
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] .text-white\/40,
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] label {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] .text-white\/60,
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] ::placeholder {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+/* "STEP 1 OF 2" indicator label was yellow → blue. On dark glass
+   blue is dim — flip to brand-yellow accent for high contrast. */
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] .text-\[\#FFE533\] {
+  color: #ffffff !important;
+}
+/* Input fills inside the glass — use white/10 translucent (the
+   default Tailwind class) instead of the LP mobile's solid grey
+   fill, so they sit nicely on the dark glass. */
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] input,
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] textarea {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border: 0 !important;
+}
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] input:focus,
+.theme-light[data-lp-root] .hidden.lg\:block.backdrop-blur-\[30px\].bg-\[rgba\(0\,0\,0\,0\.3\)\] textarea:focus {
+  background-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25) !important;
+}
+
+/* ── Social Proof stats on MOBILE — 2×2 grid ────────────────────
+   Default mobile stacks all 4 stats vertically (4 rows). Switch
+   to a 2-column grid (2 rows × 2 cols) so they fill the same
+   width as the image above and feel more balanced. */
+@media (max-width: 991px) {
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 14px !important;
+    flex-direction: initial !important;
+  }
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    padding: 16px !important;
+    background-color: #f5f7fb !important;
+    border-radius: 14px !important;
+  }
+  /* Icon box bigger on mobile too — pulls focus. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div > div:first-child {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 10px !important;
+    background-color: #ffffff !important;
+  }
+  /* Numeral compact on mobile. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) span.font-sans.font-bold {
+    font-size: 26px !important;
+  }
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) span.font-mono {
+    font-size: 12px !important;
+  }
+}
+
+/* ── Hero h1 — same treatment as section h2: weightier + more lh ─
+   Default h1 in hero is font-normal (400) with leading-[0.95]
+   (very tight). Match section h2: semibold (600) + relaxed lh. */
+.theme-light[data-lp-root] [data-lp-hero] h1 {
+  font-weight: 500 !important;
+  line-height: 1.05 !important;
+}
+
+/* ── How it Works card text — bump to readable sizes ────────────
+   Mobile description was `text-sm` (14px) — below the 16px floor.
+   Mobile title was `text-lg` (18px) — fine. Bump body to 16px on
+   mobile and 18px on desktop (matches the page's body baseline).
+   Also boost weight on titles for presence. */
+.theme-light[data-lp-root] #process h3 {
+  font-weight: 600 !important;
+}
+@media (max-width: 991px) {
+  .theme-light[data-lp-root] #process .text-sm {
+    font-size: 16px !important;
+    line-height: 1.45 !important;
+  }
+  .theme-light[data-lp-root] #process h3.text-lg {
+    font-size: 20px !important;
+  }
+}
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #process p.text-base {
+    font-size: 18px !important;
+    line-height: 1.5 !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   TEXT FLOOR — minimum 16px across the entire LP
+   ─────────────────────────────────────────────────────────────────
+   Anything tagged text-xs (12px), text-sm (14px), text-[14px],
+   text-[15px] or smaller bumps to 16px on the LP. Section eyebrows
+   keep their intentional small-uppercase look via a more specific
+   rule above (12px mono uppercase tracking 2px) — that's a design
+   convention, not body copy. */
+.theme-light[data-lp-root] *:not(.font-mono):not(.uppercase) {
+  /* base rule does nothing — actual floor below */
+}
+.theme-light[data-lp-root] section .text-xs,
+.theme-light[data-lp-root] section .text-sm,
+.theme-light[data-lp-root] section .text-\[12px\],
+.theme-light[data-lp-root] section .text-\[13px\],
+.theme-light[data-lp-root] section .text-\[14px\],
+.theme-light[data-lp-root] section .text-\[15px\],
+.theme-light[data-lp-root] footer .text-xs,
+.theme-light[data-lp-root] footer .text-sm,
+.theme-light[data-lp-root] footer .text-\[12px\],
+.theme-light[data-lp-root] footer .text-\[13px\],
+.theme-light[data-lp-root] footer .text-\[14px\],
+.theme-light[data-lp-root] footer .text-\[15px\] {
+  font-size: 16px !important;
+}
+/* …but keep mono-uppercase eyebrows tight at 12-13px (intentional). */
+.theme-light[data-lp-root] section .font-mono.uppercase,
+.theme-light[data-lp-root] footer .font-mono.uppercase {
+  font-size: 12px !important;
+}
+
+/* ── CTA banner heading — bolder + bigger ──────────────────────
+   `Get Your Free Moving Quote in {city} in 30 Seconds` was 40/64px
+   weight 500 — too light against the photo. Bump to weight 700 +
+   slightly bigger. */
+.theme-light[data-lp-root] #cta h2.font-bold {
+  font-weight: 600 !important;
+  font-size: 44px !important;
+  line-height: 1.05 !important;
+  letter-spacing: -1.4px !important;
+}
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #cta h2.font-bold {
+    font-size: 72px !important;
+    letter-spacing: -2.2px !important;
+  }
+}
+
+/* CTA banner button text — bump from 16 to 17/18, bolder. */
+.theme-light[data-lp-root] #cta button.bg-\[\#0c0c0c\] {
+  font-size: 17px !important;
+  font-weight: 600 !important;
+}
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #cta button.bg-\[\#0c0c0c\] {
+    font-size: 18px !important;
+  }
+}
+/* CTA banner tagline ("No hidden fees…") — bump up. */
+.theme-light[data-lp-root] #cta p {
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+}
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #cta p {
+    font-size: 18px !important;
+  }
+}
+
+/* ── Reviews — quote text bigger + bolder, reviewer name bigger ─ */
+.theme-light[data-lp-root] #reviews .font-sans:not(.font-bold):not(.font-semibold):not(.font-medium) {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+}
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #reviews .font-sans:not(.font-bold):not(.font-semibold):not(.font-medium) {
+    font-size: 18px !important;
+  }
+}
+/* (Removed earlier `span.font-bold → 17px` rule — it was
+   indiscriminately shrinking the BIG rating numerals (4,9/5 at
+   text-[64px]/[32px]) and the reviewer name h3 (text-xl/2xl) to
+   17px. Reviewer names + ratings are already at appropriate sizes
+   via their Tailwind classes; the global 16px floor handles any
+   smaller text.) */
+
+/* ── FAQ heading — match section h2 weight ──────────────────────
+   FAQ h2 has Tailwind classes that may slip past the
+   `section h2.font-bold` rule (it's inside a flex row with extra
+   classes). Re-apply weight 600 explicitly. */
+.theme-light[data-lp-root] #faq h2 {
+  font-weight: 600 !important;
+}
+
+/* ── LP footer — RE-SHOW the contact form section ───────────────
+   mainpage-5/accent.css hides the form on `data-accent="blue"`
+   (used by both mainpage-5 AND LP). LP wants the form back.
+   Override with a more specific selector chaining BOTH attribute
+   markers so mainpage-5's hide rule still wins there. */
+body:has([data-accent="blue"][data-lp-root]) #contact > div > div:first-child,
+body:has([data-accent="blue"][data-lp-root]) #contact > div > div:nth-child(2) {
+  display: block !important;
+}
+
+/* ── Services heading + subtitle — vertical stack on desktop ────
+   Default on desktop: heading LEFT + subtitle RIGHT (flex-row).
+   User wants subtitle BELOW heading. Override to flex-col + give
+   the subtitle a proper top margin. */
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #services .lg\:flex-row.lg\:items-end {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 20px !important;
+  }
+  .theme-light[data-lp-root] #services .lg\:flex-row.lg\:items-end p {
+    max-width: 720px !important;
+  }
+}
+
+/* ── h2 sizes: shave ~8pt off desktop ───────────────────────────
+   96px → 88px on desktop; mobile/sm stay as-is. */
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] section h2.font-bold {
+    font-size: 82px !important;
+  }
+}
+
+/* ── CTA heading display backdrop ──────────────────────────────
+   Heading sits on photo top-left with only a thin global gradient.
+   Add a stronger dark gradient panel right behind the h2 (desktop)
+   so it pops against any photo. Mobile already darker enough. */
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #cta .absolute.top-0.left-0.right-0 {
+    background: linear-gradient(
+      to bottom right,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.5) 50%,
+      transparent 90%
+    );
+    /* Stronger blur — earlier 14px still left visible silhouettes
+       of the photo bleeding through the dark panel. */
+    backdrop-filter: blur(40px) saturate(120%);
+    -webkit-backdrop-filter: blur(40px) saturate(120%);
+    /* Mask the blur to fade with the gradient (no hard edge). */
+    mask-image: linear-gradient(
+      to bottom right,
+      black 0%,
+      black 55%,
+      transparent 92%
+    );
+    -webkit-mask-image: linear-gradient(
+      to bottom right,
+      black 0%,
+      black 55%,
+      transparent 92%
+    );
+    padding-right: 30% !important;
+    padding-bottom: 60px !important;
+    border-bottom-right-radius: 100%;
+  }
+}
+
+/* ── Reviews h2 — force semibold to match other section h2s ─────
+   `#reviews h2.font-bold` wasn't matching the global h2.font-bold
+   rule (Tailwind may compile font-bold with different class chain).
+   Add explicit rule. */
+.theme-light[data-lp-root] #reviews h2 {
+  font-weight: 700 !important;
+}
+
+/* ── Service Area — uniform 4-col grid ──────────────────────────
+   Replaces the default `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`
+   spacing with consistent 4-col desktop / 2-col mobile rows and a
+   tighter 8px gap so the block reads as a clean reference card. */
+.theme-light[data-lp-root] #service-area .grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+@media (max-width: 991px) {
+  .theme-light[data-lp-root] #service-area .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   LP FOOTER CONTACT FORM — blue-island adaptation
+   ─────────────────────────────────────────────────────────────────
+   Reference: /privacy renders the same `ContactFooter` on its
+   original dark surface (#141414 bg + yellow CTA + white text on
+   bg-white/10 inputs). On the LP the bg becomes the blue island
+   (#0066ff). We adapt the same form rhythm to the LP palette:
+     • inputs           → solid white card with ink text/placeholder
+     • textarea         → same
+     • Continue/Submit  → WHITE pill with BLUE text (was white-on-
+                          white because globals.css forces
+                          `.lg:bg-[#FFE533]` to white in the
+                          footer and my earlier rule whitens the
+                          btn-shine label)
+     • Step indicator   → white pills (already handled in accent.css)
+     • Labels           → white at 80% (more readable than 70%)
+     • Heading column ↔ form column gap → wider for breathing room. */
+
+/* Hide the "CONTACTS" eyebrow + its border-bottom divider at the
+   top of the contact form section — user-requested cleanup. */
+body:has([data-accent="blue"][data-lp-root]) #contact > div > div:first-child > div.border-b {
+  display: none !important;
+}
+
+/* Wider gap between heading column + form column on desktop so the
+   subtitle paragraph doesn't crowd the inputs. */
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"][data-lp-root]) #contact > div > div:first-child > div.flex.flex-col.gap-5.lg\:flex-row {
+    gap: 48px !important;
+  }
+}
+
+/* Step indicator — the default 2 short pills (`h-1.5`) read as a
+   stray dashes / line at the top of the form. Add a visible
+   "STEP 1 OF 2" mono label above and bump pill height so the
+   multi-step nature of the form is obvious. */
+body:has([data-accent="blue"][data-lp-root]) #contact form > div.flex.gap-1\.5 {
+  position: relative;
+  padding-top: 24px;
+  margin-top: 4px;
+}
+body:has([data-accent="blue"][data-lp-root]) #contact form > div.flex.gap-1\.5::before {
+  content: "Step 1 of 2";
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+}
+body:has([data-accent="blue"][data-lp-root]) #contact form > div.flex.gap-1\.5 > span {
+  height: 6px !important;
+}
+body:has([data-accent="blue"][data-lp-root]) #contact form > div.flex.gap-1\.5 > span.w-8 {
+  width: 40px !important;
+}
+body:has([data-accent="blue"][data-lp-root]) #contact form > div.flex.gap-1\.5 > span.w-2 {
+  width: 12px !important;
+}
+
+/* INPUTS — solid white card on the blue island. */
+body:has([data-accent="blue"][data-lp-root]) #contact form input,
+body:has([data-accent="blue"][data-lp-root]) #contact form textarea {
+  background-color: #ffffff !important;
+  color: #001f4d !important;
+  border: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border-radius: 12px !important;
+  height: 56px !important;
+  font-size: 16px !important;
+  padding: 0 18px !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.3px !important;
+}
+body:has([data-accent="blue"][data-lp-root]) #contact form textarea {
+  height: auto !important;
+  min-height: 140px !important;
+  padding: 16px 18px !important;
+  line-height: 1.5 !important;
+}
+body:has([data-accent="blue"][data-lp-root]) #contact form input::placeholder,
+body:has([data-accent="blue"][data-lp-root]) #contact form textarea::placeholder {
+  color: rgba(0, 31, 77, 0.45) !important;
+  opacity: 1 !important;
+}
+body:has([data-accent="blue"][data-lp-root]) #contact form input:focus,
+body:has([data-accent="blue"][data-lp-root]) #contact form textarea:focus {
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55) !important;
+}
+
+/* LABELS — white at 85%, slightly larger so they read on the
+   high-contrast blue. mono-uppercase preserved (accent.css already
+   sets 11px/2px). Bump to 12px for legibility in this context. */
+body:has([data-accent="blue"][data-lp-root]) #contact form label {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 12px !important;
+  letter-spacing: 2px !important;
+  font-weight: 600 !important;
+}
+
+/* SUBMIT / CONTINUE BUTTON — keep the ORIGINAL Tailwind shape
+   (mono-uppercase label, rounded-lg, h-[52px]) intact; just
+   recolor white bg + blue text. Need to override:
+     1. globals.css `.lg:bg-[#FFE533] → white` (already white, OK).
+     2. lp-theme general btn-shine span restyle (sans-medium 16px,
+        text-transform:none, color:white) — restore mono uppercase
+        and switch color to brand blue. */
+body:has([data-accent="blue"][data-lp-root]) #contact form button.btn-shine {
+  background-color: #ffffff !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: background-color .2s ease !important;
+}
+body:has([data-accent="blue"][data-lp-root]) #contact form button.btn-shine:hover {
+  background-color: #f0f5ff !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+body:has([data-accent="blue"][data-lp-root]) #contact form button.btn-shine > span {
+  color: #0066ff !important;
+  /* Revert lp-theme's sans-medium override — keep the original
+     `font-mono font-bold uppercase tracking-[-0.64px]` look. */
+  font-family: var(--font-mono, ui-monospace, monospace) !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  text-transform: uppercase !important;
+  letter-spacing: -0.64px !important;
+}
+body:has([data-accent="blue"][data-lp-root]) #contact form button.btn-shine:hover > span {
+  color: #0052cc !important;
+}
+
+/* "Back" link (step 2) — subtle white at 60%. */
+body:has([data-accent="blue"][data-lp-root]) #contact form button[type="button"]:not(.btn-shine) {
+  color: rgba(255, 255, 255, 0.6) !important;
+  text-transform: none !important;
+  font-family: var(--font-sans, system-ui, sans-serif) !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.2px !important;
+}
+
+/* Validation error messages — soft red on the blue island. */
+body:has([data-accent="blue"][data-lp-root]) #contact form .text-red-400 {
+  color: #ffb4b4 !important;
+  font-size: 13px !important;
+}
+
+/* Optional info row (Additional Information textarea label) — keep
+   white at 85% same as other labels (overrides accent.css's
+   white/40). */
+body:has([data-accent="blue"][data-lp-root]) #contact form .text-white\/40 {
+  color: rgba(255, 255, 255, 0.85) !important;
 }

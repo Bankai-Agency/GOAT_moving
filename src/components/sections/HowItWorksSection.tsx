@@ -31,11 +31,17 @@ function HowItWorksCard({ step }: { step: HowItWorksStep }) {
 
   /* On touch devices: trigger active state by scroll (card sits in middle
      viewport band). Center the cursor-following spotlight in the card.
-     On hover-capable devices (desktop), keep the original mouse-driven UX. */
+     On hover-capable devices (desktop), keep the original mouse-driven UX.
+
+     Detection: width ≤ 991px is the LP mobile breakpoint. Don't rely on
+     matchMedia("(hover: hover)") — some mobile browsers report true,
+     blocking the scroll trigger. Width-based check is reliable. */
   useEffect(() => {
-    hasHoverRef.current = typeof window !== "undefined"
-      && window.matchMedia("(hover: hover)").matches;
-    if (hasHoverRef.current) return;
+    const isMobile = typeof window !== "undefined"
+      && window.matchMedia("(max-width: 991px)").matches;
+    hasHoverRef.current = !isMobile;
+
+    if (!isMobile) return;
 
     const el = cardRef.current;
     if (!el) return;
