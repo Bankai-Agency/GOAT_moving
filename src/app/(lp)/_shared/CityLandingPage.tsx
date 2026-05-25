@@ -188,7 +188,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                • Outer: full-viewport width + px-4 + top padding for nav.
                • Inner: max-w-[1408px] mx-auto — same container width.
              Image stays full-bleed since it's in a sibling absolute div. */}
-          <div className="relative z-10 h-full px-4 pt-[100px] lg:pt-[108px]">
+          <div className="relative z-10 h-full px-4 pt-[100px] lg:pt-[108px] lg:pb-[108px]">
           <div className="max-w-[1408px] mx-auto h-full">
 
           {/* Hero content — flex justify-center pins copy to the
