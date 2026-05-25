@@ -1434,40 +1434,14 @@
   background-color: rgba(255, 255, 255, 0.45) !important;
 }
 
-/* ── CTA heading display backdrop ──────────────────────────────
-   Heading sits on photo top-left with only a thin global gradient.
-   Add a stronger dark gradient panel right behind the h2 (desktop)
-   so it pops against any photo. Mobile already darker enough. */
-@media (min-width: 1024px) {
-  .theme-light[data-lp-root] #cta .absolute.top-0.left-0.right-0 {
-    background: linear-gradient(
-      to bottom right,
-      rgba(0, 0, 0, 0.7) 0%,
-      rgba(0, 0, 0, 0.5) 50%,
-      transparent 90%
-    );
-    /* Stronger blur — earlier 14px still left visible silhouettes
-       of the photo bleeding through the dark panel. */
-    backdrop-filter: blur(40px) saturate(120%);
-    -webkit-backdrop-filter: blur(40px) saturate(120%);
-    /* Mask the blur to fade with the gradient (no hard edge). */
-    mask-image: linear-gradient(
-      to bottom right,
-      black 0%,
-      black 55%,
-      transparent 92%
-    );
-    -webkit-mask-image: linear-gradient(
-      to bottom right,
-      black 0%,
-      black 55%,
-      transparent 92%
-    );
-    padding-right: 30% !important;
-    padding-bottom: 60px !important;
-    border-bottom-right-radius: 100%;
-  }
-}
+/* ── CTA heading display backdrop — REMOVED.
+   Previously this @media (min-width: 1024px) rule painted a dark
+   gradient + backdrop-blur + mask-image fade on top of the CTA
+   heading wrapper, with `border-bottom-right-radius: 100%` which
+   produced a desktop-only "circular blob" silhouette behind the
+   heading. The rebuilt CTABanner now handles legibility itself via
+   an inline radial-gradient wash, so this override is no longer
+   needed and was actively fighting it. */
 
 /* ── Reviews h2 — match section h2 weight (600) ─────────────────
    Remove the old 700 override; section h2.font-bold already sets 600.

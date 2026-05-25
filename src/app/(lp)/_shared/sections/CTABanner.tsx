@@ -45,18 +45,20 @@ export function CTABanner({
             priority={false}
           />
 
-          {/* Soft elliptical wash anchored at the top-left, where the
-              heading sits. Wide enough to cover both heading lines,
-              then narrows + fades smoothly to fully transparent before
-              reaching the bottom blue strip — so the photo around the
-              CTA pill stays untouched. Radial (not linear) so there's
-              no horizontal "band" edge to read as a stripe. */}
+          {/* Elliptical wash anchored at the top-left corner — large
+              enough to cover both heading lines on every viewport,
+              strong enough to keep white text readable over busy
+              photo areas (sky / tile / chrome). Radial (not linear)
+              so there's no horizontal "band" edge to read as a
+              stripe. Five-stop curve so the fade tapers smoothly to
+              fully transparent well before reaching the blue CTA
+              pill — the photo around the pill stays untouched. */}
           <div
             aria-hidden
             className="absolute inset-0 pointer-events-none z-[1]"
             style={{
               background:
-                "radial-gradient(ellipse 75% 55% at 0% 0%, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0.12) 55%, rgba(0,0,0,0) 75%)",
+                "radial-gradient(ellipse 110% 75% at 0% 0%, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 18%, rgba(0,0,0,0.45) 38%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 85%)",
             }}
           />
 
