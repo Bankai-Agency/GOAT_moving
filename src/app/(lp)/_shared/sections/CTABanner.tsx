@@ -14,9 +14,17 @@ const defaults = {
   heading: "Ready to experience the difference?",
   tagline: "Get your free, no-obligation quote today and let our family move yours",
   buttonText: "Get a Free Quote",
-  image: "/images/cta-bg.png",
+  image: "/images/cta-bg.webp",
 };
 
+/* CTABanner — rebuilt as a clean stack:
+     1. Section padding wrapper
+     2. Rounded card (overflow hidden, fixed height)
+     3. Full-bleed background photo (no overlay, no gradient, no
+        drop-shadow on the heading — these all produced visible
+        Mach-band / halo artefacts on the busy photo)
+     4. Heading positioned top-left (plain white text)
+     5. Blue tagline strip at the bottom with inline CTA button */
 export function CTABanner({
   heading = defaults.heading,
   tagline = defaults.tagline,
@@ -26,50 +34,54 @@ export function CTABanner({
   return (
     <section id="cta" className="bg-[#0c0c0c] px-4 py-[60px] lg:py-[80px]">
       <div className="max-w-[1408px] mx-auto">
-        <div className="relative rounded-2xl lg:rounded-3xl overflow-hidden">
-          {/* Full-height image background — taller */}
-          <div className="relative h-[600px] lg:h-[640px]">
-            <Image
-              src={image}
-              alt="GOAT Movers team"
-              fill
-              sizes="(max-width: 1024px) 200vw, 100vw"
-              quality={90}
-              className="object-cover"
-            />
-            {/* Linear top-down dark wash — darkens just the top
-                third of the image where the heading lives, then
-                fades cleanly to transparent. No visible band edge,
-                no circular blob. */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 25%, rgba(0,0,0,0.08) 45%, rgba(0,0,0,0) 65%)",
-              }}
-            />
+        <div className="relative rounded-2xl lg:rounded-3xl overflow-hidden h-[600px] lg:h-[640px]">
+          <Image
+            src={image}
+            alt="GOAT Movers team"
+            fill
+            sizes="(max-width: 1024px) 100vw, 1408px"
+            quality={90}
+            className="object-cover"
+            priority={false}
+          />
 
-            {/* Heading overlaid on image — top left */}
-            <div className="absolute top-0 left-0 right-0 px-6 lg:px-12 pt-8 lg:pt-12">
-              <h2 className="font-sans font-bold text-[32px] lg:text-[56px] leading-[1.1] tracking-[-0.96px] lg:tracking-[-2.24px] text-white max-w-[600px]">
-                {heading}
-              </h2>
-            </div>
+          {/* Soft elliptical wash anchored at the top-left, where the
+              heading sits. Wide enough to cover both heading lines,
+              then narrows + fades smoothly to fully transparent before
+              reaching the bottom blue strip — so the photo around the
+              CTA pill stays untouched. Radial (not linear) so there's
+              no horizontal "band" edge to read as a stripe. */}
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none z-[1]"
+            style={{
+              background:
+                "radial-gradient(ellipse 75% 55% at 0% 0%, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.35) 30%, rgba(0,0,0,0.12) 55%, rgba(0,0,0,0) 75%)",
+            }}
+          />
 
-            {/* Yellow floating island bar — with margins and rounded corners */}
-            <div className="absolute bottom-4 lg:bottom-6 left-4 lg:left-6 right-4 lg:right-6">
-              <div className="bg-[#FFE533] rounded-xl lg:rounded-2xl px-5 lg:px-8 py-3 lg:py-3.5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
-                <p className="font-sans font-normal text-sm lg:text-base leading-[1.4] text-[#0c0c0c]/80 lg:whitespace-nowrap">
-                  {tagline}
-                </p>
-                <LPButton
-                  variant="secondary"
-                  size="sm"
-                  onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
-                >
-                  {buttonText}
-                </LPButton>
-              </div>
+          {/* Heading — plain white text on top of the radial wash. */}
+          <div className="absolute top-0 left-0 right-0 px-6 lg:px-12 pt-8 lg:pt-12 z-10">
+            <h2 className="font-sans font-bold text-[32px] lg:text-[56px] leading-[1.1] tracking-[-0.96px] lg:tracking-[-2.24px] text-white max-w-[600px]">
+              {heading}
+            </h2>
+          </div>
+
+          {/* Bottom blue strip — tagline + CTA button. Sits on top of
+              the photo as a solid panel so contrast is guaranteed
+              without any overlay tricks on the image itself. */}
+          <div className="absolute bottom-4 lg:bottom-6 left-4 lg:left-6 right-4 lg:right-6 z-10">
+            <div className="bg-[#0066ff] rounded-xl lg:rounded-2xl px-5 lg:px-8 py-3 lg:py-3.5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-4">
+              <p className="font-sans font-normal text-sm lg:text-base leading-[1.4] text-white lg:whitespace-nowrap">
+                {tagline}
+              </p>
+              <LPButton
+                variant="secondary"
+                size="sm"
+                onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
+              >
+                {buttonText}
+              </LPButton>
             </div>
           </div>
         </div>

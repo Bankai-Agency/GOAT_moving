@@ -204,31 +204,35 @@ export function DatePicker({
       {isOpen && popoverPos && typeof window !== "undefined" && createPortal(
         <div
           ref={popoverRef}
-          className="fixed z-[300] w-[300px] backdrop-blur-[20px] bg-[rgba(20,20,20,0.96)] ring-1 ring-white/10 rounded-[10px] p-4 shadow-2xl animate-dropdown-in"
+          className={`fixed z-[300] w-[300px] rounded-[10px] p-4 animate-dropdown-in ${
+            isLight
+              ? "bg-white ring-1 ring-black/10 shadow-xl"
+              : "backdrop-blur-[20px] bg-[rgba(20,20,20,0.96)] ring-1 ring-white/10 shadow-2xl"
+          }`}
           style={{ top: popoverPos.top, left: popoverPos.left }}
         >
           {/* Header: month/year + arrows */}
           <div className="flex items-center justify-between mb-3">
-            <span className="font-sans font-semibold text-base text-white">
+            <span className={`font-sans font-semibold text-base ${isLight ? "text-[#001f4d]" : "text-white"}`}>
               {MONTHS[viewMonth]} {viewYear}
             </span>
             <div className="flex gap-1">
               <button
                 type="button"
                 onClick={prevMonth}
-                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer"
+                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${isLight ? "hover:bg-[#f1f3f6]" : "hover:bg-white/10"}`}
               >
                 <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
-                  <path d="M6 1L1 6L6 11" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M6 1L1 6L6 11" stroke={isLight ? "#001f4d" : "white"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
               <button
                 type="button"
                 onClick={nextMonth}
-                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/10 transition-colors cursor-pointer"
+                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors cursor-pointer ${isLight ? "hover:bg-[#f1f3f6]" : "hover:bg-white/10"}`}
               >
                 <svg width="7" height="12" viewBox="0 0 7 12" fill="none">
-                  <path d="M1 1L6 6L1 11" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M1 1L6 6L1 11" stroke={isLight ? "#001f4d" : "white"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
             </div>
@@ -239,7 +243,7 @@ export function DatePicker({
             {DAYS.map((day) => (
               <div
                 key={day}
-                className="h-7 flex items-center justify-center font-sans font-medium text-[11px] uppercase text-white/30"
+                className={`h-7 flex items-center justify-center font-sans font-medium text-[11px] uppercase ${isLight ? "text-[#001f4d]/45" : "text-white/30"}`}
               >
                 {day}
               </div>
@@ -252,7 +256,7 @@ export function DatePicker({
             {Array.from({ length: firstDay }).map((_, i) => (
               <div
                 key={`prev-${i}`}
-                className="h-8 flex items-center justify-center font-sans text-sm text-white/15 rounded-md"
+                className={`h-8 flex items-center justify-center font-sans text-sm rounded-md ${isLight ? "text-[#001f4d]/20" : "text-white/15"}`}
               >
                 {prevMonthDays - firstDay + 1 + i}
               </div>
@@ -266,21 +270,27 @@ export function DatePicker({
               const isPast =
                 new Date(viewYear, viewMonth, day) < today;
 
+              const dayClass = selected
+                ? isLight
+                  ? "bg-[#0066ff] text-white font-semibold scale-110"
+                  : "bg-[#FFE533] text-black font-semibold scale-110"
+                : todayDay
+                  ? isLight
+                    ? "bg-[#eef3ff] text-[#0066ff] font-semibold"
+                    : "bg-white/10 text-white font-semibold"
+                  : isPast
+                    ? isLight ? "text-[#001f4d]/20 cursor-default" : "text-white/15 cursor-default"
+                    : isLight
+                      ? "text-[#001f4d] hover:bg-[#f1f3f6] hover:scale-110"
+                      : "text-white hover:bg-white/10 hover:scale-110";
+
               return (
                 <button
                   key={day}
                   type="button"
                   onClick={() => selectDate(day)}
                   disabled={isPast}
-                  className={`h-8 flex items-center justify-center font-sans text-sm rounded-md transition-all duration-150 ease-out cursor-pointer
-                    ${selected
-                      ? "bg-[#FFE533] text-black font-semibold scale-110"
-                      : todayDay
-                        ? "bg-white/10 text-white font-semibold"
-                        : isPast
-                          ? "text-white/15 cursor-default"
-                          : "text-white hover:bg-white/10 hover:scale-110"
-                    }`}
+                  className={`h-8 flex items-center justify-center font-sans text-sm rounded-md transition-all duration-150 ease-out cursor-pointer ${dayClass}`}
                 >
                   {day}
                 </button>
@@ -293,7 +303,7 @@ export function DatePicker({
             }).map((_, i) => (
               <div
                 key={`next-${i}`}
-                className="h-8 flex items-center justify-center font-sans text-sm text-white/15 rounded-md"
+                className={`h-8 flex items-center justify-center font-sans text-sm rounded-md ${isLight ? "text-[#001f4d]/20" : "text-white/15"}`}
               >
                 {i + 1}
               </div>
@@ -301,7 +311,7 @@ export function DatePicker({
           </div>
 
           {/* Footer: Today button */}
-          <div className="mt-2 pt-2 border-t border-white/[0.08] flex justify-between">
+          <div className={`mt-2 pt-2 flex justify-between border-t ${isLight ? "border-black/[0.08]" : "border-white/[0.08]"}`}>
             <button
               type="button"
               onClick={() => {
@@ -309,7 +319,7 @@ export function DatePicker({
                 onChange?.("");
                 setIsOpen(false);
               }}
-              className="font-mono text-xs uppercase text-white/40 hover:text-white/60 transition-colors cursor-pointer"
+              className={`font-mono text-xs uppercase transition-colors cursor-pointer ${isLight ? "text-[#001f4d]/50 hover:text-[#001f4d]/80" : "text-white/40 hover:text-white/60"}`}
             >
               Clear
             </button>
@@ -320,7 +330,7 @@ export function DatePicker({
                 setViewYear(today.getFullYear());
                 selectDate(today.getDate());
               }}
-              className="font-mono text-xs uppercase text-[#FFE533] hover:text-[#FFE533]/80 transition-colors cursor-pointer"
+              className={`font-mono text-xs uppercase transition-colors cursor-pointer ${isLight ? "text-[#0066ff] hover:text-[#0066ff]/80" : "text-[#FFE533] hover:text-[#FFE533]/80"}`}
             >
               Today
             </button>

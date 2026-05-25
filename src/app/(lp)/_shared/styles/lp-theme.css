@@ -39,9 +39,12 @@
 .theme-light[data-lp-root] .text-white\/30 { color: rgba(0, 31, 77, 0.3) !important; }
 
 /* On a blue CTA, text was `text-[#0c0c0c]` (dark on yellow). Now bg
-   is blue (#0066ff) — text needs to be white for contrast. */
+   is blue (#0066ff) — text needs to be white for contrast.
+   `:not(.lp-btn)` excludes our LP buttons from the universal sweep
+   so secondary buttons (white bg + blue text) inside the island
+   keep their own colour scheme instead of being whitewashed. */
 .theme-light[data-lp-root] .bg-\[\#FFE533\] .text-\[\#0c0c0c\],
-.theme-light[data-lp-root] .bg-\[\#FFE533\] *,
+.theme-light[data-lp-root] .bg-\[\#FFE533\] *:not(.lp-btn),
 .theme-light[data-lp-root] [class*="bg-[#FFE533]"] .text-\[\#0c0c0c\] {
   color: #ffffff !important;
 }

@@ -4,6 +4,13 @@ import { ContactFooter } from "@lp/sections/ContactFooter";
 import { Touchbar } from "@lp/sections/Touchbar";
 import { QuoteModal } from "@lp/ui/QuoteModal";
 import { LPButton } from "@lp/ui/LPButton";
+import { BackToOriginLink } from "./BackToOriginLink";
+/* Thank-you page reuses the LP visual system (white bg + #0066ff
+   accent + LPTerminalNav). Without these stylesheets the floating
+   nav has no `.mega-nav` rules and breaks on desktop. */
+import "@lp/styles/accent.css";
+import "@lp/styles/mega-nav.css";
+import "@lp/styles/lp-theme.css";
 
 export const metadata: Metadata = {
   title: "Thank You — Your Quote Request Was Received",
@@ -56,9 +63,7 @@ export default function ThankYouPage() {
                 <LPButton variant="primary" size="md" href="tel:+13805240846">
                   Call +1 380-524-0846
                 </LPButton>
-                <LPButton variant="secondary" size="md" href="/">
-                  Back to home
-                </LPButton>
+                <BackToOriginLink size="md" />
               </div>
             </div>
 
@@ -70,9 +75,7 @@ export default function ThankYouPage() {
                 </LPButton>
               </div>
               <div className="flex-1">
-                <LPButton variant="secondary" size="md" href="/" fullWidth>
-                  Back to home
-                </LPButton>
+                <BackToOriginLink size="md" fullWidth />
               </div>
             </div>
           </section>

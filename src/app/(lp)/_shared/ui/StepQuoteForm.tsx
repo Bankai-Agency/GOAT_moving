@@ -44,7 +44,7 @@ function PrivacyCheckbox({
   surface: LPSurface;
 }) {
   const isLight = surface === "light";
-  const textColor = isLight ? "text-[#001f4d]/65" : "text-white/65";
+  const textColor = isLight ? "text-[#001f4d]/65" : "text-white/70";
   const linkColor = isLight ? "text-[#0066ff]" : "text-white";
   return (
     <label className="flex items-start gap-2.5 cursor-pointer select-none">
@@ -207,20 +207,25 @@ export function StepQuoteForm({
 
       {step === 2 && (
         <div className="flex flex-col gap-5">
-          <LPInput
-            label="Moving from"
-            placeholder="Address"
-            value={values.movingFrom}
-            onChange={(v) => set("movingFrom", v)}
-            surface={surface}
-          />
-          <LPInput
-            label="Moving to"
-            placeholder="Address"
-            value={values.movingTo}
-            onChange={(v) => set("movingTo", v)}
-            surface={surface}
-          />
+          {/* Moving from + Moving to share a row to save vertical
+              space (matches QuoteModal). Collapses to stacked on
+              narrow widths so the labels never wrap. */}
+          <div className="flex flex-col sm:flex-row gap-5">
+            <LPInput
+              label="Moving from"
+              placeholder="Address"
+              value={values.movingFrom}
+              onChange={(v) => set("movingFrom", v)}
+              surface={surface}
+            />
+            <LPInput
+              label="Moving to"
+              placeholder="Address"
+              value={values.movingTo}
+              onChange={(v) => set("movingTo", v)}
+              surface={surface}
+            />
+          </div>
           <DatePicker
             label="Move date"
             placeholder="Choose date"
@@ -234,6 +239,7 @@ export function StepQuoteForm({
             options={MOVE_SIZES}
             value={values.moveSize}
             onChange={(v) => set("moveSize", v)}
+            surface={surface}
           />
           <PrivacyCheckbox
             checked={agreesToPrivacy}

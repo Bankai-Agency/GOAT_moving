@@ -34,13 +34,10 @@ export function LPSolution({
      than the previous "every-pixel-of-scroll → immediate translate"
      handler that felt jittery and abrupt. */
   useEffect(() => {
-    /* Desktop only: scroll-driven horizontal translate of the track.
-       Mobile uses native horizontal swipe (overflow-x: auto + snap),
-       which is the standard pattern for touch and avoids the
-       sticky-pin dead-zone that creates a big empty white area
-       between this section and the next. */
-    if (window.innerWidth < 1024) return;
-
+    /* Scroll-driven horizontal translate of the card track — same
+       behaviour on every viewport. Mobile previously fell back to
+       native overflow-x swipe; we now keep the sticky-pin pattern
+       so mobile and desktop share identical motion. */
     const el = sectionRef.current;
     const track = trackRef.current;
     if (!el || !track) return;
@@ -55,7 +52,12 @@ export function LPSolution({
       const scrolled = Math.max(0, Math.min(total, -rect.top));
       const progress = total > 0 ? scrolled / total : 0;
       const containerWidth = Math.min(1408, window.innerWidth);
-      const trackLeft = (window.innerWidth - containerWidth) / 2 + 16;
+      /* On mobile the container is full-bleed (no centring inset)
+         so trackLeft collapses to the left padding only. */
+      const trackLeft =
+        window.innerWidth >= 1024
+          ? (window.innerWidth - containerWidth) / 2 + 16
+          : 16;
       const cardGap = 20;
       const maxTx = Math.max(
         0,
@@ -74,11 +76,14 @@ export function LPSolution({
     };
 
     const onScroll = () => compute();
+    const onResize = () => compute();
     compute();
     raf = requestAnimationFrame(tick);
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
       cancelAnimationFrame(raf);
     };
   }, []);
@@ -87,14 +92,13 @@ export function LPSolution({
     <section
       id="solution"
       ref={sectionRef}
-      /* Desktop: 200vh envelope so the JS scroll-driven horizontal
-         translate has room to play out. Mobile: content-height —
-         no fake long section, no sticky pin, no dead-zone. Cards
-         use native horizontal swipe instead. */
+      /* 200vh envelope on every viewport so the JS scroll-driven
+         horizontal translate has room to play out. Sticky child below
+         pins for the whole envelope. */
       style={{ position: "relative" }}
-      className="pt-[60px] lg:pt-[100px] pb-[60px] lg:pb-[80px] lg:h-[200vh]"
+      className="pt-[60px] lg:pt-[100px] pb-[60px] lg:pb-[80px] h-[200vh]"
     >
-      <div className="lg:sticky lg:top-0 lg:h-screen flex flex-col lg:justify-center lg:overflow-hidden">
+      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
         {/* Header — content centered vertically in viewport via
             `justify-center` on the sticky flex-col. No extra mt:
             the center alignment handles the offset from sticky top
@@ -133,15 +137,12 @@ export function LPSolution({
             inflated the gap by vertically centering the track in
             the remaining h-screen space. */}
         <div className="mt-8 lg:mt-12 w-full">
-          {/* Mobile: native horizontal swipe — full-bleed `overflow-x:auto`
-              + snap-x snap-mandatory. Padding-inline 16px gives the
-              same left-edge alignment as the container above; the
-              last card's right padding (added via track style) acts
-              as snap-end breathing room. Desktop: keeps the JS-driven
-              translate inside a centred max-w container. */}
+          {/* JS-driven horizontal translate on every viewport — same
+              motion on mobile and desktop. `overflow-visible` lets the
+              track extend past the centred container as it slides; the
+              outer section's `overflow-hidden` clips it to viewport. */}
           <div
-            className="px-4 lg:max-w-[1408px] lg:mx-auto lg:px-4 w-full overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:snap-none"
-            style={{ scrollbarWidth: "none" }}
+            className="px-4 lg:max-w-[1408px] lg:mx-auto lg:px-4 w-full overflow-visible"
           >
             <div
               ref={trackRef}

@@ -28,9 +28,9 @@ function ModalInput({
   const isEmail = type === "email";
   return (
     <div className="flex-1 flex flex-col gap-2">
-      <label className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
+      <label className="lp-label lp-label--light">
         {label}
-        {required && <span className="text-[#FFE533]"> *</span>}
+        {required && <span className="lp-label__required"> *</span>}
       </label>
       <input
         type={type}
@@ -41,7 +41,7 @@ function ModalInput({
         onChange={(e) => onChange(isPhone ? formatUsPhone(e.target.value) : e.target.value)}
         required={required}
         pattern={isEmail ? EMAIL_PATTERN : undefined}
-        className="backdrop-blur-[20px] bg-white/10 rounded-[10px] h-[56px] px-4 font-sans font-normal text-base lg:text-lg leading-[1.5] lg:leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.36px] text-white placeholder:text-white/60 outline-none focus:bg-white/15 input-glow transition-all duration-200 invalid:[&:not(:placeholder-shown)]:ring-1 invalid:[&:not(:placeholder-shown)]:ring-[#FF6B6B]"
+        className="lp-input lp-input--light invalid:[&:not(:placeholder-shown)]:ring-1 invalid:[&:not(:placeholder-shown)]:ring-[#FF6B6B]"
       />
     </div>
   );
@@ -252,14 +252,14 @@ export function QuoteModal() {
 
                 {/* Optional message */}
                 <div className="flex flex-col gap-2">
-                  <label className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
+                  <label className="lp-label lp-label--light">
                     Additional Information (Optional)
                   </label>
                   <textarea
                     placeholder="Any special requests or details..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="backdrop-blur-[20px] bg-white/10 rounded-[10px] p-4 h-[120px] font-sans font-normal text-base lg:text-lg leading-[1.5] lg:leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.36px] text-white placeholder:text-white/60 outline-none focus:bg-white/15 input-glow transition-all duration-200 resize-none"
+                    className="lp-textarea lp-input--light"
                   />
                 </div>
 
@@ -272,7 +272,7 @@ export function QuoteModal() {
                     onChange={(e) => setAgreesToPrivacy(e.target.checked)}
                     className="mt-0.5 w-4 h-4 rounded cursor-pointer shrink-0 accent-[#0066ff]"
                   />
-                  <span className="font-sans font-normal text-[13px] leading-[1.4] tracking-[-0.2px] text-white/65">
+                  <span className="font-sans font-normal text-[13px] leading-[1.4] tracking-[-0.2px] text-white/70">
                     By submitting, you agree to our{" "}
                     <Link
                       href="/privacy"

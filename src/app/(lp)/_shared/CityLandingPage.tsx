@@ -154,10 +154,13 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
          LP keeps its proportional `zoom` scale-down for visual
          continuity with the existing pages). */}
       <LPTerminalNav />
-      <div className="page-zoom">
       <main>
 
       {/* ───────────── 1. HERO ─────────────
+          Hero is OUTSIDE .page-zoom so it renders at the device's
+          true 100dvh — the rest of the page is zoomed down to fit
+          the design reference grid but the hero must stay full-bleed
+          on every screen size.
           Full-bleed: image stretches to the viewport edges (no side
           margins, no rounded corners) and fills 100dvh including the
           area beneath the floating nav. Inner content stays aligned
@@ -234,8 +237,11 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
               {/* RIGHT — shared LPQuoteForm (white card) on desktop.
                   Same surface as LPCtaForm so both forms read
                   identically. White contrasts strongly with the
-                  dark hero photo behind. */}
-              <div className="hidden lg:block relative z-40 w-full max-w-[520px] lg:ml-auto">
+                  dark hero photo behind.
+                  `lg:self-start` top-aligns the card so step 2 (which
+                  is taller than step 1) grows downward instead of
+                  pushing the top edge up under the floating nav. */}
+              <div className="hidden lg:block relative z-40 w-full max-w-[520px] lg:ml-auto lg:self-start">
                 <LPQuoteForm city={city} />
               </div>
             </div>
@@ -253,6 +259,10 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           <LPQuoteForm city={city} className="shadow-none!" />
         </div>
       </section>
+
+      {/* All non-hero sections live INSIDE .page-zoom so they
+          scale proportionally to the 1728px reference. */}
+      <div className="page-zoom">
 
       {/* 2. Services (moved up — was after CTABanner) */}
       <ServicesSection
@@ -292,7 +302,16 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       />
 
 
-      {/* 5. Process — LP-only layout (left sticky heading + right
+      {/* 5. CTA banner — emotional / aspirational, click-to-modal.
+            Sits straight after Social Proof so the credibility momentum
+            from the stats / testimonial leads into a single-action CTA. */}
+      <CTABanner
+        heading={`Ready to Move in ${city}?`}
+        tagline="No hidden fees. No hourly surprises. Fully licensed and insured."
+        buttonText="Get Your Free Quote"
+      />
+
+      {/* 6. Process — LP-only layout (left sticky heading + right
             card stack, always-on auto-animating spotlight). The
             section already provides id="process" internally, so no
             wrapper div needed. */}
@@ -307,16 +326,19 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         steps={processSteps}
       />
 
-      {/* 6. CTA banner (with button) — emotional / aspirational
-            angle: shorter, punchier headline + click-to-modal flow. */}
-      <CTABanner
-        heading={`Ready to Move in ${city}?`}
-        tagline="No hidden fees. No hourly surprises. Fully licensed and insured."
-        buttonText="Get Your Free Quote"
-      />
-
-      {/* 8. Testimonials — default reviews carousel */}
+      {/* 7. Testimonials — default reviews carousel */}
       <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} />
+
+      {/* 8. Lead-capture CTA with embedded form — utilitarian
+            "fill the form right here, get a real number". Placed
+            after Reviews so the user has just absorbed social proof
+            and the form is the natural next step before the more
+            informational Service Area + FAQ sections. */}
+      <LPCtaForm
+        heading="Tell Us About Your Move"
+        tagline={`Share a few details and we'll send a real ${city} quote — not a sales pitch. Most moves estimated in under a minute.`}
+        city={city}
+      />
 
       {/* 9. Service area — neighborhoods */}
       <ServiceAreaSection
@@ -329,22 +351,12 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
 
       {/* 10. FAQ */}
       <FAQSection title="Frequently Asked Questions" items={config.faqs} />
-      </main>
-
-      {/* 11. Lead-capture CTA with embedded form — utilitarian
-            angle: "fill the form right here, get a real number".
-            Distinct content from the click-to-modal CTABanner above
-            so the two CTAs don't duplicate the same message. */}
-      <LPCtaForm
-        heading="Tell Us About Your Move"
-        tagline={`Share a few details and we'll send a real ${city} quote — not a sales pitch. Most moves estimated in under a minute.`}
-        city={city}
-      />
 
       <ContactFooter />
       <Touchbar />
       <QuoteModal />
       </div>
+      </main>
     </>
   );
 }
