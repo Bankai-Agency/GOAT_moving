@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LPInput, formatUsPhone, type LPSurface } from "./LPInput";
 import { LPButton } from "./LPButton";
@@ -31,6 +32,45 @@ const empty: QuoteFormValues = {
 
 const isValidPhone = (v: string) => v.replace(/\D/g, "").length >= 10;
 const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+/* ─────── Privacy checkbox ─────── */
+function PrivacyCheckbox({
+  checked,
+  onChange,
+  surface,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  surface: LPSurface;
+}) {
+  const isLight = surface === "light";
+  const textColor = isLight ? "text-[#001f4d]/65" : "text-white/65";
+  const linkColor = isLight ? "text-[#0066ff]" : "text-white";
+  return (
+    <label className="flex items-start gap-2.5 cursor-pointer select-none">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="mt-0.5 w-4 h-4 rounded cursor-pointer shrink-0 accent-[#0066ff]"
+      />
+      <span
+        className={`font-sans font-normal text-[13px] leading-[1.4] tracking-[-0.2px] ${textColor}`}
+      >
+        By submitting, you agree to our{" "}
+        <Link
+          href="/privacy"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`${linkColor} underline underline-offset-2 hover:opacity-80`}
+        >
+          Privacy Policy
+        </Link>{" "}
+        and consent to be contacted about your move.
+      </span>
+    </label>
+  );
+}
 
 /* ─────── Step indicator ─────── */
 function StepIndicator({ current, surface }: { current: number; surface: LPSurface }) {
@@ -71,6 +111,7 @@ export function StepQuoteForm({
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [agreesToPrivacy, setAgreesToPrivacy] = useState(true);
 
   const set = <K extends keyof QuoteFormValues>(key: K, v: QuoteFormValues[K]) => {
     setValues((prev) => ({ ...prev, [key]: v }));
@@ -185,6 +226,7 @@ export function StepQuoteForm({
             placeholder="Choose date"
             value={values.moveDate}
             onChange={(v) => set("moveDate", v)}
+            surface={surface}
           />
           <SelectDropdown
             label="Move size"
@@ -193,10 +235,15 @@ export function StepQuoteForm({
             value={values.moveSize}
             onChange={(v) => set("moveSize", v)}
           />
+          <PrivacyCheckbox
+            checked={agreesToPrivacy}
+            onChange={setAgreesToPrivacy}
+            surface={surface}
+          />
           <LPButton
             type="button"
             onClick={handleSubmit}
-            disabled={submitting}
+            disabled={submitting || !agreesToPrivacy}
             fullWidth
           >
             {submitting ? "Sending…" : "Submit Request"}

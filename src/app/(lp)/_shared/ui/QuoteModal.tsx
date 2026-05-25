@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DatePicker } from "./DatePicker";
 import { formatUsPhone } from "./FormInput";
@@ -77,6 +78,7 @@ export function QuoteModal() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<ModalFormData>(emptyForm);
+  const [agreesToPrivacy, setAgreesToPrivacy] = useState(true);
 
   const validateStep1 = () => {
     const errs: Record<string, string> = {};
@@ -245,6 +247,7 @@ export function QuoteModal() {
                   placeholder="Choose date"
                   value={formData.moveDate}
                   onChange={(val) => setFormData({ ...formData, moveDate: val })}
+                  surface="light"
                 />
 
                 {/* Optional message */}
@@ -260,7 +263,29 @@ export function QuoteModal() {
                   />
                 </div>
 
-                <LPButton type="submit" disabled={submitting} fullWidth className="mt-2">
+                {/* Privacy consent — checked by default. Submit stays
+                    disabled unless this is checked. */}
+                <label className="flex items-start gap-2.5 cursor-pointer select-none mt-1">
+                  <input
+                    type="checkbox"
+                    checked={agreesToPrivacy}
+                    onChange={(e) => setAgreesToPrivacy(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 rounded cursor-pointer shrink-0 accent-[#0066ff]"
+                  />
+                  <span className="font-sans font-normal text-[13px] leading-[1.4] tracking-[-0.2px] text-white/65">
+                    By submitting, you agree to our{" "}
+                    <Link
+                      href="/privacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white underline underline-offset-2 hover:opacity-80"
+                    >
+                      Privacy Policy
+                    </Link>{" "}
+                    and consent to be contacted about your move.
+                  </span>
+                </label>
+                <LPButton type="submit" disabled={submitting || !agreesToPrivacy} fullWidth className="mt-2">
                   {submitting ? "Sending..." : "Submit Request"}
                 </LPButton>
                 <LPButton variant="ghost" size="sm" onClick={() => setStep(1)} className="self-center">

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { LPLabel, type LPSurface } from "./LPInput";
 
 const DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const MONTHS = [
@@ -23,11 +24,13 @@ export function DatePicker({
   placeholder = "Choose date",
   value,
   onChange,
+  surface = "glass",
 }: {
   label: string;
   placeholder?: string;
   value?: string;
   onChange?: (formatted: string) => void;
+  surface?: LPSurface;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [popoverPos, setPopoverPos] = useState<{ top: number; left: number } | null>(null);
@@ -152,21 +155,34 @@ export function DatePicker({
     viewMonth === 0 ? 11 : viewMonth - 1
   );
 
+  /* Surface-aware classes — light matches LPInput--light (white card
+     usage in modal / LPCtaForm), glass matches LPInput--glass (hero
+     glass form on dark photo). */
+  const isLight = surface === "light";
+  const triggerClass = isLight
+    ? "lp-input lp-input--light flex items-center justify-between cursor-pointer text-left"
+    : "backdrop-blur-[20px] bg-white/10 rounded-[10px] h-[56px] lg:h-[57px] px-4 flex items-center justify-between cursor-pointer hover:bg-white/15 transition-all duration-200 ease-out text-left";
+  const valueColor = isLight
+    ? selectedDate
+      ? "text-[#001f4d]"
+      : "text-[#001f4d]/40"
+    : selectedDate
+      ? "text-white"
+      : "text-white/60";
+  const iconStroke = isLight ? "#001f4d" : "white";
+  const iconOpacity = isLight ? 0.55 : 0.6;
+
   return (
     <div className="flex-1 min-w-0 flex flex-col gap-2 relative" ref={ref}>
-      <label className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
-        {label}
-      </label>
+      <LPLabel surface={surface}>{label}</LPLabel>
       <button
         ref={triggerRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="backdrop-blur-[20px] bg-white/10 rounded-[10px] h-[56px] lg:h-[57px] px-4 flex items-center justify-between cursor-pointer hover:bg-white/15 transition-all duration-200 ease-out text-left"
+        className={triggerClass}
       >
         <span
-          className={`font-sans font-normal text-lg leading-[1.4] tracking-[-0.36px] ${
-            selectedDate ? "text-white" : "text-white/60"
-          }`}
+          className={`font-sans font-normal text-base leading-[1.4] tracking-[-0.3px] ${valueColor}`}
         >
           {selectedDate ? formatDate(selectedDate) : placeholder}
         </span>
@@ -176,12 +192,12 @@ export function DatePicker({
           viewBox="0 0 20 20"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="opacity-60"
+          style={{ opacity: iconOpacity, flexShrink: 0 }}
         >
-          <rect x="2" y="4" width="16" height="14" rx="2" stroke="white" strokeWidth="1.5" />
-          <path d="M2 8H18" stroke="white" strokeWidth="1.5" />
-          <path d="M6 2V6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-          <path d="M14 2V6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+          <rect x="2" y="4" width="16" height="14" rx="2" stroke={iconStroke} strokeWidth="1.5" />
+          <path d="M2 8H18" stroke={iconStroke} strokeWidth="1.5" />
+          <path d="M6 2V6" stroke={iconStroke} strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M14 2V6" stroke={iconStroke} strokeWidth="1.5" strokeLinecap="round" />
         </svg>
       </button>
 
