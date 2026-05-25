@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@site/*": ["./src/app/(site)/_shared/*"],
+      "@lp/*": ["./src/app/(lp)/_shared/*"]
     }
   },
   "include": [

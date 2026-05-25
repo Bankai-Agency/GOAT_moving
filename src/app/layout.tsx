@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Roboto_Mono } from "next/font/google";
-import { NavProgress } from "@/components/layout/NavProgress";
-import { ScrollReset } from "@/components/layout/ScrollReset";
-import { Analytics } from "@/components/seo/Analytics";
-import { ShutterTransition } from "@/components/motion/ShutterTransition";
+import { NavProgress } from "@/components/NavProgress";
+import { ScrollReset } from "@/components/ScrollReset";
+import { Analytics } from "@/components/Analytics";
+import { ShutterTransition } from "@/components/ShutterTransition";
 import "./globals.css";
 
 const geist = Geist({

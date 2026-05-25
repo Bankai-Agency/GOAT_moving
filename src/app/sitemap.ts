@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { locationConfigs } from "./_locations/locationConfigs";
+import { locationConfigs } from "@site/locations/locationConfigs";
 
 const SITE_URL = "https://thegoatmovers.net";
 

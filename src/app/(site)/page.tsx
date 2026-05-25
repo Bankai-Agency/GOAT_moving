@@ -1,0 +1,51 @@
+import type { Metadata } from "next";
+import { Header } from "@site/layout/Header";
+import { JsonLd } from "@site/seo/JsonLd";
+import { localBusinessSchema, websiteSchema } from "@site/seo/schema";
+import { HeroSection } from "@site/sections/HeroSection";
+import { AboutSection } from "@site/sections/AboutSection";
+import { ServicesSection } from "@site/sections/ServicesSection";
+import { ServiceAreaSection } from "@site/sections/ServiceAreaSection";
+import { ReviewsSection } from "@site/sections/ReviewsSection";
+import { GallerySection } from "@site/sections/GallerySection";
+import { CTABanner } from "@site/sections/CTABanner";
+import { FAQSection } from "@site/sections/FAQSection";
+import { ContactFooter } from "@site/sections/ContactFooter";
+import { Touchbar } from "@site/layout/Touchbar";
+import { QuoteModal } from "@site/ui/QuoteModal";
+
+export const metadata: Metadata = {
+  title: "Movers in Vancouver, WA & Portland, OR | $125/hr — GOAT Movers",
+  description:
+    "Stress-free moving across the I-5 corridor. Local moves at $125/hr, long-distance, commercial & packing. Licensed, insured, 850+ five-star reviews. Get your free quote today.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Movers in Vancouver, WA & Portland, OR | GOAT Movers",
+    description:
+      "Licensed & insured moving company serving Vancouver, WA, Portland, OR, and the I-5 corridor. Flat $125/hr, fixed-price quotes, 850+ five-star reviews.",
+    url: "/",
+    type: "website",
+  },
+};
+
+export default function Home() {
+  return (
+    <div className="page-zoom">
+      <JsonLd data={[localBusinessSchema(), websiteSchema()]} />
+      <Header />
+      <main>
+        <HeroSection />
+        <AboutSection />
+        <ServicesSection />
+        <ServiceAreaSection />
+        <ReviewsSection />
+        <GallerySection />
+        <CTABanner />
+        <FAQSection />
+      </main>
+      <ContactFooter />
+      <Touchbar />
+      <QuoteModal />
+    </div>
+  );
+}
