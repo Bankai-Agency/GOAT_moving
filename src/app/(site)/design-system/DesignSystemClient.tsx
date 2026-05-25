@@ -626,7 +626,6 @@ function Mp5Content() {
 
       <Specimen name="AccentPill — sizes" meta="(drafts)/mainpage-5/AccentPill">
         <div className="ds-row">
-          <LPButton size="xs">Quote</LPButton>
           <LPButton size="sm">Quote</LPButton>
           <LPButton size="md">Get a Free Quote</LPButton>
           <LPButton size="lg">Get a Free Quote</LPButton>
