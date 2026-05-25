@@ -16,6 +16,9 @@ import type { ReactNode, MouseEventHandler } from "react";
      md — 56px (forms, default)
      lg — 64px (large hero CTAs)
 
+   When `href` is set, renders as <a> (use for navigational CTAs
+   like "Call ..." or "Back to home"). Otherwise renders <button>.
+
    No CSS-overrides needed — all styling lives here. If a button
    doesn't look right somewhere, fix THIS file, not lp-theme.css.
    ════════════════════════════════════════════════════════════════ */
@@ -27,9 +30,15 @@ type Props = {
   variant?: LPButtonVariant;
   size?: LPButtonSize;
   fullWidth?: boolean;
+  /** Render as <a href={href}> instead of <button>. */
+  href?: string;
+  /** When rendering as <a>, the `target` attribute. */
+  target?: "_blank" | "_self";
+  /** When rendering as <a>, the `rel` attribute. */
+  rel?: string;
   type?: "button" | "submit";
   disabled?: boolean;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
+  onClick?: MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>;
   children: ReactNode;
   ariaLabel?: string;
   className?: string;
@@ -84,6 +93,9 @@ export function LPButton({
   variant = "primary",
   size = "md",
   fullWidth = false,
+  href,
+  target,
+  rel,
   type = "button",
   disabled = false,
   onClick,
@@ -91,14 +103,33 @@ export function LPButton({
   ariaLabel,
   className = "",
 }: Props) {
+  const finalClassName = `${variantClassName[variant]} ${className}`.trim();
+  const style = baseStyle(size, fullWidth);
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        target={target}
+        rel={rel}
+        aria-label={ariaLabel}
+        onClick={onClick as MouseEventHandler<HTMLAnchorElement>}
+        style={{ ...style, textDecoration: "none" }}
+        className={finalClassName}
+      >
+        {children}
+      </a>
+    );
+  }
+
   return (
     <button
       type={type}
       disabled={disabled}
-      onClick={onClick}
+      onClick={onClick as MouseEventHandler<HTMLButtonElement>}
       aria-label={ariaLabel}
-      style={baseStyle(size, fullWidth)}
-      className={`${variantClassName[variant]} ${className}`.trim()}
+      style={style}
+      className={finalClassName}
     >
       {children}
     </button>
