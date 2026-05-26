@@ -2363,3 +2363,56 @@ body:has([data-accent="blue"]) .lp-btn:disabled {
 .theme-light[data-lp-root] [data-lp-dark-zone] #reviews .bg-\[\#303030\] {
   background-color: #2a2a2a !important;
 }
+/* Globals turns the Yelp / Google source icons black
+   (`filter: brightness(0)`) because the original light-grey
+   chip would otherwise swallow the native white. The dark-zone
+   chip (#2a2a2a above) is dark again, so black icons disappear.
+   Restore native colours so yelp-white reads as white and
+   google-color keeps its multi-coloured G mark. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews a[href*="yelp"] img,
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews a[href*="google.com/maps"] img {
+  filter: none !important;
+}
+/* Summary card Yelp/Google chips: my `.bg-[#303030] → #2a2a2a`
+   override above also captured the hover state, so the chips
+   stopped flashing brand colours on hover (review-card chips
+   keep working because they sit under a more-specific selector).
+   Re-apply the brand-hover here at higher specificity so the
+   summary card mirrors the review-card behaviour: Yelp red,
+   Google blue. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews a[href*="yelp"]:hover {
+  background-color: #FF2828 !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews a[href*="google.com/maps"]:hover {
+  background-color: #357DFF !important;
+}
+
+/* Mobile summary card breathing room — the `h-[250px]` card had
+   subtitle + avatars row sitting almost touching because
+   justify-between only distributes leftover space and the
+   content nearly fills the box. Bump to 290px so there's a
+   visible gap between the description and the avatar/stars row. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .h-\[250px\] {
+  height: 290px !important;
+}
+/* And shrink the "500+ 5-Star Reviews" eyebrow inside that card —
+   the original text-xs (12px) reads bulky next to the small
+   avatars and 5-star strip on mobile. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .h-\[250px\] .uppercase.whitespace-nowrap {
+  font-size: 10px !important;
+  letter-spacing: -0.2px !important;
+}
+
+/* Review-card hover currently swaps the yellow stars for a black
+   variant (so they read on the yellow card bg). Inside the LP
+   dark zone the card flips to blue and the "black" stars end up
+   appearing white via the colour-mix overrides — distracting and
+   off-brand. Lock the yellow stars to always-visible on the LP
+   and keep the black-stars div hidden in every state. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .group\/card:hover .group-hover\/card\:hidden {
+  display: block !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .group\/card .group-hover\/card\:flex,
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .group\/card:hover .group-hover\/card\:flex {
+  display: none !important;
+}
