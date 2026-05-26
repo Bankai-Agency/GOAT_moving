@@ -532,7 +532,8 @@
       0 0 0 12px rgba(0, 102, 255, 0.16);
   }
 }
-.theme-light[data-lp-root] #process .lp-process-icon-pulse {
+.theme-light[data-lp-root] #process .lp-process-icon-pulse,
+.theme-light[data-lp-root] #solution .lp-process-icon-pulse {
   animation: lpProcessIconPulse 2.4s ease-in-out infinite;
 }
 

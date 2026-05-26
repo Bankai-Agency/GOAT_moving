@@ -1,7 +1,132 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { IncludedItem } from "./WhatsIncludedSection";
+
+/* Per-card spotlight + border glow — same auto-traversing radial
+   gradient as LPProcessCard, but tuned for a DARK (#1a1a1a) card
+   surface. Process's 0.18 / 0.55 alphas read clearly on light blue
+   (#f0f5ff); on dark we double them so the blue spotlight is just
+   as visible without dominating. */
+function LPSolutionCard({ item, index }: { item: IncludedItem; index: number }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    let raf = 0;
+    /* Per-index phase offset — 4 cards get 0, 90°, 180°, 270° so
+       they don't all pulse in sync. Pattern matches LPProcessCard. */
+    const phase = (index * Math.PI * 2) / 4;
+    const PERIOD = 6000;
+    const start = performance.now();
+
+    const tick = (t: number) => {
+      const el = cardRef.current;
+      if (el) {
+        const w = el.offsetWidth;
+        const h = el.offsetHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const a = ((t - start) / PERIOD) * Math.PI * 2 + phase;
+        const rx = w * 0.35;
+        const ry = h * 0.32;
+        setPos({ x: cx + Math.cos(a) * rx, y: cy + Math.sin(a) * ry });
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [index]);
+
+  return (
+    <div
+      ref={cardRef}
+      className="relative overflow-hidden min-h-[320px] lg:min-h-[460px]"
+      style={{
+        flex: "0 0 min(480px, calc(100vw - 40px))",
+        backgroundColor: "#1a1a1a",
+        border: "1px solid rgba(255, 255, 255, 0.06)",
+        borderRadius: 20,
+        padding: 32,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        gap: 24,
+      }}
+    >
+      {/* Inner spotlight — bumped alphas (0.32 / 0.10) so the blue
+          glow registers against the dark card. Tracks the same
+          ellipse as LPProcess. Radius bumped to 420px + an extra
+          `filter: blur(40px)` so the glow smudges across the whole
+          card surface (user asked for it to "размазалось по
+          карточке"). The card has `overflow: hidden` so the blur
+          halo clips at the card edge — no leak. */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(420px circle at ${pos.x}px ${pos.y}px, rgba(0, 102, 255, 0.38), rgba(0, 102, 255, 0.14) 55%, transparent 95%)`,
+          filter: "blur(40px)",
+        }}
+      />
+      {/* Border ring glow — same radial-mask trick as LPProcess; alpha
+          bumped to 0.70 so the ring brightens visibly on the dark
+          surface. */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          borderRadius: 20,
+          background: `radial-gradient(320px circle at ${pos.x}px ${pos.y}px, rgba(0, 102, 255, 0.70), transparent 60%)`,
+          mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          maskComposite: "exclude",
+          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMaskComposite: "xor",
+          padding: "1.5px",
+        }}
+      />
+
+      <div
+        className="lp-process-icon-pulse relative z-10 flex items-center justify-center [&_svg]:w-10 [&_svg]:h-10 [&_svg_path]:!fill-white [&_svg_circle]:!fill-white [&_svg_ellipse]:!fill-white"
+        style={{
+          width: 72,
+          height: 72,
+          borderRadius: 16,
+          backgroundColor: "#0066ff",
+        }}
+      >
+        {item.icon}
+      </div>
+      <div className="relative z-10 flex flex-col gap-3">
+        <h3
+          style={{
+            fontFamily: "var(--font-sans, system-ui, sans-serif)",
+            fontWeight: 500,
+            fontSize: 26,
+            lineHeight: 1.2,
+            letterSpacing: "-0.6px",
+            color: "#ffffff",
+            margin: 0,
+            whiteSpace: "pre-line",
+          }}
+        >
+          {item.title}
+        </h3>
+        <p
+          style={{
+            fontFamily: "var(--font-sans, system-ui, sans-serif)",
+            fontWeight: 400,
+            fontSize: 18,
+            lineHeight: 1.5,
+            letterSpacing: "-0.3px",
+            color: "rgba(255, 255, 255, 0.65)",
+            margin: 0,
+          }}
+        >
+          {item.description}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 /* ════════════════════════════════════════════════════════════════
    LPSolution — sticky-pin horizontal-scroll Our Solution section.
@@ -200,82 +325,7 @@ export function LPSolution({
               }}
             >
               {items.map((it, i) => (
-                <div
-                  key={i}
-                  className="min-h-[320px] lg:min-h-[460px]"
-                  style={{
-                    /* Mobile: wider card (calc(100vw - 40px) ≈ 335
-                       on a 375 viewport, vs the 311 we had before).
-                       Desktop: capped at 480 as before. */
-                    flex: "0 0 min(480px, calc(100vw - 40px))",
-                    /* Solid dark card — matches LPProcess's veil=1
-                       look without animating. Cards stay `#1a1a1a`
-                       through the entire dark-zone scrub so the
-                       visual is identical at every veil value
-                       (user explicitly asked for one colour, no
-                       gradient/color-mix animation). Hairline white
-                       outline keeps the card visible against the
-                       darker `#0c0c0c` veil during full opacity. */
-                    backgroundColor: "#1a1a1a",
-                    border: "1px solid rgba(255, 255, 255, 0.06)",
-                    borderRadius: 20,
-                    padding: 32,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    gap: 24,
-                  }}
-                >
-                  <div
-                    className="flex items-center justify-center [&_svg]:w-10 [&_svg]:h-10 [&_svg_path]:!fill-white [&_svg_circle]:!fill-white [&_svg_ellipse]:!fill-white"
-                    style={{
-                      width: 72,
-                      height: 72,
-                      borderRadius: 16,
-                      backgroundColor: "#0066ff",
-                    }}
-                  >
-                    {it.icon}
-                  </div>
-                  <div className="flex flex-col gap-3">
-                    <h3
-                      style={{
-                        fontFamily: "var(--font-sans, system-ui, sans-serif)",
-                        fontWeight: 500,
-                        fontSize: 26,
-                        lineHeight: 1.2,
-                        letterSpacing: "-0.6px",
-                        /* Solid white — the cards are always dark
-                           (`#1a1a1a`), so text never needs to
-                           color-mix against --dark-veil. Using a
-                           literal `#ffffff` here also dodges the
-                           `[data-lp-dark-zone] h3[style*="#001f4d"]`
-                           override, which would otherwise blend the
-                           title back toward ink at low veil values. */
-                        color: "#ffffff",
-                        margin: 0,
-                        whiteSpace: "pre-line",
-                      }}
-                    >
-                      {it.title}
-                    </h3>
-                    <p
-                      style={{
-                        fontFamily: "var(--font-sans, system-ui, sans-serif)",
-                        fontWeight: 400,
-                        fontSize: 18,
-                        lineHeight: 1.5,
-                        letterSpacing: "-0.3px",
-                        /* Muted white to match the title's contrast
-                           ratio — pairs with the solid-dark card. */
-                        color: "rgba(255, 255, 255, 0.65)",
-                        margin: 0,
-                      }}
-                    >
-                      {it.description}
-                    </p>
-                  </div>
-                </div>
+                <LPSolutionCard key={i} item={it} index={i} />
               ))}
             </div>
           </div>

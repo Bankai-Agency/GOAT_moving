@@ -85,13 +85,18 @@ function LPProcessCard({ step, index }: { step: LPProcessStep; index: number }) 
         borderRadius: 24,
       }}
     >
-      {/* Animated blue spotlight — kept compact (240px radius) so it
-          doesn't wash over the title and body text. On a light card
-          a smaller, denser tint reads better than a big diffuse one. */}
+      {/* Animated blue spotlight — radius bumped to 420px + an extra
+          `filter: blur(40px)` so the glow smudges across the whole
+          card surface (matches the LPSolution treatment). Alphas
+          tuned LOWER (0.22 / 0.08) than Solution because Process
+          cards are light (#f0f5ff) — the same alphas would be too
+          vivid against the light surface. The card has
+          `overflow: hidden` so the blur halo clips at the card edge. */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(240px circle at ${pos.x}px ${pos.y}px, rgba(0, 102, 255, 0.18), rgba(0, 102, 255, 0.06) 50%, transparent 75%)`,
+          background: `radial-gradient(420px circle at ${pos.x}px ${pos.y}px, rgba(0, 102, 255, 0.22), rgba(0, 102, 255, 0.08) 55%, transparent 95%)`,
+          filter: "blur(40px)",
         }}
       />
 
