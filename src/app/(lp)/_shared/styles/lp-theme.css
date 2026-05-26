@@ -2082,16 +2082,16 @@ body:has([data-accent="blue"]) .lp-btn:disabled {
    its wrapper.
    ══════════════════════════════════════════════════════════════ */
 
-/* Section bg: let the veil show through by zeroing out the
-   section's own bg colour proportionally to --dark-veil. The
-   sections we wrap (LPSolution, AboutSection) both paint white
-   by default after theme-light flips. */
+/* Section bg inside the dark zone stays fully transparent at every
+   --dark-veil value. The fixed dark veil (position: fixed inset-0
+   in DarkScrollZone) is what does the visual darkening — and it
+   covers the *previous* light section above the zone identically.
+   Painting a partial #0c0c0c on the in-zone section's own bg
+   created double-darkening (veil + section), so the boundary
+   between the previous light section and the dark zone showed a
+   visible step (lighter above, darker below) mid-transition. */
 .theme-light[data-lp-root] [data-lp-dark-zone] section {
-  background-color: color-mix(
-    in srgb,
-    transparent calc((1 - var(--dark-veil, 0)) * 100%),
-    #0c0c0c
-  ) !important;
+  background-color: rgba(0, 0, 0, 0) !important;
 }
 
 /* AboutSection cards / video frame paint #181818 → fade toward
@@ -2508,4 +2508,49 @@ body:has([data-lp-root]) {
 }
 .theme-light[data-lp-root] #service-area .group.flex.items-center:hover {
   background-color: #ffffff !important;
+}
+
+/* ── Reviews cards — disable hover entirely ────────────────────
+   The desktop review card uses a yellow-flip-on-hover pattern
+   (bg-[#FFE533] + group-hover text/icon swaps). In the LP white-
+   card design that hover causes a broken white-on-white state
+   (yellow flipped to white by our card override, but child swaps
+   still hide the rest-state name/text). Neutralise the entire
+   hover surface — card stays its rest white card, children stay
+   in their rest layout. */
+.theme-light[data-lp-root] #reviews .group\/card:hover {
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 2px rgba(0, 31, 77, 0.04), 0 4px 12px rgba(0, 31, 77, 0.04) !important;
+}
+.theme-light[data-lp-root] #reviews .group\/card .group-hover\/card\:hidden,
+.theme-light[data-lp-root] #reviews .group\/card:hover .group-hover\/card\:hidden {
+  display: block !important;
+}
+.theme-light[data-lp-root] #reviews .group\/card .group-hover\/card\:flex,
+.theme-light[data-lp-root] #reviews .group\/card:hover .group-hover\/card\:flex {
+  display: none !important;
+}
+/* Keep rest-state text colours (ink / muted ink set by theme-light
+   flips) regardless of hover state — the group-hover:text-black
+   classes were designed for the yellow surface. */
+.theme-light[data-lp-root] #reviews .group\/card:hover .group-hover\/card\:text-black,
+.theme-light[data-lp-root] #reviews .group\/card:hover .group-hover\/card\:text-black\/60 {
+  color: inherit !important;
+}
+/* NOTE: the Yelp/Google avatar bubble's group-hover bg flip
+   (bg-[#303030] → bg-[#0c0c0c]) and its own :hover scale-110 are
+   intentionally left intact — those are bubble-only interactions
+   the user wants to keep. */
+
+/* ── Mobile hero section bg → transparent ──────────────────────
+   On mobile the LPQuoteForm renders BELOW the hero photo (inside
+   the same `<section className="bg-[#0c0c0c]">` that wraps the
+   hero card). Globals flips `.bg-[#0c0c0c]` → white, but we want
+   the body gradient to show through the area around the mobile
+   form instead. Target only this section (via :has([data-lp-hero]))
+   and only on <lg viewports — desktop layout is unaffected. */
+@media (max-width: 1023px) {
+  .theme-light[data-lp-root] section:has([data-lp-hero]) {
+    background-color: rgba(0, 0, 0, 0) !important;
+  }
 }
