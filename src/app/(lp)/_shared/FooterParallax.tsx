@@ -36,18 +36,19 @@ export function FooterParallax({ children }: { children: ReactNode }) {
     const dark = darkRef.current;
     if (!wrap || !inner || !dark) return;
 
-    /* `scrub: 1` (1-second smoothing) instead of frame-perfect
-       `true`. The page sits inside `.page-zoom` (CSS `zoom`
-       0.7-1.0), and frame-perfect scrub interacts poorly with the
-       zoom-scaled coordinates — direction reversals snapped to
-       slightly off positions every scroll tick, reading as a
-       jitter. Smoothing flattens that into a glide. */
+    /* `scrub: 0.3` (300ms smoothing) — short enough that fast
+       scrolls feel directly coupled (no 1-second catch-up tail
+       that reads as the footer "jumping out" after the scroll
+       stops), long enough to flatten the frame-to-frame jitter
+       caused by `.page-zoom`'s CSS `zoom` quantising the scroll
+       position. Was `scrub: 1` originally — that catch-up was the
+       visible "выпрыгивает" the user reported on fast scrolls. */
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: wrap,
         start: "clamp(top bottom)",
         end: "clamp(top top)",
-        scrub: 1,
+        scrub: 0.3,
         invalidateOnRefresh: true,
       },
     });

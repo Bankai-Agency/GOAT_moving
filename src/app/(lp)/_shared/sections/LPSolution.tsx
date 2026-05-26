@@ -208,7 +208,16 @@ export function LPSolution({
                        on a 375 viewport, vs the 311 we had before).
                        Desktop: capped at 480 as before. */
                     flex: "0 0 min(480px, calc(100vw - 40px))",
-                    backgroundColor: "#ffffff",
+                    /* Solid dark card — matches LPProcess's veil=1
+                       look without animating. Cards stay `#1a1a1a`
+                       through the entire dark-zone scrub so the
+                       visual is identical at every veil value
+                       (user explicitly asked for one colour, no
+                       gradient/color-mix animation). Hairline white
+                       outline keeps the card visible against the
+                       darker `#0c0c0c` veil during full opacity. */
+                    backgroundColor: "#1a1a1a",
+                    border: "1px solid rgba(255, 255, 255, 0.06)",
                     borderRadius: 20,
                     padding: 32,
                     display: "flex",
@@ -236,7 +245,14 @@ export function LPSolution({
                         fontSize: 26,
                         lineHeight: 1.2,
                         letterSpacing: "-0.6px",
-                        color: "#001f4d",
+                        /* Solid white — the cards are always dark
+                           (`#1a1a1a`), so text never needs to
+                           color-mix against --dark-veil. Using a
+                           literal `#ffffff` here also dodges the
+                           `[data-lp-dark-zone] h3[style*="#001f4d"]`
+                           override, which would otherwise blend the
+                           title back toward ink at low veil values. */
+                        color: "#ffffff",
                         margin: 0,
                         whiteSpace: "pre-line",
                       }}
@@ -250,7 +266,9 @@ export function LPSolution({
                         fontSize: 18,
                         lineHeight: 1.5,
                         letterSpacing: "-0.3px",
-                        color: "rgba(0, 31, 77, 0.65)",
+                        /* Muted white to match the title's contrast
+                           ratio — pairs with the solid-dark card. */
+                        color: "rgba(255, 255, 255, 0.65)",
                         margin: 0,
                       }}
                     >
@@ -263,6 +281,7 @@ export function LPSolution({
           </div>
         </div>
       </div>
+
     </section>
   );
 }

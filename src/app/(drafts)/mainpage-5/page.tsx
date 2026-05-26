@@ -4,6 +4,7 @@ import { QuoteModal } from "@site/ui/QuoteModal";
 import { FAQSection } from "@site/sections/FAQSection";
 import { ContactFooter } from "@site/sections/ContactFooter";
 import { SmoothScrollProvider } from "@site/motion/SmoothScrollProvider";
+import { FooterParallax } from "../../(lp)/_shared/FooterParallax";
 import { TerminalDraftClient } from "./TerminalDraftClient";
 import { TerminalNav } from "./TerminalNav";
 import "./mega-nav.css";
@@ -32,7 +33,9 @@ export default function MainpageFive() {
           <TerminalDraftClient />
           <FAQSection />
         </main>
-        <ContactFooter />
+        <FooterParallax>
+          <ContactFooter />
+        </FooterParallax>
         <Touchbar />
         <QuoteModal />
       </div>

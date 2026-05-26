@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, type CSSProperties } from "react";
 import Image from "next/image";
 import { LPTerminalNav } from "./LPTerminalNav";
 import { AboutSection } from "./sections/AboutSection";
@@ -211,7 +211,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                 {/* Rating strip — same glass settings as the floating
                    nav (rgba(0,0,0,0.3) + blur(30px)) so the bullets
                    read as the same surface family. */}
-                <div className="inline-flex items-center gap-2 backdrop-blur-[30px] bg-[rgba(0,0,0,0.3)] rounded-full pl-2.5 pr-3 py-1.5 lg:px-4 lg:py-2 w-fit overflow-hidden">
+                <div className="inline-flex items-center gap-2 lg:backdrop-blur-[30px] lg:bg-[rgba(0,0,0,0.3)] lg:rounded-full lg:px-4 lg:py-2 w-fit lg:overflow-hidden">
                   <a href="https://www.yelp.com/biz/goat-movers-vancouver" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pr-2.5 lg:pr-3 border-r border-white/15 hover:opacity-80 transition-opacity">
                     <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#FF2828] shrink-0"><Image src="/icons/yelp-white.svg" alt="Yelp" width={12} height={12} style={{ width: "auto", height: "12px" }} /></div>
                     <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className="hidden lg:inline">Yelp </span><span className="text-white">4.79</span><span className="text-white/40">/5</span></span>
@@ -281,24 +281,34 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         services={services}
       />
 
-      {/* Sections 3 + 4 share an animated blue-blob backdrop —
-          the gradient flows continuously from Our Solution into
-          Social Proof. The wrapper is `relative isolate` (no
-          overflow: hidden!) so LPSolution's inner sticky pin keeps
-          working. Sections inside the zone declare their own bg
-          transparent via lp-theme.css so the backdrop shows. */}
-      <div data-lp-blob-zone="" className="relative isolate">
-        <BlueBlobBackdrop />
-      {/* 3. Solution / Benefits— LP-only horizontal-scroll layout. */}
+      {/* 3. Solution — the ONLY architecturally-dark section in this
+          top group. DarkScrollZone wraps it alone with an exit anchor
+          at the section's bottom; veil holds at full opacity through
+          the entire Solution scroll and fades only in the last ~50vh
+          as the section exits. Adjacent sections below (SP, CTABanner)
+          are plain light sections. */}
+      <DarkScrollZone>
+        <div className="relative">
       <LPSolution
         label="Our Solution"
         title={`How We Make Moving in ${city} Predictable and Stress‑Free`}
         subtitle={`One hourly rate — everything your ${city} move needs, included.`}
         items={includedItems}
       />
+          <div
+            data-dark-zone-exit
+            aria-hidden
+            className="absolute left-0 right-0 bottom-0 h-px pointer-events-none"
+          />
+        </div>
+      </DarkScrollZone>
 
-      {/* 4. Social proof */}
-      <AboutSection
+      {/* 4. Social proof — plain LIGHT section. The blob-zone
+          wrapper still hosts the BlueBlobBackdrop for the decorative
+          radial blobs; no dark-twin treatment, no z-lift. */}
+      <div data-lp-blob-zone="" className="relative isolate">
+        <BlueBlobBackdrop />
+        <AboutSection
         label="Social Proof"
         title={
           <>
@@ -323,45 +333,43 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         buttonText="Get Your Free Quote"
       />
 
-      {/* Sections 6 + 7 + 8 share a Porsche-style dark scroll zone:
-          the background fades from white to #0c0c0c as the user
-          enters LPProcess, stays dark through Reviews, then ramps
-          back to light at the midpoint of the LPCtaForm so the
-          rest of that lead-capture form is paintable on light. */}
+      {/* 6. Process — the ONLY architecturally-dark section in this
+          bottom group. DarkScrollZone wraps it alone with an exit
+          anchor at the section's bottom; veil holds at full opacity
+          through the entire Process scroll and fades only in the
+          last ~50vh as the section exits. Reviews + LPCtaForm below
+          are plain light sections. */}
       <DarkScrollZone>
-      {/* 6. Process— LP-only layout (left sticky heading + right
-            card stack, always-on auto-animating spotlight). The
-            section already provides id="process" internally, so no
-            wrapper div needed. */}
-      <LPProcess
-        title={
-          <>
-            Your Move,
-            <br className="hidden lg:block" />{" "}
-            Fully Controlled
-          </>
-        }
-        steps={processSteps}
-      />
+        <div className="relative">
+          <LPProcess
+            title={
+              <>
+                Your Move,
+                <br className="hidden lg:block" />{" "}
+                Fully Controlled
+              </>
+            }
+            steps={processSteps}
+          />
+          <div
+            data-dark-zone-exit
+            aria-hidden
+            className="absolute left-0 right-0 bottom-0 h-px pointer-events-none"
+          />
+        </div>
+      </DarkScrollZone>
 
-      {/* 7. Testimonials — default reviews carousel */}
+      {/* 7. Testimonials — plain LIGHT section. */}
       <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} />
 
       {/* 8. Lead-capture CTA with embedded form — utilitarian
-            "fill the form right here, get a real number". The
-            `data-dark-zone-exit` marker on the wrapper tells
-            DarkScrollZone to ramp the dark veil OUT around this
-            section's midpoint — so the user crosses from the
-            dark Reviews block into the LPCtaForm dark, then sees
-            it repaint to light on the second half. */}
-      <div data-dark-zone-exit className="relative">
-        <LPCtaForm
-          heading="Tell Us About Your Move"
-          tagline={`Share a few details and we'll send a real ${city} quote — not a sales pitch. Most moves estimated in under a minute.`}
-          city={city}
-        />
-      </div>
-      </DarkScrollZone>
+            "fill the form right here, get a real number". Fully
+            light — no dark zone wrapper, no veil borrowing. */}
+      <LPCtaForm
+        heading="Tell Us About Your Move"
+        tagline={`Share a few details and we'll send a real ${city} quote — not a sales pitch. Most moves estimated in under a minute.`}
+        city={city}
+      />
 
       {/* 9. Service area — neighborhoods */}
       <ServiceAreaSection

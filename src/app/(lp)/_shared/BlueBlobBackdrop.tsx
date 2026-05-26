@@ -16,7 +16,23 @@ export function BlueBlobBackdrop() {
       aria-hidden
       className="absolute inset-0 overflow-hidden pointer-events-none z-[-1]"
       style={{
-        background: "linear-gradient(180deg, #f6f9ff 0%, #ffffff 100%)",
+        /* Solid #f6f9ff base — same tint that the rest of the LP
+           paints its light sections with (lp-theme.css light-section
+           tint block). The earlier 2-stop `#f6f9ff → #ffffff`
+           gradient left the BOTTOM of AboutSection visibly white,
+           which seamed against the next section's #f6f9ff. Solid
+           tint = seamless hand-off into CTABanner below. Blobs
+           still float on top for the decorative glow.
+
+           Opacity is tied to (1 − --dark-veil): when this backdrop
+           sits INSIDE a DarkScrollZone (the Solution + Social Proof
+           combined zone), it stays invisible while the dark veil is
+           up and only fades in as the veil fades out. Outside any
+           dark zone, --dark-veil is undefined → defaults to 0 →
+           opacity 1 (fully visible), so this backdrop still works
+           on its own. */
+        backgroundColor: "#f6f9ff",
+        opacity: "calc(1 - var(--dark-veil, 0))",
       }}
     >
       {/* Blob opacities: desktop reads them clearly at the values
