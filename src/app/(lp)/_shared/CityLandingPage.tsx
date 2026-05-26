@@ -18,7 +18,6 @@ import { ReviewsSection } from "./sections/ReviewsSection";
 import { ContactFooter } from "./sections/ContactFooter";
 import { DarkScrollZone } from "./DarkScrollZone";
 import { FooterParallax } from "./FooterParallax";
-import { BlueBlobBackdrop } from "./BlueBlobBackdrop";
 import { Touchbar } from "./sections/Touchbar";
 import { QuoteModal } from "./ui/QuoteModal";
 import { LPQuoteForm } from "./ui/LPQuoteForm";
@@ -303,12 +302,11 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         </div>
       </DarkScrollZone>
 
-      {/* 4. Social proof — plain LIGHT section. The blob-zone
-          wrapper still hosts the BlueBlobBackdrop for the decorative
-          radial blobs; no dark-twin treatment, no z-lift. */}
-      <div data-lp-blob-zone="" className="relative isolate">
-        <BlueBlobBackdrop />
-        <AboutSection
+      {/* 4. Social proof — plain LIGHT section. Background gradient
+          comes from the shared body gradient in lp-theme.css so this
+          section reads identically to its neighbors (no unique blob
+          backdrop). */}
+      <AboutSection
         label="Social Proof"
         title={
           <>
@@ -321,7 +319,6 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         stats={socialProofStats}
         {...(socialProofImage ? { videoPoster: socialProofImage } : {})}
       />
-      </div>
 
 
       {/* 5. CTA banner— emotional / aspirational, click-to-modal.
