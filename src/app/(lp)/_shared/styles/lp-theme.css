@@ -853,13 +853,22 @@
 
 /* ── Social Proof icon bubbles → match Our Solution surface ─────
    Each stat in AboutSection sits in a `bg-[#181818] w-14 h-14`
-   square (`lg:w-20 lg:h-20` on desktop). theme-light flips that
-   to neutral grey #f1f3f6. Repaint to #f0f5ff (the same pale
-   blue used by Our Solution cards) so the page reads as one
-   tonal family instead of swapping surface colors per section. */
+   square (`lg:w-20 lg:h-20` on desktop). Apple / Stripe-style
+   elevation:
+     • Flat pure-white fill — no gradient, no glass refraction.
+     • Three-layer drop-shadow (ambient + soft + diffuse) tinted
+       in the ink palette so the lift feels native to the LP. The
+       contact (1px) shadow defines the edge, the mid layer gives
+       depth, the long layer gives floating elevation.
+   No stroke, no tinted bg, no backdrop trickery — clean and
+   premium on every backdrop. */
 .theme-light[data-lp-root] #about .bg-\[\#181818\].w-14,
 .theme-light[data-lp-root] #about .bg-\[\#181818\].lg\:w-20 {
-  background-color: #f0f5ff !important;
+  /* Pale brand-blue tonal fill — tone-on-tone with the #0066ff
+     icons inside. No gradient, no shadow, no stroke; the plate
+     reads against both plain-white and blob-gradient backdrops
+     purely via the tonal difference. */
+  background-color: #eef3ff !important;
 }
 
 /* ── HOW IT WORKS cards — restore breathing room ───────────────
@@ -2050,3 +2059,307 @@ body:has([data-accent="blue"]) .lp-btn:disabled {
 }
 .theme-light[data-lp-root] .lp-form-helper--light { color: rgba(0, 31, 77, 0.55); }
 .theme-light[data-lp-root] .lp-form-helper--glass { color: rgba(255, 255, 255, 0.6); }
+
+/* ════════════════════════════════════════════════════════════════
+   DARK SCROLL ZONE — Porsche-style fill-to-dark reveal
+   ──────────────────────────────────────────────────────────────
+   The DarkScrollZone wrapper sets a CSS custom property
+   `--dark-veil` (0..1) on its root, driven by scroll progress.
+   The rules below blend text + element backgrounds against that
+   variable via color-mix(in srgb, …), so every paintable surface
+   inside the zone transitions in lockstep with the dark veil
+   that's fading in/out behind the content.
+
+   Selector specificity note: the existing `.theme-light[data-lp-
+   root] …` overrides win on equal specificity by source order.
+   These rules live at the bottom of the file so they cascade
+   AFTER theme-light, giving the dark zone the final word inside
+   its wrapper.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Section bg: let the veil show through by zeroing out the
+   section's own bg colour proportionally to --dark-veil. The
+   sections we wrap (LPSolution, AboutSection) both paint white
+   by default after theme-light flips. */
+.theme-light[data-lp-root] [data-lp-dark-zone] section {
+  background-color: color-mix(
+    in srgb,
+    #ffffff calc((1 - var(--dark-veil, 0)) * 100%),
+    #0c0c0c
+  ) !important;
+}
+
+/* AboutSection cards / video frame paint #181818 → fade toward
+   their original dark base as the veil reaches full opacity. */
+.theme-light[data-lp-root] [data-lp-dark-zone] .bg-\[\#181818\] {
+  background-color: color-mix(
+    in srgb,
+    #f1f3f6 calc((1 - var(--dark-veil, 0)) * 100%),
+    #181818
+  ) !important;
+}
+
+/* LPSolution cards stay their native light-blue (#f0f5ff) inside
+   the dark zone — only the card TITLES (h3) flip to white. The
+   card body copy keeps its ink colour so it stays readable on the
+   light card surface.
+
+   Note: React serialises inline style values without a space after
+   the colon (e.g. `color:#001f4d`), so the selectors omit the
+   space too — earlier "[style*="color: #001f4d"]" with a space
+   silently failed to match. */
+
+/* Section-level ink text (LPSolution main h2 etc) → white. */
+.theme-light[data-lp-root] [data-lp-dark-zone] .text-\[\#001f4d\] {
+  color: color-mix(
+    in srgb,
+    #001f4d calc((1 - var(--dark-veil, 0)) * 100%),
+    #ffffff
+  ) !important;
+}
+
+/* Card titles (h3 with inline color:#001f4d) → white. Scoped to
+   h3 so the card BODY (p with rgba(0,31,77,0.65)) and any other
+   inline-coloured leaf stays ink. */
+.theme-light[data-lp-root] [data-lp-dark-zone] h3[style*="#001f4d"] {
+  color: color-mix(
+    in srgb,
+    #001f4d calc((1 - var(--dark-veil, 0)) * 100%),
+    #ffffff
+  ) !important;
+}
+
+/* Section-level 65% ink (LPSolution main subtitle, class form) → 70% white. */
+.theme-light[data-lp-root] [data-lp-dark-zone] .text-\[\#001f4d\]\/65 {
+  color: color-mix(
+    in srgb,
+    rgba(0, 31, 77, 0.65) calc((1 - var(--dark-veil, 0)) * 100%),
+    rgba(255, 255, 255, 0.7)
+  ) !important;
+}
+
+/* Eyebrow / label muted ink (0.6 opacity, mono) → 75% white. */
+.theme-light[data-lp-root] [data-lp-dark-zone] [style*="rgba(0, 31, 77, 0.6)"] {
+  color: color-mix(
+    in srgb,
+    rgba(0, 31, 77, 0.6) calc((1 - var(--dark-veil, 0)) * 100%),
+    rgba(255, 255, 255, 0.75)
+  ) !important;
+}
+
+/* AboutSection sits on the LIGHT theme now (the dark scroll zone
+   was moved to LPProcess + Reviews + LPCtaForm), but its stat-
+   card icon containers should still read as DARK ISLANDS on the
+   light section: a #181818 chip with a white SVG icon. Two
+   overrides defeat the global theme-light flips inside #about:
+     1. Keep `.bg-[#181818]` at #181818 (theme-light flipped it to
+        #f1f3f6, the section-bg light grey).
+     2. Strip the theme-light filter chain off the stat icons
+        (year/review/star/license) so they stay their native
+        white instead of being recoloured to brand blue, which
+        would disappear on the dark chip. */
+.theme-light[data-lp-root] #about .bg-\[\#181818\] {
+  background-color: #181818 !important;
+}
+/* Stat icons (originally yellow on dark) → recolour to LP accent
+   blue (#0066ff) via the precomputed filter chain reused from
+   accent.css's `phone-yellow` rule. Pure blue on the #181818 chip
+   reads as a brand-aligned highlight; the chip itself stays dark. */
+.theme-light[data-lp-root] #about img[src*="/year.svg"],
+.theme-light[data-lp-root] #about img[src*="/review.svg"],
+.theme-light[data-lp-root] #about img[src*="/star.svg"],
+.theme-light[data-lp-root] #about img[src*="/license.svg"] {
+  filter: brightness(0) saturate(100%) invert(28%) sepia(99%)
+    saturate(3500%) hue-rotate(216deg) brightness(99%) contrast(105%) !important;
+}
+
+/* Belt-and-braces: any remaining literal `#FFE533` / yellow rgba
+   inside Social Proof (background-color shadows, inline rgba in
+   styles) maps to the LP accent blue. The global theme-light /
+   accent.css rules cover most Tailwind class forms — these catch
+   any inline-style holdouts. */
+.theme-light[data-lp-root] #about [style*="rgba(255,229,51"],
+.theme-light[data-lp-root] #about [style*="rgba(255, 229, 51"] {
+  background-color: rgba(0, 102, 255, 0.35) !important;
+}
+
+/* AboutSection internal `text-white` (its native dark-island
+   palette) was flipped by theme-light to near-black; restore it
+   toward white proportionally to --dark-veil so the deeper we
+   are into the dark zone, the more its original colour returns. */
+.theme-light[data-lp-root] [data-lp-dark-zone] .text-white {
+  color: color-mix(
+    in srgb,
+    #0c0c0c calc((1 - var(--dark-veil, 0)) * 100%),
+    #ffffff
+  ) !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] .text-white\/80,
+.theme-light[data-lp-root] [data-lp-dark-zone] .text-white\/70,
+.theme-light[data-lp-root] [data-lp-dark-zone] .text-white\/60 {
+  color: color-mix(
+    in srgb,
+    rgba(12, 12, 12, 0.7) calc((1 - var(--dark-veil, 0)) * 100%),
+    rgba(255, 255, 255, 0.75)
+  ) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BLUE BLOB ZONE — sections under the shared animated backdrop
+   ──────────────────────────────────────────────────────────────
+   The wrapper `[data-lp-blob-zone]` in CityLandingPage spans
+   LPSolution (#solution) + AboutSection (#about) with a single
+   BlueBlobBackdrop sibling underneath them. To let the backdrop
+   show through, the sections themselves need a transparent
+   background — theme-light flipped #about's `bg-[#0c0c0c]` to
+   white, which would otherwise hide the blobs.
+   ══════════════════════════════════════════════════════════════ */
+.theme-light[data-lp-root] [data-lp-blob-zone] #solution,
+.theme-light[data-lp-root] [data-lp-blob-zone] #about {
+  background-color: transparent !important;
+}
+
+/* Mobile-only blob opacity bump — the gradient was barely visible
+   on narrow viewports because each blob is sized in vw and the
+   60–70px blur diffuses what little colour remains. Push tint
+   variables up on <1024px so the gradient reads as well as on
+   desktop without affecting the desktop palette. */
+@media (max-width: 1023px) {
+  [data-lp-blob-zone] {
+    --blob-tint-a: 0.32;
+    --blob-tint-b: 0.30;
+    --blob-tint-c: 0.26;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════════
+   LPProcess (#process) inside the DARK SCROLL ZONE
+   ──────────────────────────────────────────────────────────────
+   The card grid lives inside the moved dark zone (LPProcess +
+   Reviews + LPCtaForm). When the veil is opaque, the cards should
+   read as DARK on dark — their default light-blue (#f0f5ff) bg
+   plus ink description blends toward dark + white in lockstep
+   with --dark-veil.
+   ══════════════════════════════════════════════════════════════ */
+/* Snap-curve: `max(0%, calc((1 - var(--dark-veil)*2) * 100%))`
+   means the light-blue / ink contribution drops to 0% at
+   --dark-veil ≥ 0.5. So cards & body copy "snap" to their dark
+   target in the second half of the veil ramp, avoiding a muddy
+   blue-grey mid-tone the user called eye-piercing. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #process [style*="#f0f5ff"] {
+  background-color: color-mix(
+    in srgb,
+    #f0f5ff max(0%, calc((1 - var(--dark-veil, 0) * 2) * 100%)),
+    #1a1a1a
+  ) !important;
+}
+/* Card title (h3 inline #001f4d) — snap white when veil ≥ 0.5. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #process h3[style*="#001f4d"] {
+  color: color-mix(
+    in srgb,
+    #001f4d max(0%, calc((1 - var(--dark-veil, 0) * 2) * 100%)),
+    #ffffff
+  ) !important;
+}
+/* Card description — snap to a softer grey-white so it's clearly
+   secondary to the title (not full-white). */
+.theme-light[data-lp-root] [data-lp-dark-zone] #process [style*="rgba(0, 31, 77, 0.65)"] {
+  color: color-mix(
+    in srgb,
+    rgba(0, 31, 77, 0.65) max(0%, calc((1 - var(--dark-veil, 0) * 2) * 100%)),
+    rgba(255, 255, 255, 0.6)
+  ) !important;
+}
+/* Process eyebrow underline — was `border-[#001f4d]/12` (ink/12).
+   On the dark veil the dark stroke disappears. Blend toward
+   white/22 as --dark-veil rises. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #process .border-\[\#001f4d\]\/12 {
+  border-color: color-mix(
+    in srgb,
+    rgba(0, 31, 77, 0.12) calc((1 - var(--dark-veil, 0)) * 100%),
+    rgba(255, 255, 255, 0.22)
+  ) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ReviewsSection (#reviews) inside the DARK SCROLL ZONE
+   ──────────────────────────────────────────────────────────────
+   • Re-paint the bullet underline so it stays visible on the dark
+     veil (same pattern as the LPProcess fix above).
+   • Carousel prev/next buttons get a brand treatment: enabled =
+     LP blue (#0066ff) with a WHITE arrow, disabled = subtle dark
+     grey with a dim white arrow. Defeats the global theme-light
+     flips that turned the chips light-grey and the arrows black —
+     unreadable on the dark veil + indistinguishable from each
+     other.
+   ══════════════════════════════════════════════════════════════ */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .border-white\/16 {
+  border-color: color-mix(
+    in srgb,
+    rgba(12, 12, 12, 0.1) calc((1 - var(--dark-veil, 0)) * 100%),
+    rgba(255, 255, 255, 0.22)
+  ) !important;
+}
+/* Carousel nav arrows are sized `.w-14`; pagination dots are
+   `.w-2`. Scoping the colour overrides by SIZE keeps the rules
+   from leaking into the dot strip, where the broad
+   `button.bg-[#242424]` selector was painting every inactive
+   dot blue. */
+/* Enabled arrow (canScroll*): bg-[#242424] + w-14 → LP blue. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews button.w-14.bg-\[\#242424\] {
+  background-color: #0066ff !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews button.w-14.bg-\[\#242424\]:hover {
+  background-color: #0a78ff !important;
+}
+/* Disabled arrow: bg-[#181818] + w-14 → subtle dark grey. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews button.w-14.bg-\[\#181818\] {
+  background-color: #2a2a2a !important;
+}
+/* Arrow icons inside w-14 buttons: native white SVG (theme-light's
+   brightness(0) → black is unwanted on the blue / dark-grey chips). */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews button.w-14 img[src*="arrow-left"],
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews button.w-14 img[src*="arrow-right"] {
+  filter: none !important;
+}
+
+/* Pagination dots — inactive (.w-2 + bg-[#242424]) → semi-transparent
+   white so they read as "future slides" on the dark veil. Active dot
+   (bg-[#FFE533]) is already flipped to LP blue by accent.css. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews button.w-2.bg-\[\#242424\] {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* ── Mobile Reviews cards — match desktop dark theme ────────────
+   Each card is `bg-[#181818]` with `text-white` content. The
+   broad color-mix on `.bg-[#181818]` / `.text-white` inside the
+   dark zone interpolates through muddy mid-tones during the veil
+   ramp. Pin Reviews-card paints to their final values so the
+   mobile layout reads as dark/white throughout the dark zone,
+   matching what desktop ends up at. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .bg-\[\#181818\] {
+  background-color: #181818 !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .text-white {
+  color: #ffffff !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .text-white\/60 {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+/* "500+ 5-Star Reviews" eyebrow uses text-white/50 (theme-light
+   flipped to near-black, invisible on the dark Reviews card). */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .text-white\/50 {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .text-white\/40 {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Yelp / Google source-icon plates inside Reviews summary cards
+   (`bg-[#303030]`). theme-light flips that to a light grey
+   #d6dbe2 which reads as a bright glare on the dark Reviews
+   card. Repaint to a dark chip (#2a2a2a) that sits naturally on
+   the #181818 card surface. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .bg-\[\#303030\] {
+  background-color: #2a2a2a !important;
+}

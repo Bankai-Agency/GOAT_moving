@@ -46,9 +46,24 @@ export function LPSolution({
     let currentTx = 0;
     let raf = 0;
 
+    /* Cards scrub ONLY during the pin phase on every breakpoint —
+       so by the time the sticky releases, every card has been
+       fully visible at the centre of the viewport. The post-pin
+       "exit" phase (sticky_child sliding up out of viewport) is
+       the tradeoff: ~100vh of scroll where the cards are at
+       maxTx but the section is still on screen. There's no way
+       around this with the current card width (≈ 85vw on mobile
+       × 4 cards = ~140vh of scrub needed for a 1:1 ratio); making
+       the scrub continue into the exit phase causes cards 3 & 4
+       to finish their horizontal travel while they're already
+       partially off-screen vertically — which is exactly the
+       "last cards I never see" complaint we just fixed. */
+    const stickyEl = el.firstElementChild as HTMLElement | null;
+
     const compute = () => {
       const rect = el.getBoundingClientRect();
-      const total = el.offsetHeight - window.innerHeight;
+      const stickyHeight = stickyEl?.offsetHeight ?? window.innerHeight;
+      const total = el.offsetHeight - stickyHeight;
       const scrolled = Math.max(0, Math.min(total, -rect.top));
       const progress = total > 0 ? scrolled / total : 0;
       const containerWidth = Math.min(1408, window.innerWidth);
@@ -67,9 +82,15 @@ export function LPSolution({
     };
 
     const tick = () => {
-      // LERP: easing factor controls smoothness (lower = smoother /
-      // more lag, higher = snappier).
-      currentTx += (targetTx - currentTx) * 0.05;
+      /* LERP: easing factor controls smoothness (lower = smoother /
+         more lag, higher = snappier). 0.05 was so slow that with a
+         tight pin range (h-[110vh] mobile = ~10vh budget vs ~220vw
+         of horizontal motion) targetTx jumped to maxTx after a few
+         pixels of scroll, and currentTx visibly "snapped" toward
+         it over many frames — looked like the cards teleported to
+         the end. 0.18 keeps the track within ~5 frames of the
+         target so the motion stays tied to scroll position. */
+      currentTx += (targetTx - currentTx) * 0.18;
       if (Math.abs(targetTx - currentTx) < 0.5) currentTx = targetTx;
       track.style.transform = `translateX(-${currentTx}px)`;
       raf = requestAnimationFrame(tick);
@@ -96,28 +117,54 @@ export function LPSolution({
          horizontal translate has room to play out. Sticky child below
          pins for the whole envelope. */
       style={{ position: "relative" }}
-      className="pt-[60px] lg:pt-[100px] pb-[60px] lg:pb-[80px] h-[200vh]"
+      /* Section height = sticky.h + pin_range. Pin range needs
+         to cover maxTx for a 1:1 scrub:
+           • Mobile: maxTx ≈ 140vh on a 400px phone → section
+             needs ≈ 240vh (100vh sticky + 140vh pin).
+           • Desktop: maxTx much smaller (cards capped at 480px),
+             so 220vh is plenty.
+         Don't reduce mobile below ~230vh — cards will be moving
+         faster than scroll and feel like a teleport. The post-pin
+         "exit" of the sticky child (~100vh) is the unavoidable
+         tradeoff with this card width: either we keep it (and
+         every card is fully visible during scrub) or we shrink
+         cards / change layout. */
+      className="pt-[60px] lg:pt-[100px] pb-[60px] lg:pb-[80px] h-[240vh] lg:h-[220vh]"
     >
+      {/* Animated blob backdrop is rendered by the BlueBlobBackdrop
+          wrapper around this section + AboutSection in
+          CityLandingPage so the gradient flows continuously from
+          Our Solution into Social Proof. No section-local backdrop
+          needed here. */}
+      {/* Sticky child fills the viewport on every breakpoint —
+          guarantees nothing peeks under it during the pin phase.
+          The scrub-during-exit strategy on mobile (see compute())
+          handles the seamless hand-off to AboutSection. */}
       <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
         {/* Header — content centered vertically in viewport via
             `justify-center` on the sticky flex-col. No extra mt:
             the center alignment handles the offset from sticky top
             naturally. */}
         <div className="max-w-[1408px] mx-auto px-4 w-full flex flex-col gap-3 lg:gap-4">
-          <div className="flex items-center gap-2.5">
-            <span className="w-2 h-2 rounded-full bg-[#0066ff]" />
-            <span
-              style={{
-                fontFamily: "var(--font-mono, ui-monospace, monospace)",
-                fontWeight: 600,
-                fontSize: 16,
-                letterSpacing: "-1px",
-                textTransform: "uppercase",
-                color: "rgba(0, 31, 77, 0.6)",
-              }}
-            >
-              {label}
-            </span>
+          {/* Bullet + label sit on top of a thin underline (same
+              pattern as ServicesSection / AboutSection) so the
+              eyebrow rhythm is consistent across the LP. */}
+          <div className="border-b border-[#001f4d]/12 pb-3 lg:pb-4">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2 h-2 rounded-full bg-[#0066ff]" />
+              <span
+                style={{
+                  fontFamily: "var(--font-mono, ui-monospace, monospace)",
+                  fontWeight: 600,
+                  fontSize: 16,
+                  letterSpacing: "-1px",
+                  textTransform: "uppercase",
+                  color: "rgba(0, 31, 77, 0.6)",
+                }}
+              >
+                {label}
+              </span>
+            </div>
           </div>
           <h2 className="font-sans font-bold text-[32px] sm:text-[56px] lg:text-[64px] leading-[1.05] tracking-[-1.5px] lg:tracking-[-2px] text-[#001f4d] m-0">
             {title}
@@ -161,7 +208,7 @@ export function LPSolution({
                        on a 375 viewport, vs the 311 we had before).
                        Desktop: capped at 480 as before. */
                     flex: "0 0 min(480px, calc(100vw - 40px))",
-                    backgroundColor: "#f0f5ff",
+                    backgroundColor: "#ffffff",
                     borderRadius: 20,
                     padding: 32,
                     display: "flex",

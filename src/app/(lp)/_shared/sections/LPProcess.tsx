@@ -167,23 +167,26 @@ export function LPProcess({
 }: LPProcessProps) {
   return (
     <section id="process" className="px-4 py-[60px] lg:py-[100px]">
-      <div className="max-w-[1408px] mx-auto flex flex-col gap-8 lg:gap-16">
-        {/* Eyebrow — same gap-8/gap-16 to the grid below as
-            ServicesSection uses between its header and cards. */}
-        <div className="flex items-center gap-2.5">
-          <span className="w-2 h-2 rounded-full bg-[#0066ff]" />
-          <span
-            style={{
-              fontFamily: "var(--font-mono, ui-monospace, monospace)",
-              fontWeight: 700,
-              fontSize: 16,
-              letterSpacing: "-1px",
-              textTransform: "uppercase",
-              color: "rgba(0, 31, 77, 0.6)",
-            }}
-          >
-            {label}
-          </span>
+      <div className="max-w-[1408px] mx-auto flex flex-col gap-6 lg:gap-10">
+        {/* Eyebrow row — bullet + label wrapped in the same border-b
+            underline pattern as ServicesSection / LPSolution /
+            AboutSection so the section rhythm stays consistent. */}
+        <div className="border-b border-[#001f4d]/12 pb-3 lg:pb-4">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-[#0066ff]" />
+            <span
+              style={{
+                fontFamily: "var(--font-mono, ui-monospace, monospace)",
+                fontWeight: 700,
+                fontSize: 16,
+                letterSpacing: "-1px",
+                textTransform: "uppercase",
+                color: "rgba(0, 31, 77, 0.6)",
+              }}
+            >
+              {label}
+            </span>
+          </div>
         </div>
 
         {/* Two-column: sticky heading on left, scrolling cards on right.

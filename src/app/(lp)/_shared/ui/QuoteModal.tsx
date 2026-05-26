@@ -151,7 +151,13 @@ export function QuoteModal() {
     <div className="fixed inset-0 z-[200] flex items-center justify-center animate-fade-in">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={handleClose} />
 
-      <div className="relative z-10 w-full max-w-[440px] lg:max-w-[760px] mx-4 bg-[#141414] rounded-2xl border border-white/10 overflow-hidden max-h-[90vh] overflow-y-auto">
+      {/* Modal bg pinned to pure white via `bg-white` (theme-light
+          doesn't touch it). Previously used `bg-[#141414]` which the
+          theme-light flip mapped to #f5f6f8 — the EXACT colour of
+          `.lp-input--light`, so inputs were invisible against the
+          modal surface. White modal + #f5f6f8 inputs gives clear
+          contrast on the LP. */}
+      <div className="relative z-10 w-full max-w-[440px] lg:max-w-[760px] mx-4 bg-white rounded-2xl border border-black/10 overflow-hidden max-h-[90vh] overflow-y-auto">
         {/* Close button — top-right corner */}
         <button
           onClick={handleClose}

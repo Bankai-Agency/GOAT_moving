@@ -167,7 +167,7 @@ function FooterContent() {
 
 export function ContactFooter() {
   return (
-    <footer id="contact" className="bg-[#141414] px-4 pt-16 lg:pt-20 pb-[76px] lg:pb-10">
+    <footer id="contact" className="bg-[#141414] px-4 pt-32 lg:pt-20 pb-[76px] lg:pb-10">
       <div className="max-w-[1408px] mx-auto flex flex-col gap-8">
         {/* Contact form section */}
         <div className="flex flex-col gap-[36px] lg:gap-12">

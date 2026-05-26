@@ -76,21 +76,13 @@ function ServiceCard({ title, description, number, image, href }: ServiceItem) {
   }, [el]);
 
   const commonClass =
-    "relative bg-[#181818] h-[360px] lg:h-[515px] rounded-2xl overflow-hidden flex flex-col justify-between group hover-lift";
+    "relative bg-[#181818] h-[420px] lg:h-[580px] rounded-2xl overflow-hidden flex flex-col justify-between group hover-lift cursor-pointer";
 
   const inner = (
     <>
-      {/* Watermark number */}
-      <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-sans font-light text-[100px] lg:text-[164px] leading-[1.2] tracking-[-4.92px] text-white/[0.03] select-none pointer-events-none">
-        {number}
-      </span>
-
-      {/* Background image — always visible on mobile (scroll-triggered), hover on desktop */}
-      <div
-        className={`absolute inset-0 transition-opacity duration-700 ease-out ${
-          isVisible ? "opacity-100 lg:opacity-0" : "opacity-0"
-        } lg:group-hover:opacity-100 lg:transition-opacity lg:duration-500`}
-      >
+      {/* Background image — BMW-style: always visible, fills the
+          card. No hover-to-reveal pattern, no full-area dark wash. */}
+      <div className="absolute inset-0">
         <Image
           src={image}
           alt={title}
@@ -99,33 +91,35 @@ function ServiceCard({ title, description, number, image, href }: ServiceItem) {
             isVisible ? "scale-100" : "scale-110"
           } lg:scale-100`}
         />
-        {/* Dark overlay 20% */}
-        <div className="absolute inset-0 bg-black/20" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 p-5 pb-16 lg:p-8 lg:pb-20 overflow-hidden">
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{background: 'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 55%, transparent 100%)'}} />
-        <h3 className="relative font-sans font-semibold text-[28px] lg:text-[42px] leading-[1.2] tracking-[-0.84px] lg:tracking-[-1.26px] text-white">
-          {title}
-        </h3>
-      </div>
-      <div className="relative z-10 p-5 pt-16 lg:p-8 lg:pt-20 overflow-hidden">
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 55%, transparent 100%)'}} />
-        <div className="relative flex gap-4 lg:gap-6 items-end">
-        <p className="flex-1 font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white">
-          {description}
-        </p>
-        <div className="hidden lg:flex w-14 h-14 rounded-full items-center justify-center shrink-0 bg-[#242424] group-hover:bg-white group-hover:scale-110 group-hover:rotate-[-45deg] transition-all duration-300 ease-out">
-          <Image
-            src="/icons/arrow-right.svg"
-            alt=""
-            width={19}
-            height={16}
-            className="group-hover:invert transition-all"
-          />
+      {/* Watermark number — softened so it reads as a faint stamp
+          over the photo without competing with the bottom text. */}
+      <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-sans font-light text-[100px] lg:text-[164px] leading-[1.2] tracking-[-4.92px] text-white/15 select-none pointer-events-none z-[1]">
+        {number}
+      </span>
+
+      {/* Bottom content cluster — title + description stacked
+          together on a single bottom-anchored dark gradient that
+          fades to fully transparent ~halfway up the card. No
+          top-of-card gradient, no arrow button (per BMW reference). */}
+      <div className="relative z-10 mt-auto px-5 pb-5 pt-24 lg:px-8 lg:pb-8 lg:pt-32 overflow-hidden">
+        <div
+          aria-hidden
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.78) 35%, rgba(0,0,0,0.35) 75%, rgba(0,0,0,0) 100%)",
+          }}
+        />
+        <div className="relative flex flex-col gap-2 lg:gap-3">
+          <h3 className="font-sans font-semibold text-[28px] lg:text-[42px] leading-[1.15] tracking-[-0.84px] lg:tracking-[-1.26px] text-white">
+            {title}
+          </h3>
+          <p className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white/85">
+            {description}
+          </p>
         </div>
-      </div>
       </div>
     </>
   );

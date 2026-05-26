@@ -16,6 +16,9 @@ import { LPSolution } from "./sections/LPSolution";
 import { LocalMovingRatesSection } from "./sections/LocalMovingRatesSection";
 import { ReviewsSection } from "./sections/ReviewsSection";
 import { ContactFooter } from "./sections/ContactFooter";
+import { DarkScrollZone } from "./DarkScrollZone";
+import { FooterParallax } from "./FooterParallax";
+import { BlueBlobBackdrop } from "./BlueBlobBackdrop";
 import { Touchbar } from "./sections/Touchbar";
 import { QuoteModal } from "./ui/QuoteModal";
 import { LPQuoteForm } from "./ui/LPQuoteForm";
@@ -208,7 +211,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                 {/* Rating strip — same glass settings as the floating
                    nav (rgba(0,0,0,0.3) + blur(30px)) so the bullets
                    read as the same surface family. */}
-                <div className="inline-flex items-center gap-2 backdrop-blur-[30px] bg-[rgba(0,0,0,0.3)] rounded-full pl-2.5 pr-3 py-1.5 lg:px-4 lg:py-2 w-fit">
+                <div className="inline-flex items-center gap-2 backdrop-blur-[30px] bg-[rgba(0,0,0,0.3)] rounded-full pl-2.5 pr-3 py-1.5 lg:px-4 lg:py-2 w-fit overflow-hidden">
                   <a href="https://www.yelp.com/biz/goat-movers-vancouver" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pr-2.5 lg:pr-3 border-r border-white/15 hover:opacity-80 transition-opacity">
                     <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#FF2828] shrink-0"><Image src="/icons/yelp-white.svg" alt="Yelp" width={12} height={12} style={{ width: "auto", height: "12px" }} /></div>
                     <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className="hidden lg:inline">Yelp </span><span className="text-white">4.79</span><span className="text-white/40">/5</span></span>
@@ -278,7 +281,15 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         services={services}
       />
 
-      {/* 3. Solution / Benefits — LP-only horizontal-scroll layout. */}
+      {/* Sections 3 + 4 share an animated blue-blob backdrop —
+          the gradient flows continuously from Our Solution into
+          Social Proof. The wrapper is `relative isolate` (no
+          overflow: hidden!) so LPSolution's inner sticky pin keeps
+          working. Sections inside the zone declare their own bg
+          transparent via lp-theme.css so the backdrop shows. */}
+      <div data-lp-blob-zone="" className="relative isolate">
+        <BlueBlobBackdrop />
+      {/* 3. Solution / Benefits— LP-only horizontal-scroll layout. */}
       <LPSolution
         label="Our Solution"
         title={`How We Make Moving in ${city} Predictable and Stress‑Free`}
@@ -300,9 +311,10 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         stats={socialProofStats}
         {...(socialProofImage ? { videoPoster: socialProofImage } : {})}
       />
+      </div>
 
 
-      {/* 5. CTA banner — emotional / aspirational, click-to-modal.
+      {/* 5. CTA banner— emotional / aspirational, click-to-modal.
             Sits straight after Social Proof so the credibility momentum
             from the stats / testimonial leads into a single-action CTA. */}
       <CTABanner
@@ -311,7 +323,13 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         buttonText="Get Your Free Quote"
       />
 
-      {/* 6. Process — LP-only layout (left sticky heading + right
+      {/* Sections 6 + 7 + 8 share a Porsche-style dark scroll zone:
+          the background fades from white to #0c0c0c as the user
+          enters LPProcess, stays dark through Reviews, then ramps
+          back to light at the midpoint of the LPCtaForm so the
+          rest of that lead-capture form is paintable on light. */}
+      <DarkScrollZone>
+      {/* 6. Process— LP-only layout (left sticky heading + right
             card stack, always-on auto-animating spotlight). The
             section already provides id="process" internally, so no
             wrapper div needed. */}
@@ -330,15 +348,20 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} />
 
       {/* 8. Lead-capture CTA with embedded form — utilitarian
-            "fill the form right here, get a real number". Placed
-            after Reviews so the user has just absorbed social proof
-            and the form is the natural next step before the more
-            informational Service Area + FAQ sections. */}
-      <LPCtaForm
-        heading="Tell Us About Your Move"
-        tagline={`Share a few details and we'll send a real ${city} quote — not a sales pitch. Most moves estimated in under a minute.`}
-        city={city}
-      />
+            "fill the form right here, get a real number". The
+            `data-dark-zone-exit` marker on the wrapper tells
+            DarkScrollZone to ramp the dark veil OUT around this
+            section's midpoint — so the user crosses from the
+            dark Reviews block into the LPCtaForm dark, then sees
+            it repaint to light on the second half. */}
+      <div data-dark-zone-exit className="relative">
+        <LPCtaForm
+          heading="Tell Us About Your Move"
+          tagline={`Share a few details and we'll send a real ${city} quote — not a sales pitch. Most moves estimated in under a minute.`}
+          city={city}
+        />
+      </div>
+      </DarkScrollZone>
 
       {/* 9. Service area — neighborhoods */}
       <ServiceAreaSection
@@ -352,7 +375,9 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       {/* 10. FAQ */}
       <FAQSection title="Frequently Asked Questions" items={config.faqs} />
 
-      <ContactFooter />
+      <FooterParallax>
+        <ContactFooter />
+      </FooterParallax>
       <Touchbar />
       <QuoteModal />
       </div>
