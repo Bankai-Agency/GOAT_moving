@@ -215,6 +215,21 @@ export function LPSolution({
       if (Math.abs(el.offsetHeight - desiredHeight) > 1) {
         el.style.height = `${desiredHeight}px`;
       }
+      /* Pull the NEXT section up by `stickyHeight` via negative
+         margin-bottom — the sticky-pin pattern inherently has a
+         `stickyHeight`-tall exit phase where the sticky child
+         slides up out of viewport, leaving an empty section bg
+         behind it (the user's "after the cards, 10-15 scrolls
+         of empty" complaint). Overlapping the next section onto
+         that area kills the empty perception: by default sibling
+         DOM order makes the next section paint above the exiting
+         sticky child, so the user sees the next section appear
+         right when the cards finish scrubbing. The section still
+         occupies its full scroll length in document flow — only
+         the visual margin collapses. */
+      if (Math.abs(parseFloat(el.style.marginBottom || "0") + stickyHeight) > 1) {
+        el.style.marginBottom = `${-stickyHeight}px`;
+      }
 
       const rect = el.getBoundingClientRect();
       const total = el.offsetHeight - stickyHeight;
