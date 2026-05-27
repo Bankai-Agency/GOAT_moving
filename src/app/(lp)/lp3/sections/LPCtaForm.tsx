@@ -80,11 +80,12 @@ export function LPCtaForm({
               </p>
             </div>
 
-            {/* Right — shared LPQuoteForm (white card). Same
-                component renders in the hero, ensuring both forms
-                are identical. */}
+            {/* Right — shared LPQuoteForm in glass surface. Same
+                treatment as the hero form on /lp3 (mobile = frosted
+                glass, desktop = dark glass; both painted via the
+                `_lp2-invert.css` glass-form rule). */}
             <div className="lg:max-w-[520px] lg:ml-auto w-full">
-              <LPQuoteForm city={city} />
+              <LPQuoteForm city={city} surface="glass" />
             </div>
           </div>
         </div>

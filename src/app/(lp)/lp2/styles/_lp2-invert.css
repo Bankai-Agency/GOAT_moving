@@ -142,6 +142,42 @@ body:has(.lp2-dark[data-lp-root]) {
 }
 
 
+/* ── GLASS FORM: mobile = frosted glass, desktop = dark glass
+   Hero LPQuoteForm uses `surface="glass"` on /lp2 so the INPUTS
+   render with the glass recipe (dark fill + white text). The
+   CARD differs by viewport (mirrors /lp3 treatment):
+     • MOBILE (default) — frosted white glass (rgba 255/0.04 +
+       blur 30 + saturate 120 + hairline). Sits below the hero
+       photo on the dark page; the frosted recipe lets the body
+       gradient through and reads well in isolation.
+     • DESKTOP (≥1024px) — dark glass (rgba 0/0.3 + blur 30 +
+       hairline). Same recipe as the floating mega-nav header.
+       Overlaid on the dark hero photo; reads as dark glass
+       picking up subtle gradient through the blur.
+   Both hero wrappers are rendered (one is hidden via lg:hidden /
+   hidden lg:block), so styling both via media query is safe —
+   only the visible one matters. CTA form on /lp2 still uses
+   surface="light" so this doesn't affect it. LPQuoteForm
+   defaults bring bg rgba(0,0,0,0.3) + blur 30 + heavy 0.5
+   shadow; override all three in each rule. */
+.lp2-dark[data-lp-root] [data-lp-quote-form][data-surface="glass"] {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(30px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(120%) !important;
+  border: 1px solid var(--lp-white-08) !important;
+  box-shadow: none !important;
+}
+@media (min-width: 1024px) {
+  .lp2-dark[data-lp-root] [data-lp-quote-form][data-surface="glass"] {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(30px) !important;
+    -webkit-backdrop-filter: blur(30px) !important;
+    border: 1px solid var(--lp-white-08) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35) !important;
+  }
+}
+
+
 /* ── LOGO: white in header ───────────────────────────────────
    accent.css has `.theme-light[data-accent="blue"] [data-menu-logo]
    img[src*="logo"] { filter: brightness(0) invert(1) }` which DOES
@@ -309,19 +345,11 @@ body:has(.lp2-dark[data-lp-root]) {
    islands, leave as-is. */
 
 
-/* ── FOOTER: dark grey → brand blue island ──────────────────
-   globals.css has `.theme-light footer { background-color: #005BFF
-   !important }` which paints the footer blue in the light theme.
-   Without theme-light on lp2, that rule doesn't fire → footer
-   stays dark grey (#141414). Re-apply the same blue-island paint
-   scoped to .lp2-dark. */
-.lp2-dark footer,
-.lp2-dark footer.bg-\[\#141414\] {
-  background-color: var(--lp-blue) !important;
-}
-.lp2-dark footer .bg-\[\#141414\],
-.lp2-dark footer .bg-\[\#181818\],
-.lp2-dark footer .bg-\[\#1e1e1e\],
-.lp2-dark footer .bg-\[\#242424\] {
-  background-color: var(--lp-blue) !important;
-}
+/* FOOTER — kept DARK on /lp2.
+   Earlier we re-applied the lp1 blue-island paint here, but that
+   bumps up against the rest of the dark theme. Footer now stays
+   at its JSX `bg-[#141414]` Tailwind class which renders as dark
+   grey (no theme-light flip on lp2, so no recolour). Text inside
+   was already set white by the page-level rules.
+   (lp3 still has its own blue-footer override — change there
+   independently if needed.) */

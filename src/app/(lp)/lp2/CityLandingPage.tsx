@@ -242,7 +242,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                   is taller than step 1) grows downward instead of
                   pushing the top edge up under the floating nav. */}
               <div className="hidden lg:block relative z-40 w-full max-w-[520px] lg:ml-auto lg:self-start">
-                <LPQuoteForm city={city} />
+                <LPQuoteForm city={city} surface="glass" />
               </div>
             </div>
           </div>
@@ -256,7 +256,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
             this instance — it sits on the white page bg and the
             shadow reads as a grey halo there. */}
         <div className="lg:hidden mx-4 mt-4">
-          <LPQuoteForm city={city} className="shadow-none!" />
+          <LPQuoteForm city={city} surface="glass" />
         </div>
       </section>
 

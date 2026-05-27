@@ -142,6 +142,56 @@ body:has(.lp2-dark[data-lp-root]) {
 }
 
 
+/* ── GLASS FORM: mobile = frosted glass, desktop = dark glass
+   Hero AND CTA LPQuoteForm both use `surface="glass"` on /lp3
+   so the INPUTS render with the glass recipe (dark fill + white
+   text). The CARD differs by viewport:
+     • MOBILE (default) — frosted white glass (rgba 255/0.04 +
+       blur 30 + saturate 120 + hairline). Sits below the hero
+       photo on the dark page; the frosted recipe lets the body
+       gradient through and reads well in isolation.
+     • DESKTOP (≥1024px) — dark glass (rgba 0/0.3 + blur 30 +
+       hairline). Same recipe as the floating mega-nav header.
+       Overlaid on the dark hero photo; reads as dark glass
+       picking up subtle gradient through the blur.
+   Both hero wrappers are rendered (one is hidden via lg:hidden /
+   hidden lg:block), so styling both via media query is safe —
+   only the visible one matters. The CTA-section form also uses
+   surface="glass" on /lp3 — same treatment applies (no scoping
+   needed since both contexts are dark photo backgrounds).
+   LPQuoteForm defaults bring bg rgba(0,0,0,0.3) + blur 30 +
+   heavy 0.5 shadow; override all three in each rule. */
+.lp2-dark[data-lp-root] [data-lp-quote-form][data-surface="glass"] {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(30px) saturate(120%) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(120%) !important;
+  border: 1px solid var(--lp-white-08) !important;
+  box-shadow: none !important;
+}
+@media (min-width: 1024px) {
+  .lp2-dark[data-lp-root] [data-lp-quote-form][data-surface="glass"] {
+    background-color: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(30px) !important;
+    -webkit-backdrop-filter: blur(30px) !important;
+    border: 1px solid var(--lp-white-08) !important;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35) !important;
+  }
+}
+/* CTA-section form override: always dark glass, even on mobile.
+   The mobile-frosted recipe (above) is for the hero-mobile form
+   which sits BELOW the hero photo on the dark page — that
+   context wants a frosted plate. The CTA form is overlaid on a
+   dark photo at all viewports, so it stays dark glass uniformly.
+   `#cta` id selector boosts specificity above both rules above. */
+.lp2-dark[data-lp-root] #cta [data-lp-quote-form][data-surface="glass"] {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(30px) !important;
+  -webkit-backdrop-filter: blur(30px) !important;
+  border: 1px solid var(--lp-white-08) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35) !important;
+}
+
+
 /* ── LOGO: white in header ───────────────────────────────────
    accent.css has `.theme-light[data-accent="blue"] [data-menu-logo]
    img[src*="logo"] { filter: brightness(0) invert(1) }` which DOES
@@ -152,24 +202,14 @@ body:has(.lp2-dark[data-lp-root]) {
 }
 
 
-/* ── SOLUTION CARDS: dark #1a1a1a → light pale-blue island ──
-   Cards have inline `style={{ backgroundColor: "#1a1a1a", color:
-   "#ffffff" }}` — escape both the global text-white rule (no
-   Tailwind class) AND the dark-zone color-mix rules (no matching
-   selector). Bypassed everything by hand here.
-
-   Match the Process card style (pale-blue surface, ink text,
-   brand-blue icon tile stays blue). */
-.lp2-dark[data-lp-root] #solution [style*="#1a1a1a"] {
-  background-color: var(--lp-blue-pale) !important;
-  border-color: var(--lp-ink-12) !important;
-}
-.lp2-dark[data-lp-root] #solution [style*="#1a1a1a"] h3 {
-  color: var(--lp-ink) !important;
-}
-.lp2-dark[data-lp-root] #solution [style*="#1a1a1a"] p {
-  color: var(--lp-ink-65) !important;
-}
+/* ── SOLUTION CARDS: keep original dark + blue-spotlight ────
+   LPSolutionCard JSX renders cards with inline bg #1a1a1a AND
+   two layered radial-gradient blue spotlights (420px halo +
+   320px ring glow) that animate via requestAnimationFrame.
+   The bg + spotlight composition IS the design — overriding the
+   bg to pale-blue (like in lp2) muted the blue glow effect.
+   Leave the card alone; white h3 + white/65 p (inline) read fine
+   on the dark surface. */
 
 
 /* ── SERVICES CARD: stays DARK (not inverted) ────────────────
@@ -178,83 +218,102 @@ body:has(.lp2-dark[data-lp-root]) {
    carries over correctly on the dark page. No override needed. */
 
 
-/* ── STAT CHIP: pale blue → frosted glass ──────────────────
-   On the dark page solid dark chips read as black voids. Make
-   them frosted glass — barely-tinted white surface + blur picks
-   up the body gradient behind, hairline white border gives the
-   edge. Icons stay BLUE (no filter override) — brand-blue glyph
-   on subtle glass reads cleaner than a stark white icon. */
+/* ── STAT CHIP: solid dark plate + static blue spotlight ───
+   Same dark material as Solution cards (#1a1a1a inline bg in
+   LPSolution.tsx) with a softened, STATIC version of the Solution
+   blue radial spotlight — no requestAnimationFrame motion. The
+   ::before pseudo holds the gradient + `filter: blur(20px)` so
+   the glow smudges across the chip (smaller blur than Solution's
+   40px because chips are 56–80px vs Solution's ~480px). Icon
+   sits at default flow z-index; `isolation: isolate` + `z-index:
+   -1` on the pseudo keeps the blue glow behind it without leaking
+   out of the chip. Icon PNG/SVG gets `brightness(0) invert(1)`
+   to render white (same trick used for the nav logo). */
 .lp2-dark[data-lp-root] #about .lp1-stat-chip {
-  background-color: var(--lp-white-08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-color: var(--lp-white-12);
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.2),
-    0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: #1a1a1a;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-color: var(--lp-white-08);
+  box-shadow: none;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.lp2-dark[data-lp-root] #about .lp1-stat-chip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(0, 102, 255, 0.35),
+    rgba(0, 102, 255, 0.12) 55%,
+    transparent 95%
+  );
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: -1;
 }
 .lp2-dark[data-lp-root] #about .group\/stat:hover .lp1-stat-chip {
-  background-color: var(--lp-white-12);
-  border-color: var(--lp-white-18);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.35),
-    0 0 0 1px var(--lp-white-12);
+  background-color: #1f1f1f;
+  border-color: var(--lp-white-12);
+  box-shadow: none;
 }
 
 
-/* ── REVIEW CARD: balanced frosted glass ────────────────────
-   Middle ground between "white-08 cheap-card" (too bright) and
-   "dark glass rgba(0,0,0,0.3)" (too dark). Use a barely-tinted
-   neutral overlay + strong blur from header — picks up body
-   gradient subtly without going either flat-dark or flat-bright.
+/* ── REVIEW CARD: solid dark plate (Process-card material) ──
+   Same dark material as Process cards (#1a1a1a after invert) —
+   flat plate, no blur, no glass tint, no gradient. Hairline
+   white-08 for edge against the dark page; override the
+   lp-theme.css "white plates" multi-section rule (box-shadow +
+   ink/04 border) so the card stays clean dark.
 
-   Override the lp-theme.css "white plates" multi-section rule
-   (box-shadow + ink/04 border) so the card stays clean glass. */
+   Bubbles + arrows kept on the same material so the review block
+   reads as one consistent dark surface family. */
+/* Custom plate tone for Reviews — slightly navy-tinted dark
+   that harmonises with the body gradient (which has blue radial
+   accents + a linear pass to #0a1530 deep-navy). Sits between
+   page bg (#0c0c0c) and Process plates (#1a1a1a) in luminance but
+   carries a brand-navy hue so the block feels integrated with
+   the page rather than floating on it as a neutral grey plate. */
 .lp2-dark[data-lp-root] #reviews .lp1-review-card {
-  background-color: rgba(255, 255, 255, 0.04) !important;
-  backdrop-filter: blur(30px) saturate(120%);
-  -webkit-backdrop-filter: blur(30px) saturate(120%);
-  border: 1px solid var(--lp-white-08) !important;
+  background-color: #161b2e !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0 !important;
   box-shadow: none !important;
   color: var(--lp-white);
 }
-
-
-/* ── REVIEW SOURCE BUBBLE + NAV ARROW: same glass recipe ──
-   Bubbles + arrows feel like a single material with the card. */
 .lp2-dark[data-lp-root] #reviews .lp1-source-bubble {
-  background-color: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(30px) saturate(120%);
-  -webkit-backdrop-filter: blur(30px) saturate(120%);
-  border: 1px solid var(--lp-white-08);
+  background-color: #161b2e;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0;
 }
 .lp2-dark[data-lp-root] #reviews .lp1-nav-arrow {
-  background-color: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(30px) saturate(120%);
-  -webkit-backdrop-filter: blur(30px) saturate(120%);
-  border: 1px solid var(--lp-white-08);
+  background-color: #161b2e;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0;
 }
 .lp2-dark[data-lp-root] #reviews .lp1-nav-arrow:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.10);
-  border-color: var(--lp-white-15);
+  background-color: #1c2238;
 }
 .lp2-dark[data-lp-root] #reviews .lp1-nav-arrow:disabled {
-  background-color: rgba(255, 255, 255, 0.02);
-  border-color: var(--lp-white-08);
+  background-color: #10142a;
 }
 .lp2-dark[data-lp-root] #reviews .lp1-nav-arrow img {
   filter: brightness(0) invert(1);
 }
 
 
-/* ── SERVICE AREA chips: frosted glass ──────────────────────
-   Same glass treatment as the stat chips — barely-tinted white
-   surface + blur picks up body gradient + hairline white border. */
+/* ── SERVICE AREA chips: navy-tinted dark plate ─────────────
+   Same `#161b2e` tone as the Reviews block — solid plate, no
+   blur, no border, harmonises with the navy body gradient. */
 .lp2-dark[data-lp-root] #service-area .group.flex.items-center {
-  background-color: var(--lp-white-08) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--lp-white-12) !important;
+  background-color: #161b2e !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0 !important;
   color: var(--lp-white);
 }
 .lp2-dark[data-lp-root] #service-area .group.flex.items-center h3 {
@@ -312,10 +371,29 @@ body:has(.lp2-dark[data-lp-root]) {
 }
 
 
-/* ── Process / Solution card bg ─────────────────────────────
-   These cards have inline-styled `var(--lp-blue-pale)` backgrounds
-   (pale blue tinted card). On dark page they read fine as light
-   islands, leave as-is. */
+/* ── PROCESS CARDS: pale-blue → dark plate (Solution match) ─
+   LPProcess cards render with inline `backgroundColor: "#f0f5ff"`
+   (pale-blue light plate from light-theme) + inline text colors
+   `#001f4d` (h3) and `rgba(0, 31, 77, 0.65)` (p). On the dark
+   page they read as light islands — user asked to flip them to
+   the same dark material as Solution cards (#1a1a1a). Targeting
+   via [style*=...] substring matching because the colours are
+   inline `style={{}}` — Tailwind / class overrides don't reach
+   inline styles. The animated blue radial-gradient spotlight +
+   border ring (also inline-styled) are LEFT AS-IS — their alphas
+   (0.22 / 0.55) are tuned for a light bg and read as a subtler
+   glow on dark, which is the desired effect here. Bump those
+   alphas if more punch is wanted (would need a different match
+   strategy — gradient string changes every animation frame). */
+.lp2-dark[data-lp-root] #process [style*="#f0f5ff"] {
+  background-color: #1a1a1a !important;
+}
+.lp2-dark[data-lp-root] #process [style*="#001f4d"] {
+  color: var(--lp-white) !important;
+}
+.lp2-dark[data-lp-root] #process [style*="rgba(0, 31, 77, 0.65)"] {
+  color: var(--lp-white-65) !important;
+}
 
 
 /* ── LP3 EYEBROW DIVIDERS — visible on dark page ────────────
@@ -359,19 +437,26 @@ body:has(.lp2-dark[data-lp-root]) {
 }
 
 
-/* ── FOOTER: dark grey → brand blue island ──────────────────
-   globals.css has `.theme-light footer { background-color: #005BFF
-   !important }` which paints the footer blue in the light theme.
-   Without theme-light on lp2, that rule doesn't fire → footer
-   stays dark grey (#141414). Re-apply the same blue-island paint
-   scoped to .lp2-dark. */
-.lp2-dark footer,
-.lp2-dark footer.bg-\[\#141414\] {
-  background-color: var(--lp-blue) !important;
-}
-.lp2-dark footer .bg-\[\#141414\],
-.lp2-dark footer .bg-\[\#181818\],
-.lp2-dark footer .bg-\[\#1e1e1e\],
-.lp2-dark footer .bg-\[\#242424\] {
-  background-color: var(--lp-blue) !important;
+/* ── FOOTER: transparent → body gradient shows through ────
+   Body uses `background-attachment: fixed` with a navy-blue
+   gradient (see the page rule at the top of this file). Any
+   solid footer bg paints OVER that — even a navy plate reads
+   as a hard step relative to the radials passing through.
+   Set the footer transparent so the body's fixed gradient
+   continues seamlessly into the footer region (no visible
+   seam between the section above and the footer).
+
+   A very faint top-glow radial layers on top — adds a subtle
+   "horizon" hint where the footer starts without breaking
+   continuity with the body bg. */
+.lp2-dark[data-lp-root] footer,
+.lp2-dark[data-lp-root] footer.bg-\[\#141414\] {
+  background-color: transparent !important;
+  background-image:
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(0, 102, 255, 0.06) 50%,
+      rgba(0, 102, 255, 0.12) 100%
+    ) !important;
 }
