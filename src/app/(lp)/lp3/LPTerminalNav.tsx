@@ -247,8 +247,15 @@ export function LPTerminalNav() {
               /* Background applied directly to the overlay (instead
                  of a separate z-index:-1 child) so it always paints
                  opaquely. The separate-layer pattern would render
-                 the menu as a translucent overlay on this page. */
-              backgroundColor: "#ffffff",
+                 the menu as a translucent overlay on this page.
+                 Dark navy base + blue radial accent + diagonal navy
+                 linear fade — mirrors the body gradient so the menu
+                 reads as part of the same atmospheric palette. */
+              backgroundColor: "#0c0c0c",
+              backgroundImage: `
+                radial-gradient(ellipse 80% 60% at 15% 15%, rgba(0, 102, 255, 0.20), transparent 60%),
+                linear-gradient(160deg, #0c0c0c 0%, #0a1530 100%)
+              `,
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
             }}
@@ -276,8 +283,8 @@ export function LPTerminalNav() {
                     key={link.label}
                     style={{
                       borderTop:
-                        idx === 0 ? "1px solid rgba(0,31,77,0.10)" : "0",
-                      borderBottom: "1px solid rgba(0,31,77,0.10)",
+                        idx === 0 ? "1px solid rgba(255,255,255,0.10)" : "0",
+                      borderBottom: "1px solid rgba(255,255,255,0.10)",
                     }}
                   >
                     <button
@@ -297,7 +304,7 @@ export function LPTerminalNav() {
                         fontWeight: 400,
                         lineHeight: 1.2,
                         letterSpacing: "-0.5px",
-                        color: "#001f4d",
+                        color: "#ffffff",
                         textAlign: "left",
                         transition: "color .2s ease",
                       }}
@@ -330,12 +337,12 @@ export function LPTerminalNav() {
                   height: 66,
                   borderRadius: 12,
                   backgroundColor: "transparent",
-                  border: "1px solid rgba(0,31,77,0.18)",
+                  border: "1px solid rgba(255,255,255,0.18)",
                   fontFamily: "var(--font-sans, system-ui, sans-serif)",
                   fontSize: 18,
                   fontWeight: 500,
                   letterSpacing: "-0.3px",
-                  color: "#001f4d",
+                  color: "#ffffff",
                   textDecoration: "none",
                   transition: "background-color .2s ease, border-color .2s ease",
                 }}

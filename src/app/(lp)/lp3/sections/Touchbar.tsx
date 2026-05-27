@@ -5,13 +5,6 @@ import { useEffect, useState } from "react";
 
 export function Touchbar() {
   const [visible, setVisible] = useState(false);
-  /* `overDark` tracks whether the touchbar's footprint (bottom edge
-     of the viewport) currently sits over an architecturally-dark
-     zone — `[data-lp-dark-zone]` on the LP. Drives the bar's glass
-     tint + text colour so the labels stay readable on every section
-     (dark glass + white text over dark, light glass + ink text over
-     light). Icons stay accent blue in both states. */
-  const [overDark, setOverDark] = useState(false);
 
   // Show only after the user has scrolled past the hero. If the page
   // exposes a `[data-hero-region]` element (mainpage-5 sticky-pin
@@ -25,23 +18,8 @@ export function Touchbar() {
       }
       return Math.max(window.innerHeight * 0.8, 600);
     };
-    const darkZones = () =>
-      document.querySelectorAll<HTMLElement>("[data-lp-dark-zone]");
     const onScroll = () => {
       setVisible(window.scrollY > threshold());
-      /* Touchbar height ≈ 60px, sits at the very bottom of the
-         viewport. Sample a point ~30px above the viewport bottom
-         (touchbar centre) to decide which zone it sits over. */
-      const probeY = window.innerHeight - 30;
-      let inDark = false;
-      for (const dz of Array.from(darkZones())) {
-        const r = dz.getBoundingClientRect();
-        if (r.top <= probeY && r.bottom > probeY) {
-          inDark = true;
-          break;
-        }
-      }
-      setOverDark(inDark);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -52,12 +30,15 @@ export function Touchbar() {
     };
   }, []);
 
-  /* Glass + text palette — flips with `overDark`. Icons stay blue in
-     both states for a consistent accent. */
-  const bgRgba = overDark ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 0.55)";
-  const textColor = overDark ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 31, 77, 0.85)";
-  const ctaTextColor = overDark ? "#ffffff" : "#001f4d";
-  const borderColor = overDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 31, 77, 0.1)";
+  /* Glass + text palette — /lp3 is a uniformly dark page (no
+     `[data-lp-dark-zone]` wrappers), so the touchbar always uses
+     the dark-glass treatment. The adaptive light/dark flip lives
+     in /lp2's Touchbar copy where DarkScrollZones swap regions
+     between light and dark during scroll. Icons stay accent blue. */
+  const bgRgba = "rgba(0, 0, 0, 0.3)";
+  const textColor = "rgba(255, 255, 255, 0.9)";
+  const ctaTextColor = "#ffffff";
+  const borderColor = "rgba(255, 255, 255, 0.1)";
 
   return (
     <div

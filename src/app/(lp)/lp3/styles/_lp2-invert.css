@@ -260,6 +260,61 @@ body:has(.lp2-dark[data-lp-root]) {
 }
 
 
+/* ── SOCIAL PROOF stats — MOBILE override ──────────────────
+   On mobile (`max-width: 991px`) `_about.css` repaints each
+   stat row as a card with `background-color: var(--lp-surface)`
+   (light #f5f7fb) and the inner icon container with
+   `var(--lp-white)`. On /lp3 dark page our text is white →
+   white-on-white is invisible (see screenshot).
+
+   Match the _about.css selector structure verbatim under the
+   `.lp2-dark` prefix so specificity beats the `!important`
+   light-surface paint:
+     • Outer card → #161b2e (same navy plate as Reviews /
+       Service Area — keeps the dark-card family consistent).
+     • Inner icon chip → transparent + no border. Icon sits
+       directly on the navy plate; the chip's `::before` blue-
+       spotlight pseudo still fires (it's not media-scoped),
+       giving the icon a soft ambient halo. */
+@media (max-width: 991px) {
+  .lp2-dark[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div {
+    background-color: #161b2e !important;
+    /* More breathing room than _about.css mobile defaults
+       (16px padding + 10px gap). Vertical padding bumped to
+       30px and the icon/text gap to 14px so the card doesn't
+       feel cramped, especially with the larger icon. */
+    padding: 30px 16px !important;
+    gap: 14px !important;
+  }
+  .lp2-dark[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div > div:first-child {
+    background-color: transparent !important;
+    border: 0 !important;
+    /* Shrink the chip to icon size so the 48px box doesn't
+       centre the icon inside an invisible square — without a
+       width override the icon visually floats in the middle of
+       a hidden plate. With width:auto + the card's
+       align-items: flex-start, the icon sits flush at the
+       card's left padding, aligned with the text below. */
+    width: auto !important;
+    height: auto !important;
+  }
+  /* Bump the icon a touch — was w-6 (24px) on mobile via the JSX
+     Tailwind class; 32px reads better as the visual anchor of
+     each plate now that there's no plate around it. */
+  .lp2-dark[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div > div:first-child img {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  /* Kill the desktop spotlight ::before pseudo on mobile — with
+     no visible chip plate, the chip's `overflow: hidden` box
+     clips the blurred blue gradient into a faint square that
+     reads as a small plate. */
+  .lp2-dark[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div > div:first-child::before {
+    display: none !important;
+  }
+}
+
+
 /* ── REVIEW CARD: solid dark plate (Process-card material) ──
    Same dark material as Process cards (#1a1a1a after invert) —
    flat plate, no blur, no glass tint, no gradient. Hairline
