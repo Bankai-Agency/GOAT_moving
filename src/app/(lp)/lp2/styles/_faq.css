@@ -1,0 +1,9 @@
+/* LP1 — FAQ section styles. Extracted from lp-theme.css (L1). */
+
+/* ── FAQ heading — match section h2 weight ──────────────────────
+   FAQ h2 has Tailwind classes that may slip past the
+   `section h2.font-bold` rule (it's inside a flex row with extra
+   classes). Re-apply weight 600 explicitly. */
+[data-lp-root] #faq h2 {
+  font-weight: 600 !important;
+}

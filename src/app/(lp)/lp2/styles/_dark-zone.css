@@ -1,0 +1,135 @@
+/* LP1 — DarkScrollZone color-mix infrastructure. Extracted from
+   lp-theme.css (L1).
+
+   The DarkScrollZone wrapper sets a CSS custom property
+   `--dark-veil` (0..1) on its root, driven by scroll progress.
+   Rules below blend text + element backgrounds against that
+   variable via color-mix(in srgb, …), so every paintable surface
+   inside the zone transitions in lockstep with the dark veil.
+
+   These rules cover GENERIC selectors (anything inside
+   [data-lp-dark-zone] matching `.text-white`, `.bg-[#181818]`,
+   `.text-[#001f4d]`, etc.). Section-specific dark-zone overrides
+   (e.g. `[data-lp-dark-zone] #process [style*="..."]` and
+   `[data-lp-dark-zone] #reviews button.w-14`) live in
+   _process.css, _reviews.css, _about.css respectively.
+
+   Loaded AFTER per-section CSS so cascade order preserved. */
+
+/* ════════════════════════════════════════════════════════════════
+   DARK SCROLL ZONE — Porsche-style fill-to-dark reveal
+   ──────────────────────────────────────────────────────────────
+   The DarkScrollZone wrapper sets a CSS custom property
+   `--dark-veil` (0..1) on its root, driven by scroll progress.
+   The rules below blend text + element backgrounds against that
+   variable via color-mix(in srgb, …), so every paintable surface
+   inside the zone transitions in lockstep with the dark veil
+   that's fading in/out behind the content.
+
+   Selector specificity note: the existing `.theme-light[data-lp-
+   root] …` overrides win on equal specificity by source order.
+   These rules live at the bottom of the file so they cascade
+   AFTER theme-light, giving the dark zone the final word inside
+   its wrapper.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Section bg inside the dark zone stays fully transparent at every
+   --dark-veil value. The fixed dark veil (position: fixed inset-0
+   in DarkScrollZone) is what does the visual darkening — and it
+   covers the *previous* light section above the zone identically.
+   Painting a partial var(--lp-dark) on the in-zone section's own bg
+   created double-darkening (veil + section), so the boundary
+   between the previous light section and the dark zone showed a
+   visible step (lighter above, darker below) mid-transition. */
+[data-lp-root] [data-lp-dark-zone] section {
+  background-color: var(--lp-transparent) !important;
+}
+
+/* AboutSection cards / video frame paint var(--lp-dark-surface) → fade toward
+   their original dark base as the veil reaches full opacity. */
+[data-lp-root] [data-lp-dark-zone] .bg-\[\#181818\] {
+  background-color: color-mix(
+    in srgb,
+    var(--lp-surface-light) calc(var(--dark-veil, 0) * 100%),
+    var(--lp-dark-surface)
+  ) !important;
+}
+
+/* LPSolution cards stay their native light-blue (var(--lp-blue-pale)) inside
+   the dark zone — only the card TITLES (h3) flip to white. The
+   card body copy keeps its ink colour so it stays readable on the
+   light card surface.
+
+   Note: React serialises inline style values without a space after
+   the colon (e.g. `color:var(--lp-ink)`), so the selectors omit the
+   space too — earlier "[style*="color: #001f4d"]" with a space
+   silently failed to match. */
+
+/* Section-level ink text (LPSolution main h2 etc) → white. */
+[data-lp-root] [data-lp-dark-zone] .text-\[\#001f4d\] {
+  color: color-mix(
+    in srgb,
+    var(--lp-ink) calc(var(--dark-veil, 0) * 100%),
+    var(--lp-white)
+  ) !important;
+}
+
+/* Card titles (h3 with inline color:var(--lp-ink)) → white. Scoped to
+   h3 so the card BODY (p with var(--lp-ink-65)) and any other
+   inline-coloured leaf stays ink. */
+[data-lp-root] [data-lp-dark-zone] h3[style*="#001f4d"] {
+  color: color-mix(
+    in srgb,
+    var(--lp-ink) calc(var(--dark-veil, 0) * 100%),
+    var(--lp-white)
+  ) !important;
+}
+
+/* Section-level 65% ink (LPSolution main subtitle, class form) → 70% white. */
+[data-lp-root] [data-lp-dark-zone] .text-\[\#001f4d\]\/65 {
+  color: color-mix(
+    in srgb,
+    var(--lp-ink-65) calc(var(--dark-veil, 0) * 100%),
+    var(--lp-white-70)
+  ) !important;
+}
+
+/* Eyebrow / label muted ink (0.6 opacity, mono) → 75% white. */
+[data-lp-root] [data-lp-dark-zone] [style*="rgba(0, 31, 77, 0.6)"] {
+  color: color-mix(
+    in srgb,
+    var(--lp-ink-60) calc(var(--dark-veil, 0) * 100%),
+    var(--lp-white-75)
+  ) !important;
+}
+/* AboutSection internal `text-white` (its native dark-island
+   palette) was flipped by theme-light to near-black; restore it
+   toward white proportionally to --dark-veil so the deeper we
+   are into the dark zone, the more its original colour returns. */
+[data-lp-root] [data-lp-dark-zone] .text-white {
+  color: color-mix(
+    in srgb,
+    var(--lp-dark) calc(var(--dark-veil, 0) * 100%),
+    var(--lp-white)
+  ) !important;
+}
+[data-lp-root] [data-lp-dark-zone] .text-white\/80,
+[data-lp-root] [data-lp-dark-zone] .text-white\/70,
+[data-lp-root] [data-lp-dark-zone] .text-white\/60 {
+  color: color-mix(
+    in srgb,
+    rgba(12, 12, 12, 0.7) calc(var(--dark-veil, 0) * 100%),
+    var(--lp-white-75)
+  ) !important;
+}
+/* Eyebrow underline — was `border-[var(--lp-ink)]/12` (ink/12).
+   On the dark veil the dark stroke disappears. Blend toward
+   white/22 as --dark-veil rises. Applies to every section inside
+   any dark zone (#process AND now #solution). */
+[data-lp-root] [data-lp-dark-zone] .border-\[\#001f4d\]\/12 {
+  border-color: color-mix(
+    in srgb,
+    var(--lp-ink-12) calc(var(--dark-veil, 0) * 100%),
+    var(--lp-white-22)
+  ) !important;
+}

@@ -1,0 +1,122 @@
+/* ════════════════════════════════════════════════════════════════
+   LP1 design tokens.
+
+   Single source of truth for hex colors used across lp-theme.css,
+   accent.css, mega-nav.css, and section TSX inline styles. To
+   change the LP palette: edit values here, not call sites.
+
+   Scope: `[data-lp-root]`. The variables inherit to all descendants
+   of the LP wrapper div. Outside the wrapper they don't apply —
+   keeps LP1 isolated from any other route that might also use this
+   stylesheet by accident.
+
+   NOT TOKENIZED YET (deferred to follow-up passes):
+     • rgba() variants — many alpha levels, needs its own pass
+     • #FFE533 occurrences inside selectors `.bg-\[\#FFE533\]`
+       (these are CSS-escape characters in the selector text, not
+       color values)
+     • Radii, font sizes, spacing
+   ══════════════════════════════════════════════════════════════ */
+
+/* Scope: BOTH `:root` AND `[data-lp-root]` define the same vars.
+   Why :root? `body:has([data-lp-root])` (line 2463 of lp-theme.css)
+   paints the page gradient on the body element — an ANCESTOR of
+   the [data-lp-root] wrapper. CSS vars inherit DOWN the tree only,
+   so `var(--lp-white)` on body would resolve to its initial value
+   (undefined) if tokens were scoped only to [data-lp-root]. The
+   dark html { background: #0c0c0c } would then show through,
+   making the whole page appear dark.
+   Defining on :root makes the vars available everywhere on the
+   pages that import this file. Other routes don't import _tokens.css
+   so there's no leak risk. */
+:root,
+[data-lp-root] {
+  /* ── Brand blue ─────────────────────────────────────────── */
+  --lp-blue: #0066ff;
+  --lp-blue-hover: #0052cc;
+  --lp-blue-pale: #f0f5ff;
+
+  /* ── Ink (text on light surfaces) ───────────────────────── */
+  --lp-ink: #001f4d;
+
+  /* ── Light surfaces ─────────────────────────────────────── */
+  --lp-bg: #ffffff;
+  --lp-white: #ffffff;
+  --lp-surface: #f5f7fb;
+  --lp-surface-light: #f1f3f6;
+  --lp-hairline: #e2e6ec;
+
+  /* ── Dark surfaces ──────────────────────────────────────── */
+  --lp-dark: #0c0c0c;
+  --lp-dark-surface: #181818;
+  --lp-dark-surface-2: #242424;
+  --lp-dark-surface-3: #303030;
+
+  /* ── Legacy yellow ─────────────────────────────────────────
+     theme-light flips this to blue everywhere it appears as a
+     value. Kept tokenised so changing it once propagates. */
+  --lp-yellow: #FFE533;
+
+  /* ── Ink alphas (text/border on light surfaces) ───────────
+     Used in color-mix, drop-shadows, hairline borders. */
+  --lp-ink-04: rgba(0, 31, 77, 0.04);
+  --lp-ink-12: rgba(0, 31, 77, 0.12);
+  --lp-ink-40: rgba(0, 31, 77, 0.4);
+  --lp-ink-45: rgba(0, 31, 77, 0.45);
+  --lp-ink-55: rgba(0, 31, 77, 0.55);
+  --lp-ink-60: rgba(0, 31, 77, 0.6);
+  --lp-ink-65: rgba(0, 31, 77, 0.65);
+  --lp-ink-70: rgba(0, 31, 77, 0.7);
+  --lp-ink-75: rgba(0, 31, 77, 0.75);
+  --lp-ink-85: rgba(0, 31, 77, 0.85);
+
+  /* ── White alphas (text/border on dark surfaces) ──────────
+     Used wherever text-white/X / border-white/X appears, plus
+     color-mix targets for dark-zone interpolations. */
+  --lp-white-03: rgba(255, 255, 255, 0.03);
+  --lp-white-08: rgba(255, 255, 255, 0.08);
+  --lp-white-10: rgba(255, 255, 255, 0.1);
+  --lp-white-12: rgba(255, 255, 255, 0.12);
+  --lp-white-15: rgba(255, 255, 255, 0.15);
+  --lp-white-16: rgba(255, 255, 255, 0.16);
+  --lp-white-18: rgba(255, 255, 255, 0.18);
+  --lp-white-20: rgba(255, 255, 255, 0.2);
+  --lp-white-22: rgba(255, 255, 255, 0.22);
+  --lp-white-25: rgba(255, 255, 255, 0.25);
+  --lp-white-30: rgba(255, 255, 255, 0.3);
+  --lp-white-45: rgba(255, 255, 255, 0.45);
+  --lp-white-50: rgba(255, 255, 255, 0.5);
+  --lp-white-55: rgba(255, 255, 255, 0.55);
+  --lp-white-60: rgba(255, 255, 255, 0.6);
+  --lp-white-65: rgba(255, 255, 255, 0.65);
+  --lp-white-70: rgba(255, 255, 255, 0.7);
+  --lp-white-75: rgba(255, 255, 255, 0.75);
+  --lp-white-80: rgba(255, 255, 255, 0.8);
+  --lp-white-85: rgba(255, 255, 255, 0.85);
+  --lp-white-90: rgba(255, 255, 255, 0.9);
+
+  /* ── Glass / overlays ─────────────────────────────────────
+     Dark translucent surfaces (nav, hero rating pill, modal
+     scrim). Alpha-30 is the canonical glass mix. */
+  --lp-glass-bg: rgba(0, 0, 0, 0.3);
+  --lp-glass-blur: 30px;
+  --lp-transparent: rgba(0, 0, 0, 0);
+
+  /* ── Radii ────────────────────────────────────────────────
+     The LP system uses 12px as the default radius. Pill is
+     999px (full-round). Sub-radii rarely needed. */
+  --lp-r-sm: 8px;
+  --lp-r-md: 12px;
+  --lp-r-lg: 16px;
+  --lp-r-xl: 20px;
+  --lp-r-2xl: 24px;
+  --lp-r-pill: 999px;
+
+  /* ── Spacing / layout ────────────────────────────────────
+     Section vertical rhythm (60px mobile / 100px desktop) and
+     the LP content max-width grid. */
+  --lp-section-pad-y-sm: 60px;
+  --lp-section-pad-y-lg: 100px;
+  --lp-content-pad-x: 16px;
+  --lp-content-max: 1408px;
+}

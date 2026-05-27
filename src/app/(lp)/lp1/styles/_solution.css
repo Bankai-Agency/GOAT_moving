@@ -1,0 +1,16 @@
+/* LP1 — Solution / WhatsIncluded section styles. Extracted from
+   lp-theme.css (L1).
+
+   NOTE: the `.lp-process-icon-pulse` keyframe + applicator rule
+   (#process + #solution together) stayed in lp-theme.css as
+   shared animation infrastructure. */
+
+
+/* ── Solution card h3 weight ────────────────────────────────
+   LPSolution card h3 — explicit semibold (600), matches the
+   section h2 weight so the whole heading hierarchy reads as
+   one family. Forces the value past any cascading default
+   (browser h3 = bold) or inherited rule. */
+.theme-light[data-lp-root] #solution h3 {
+  font-weight: 600 !important;
+}

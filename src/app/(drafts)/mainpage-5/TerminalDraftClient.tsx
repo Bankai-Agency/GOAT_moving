@@ -40,7 +40,7 @@ const benefits = [
     label: "Step 01",
     title: "Get a Free Estimate",
     body: "Tell us your move details — pickup, drop-off, date, anything fragile — and we'll send back an honest, all-in quote. No phone tag, no obligations.",
-    image: "/images/home-hero.png",
+    image: "/images/mp5-step-01.png",
   },
   {
     label: "Step 02",

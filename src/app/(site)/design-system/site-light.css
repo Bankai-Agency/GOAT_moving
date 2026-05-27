@@ -237,10 +237,27 @@
    These ship as their own dark islands by design in lp-theme.css
    (footer = blue island, header glass, touchbar bottom bar). Mirror
    the footer-as-blue-island here so site/light's ContactFooter reads
-   the same way LP's does. */
-.theme-light[data-site-light-root] footer {
+   the same way LP's does.
+
+   Chain `footer#contact.bg-[#141414]` so the rule beats every other
+   `.bg-[#141414]` flip in the cascade (globals/lp-theme/accent) on
+   specificity — without the id chain the user reported the footer
+   rendering as pale grey instead of the brand-blue island. */
+.theme-light[data-site-light-root] footer,
+.theme-light[data-site-light-root] footer#contact,
+.theme-light[data-site-light-root] footer#contact.bg-\[\#141414\] {
   background-color: #0066ff !important;
   color: #ffffff !important;
+}
+/* Inner panels inside the footer (avatars chip, badges, separator
+   cards) repaint to the same brand-blue so the whole island reads
+   as one surface. */
+.theme-light[data-site-light-root] footer#contact .bg-\[\#0c0c0c\],
+.theme-light[data-site-light-root] footer#contact .bg-\[\#141414\],
+.theme-light[data-site-light-root] footer#contact .bg-\[\#181818\],
+.theme-light[data-site-light-root] footer#contact .bg-\[\#1e1e1e\],
+.theme-light[data-site-light-root] footer#contact .bg-\[\#242424\] {
+  background-color: #0066ff !important;
 }
 .theme-light[data-site-light-root] footer .text-white         { color: #ffffff !important; }
 .theme-light[data-site-light-root] footer .text-white\/90     { color: rgba(255, 255, 255, 0.9) !important; }
@@ -400,6 +417,55 @@
    readable ink-65 with mainpage-5 cadence (sans 500, no caps). */
 .theme-light[data-site-light-root] form label {
   color: rgba(0, 31, 77, 0.65) !important;
+}
+
+/* ─── Reviews — kill the broad whole-card hover ─────────────────
+   ReviewCardDesktop wraps everything in `hover:bg-[#FFE533]` +
+   `group-hover/card:text-black`. In the light theme that paints
+   the WHOLE card flat blue on hover and flips text to black —
+   reads as a flash and ruins the composition. Pin the card
+   surface + text colours to their default state regardless of
+   hover; only the inner Yelp/Google chip keeps its own brand-color
+   hover (scale-110 + red / blue swap). */
+.theme-light[data-site-light-root] #reviews .group\/card,
+.theme-light[data-site-light-root] #reviews .group\/card:hover {
+  background-color: #f0f5ff !important;
+  box-shadow: none !important;
+}
+.theme-light[data-site-light-root] #reviews .group\/card:hover .group-hover\/card\:text-black {
+  color: #001f4d !important;
+}
+.theme-light[data-site-light-root] #reviews .group\/card:hover .group-hover\/card\:text-black\/60 {
+  color: rgba(0, 31, 77, 0.6) !important;
+}
+.theme-light[data-site-light-root] #reviews .group\/card:hover .group-hover\/card\:bg-\[\#0c0c0c\] {
+  background-color: #0066ff !important;
+}
+/* Stars: yellow set is hidden on hover via `group-hover/card:hidden`
+   and a black set fades in. With the card hover disabled visually
+   we want the yellow set ALWAYS visible and the black set never. */
+.theme-light[data-site-light-root] #reviews .group\/card .group-hover\/card\:hidden {
+  display: block !important;
+}
+.theme-light[data-site-light-root] #reviews .group\/card .hidden.group-hover\/card\:flex {
+  display: none !important;
+}
+
+/* ─── Reviews — Yelp/Google round chips ─────────────────────────
+   Default bg-[#303030] gets flipped to a pale grey by globals which
+   reads as a washed-out blob against the pale lavender card — the
+   composition feels disconnected. Repaint to brand blue so the
+   white SVG icons inside read crisply on-brand. The chips' own
+   per-brand hover colors (Yelp #FF2828, Google #357DFF) keep their
+   scale-110 micro-interaction. */
+.theme-light[data-site-light-root] #reviews .bg-\[\#303030\] {
+  background-color: #0066ff !important;
+}
+.theme-light[data-site-light-root] #reviews a.bg-\[\#303030\].hover\:bg-\[\#FF2828\]:hover {
+  background-color: #FF2828 !important;
+}
+.theme-light[data-site-light-root] #reviews a.bg-\[\#303030\].hover\:bg-\[\#357DFF\]:hover {
+  background-color: #357DFF !important;
 }
 
 /* ─── WhatsIncluded — yellow hover → blue at the card overlay ───

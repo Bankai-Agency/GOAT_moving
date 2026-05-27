@@ -1,0 +1,153 @@
+/* ════════════════════════════════════════════════════════════════
+   LP1 — Services section styles.
+
+   All rules targeting `#services` (with selectors specific to it,
+   not multi-section catch-alls).
+
+   Extracted from lp-theme.css (L1 refactor — move, don't rewrite).
+   Blocks preserved in their original relative order. Loaded AFTER
+   lp-theme.css in page.tsx so any equal-specificity ties resolve
+   the same way they did when these rules lived in lp-theme.css.
+
+   Rules that target #services alongside [data-lp-hero]/#cta
+   (shared dark-island infrastructure for text/border colours)
+   stayed in lp-theme.css.
+   ══════════════════════════════════════════════════════════════ */
+
+
+/* ── SERVICES CARDS — keep dark base ────────────────────────────
+   Each service card is a photo-backed "dark island": bg-[var(--lp-dark-surface)]
+   underneath + photo on top + dark overlay + white text. The
+   photo fades in via IntersectionObserver (threshold 0.3), so
+   before scroll triggers it the card is just its base colour. If
+   we let theme-light flip that base to var(--lp-surface-light) (light grey),
+   text-white on light = invisible during the idle state. Revert
+   the bg back to var(--lp-dark-surface) so the dark base + white text always
+   read, with the photo + overlay layering on top once visible. */
+[data-lp-root] #services .lp1-service-card {
+  background-color: var(--lp-dark-surface) !important;
+}
+
+
+/* ── Services card h3 typography ──────────────────────────────
+   h3 inside ServicesSection cards (Local Moving / Long Distance /
+   etc.) — was semibold. mainpage-5 keeps card titles at
+   normal/semibold but smaller relative to the section h2.
+   Weight 500 explicit so mobile and desktop render identically
+   (the previous 400 + heavy LCD subpixel rendering at 28px mobile
+   was reading lighter than the 42px desktop). */
+[data-lp-root] #services h3.font-semibold {
+  font-weight: 500 !important;
+  letter-spacing: -0.7px !important;
+  line-height: 1.1 !important;
+}
+@media (min-width: 1024px) {
+  [data-lp-root] #services h3.font-semibold {
+    letter-spacing: -1.2px !important;
+    line-height: 1.05 !important;
+  }
+}
+
+
+/* ── Watermark numerals — weight 400 not light ───────────────
+   Decorative giant numerals (01/02/03/04) behind each service card.
+   Source TSX uses `font-light` (300). LP system is now restricted to
+   3 sans weights: 400 / 500 / 700. Promote light → regular so we
+   stay within the system. (These numerals sit at 3% white opacity so
+   the weight bump is barely visible.) */
+[data-lp-root] #services .font-light {
+  font-weight: 400 !important;
+}
+
+
+/* ── SERVICES CARDS: photo always visible + new hover effect ────
+   Default = previous "hover state" (photo visible, gradients
+   under text fully opaque). Hover triggers a different
+   micro-interaction: image zoom + blue tint sweep + arrow circle
+   pops to blue and slides right. */
+[data-lp-root] #services .lp1-service-card > .absolute.transition-opacity {
+  opacity: 1 !important;
+}
+[data-lp-root] #services .lp1-service-card .absolute.transition-opacity img {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* NEW HOVER */
+/* 1. Image zooms in slightly. */
+[data-lp-root] #services .lp1-service-card:hover .absolute.transition-opacity img {
+  transform: scale(1.08);
+}
+/* 2. Dark overlay deepens — keep colour neutral (no blue tint).
+   Subtle warm-dark cast so the photo gets richer on hover. */
+[data-lp-root] #services .lp1-service-card .bg-black\/20 {
+  transition: background-color 0.4s ease-out;
+}
+[data-lp-root] #services .lp1-service-card:hover .bg-black\/20 {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+}
+/* Arrow circle hover rules removed — current JSX has no arrow
+   circle (BMW reference dropped it). Was dead code. */
+
+
+/* ── Services cards — gradient under text ALWAYS visible ────────
+   The cards have two gradient overlays (top-to-bottom under title,
+   bottom-to-top under description) but they default to opacity 0
+   and only show on hover. Without hover, the photo is partially
+   washed out by the bg-black/20 overlay but text-white can still
+   blend with bright spots in the photo.
+   Force the gradient overlays to be visible by default (lower
+   opacity than hover ~0.5) so the title/description always sit
+   on a dark gradient — readable on ANY photo. */
+[data-lp-root] #services .group .opacity-0.group-hover\:opacity-100,
+[data-lp-root] #services [style*="rgba(0,0,0,0.75)"],
+[data-lp-root] #services [style*="rgba(0, 0, 0, 0.75)"] {
+  opacity: 1 !important;
+}
+
+
+/* ── Services cards mobile typography — bigger text ─────────────
+   Default title text-[28px] + body text-base (16px) feels small
+   on a full-width photo card. Bump on mobile to title 32px + body
+   18px so they breathe. Desktop unchanged. */
+@media (max-width: 991px) {
+  [data-lp-root] #services .group h3 {
+    font-size: 30px !important;
+    letter-spacing: -1px !important;
+    line-height: 1.1 !important;
+  }
+  [data-lp-root] #services .group p {
+    font-size: 18px !important;
+    line-height: 1.45 !important;
+    letter-spacing: -0.4px !important;
+  }
+}
+
+
+/* ── Services h2 — fit 2-line title without wrap ────────────────
+   "Find the Right Moving Service" at the page's section-h2 size
+   (96px on desktop via typography override) exceeds the default
+   max-w-[900px] → first half wraps into 2 lines + the <br> adds
+   a third. Widen the h2's max-width on desktop so the first line
+   stays on one row. */
+@media (min-width: 1024px) {
+  [data-lp-root] #services h2 {
+    max-width: none !important;
+    white-space: nowrap;
+  }
+}
+
+
+/* ── Services heading + subtitle — vertical stack on desktop ────
+   Default on desktop: heading LEFT + subtitle RIGHT (flex-row).
+   User wants subtitle BELOW heading. Override to flex-col + give
+   the subtitle a proper top margin. */
+@media (min-width: 1024px) {
+  [data-lp-root] #services .lg\:flex-row.lg\:items-end {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 20px !important;
+  }
+  [data-lp-root] #services .lg\:flex-row.lg\:items-end p {
+    max-width: 720px !important;
+  }
+}

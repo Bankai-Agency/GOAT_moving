@@ -1,0 +1,275 @@
+/* LP1 — Reviews section styles. Extracted from lp-theme.css (L1).
+
+   Includes both base appearance AND dark-zone variants
+   (LPProcess + Reviews + LPCtaForm sit inside the second DarkScrollZone
+   in CityLandingPage).
+
+   L2 SEMANTIC CLASSES (used here):
+     • .lp1-review-card  — review + summary cards (both desktop+mobile)
+     • .lp1-source-bubble — Yelp / Google round source buttons
+     • .lp1-nav-arrow    — carousel nav arrows (uses native :disabled) */
+
+
+/* ── lp1-source-bubble — L2 SEMANTIC CLASS ────────────────────
+   Round white-grey button containing the Yelp / Google logo.
+   Tailwind hover variants in JSX (`hover:bg-[#FF2828]` /
+   `hover:bg-[#357DFF]`) provide the brand-colour hover — no need
+   to recreate them here. Base rest colour mimics the previous
+   bg-[#303030] → theme-light flip → #d6dbe2. */
+[data-lp-root] #reviews .lp1-source-bubble {
+  background-color: #d6dbe2;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+
+/* ── lp1-nav-arrow — L2 SEMANTIC CLASS ────────────────────────
+   Carousel prev/next button. State is driven by the native
+   `disabled` attribute on the <button>, not by conditional class
+   strings — much cleaner JSX. The arrow image inside fades to 30%
+   when the button is disabled. */
+[data-lp-root] #reviews .lp1-nav-arrow {
+  background-color: #e2e6ec;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+[data-lp-root] #reviews .lp1-nav-arrow:hover:not(:disabled) {
+  background-color: #d6dbe2;
+  transform: scale(1.1);
+}
+[data-lp-root] #reviews .lp1-nav-arrow:disabled {
+  background-color: #f1f3f6;
+  cursor: default;
+}
+[data-lp-root] #reviews .lp1-nav-arrow img {
+  transition: opacity 0.2s ease;
+}
+[data-lp-root] #reviews .lp1-nav-arrow:disabled img {
+  opacity: 0.3;
+}
+
+
+/* ── Reviews summary card — restack footer vertically ─────────
+   The first card in the Reviews carousel shows the 4.9/5 rating,
+   Yelp/Google buttons, copy, then a footer row with avatars LEFT
+   and stars + "500+ 5-Star Reviews" text RIGHT. In the narrow
+   340px desktop card / mobile card the right text overflows and
+   gets clipped. Restack: avatars on top, stars + text BELOW. */
+.theme-light[data-lp-root] #reviews .h-\[250px\] .flex.items-end.justify-between,
+.theme-light[data-lp-root] #reviews .h-\[374px\] .flex.items-end.justify-between {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 14px !important;
+}
+.theme-light[data-lp-root] #reviews .h-\[250px\] .flex.flex-col.items-end.text-right,
+.theme-light[data-lp-root] #reviews .h-\[374px\] .flex.flex-col.items-end.text-right {
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+/* Reviews stat numbers ("4,9" big) — keep them attention-grabbing
+   but in font-normal to match mainpage-5's "big numerals look light"
+   feel. :not(h2) excludes the section heading which shares the same
+   text-[32px] class — without it the h2 was getting 400 instead of
+   600, beating all subsequent overrides via higher specificity. */
+.theme-light[data-lp-root] #reviews .font-bold.text-\[64px\]:not(h2),
+.theme-light[data-lp-root] #reviews .font-bold.text-\[32px\]:not(h2) {
+  font-weight: 400 !important;
+}
+/* ── REVIEWS: yellow stars stay yellow (theme-light's filter chain
+   would recolour them blue, which loses contrast on the light card). */
+.theme-light[data-lp-root] #reviews img[src*="star-yellow"] {
+  filter: none !important;
+}
+/* ── Reviews stars — orange-yellow for contrast on light cards ─
+   Default star-yellow is var(--lp-yellow) which on a light grey card has
+   poor contrast. Filter chain converts to a warmer orange that
+   stays brand-friendly + readable on light surfaces. */
+.theme-light[data-lp-root] #reviews img[src*="star-yellow"] {
+  filter: brightness(0) saturate(100%) invert(70%) sepia(75%) saturate(2500%) hue-rotate(360deg) brightness(102%) contrast(102%) !important;
+}
+/* ── Reviews — quote text bigger + bolder, reviewer name bigger ─ */
+.theme-light[data-lp-root] #reviews .font-sans:not(.font-bold):not(.font-semibold):not(.font-medium) {
+  font-size: 16px !important;
+  line-height: 1.5 !important;
+}
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #reviews .font-sans:not(.font-bold):not(.font-semibold):not(.font-medium) {
+    font-size: 18px !important;
+  }
+}
+/* ── Reviews h2 — match section h2 weight (600) ─────────────────
+   Remove the old 700 override; section h2.font-bold already sets 600.
+   Explicit rule for safety — ID selector beats class selector. */
+.theme-light[data-lp-root] #reviews h2.font-bold {
+  font-weight: 600 !important;
+}
+@media (min-width: 1024px) {
+  .theme-light[data-lp-root] #reviews h2.font-bold {
+    font-weight: 600 !important;
+  }
+}
+/* ════════════════════════════════════════════════════════════════
+   ReviewsSection (#reviews) inside the DARK SCROLL ZONE
+   ──────────────────────────────────────────────────────────────
+   • Re-paint the bullet underline so it stays visible on the dark
+     veil (same pattern as the LPProcess fix above).
+   • Carousel prev/next buttons get a brand treatment: enabled =
+     LP blue (var(--lp-blue)) with a WHITE arrow, disabled = subtle dark
+     grey with a dim white arrow. Defeats the global theme-light
+     flips that turned the chips light-grey and the arrows black —
+     unreadable on the dark veil + indistinguishable from each
+     other.
+   ══════════════════════════════════════════════════════════════ */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .border-white\/16 {
+  border-color: color-mix(
+    in srgb,
+    rgba(12, 12, 12, 0.1) calc((1 - var(--dark-veil, 0)) * 100%),
+    var(--lp-white-22)
+  ) !important;
+}
+/* Carousel nav arrows are sized `.w-14`; pagination dots are
+   `.w-2`. Scoping the colour overrides by SIZE keeps the rules
+   from leaking into the dot strip, where the broad
+   `button.bg-[var(--lp-dark-surface-2)]` selector was painting every inactive
+   dot blue. */
+/* Enabled arrow (canScroll*): bg-[var(--lp-dark-surface-2)] + w-14 → LP blue. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .lp1-nav-arrow:not(:disabled) {
+  background-color: var(--lp-blue) !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .lp1-nav-arrow:not(:disabled):hover {
+  background-color: #0a78ff !important;
+}
+/* Disabled arrow: bg-[var(--lp-dark-surface)] + w-14 → subtle dark grey. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .lp1-nav-arrow:disabled {
+  background-color: #2a2a2a !important;
+}
+/* Arrow icons inside w-14 buttons: native white SVG (theme-light's
+   brightness(0) → black is unwanted on the blue / dark-grey chips). */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .lp1-nav-arrow img[src*="arrow-left"],
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .lp1-nav-arrow img[src*="arrow-right"] {
+  filter: none !important;
+}
+
+/* Pagination dots — inactive (.w-2 + bg-[var(--lp-dark-surface-2)]) → semi-transparent
+   white so they read as "future slides" on the dark veil. Active dot
+   (bg-[var(--lp-yellow)]) is already flipped to LP blue by accent.css. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews button.w-2.bg-\[\#242424\] {
+  background-color: var(--lp-white-30) !important;
+}
+
+/* ── Mobile Reviews cards — match desktop dark theme ────────────
+   Each card is `bg-[var(--lp-dark-surface)]` with `text-white` content. The
+   broad color-mix on `.bg-[var(--lp-dark-surface)]` / `.text-white` inside the
+   dark zone interpolates through muddy mid-tones during the veil
+   ramp. Pin Reviews-card paints to their final values so the
+   mobile layout reads as dark/white throughout the dark zone,
+   matching what desktop ends up at. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .lp1-review-card {
+  background-color: var(--lp-dark-surface) !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .text-white {
+  color: var(--lp-white) !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .text-white\/60 {
+  color: var(--lp-white-60) !important;
+}
+/* "500+ 5-Star Reviews" eyebrow uses text-white/50 (theme-light
+   flipped to near-black, invisible on the dark Reviews card). */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .text-white\/50 {
+  color: var(--lp-white-50) !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .text-white\/40 {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Yelp / Google source-icon plates inside Reviews summary cards
+   (`bg-[var(--lp-dark-surface-3)]`). theme-light flips that to a light grey
+   #d6dbe2 which reads as a bright glare on the dark Reviews
+   card. Repaint to a dark chip (#2a2a2a) that sits naturally on
+   the var(--lp-dark-surface) card surface. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .lp1-source-bubble {
+  background-color: #2a2a2a !important;
+}
+/* Globals turns the Yelp / Google source icons black
+   (`filter: brightness(0)`) because the original light-grey
+   chip would otherwise swallow the native white. The dark-zone
+   chip (#2a2a2a above) is dark again, so black icons disappear.
+   Restore native colours so yelp-white reads as white and
+   google-color keeps its multi-coloured G mark. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews a[href*="yelp"] img,
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews a[href*="google.com/maps"] img {
+  filter: none !important;
+}
+/* Summary card Yelp/Google chips: my `.bg-[var(--lp-dark-surface-3)] → #2a2a2a`
+   override above also captured the hover state, so the chips
+   stopped flashing brand colours on hover (review-card chips
+   keep working because they sit under a more-specific selector).
+   Re-apply the brand-hover here at higher specificity so the
+   summary card mirrors the review-card behaviour: Yelp red,
+   Google blue. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews a[href*="yelp"]:hover {
+  background-color: #FF2828 !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews a[href*="google.com/maps"]:hover {
+  background-color: #357DFF !important;
+}
+
+/* Mobile summary card breathing room — the `h-[250px]` card had
+   subtitle + avatars row sitting almost touching because
+   justify-between only distributes leftover space and the
+   content nearly fills the box. Bump to 290px so there's a
+   visible gap between the description and the avatar/stars row. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .h-\[250px\] {
+  height: 290px !important;
+}
+/* And shrink the "500+ 5-Star Reviews" eyebrow inside that card —
+   the original text-xs (12px) reads bulky next to the small
+   avatars and 5-star strip on mobile. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .h-\[250px\] .uppercase.whitespace-nowrap {
+  font-size: 10px !important;
+  letter-spacing: -0.2px !important;
+}
+
+/* Review-card hover currently swaps the yellow stars for a black
+   variant (so they read on the yellow card bg). Inside the LP
+   dark zone the card flips to blue and the "black" stars end up
+   appearing white via the colour-mix overrides — distracting and
+   off-brand. Lock the yellow stars to always-visible on the LP
+   and keep the black-stars div hidden in every state. */
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .group\/card:hover .group-hover\/card\:hidden {
+  display: block !important;
+}
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .group\/card .group-hover\/card\:flex,
+.theme-light[data-lp-root] [data-lp-dark-zone] #reviews .group\/card:hover .group-hover\/card\:flex {
+  display: none !important;
+}
+/* ── Reviews cards — disable hover entirely ────────────────────
+   The desktop review card uses a yellow-flip-on-hover pattern
+   (bg-[var(--lp-yellow)] + group-hover text/icon swaps). In the LP white-
+   card design that hover causes a broken white-on-white state
+   (yellow flipped to white by our card override, but child swaps
+   still hide the rest-state name/text). Neutralise the entire
+   hover surface — card stays its rest white card, children stay
+   in their rest layout. */
+.theme-light[data-lp-root] #reviews .group\/card:hover {
+  background-color: var(--lp-white) !important;
+  box-shadow: 0 1px 2px var(--lp-ink-04), 0 4px 12px var(--lp-ink-04) !important;
+}
+.theme-light[data-lp-root] #reviews .group\/card .group-hover\/card\:hidden,
+.theme-light[data-lp-root] #reviews .group\/card:hover .group-hover\/card\:hidden {
+  display: block !important;
+}
+.theme-light[data-lp-root] #reviews .group\/card .group-hover\/card\:flex,
+.theme-light[data-lp-root] #reviews .group\/card:hover .group-hover\/card\:flex {
+  display: none !important;
+}
+/* Keep rest-state text colours (ink / muted ink set by theme-light
+   flips) regardless of hover state — the group-hover:text-black
+   classes were designed for the yellow surface. */
+.theme-light[data-lp-root] #reviews .group\/card:hover .group-hover\/card\:text-black,
+.theme-light[data-lp-root] #reviews .group\/card:hover .group-hover\/card\:text-black\/60 {
+  color: inherit !important;
+}
+/* NOTE: the Yelp/Google avatar bubble's group-hover bg flip
+   (bg-[var(--lp-dark-surface-3)] → bg-[var(--lp-dark)]) and its own :hover scale-110 are
+   intentionally left intact — those are bubble-only interactions
+   the user wants to keep. */

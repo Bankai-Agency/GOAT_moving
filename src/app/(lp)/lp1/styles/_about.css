@@ -1,0 +1,196 @@
+/* LP1 — Social Proof / AboutSection styles. Extracted from
+   lp-theme.css (L1).
+
+   Includes both the base section appearance AND the dark-zone
+   override for the #about stat-card chip (the only [data-lp-dark-zone]-scoped
+   rule that's about-specific; lives here so all About-related CSS
+   is in one place).
+
+   NOTE: multi-section "white plates on gradient" rule
+   (#about + #reviews + #service-area) stayed in lp-theme.css. */
+
+
+/* ── SOCIAL PROOF (AboutSection): swap the embedded video for a
+   static image. Browser shows the poster attribute when the video
+   has no controls active, so we just hide the play button overlay
+   and disable click on the video — the poster image remains as a
+   still backdrop. */
+.theme-light[data-lp-root] #about video {
+  pointer-events: none !important;
+}
+.theme-light[data-lp-root] #about button[aria-label="Play video"] {
+  display: none !important;
+}
+
+
+/* ── Social Proof stat values → match Our Solution card h3 ─────
+   AboutSection stat numbers (4.9, 437+, 500+, 100%) take the same
+   typographic treatment as the WhatsIncluded card titles ("Moving
+   Truck & Fuel" etc.) — same weight (700), same tracking, same
+   line-height. Keeps both blocks reading as one heading family. */
+.theme-light[data-lp-root] #about .font-sans.font-bold.text-2xl {
+  font-weight: 600 !important;
+  letter-spacing: -0.6px !important;
+  line-height: 1.1 !important;
+}
+
+
+/* ── lp1-stat-chip — L2 SEMANTIC CLASS ─────────────────────────
+   Replaces the old `.bg-[#181818]` catch-all. The chip is now a
+   single self-contained component: pale-blue tonal surface with
+   a hairline border + soft shadow at rest, lifts on parent hover.
+
+   No `!important` — there's no theme-light flip to fight because
+   we removed the Tailwind hex class from the JSX.
+
+   This is the L2 pattern: semantic class owns the bg + border +
+   shadow + transitions; Tailwind only handles layout (w/h/flex). */
+[data-lp-root] #about .lp1-stat-chip {
+  background-color: #eef3ff;
+  border: 1px solid var(--lp-ink-04);
+  box-shadow:
+    0 1px 2px var(--lp-ink-04),
+    0 4px 12px var(--lp-ink-04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+/* Hover lift via parent `.group/stat` (Tailwind class on the
+   wrapping <div>). Matches the original group-hover behaviour. */
+[data-lp-root] #about .group\/stat:hover .lp1-stat-chip {
+  background-color: #e3eaf6;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transform: scale(1.05);
+}
+
+
+/* ── Social Proof (AboutSection) desktop layout — 2-column ──────
+   Default stacks vertically (heading → video → stats row). On
+   desktop split into grid: heading spans top, video on the LEFT,
+   stats stacked vertically on the RIGHT. Mobile untouched. */
+@media (min-width: 992px) {
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] {
+    display: grid !important;
+    grid-template-columns: 1.2fr 1fr;
+    grid-template-areas:
+      "heading heading"
+      "video stats";
+    gap: 48px 56px !important;
+  }
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(1) {
+    grid-area: heading;
+  }
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(2) {
+    grid-area: video;
+  }
+  /* Stats column — stack vertically and fill the full image
+     height with `justify-content: space-between`. Each stat row
+     becomes a larger card with bigger icon, larger numerals,
+     and a clean separator line. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) {
+    grid-area: stats;
+    flex-direction: column !important;
+    gap: 0 !important;
+    justify-content: space-between !important;
+    height: 100%;
+  }
+  /* Each stat row — bigger padding + bottom border for separation
+     between rows. Last child no border. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div {
+    flex: 1 1 auto !important;
+    padding: 20px 0 !important;
+    border-bottom: 1px solid rgba(0, 31, 77, 0.08) !important;
+    gap: 24px !important;
+    align-items: center !important;
+  }
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div:first-child {
+    padding-top: 0 !important;
+  }
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div:last-child {
+    padding-bottom: 0 !important;
+    border-bottom: 0 !important;
+  }
+  /* Icon container — bigger square. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div > div:first-child {
+    width: 88px !important;
+    height: 88px !important;
+    border-radius: var(--lp-r-md) !important;
+  }
+  /* Numerals — bigger. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) span.font-sans.font-bold {
+    font-size: 40px !important;
+  }
+  /* Label — keep mono uppercase but a touch bigger. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) span.font-mono {
+    font-size: 13px !important;
+  }
+}
+
+
+/* ── Social Proof stats on MOBILE — 2×2 grid ────────────────────
+   Default mobile stacks all 4 stats vertically (4 rows). Switch
+   to a 2-column grid (2 rows × 2 cols) so they fill the same
+   width as the image above and feel more balanced. */
+@media (max-width: 991px) {
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 14px !important;
+    flex-direction: initial !important;
+  }
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+    padding: 16px !important;
+    background-color: var(--lp-surface) !important;
+    border-radius: 14px !important;
+  }
+  /* Icon box bigger on mobile too — pulls focus. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div > div:first-child {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 10px !important;
+    background-color: var(--lp-white) !important;
+  }
+  /* Numeral compact on mobile. */
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) span.font-sans.font-bold {
+    font-size: 26px !important;
+  }
+  .theme-light[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) span.font-mono {
+    font-size: 12px !important;
+  }
+}
+
+
+/* Dark-zone variant of lp1-stat-chip — when the chip sits inside
+   [data-lp-dark-zone], the chip's border fades from ink-04 (light
+   state) toward white-12 (dark state) in lockstep with --dark-veil
+   so it stays distinguishable on the darkening backdrop. */
+[data-lp-root] [data-lp-dark-zone] #about .lp1-stat-chip {
+  border-color: color-mix(
+    in srgb,
+    var(--lp-ink-04) calc((1 - var(--dark-veil, 0)) * 100%),
+    var(--lp-white-12)
+  );
+}
+/* Stat icons (originally yellow on dark) → recolour to LP accent
+   blue (var(--lp-blue)) via the precomputed filter chain reused from
+   accent.css's `phone-yellow` rule. Pure blue on the var(--lp-dark-surface) chip
+   reads as a brand-aligned highlight; the chip itself stays dark. */
+.theme-light[data-lp-root] #about img[src*="/year.svg"],
+.theme-light[data-lp-root] #about img[src*="/review.svg"],
+.theme-light[data-lp-root] #about img[src*="/star.svg"],
+.theme-light[data-lp-root] #about img[src*="/license.svg"] {
+  filter: brightness(0) saturate(100%) invert(28%) sepia(99%)
+    saturate(3500%) hue-rotate(216deg) brightness(99%) contrast(105%) !important;
+}
+
+/* Belt-and-braces: any remaining literal `var(--lp-yellow)` / yellow rgba
+   inside Social Proof (background-color shadows, inline rgba in
+   styles) maps to the LP accent blue. The global theme-light /
+   accent.css rules cover most Tailwind class forms — these catch
+   any inline-style holdouts. */
+.theme-light[data-lp-root] #about [style*="rgba(255,229,51"],
+.theme-light[data-lp-root] #about [style*="rgba(255, 229, 51"] {
+  background-color: rgba(0, 102, 255, 0.35) !important;
+}

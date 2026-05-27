@@ -1,0 +1,327 @@
+/* ════════════════════════════════════════════════════════════════
+   LP2 — DARK THEME INVERSION
+
+   Reverses the LP1 light theme: sections that were white become
+   dark; cards/elements that were dark become light. Applied as
+   overrides on `.lp2-dark` wrapper class. Loaded LAST in page.tsx
+   so it beats all per-section base rules.
+
+   NOT done here (intentionally — they read fine on the dark page):
+     • Hero photo + dark overlay
+     • CTA Banner photo + dark overlay
+     • LPCtaForm photo + dark overlay
+     • Footer (already dark navy)
+   ══════════════════════════════════════════════════════════════ */
+
+
+/* ── PAGE: body gradient → dark ──────────────────────────────
+   Original `body:has([data-lp-root])` rule in lp-theme.css paints
+   a soft blue/white wash. Override with a dark gradient when the
+   page carries the `.lp2-dark` marker. */
+body:has(.lp2-dark[data-lp-root]) {
+  background-color: var(--lp-dark) !important;
+  background-image:
+    radial-gradient(ellipse 75% 65% at 88% 18%, rgba(0, 102, 255, 0.22), transparent 55%),
+    radial-gradient(ellipse 65% 55% at 12% 82%, rgba(0, 102, 255, 0.18), transparent 55%),
+    linear-gradient(140deg, var(--lp-dark) 0%, #0a1530 100%) !important;
+  background-attachment: fixed !important;
+}
+
+
+/* ── PAGE-LEVEL TEXT: ink → white ────────────────────────────
+   lp-theme.css has aggressive `text-white → ink` flips (originally
+   for light theme). On lp2 we need the OPPOSITE — restore the
+   white-family colours that the underlying Tailwind classes
+   described. Selector specificity (.lp2-dark + [data-lp-root])
+   beats the lp-theme rules (only [data-lp-root]). */
+.lp2-dark[data-lp-root] {
+  color: var(--lp-white);
+}
+.lp2-dark[data-lp-root] h1,
+.lp2-dark[data-lp-root] h2,
+.lp2-dark[data-lp-root] h3,
+.lp2-dark[data-lp-root] h4 {
+  color: var(--lp-white);
+}
+
+/* text-white/X family — restore white at each alpha step. */
+.lp2-dark[data-lp-root] .text-white                  { color: var(--lp-white) !important; }
+.lp2-dark[data-lp-root] .text-white\/90              { color: var(--lp-white-90) !important; }
+.lp2-dark[data-lp-root] .text-white\/85              { color: var(--lp-white-85) !important; }
+.lp2-dark[data-lp-root] .text-white\/80              { color: var(--lp-white-80) !important; }
+.lp2-dark[data-lp-root] .text-white\/75              { color: var(--lp-white-75) !important; }
+.lp2-dark[data-lp-root] .text-white\/70              { color: var(--lp-white-70) !important; }
+.lp2-dark[data-lp-root] .text-white\/65              { color: var(--lp-white-65) !important; }
+.lp2-dark[data-lp-root] .text-white\/60              { color: var(--lp-white-60) !important; }
+.lp2-dark[data-lp-root] .text-white\/55              { color: var(--lp-white-55) !important; }
+.lp2-dark[data-lp-root] .text-white\/50              { color: var(--lp-white-50) !important; }
+.lp2-dark[data-lp-root] .text-white\/45              { color: var(--lp-white-45) !important; }
+.lp2-dark[data-lp-root] .text-white\/40              { color: var(--lp-white-45) !important; }
+.lp2-dark[data-lp-root] .text-white\/30              { color: var(--lp-white-30) !important; }
+.lp2-dark[data-lp-root] .text-white\/25              { color: var(--lp-white-25) !important; }
+.lp2-dark[data-lp-root] .text-white\/20              { color: var(--lp-white-22) !important; }
+.lp2-dark[data-lp-root] .text-white\/15              { color: var(--lp-white-18) !important; }
+
+/* Ink-coloured Tailwind classes — flip to white on dark. */
+.lp2-dark[data-lp-root] .text-\[\#001f4d\]           { color: var(--lp-white) !important; }
+.lp2-dark[data-lp-root] .text-\[\#001f4d\]\/65       { color: var(--lp-white-70) !important; }
+.lp2-dark[data-lp-root] .text-\[\#0c0c0c\]           { color: var(--lp-white) !important; }
+
+/* Inline-styled ink h3 (Solution/Process card titles use
+   `style={{color:"#001f4d"}}`) — cards are pale-blue so ink
+   stays readable; no override needed. Leave as-is. */
+
+
+/* ── DARK-ZONE TEXT: must follow color-mix transition ───────
+   _dark-zone.css has rules like
+   `[data-lp-root] [data-lp-dark-zone] .text-white { color: color-mix(... veil ...) }`
+   designed to transition section text from WHITE (at veil=0,
+   page dark) to INK (at veil=1, page light via white veil).
+
+   But my generic page-level `.lp2-dark[data-lp-root] .text-white →
+   white !important` rule above WINS on specificity (2 classes vs
+   1), so the color-mix never applies → h2 stays white even when
+   the veil paints the surrounding area light → text invisible.
+
+   Re-apply the color-mix here at HIGHER specificity (adds
+   .lp2-dark to the dark-zone selector). Now h2/p inside
+   DarkScrollZone wrappers (Solution + Process) properly fade
+   white→ink as the user scrolls into the zone. */
+.lp2-dark[data-lp-root] [data-lp-dark-zone] .text-white {
+  color: color-mix(
+    in srgb,
+    var(--lp-ink) calc(var(--dark-veil, 0) * 100%),
+    var(--lp-white)
+  ) !important;
+}
+.lp2-dark[data-lp-root] [data-lp-dark-zone] .text-white\/80,
+.lp2-dark[data-lp-root] [data-lp-dark-zone] .text-white\/70,
+.lp2-dark[data-lp-root] [data-lp-dark-zone] .text-white\/60 {
+  color: color-mix(
+    in srgb,
+    var(--lp-ink-70) calc(var(--dark-veil, 0) * 100%),
+    var(--lp-white-75)
+  ) !important;
+}
+/* Solution section h2 + subtitle use `text-[#001f4d]` / `.../65`
+   Tailwind classes (ink-coloured in JSX). Same problem — needs
+   color-mix override at higher specificity. */
+.lp2-dark[data-lp-root] [data-lp-dark-zone] .text-\[\#001f4d\] {
+  color: color-mix(
+    in srgb,
+    var(--lp-ink) calc(var(--dark-veil, 0) * 100%),
+    var(--lp-white)
+  ) !important;
+}
+.lp2-dark[data-lp-root] [data-lp-dark-zone] .text-\[\#001f4d\]\/65 {
+  color: color-mix(
+    in srgb,
+    rgba(0, 31, 77, 0.65) calc(var(--dark-veil, 0) * 100%),
+    var(--lp-white-70)
+  ) !important;
+}
+
+
+/* ── LIGHT FORM CARDS: revert text-white → ink ─────────────
+   LPQuoteForm renders a white card via `data-surface="light"`
+   (used in Hero + LPCtaForm). The card has form heading + helper
+   text marked `text-white` in JSX (legacy from dark theme).
+   Our page-level `text-white → white` rule above turns those
+   white → invisible on the white form. Restore ink inside light
+   forms. Higher specificity (extra data-attr selector) wins. */
+.lp2-dark[data-lp-root] [data-lp-quote-form][data-surface="light"] .text-white,
+.lp2-dark[data-lp-root] [data-lp-quote-form][data-surface="light"] h2,
+.lp2-dark[data-lp-root] [data-lp-quote-form][data-surface="light"] h3 {
+  color: var(--lp-ink) !important;
+}
+.lp2-dark[data-lp-root] [data-lp-quote-form][data-surface="light"] .text-white\/80,
+.lp2-dark[data-lp-root] [data-lp-quote-form][data-surface="light"] .text-white\/70,
+.lp2-dark[data-lp-root] [data-lp-quote-form][data-surface="light"] .text-white\/60,
+.lp2-dark[data-lp-root] [data-lp-quote-form][data-surface="light"] p {
+  color: var(--lp-ink-65) !important;
+}
+
+
+/* ── LOGO: white in header ───────────────────────────────────
+   accent.css has `.theme-light[data-accent="blue"] [data-menu-logo]
+   img[src*="logo"] { filter: brightness(0) invert(1) }` which DOES
+   the white-logo recolour but requires `theme-light` (not on lp2).
+   Re-apply the same filter chain under .lp2-dark. */
+.lp2-dark[data-lp-root] [data-menu-logo] img[src*="logo"] {
+  filter: brightness(0) invert(1) !important;
+}
+
+
+/* ── SOLUTION CARDS: dark #1a1a1a → light pale-blue island ──
+   Cards have inline `style={{ backgroundColor: "#1a1a1a", color:
+   "#ffffff" }}` — escape both the global text-white rule (no
+   Tailwind class) AND the dark-zone color-mix rules (no matching
+   selector). Bypassed everything by hand here.
+
+   Match the Process card style (pale-blue surface, ink text,
+   brand-blue icon tile stays blue). */
+.lp2-dark[data-lp-root] #solution [style*="#1a1a1a"] {
+  background-color: var(--lp-blue-pale) !important;
+  border-color: var(--lp-ink-12) !important;
+}
+.lp2-dark[data-lp-root] #solution [style*="#1a1a1a"] h3 {
+  color: var(--lp-ink) !important;
+}
+.lp2-dark[data-lp-root] #solution [style*="#1a1a1a"] p {
+  color: var(--lp-ink-65) !important;
+}
+
+
+/* ── SERVICES CARD: stays DARK (not inverted) ────────────────
+   The card is photo-with-dark-gradient by design — text is white
+   on the gradient regardless of page theme. Original LP1 styling
+   carries over correctly on the dark page. No override needed. */
+
+
+/* ── STAT CHIP: pale blue → frosted glass ──────────────────
+   On the dark page solid dark chips read as black voids. Make
+   them frosted glass — barely-tinted white surface + blur picks
+   up the body gradient behind, hairline white border gives the
+   edge. Icons stay BLUE (no filter override) — brand-blue glyph
+   on subtle glass reads cleaner than a stark white icon. */
+.lp2-dark[data-lp-root] #about .lp1-stat-chip {
+  background-color: var(--lp-white-08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: var(--lp-white-12);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.15);
+}
+.lp2-dark[data-lp-root] #about .group\/stat:hover .lp1-stat-chip {
+  background-color: var(--lp-white-12);
+  border-color: var(--lp-white-18);
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.35),
+    0 0 0 1px var(--lp-white-12);
+}
+
+
+/* ── REVIEW CARD: white → frosted glass ─────────────────────
+   Same glass treatment as stat chips and service-area chips. */
+.lp2-dark[data-lp-root] #reviews .lp1-review-card {
+  background-color: var(--lp-white-08) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: var(--lp-white-12) !important;
+  color: var(--lp-white);
+}
+
+
+/* ── REVIEW SOURCE BUBBLE + NAV ARROW: glass ────────────────
+   Match the card glass aesthetic; bubbles + arrows pick up the
+   tint from the page behind. */
+.lp2-dark[data-lp-root] #reviews .lp1-source-bubble {
+  background-color: var(--lp-white-10);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+.lp2-dark[data-lp-root] #reviews .lp1-nav-arrow {
+  background-color: var(--lp-white-10);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--lp-white-12);
+}
+.lp2-dark[data-lp-root] #reviews .lp1-nav-arrow:hover:not(:disabled) {
+  background-color: var(--lp-white-15);
+}
+.lp2-dark[data-lp-root] #reviews .lp1-nav-arrow:disabled {
+  background-color: var(--lp-white-08);
+}
+.lp2-dark[data-lp-root] #reviews .lp1-nav-arrow img {
+  filter: brightness(0) invert(1);
+}
+
+
+/* ── SERVICE AREA chips: frosted glass ──────────────────────
+   Same glass treatment as the stat chips — barely-tinted white
+   surface + blur picks up body gradient + hairline white border. */
+.lp2-dark[data-lp-root] #service-area .group.flex.items-center {
+  background-color: var(--lp-white-08) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--lp-white-12) !important;
+  color: var(--lp-white);
+}
+.lp2-dark[data-lp-root] #service-area .group.flex.items-center h3 {
+  color: var(--lp-white) !important;
+}
+
+
+/* ── FAQ: ink text → white, ink borders → white-12 ──────────
+   accent.css paints FAQ via `body:has([data-accent="blue"]) #faq …`
+   — items transparent, border ink-12, question text ink, plus
+   icon stroke ink, answer text ink-65. All invisible on dark
+   page. Override at higher specificity (add .lp2-dark to chain).
+   Hover state stays brand-blue — works on dark too. */
+.lp2-dark[data-lp-root] #faq .faq-list .faq-item {
+  border-bottom-color: var(--lp-white-12) !important;
+}
+.lp2-dark[data-lp-root] #faq .faq-list .faq-item:first-child {
+  border-top-color: var(--lp-white-12) !important;
+}
+.lp2-dark[data-lp-root] #faq .faq-list .faq-item button > span {
+  color: var(--lp-white) !important;
+}
+.lp2-dark[data-lp-root] #faq .faq-list .faq-item button > div svg path {
+  stroke: var(--lp-white) !important;
+}
+.lp2-dark[data-lp-root] #faq .faq-list .faq-item p {
+  color: var(--lp-white-70) !important;
+}
+
+
+/* ── Section h2 visibility on dark page ──────────────────────
+   Section h2.font-bold in lp-theme.css sets explicit weight 600
+   but the color came from theme-light flip. Now needs to be white. */
+.lp2-dark[data-lp-root] section h2.font-bold {
+  color: var(--lp-white);
+}
+
+
+/* ── Eyebrow labels (font-mono uppercase) on dark page ──── */
+.lp2-dark[data-lp-root] section .font-mono.font-bold.uppercase {
+  color: var(--lp-white-60);
+}
+
+
+/* ── Body intro p (section subtitle) — readable on dark ──── */
+.lp2-dark[data-lp-root] section h2 + p,
+.lp2-dark[data-lp-root] section .font-normal.text-base.lg\:text-xl {
+  color: var(--lp-white-70);
+}
+
+
+/* ── Solution card titles: ink → white on dark ──────────── */
+.lp2-dark[data-lp-root] #solution h3 {
+  color: var(--lp-white);
+}
+
+
+/* ── Process / Solution card bg ─────────────────────────────
+   These cards have inline-styled `var(--lp-blue-pale)` backgrounds
+   (pale blue tinted card). On dark page they read fine as light
+   islands, leave as-is. */
+
+
+/* ── FOOTER: dark grey → brand blue island ──────────────────
+   globals.css has `.theme-light footer { background-color: #005BFF
+   !important }` which paints the footer blue in the light theme.
+   Without theme-light on lp2, that rule doesn't fire → footer
+   stays dark grey (#141414). Re-apply the same blue-island paint
+   scoped to .lp2-dark. */
+.lp2-dark footer,
+.lp2-dark footer.bg-\[\#141414\] {
+  background-color: var(--lp-blue) !important;
+}
+.lp2-dark footer .bg-\[\#141414\],
+.lp2-dark footer .bg-\[\#181818\],
+.lp2-dark footer .bg-\[\#1e1e1e\],
+.lp2-dark footer .bg-\[\#242424\] {
+  background-color: var(--lp-blue) !important;
+}

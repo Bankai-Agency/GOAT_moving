@@ -223,9 +223,17 @@ export function TerminalNav() {
     const lineMid = $("[data-burger-line='mid']");
     const lineBot = $("[data-burger-line='bot']");
 
+    /* `lineMid` is intentionally not required — the current burger
+       renders only top + bot spans (X-style 2-line burger). The GSAP
+       `animateBurger`/`killMobile` paths still reference `lineMid!`,
+       but those live in the dead mobile-menu timelines (mobile menu
+       is React-state-driven now), so they never execute. Guarding
+       on `lineMid` here would early-return the entire effect and
+       prevent ALL desktop click bindings (Services/Locations
+       dropdown toggles, outside-click-to-close). */
     if (
       !navList || !dropWrapper || !dropContainer || !backdrop ||
-      !burger || !backBtn || !logo || !lineTop || !lineMid || !lineBot
+      !burger || !backBtn || !logo || !lineTop || !lineBot
     ) return;
 
     type State = {
