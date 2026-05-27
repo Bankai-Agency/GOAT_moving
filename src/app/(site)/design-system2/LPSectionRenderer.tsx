@@ -201,11 +201,11 @@ function PrimitivesShowcase() {
         <div style={{ display: "grid", gap: 12, maxWidth: 380 }}>
           <div>
             <LPLabel surface="light" htmlFor="ds2-name-light">Full name</LPLabel>
-            <LPInput surface="light" id="ds2-name-light" placeholder="Your name" />
+            <LPInput surface="light" id="ds2-name-light" placeholder="Your name" value="" onChange={() => {}} />
           </div>
           <div>
             <LPLabel surface="light" htmlFor="ds2-msg-light">Message</LPLabel>
-            <LPTextarea surface="light" id="ds2-msg-light" rows={3} placeholder="Tell us more" />
+            <LPTextarea surface="light" id="ds2-msg-light" rows={3} placeholder="Tell us more" value="" onChange={() => {}} />
           </div>
         </div>
       </PrimitivesGroup>
@@ -222,11 +222,11 @@ function PrimitivesShowcase() {
         >
           <div>
             <LPLabel surface="glass" htmlFor="ds2-name-glass">Full name</LPLabel>
-            <LPInput surface="glass" id="ds2-name-glass" placeholder="Your name" />
+            <LPInput surface="glass" id="ds2-name-glass" placeholder="Your name" value="" onChange={() => {}} />
           </div>
           <div>
             <LPLabel surface="glass" htmlFor="ds2-msg-glass">Message</LPLabel>
-            <LPTextarea surface="glass" id="ds2-msg-glass" rows={3} placeholder="Tell us more" />
+            <LPTextarea surface="glass" id="ds2-msg-glass" rows={3} placeholder="Tell us more" value="" onChange={() => {}} />
           </div>
         </div>
       </PrimitivesGroup>
