@@ -176,6 +176,19 @@ body:has(.lp2-dark[data-lp-root]) {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35) !important;
   }
 }
+/* CTA-section form override: always dark glass, even on mobile.
+   The mobile-frosted recipe above is for the hero-mobile form
+   which sits BELOW the hero photo on the dark page. The CTA
+   form is overlaid on a dark photo at all viewports, so it
+   stays dark glass uniformly. `#cta` id selector boosts
+   specificity above both rules above. */
+.lp2-dark[data-lp-root] #cta [data-lp-quote-form][data-surface="glass"] {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(30px) !important;
+  -webkit-backdrop-filter: blur(30px) !important;
+  border: 1px solid var(--lp-white-08) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35) !important;
+}
 
 
 /* ── LOGO: white in header ───────────────────────────────────
@@ -214,74 +227,115 @@ body:has(.lp2-dark[data-lp-root]) {
    carries over correctly on the dark page. No override needed. */
 
 
-/* ── STAT CHIP: pale blue → frosted glass ──────────────────
-   On the dark page solid dark chips read as black voids. Make
-   them frosted glass — barely-tinted white surface + blur picks
-   up the body gradient behind, hairline white border gives the
-   edge. Icons stay BLUE (no filter override) — brand-blue glyph
-   on subtle glass reads cleaner than a stark white icon. */
+/* ── STAT CHIP: solid dark plate + static blue spotlight ───
+   Mirror of /lp3 treatment. Same dark material as Solution
+   cards (#1a1a1a) with a softened, STATIC version of the blue
+   radial spotlight via ::before pseudo. `isolation: isolate` +
+   `z-index: -1` keeps the blue glow behind the icon. */
 .lp2-dark[data-lp-root] #about .lp1-stat-chip {
-  background-color: var(--lp-white-08);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-color: var(--lp-white-12);
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.2),
-    0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: #1a1a1a;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-color: var(--lp-white-08);
+  box-shadow: none;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.lp2-dark[data-lp-root] #about .lp1-stat-chip::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(0, 102, 255, 0.35),
+    rgba(0, 102, 255, 0.12) 55%,
+    transparent 95%
+  );
+  filter: blur(20px);
+  pointer-events: none;
+  z-index: -1;
 }
 .lp2-dark[data-lp-root] #about .group\/stat:hover .lp1-stat-chip {
-  background-color: var(--lp-white-12);
-  border-color: var(--lp-white-18);
-  box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.35),
-    0 0 0 1px var(--lp-white-12);
+  background-color: #1f1f1f;
+  border-color: var(--lp-white-12);
+  box-shadow: none;
 }
 
 
-/* ── REVIEW CARD: white → frosted glass ─────────────────────
-   Same glass treatment as stat chips and service-area chips. */
+/* ── SOCIAL PROOF stats — MOBILE override ──────────────────
+   Mirror of /lp3 treatment. `_about.css` paints each stat row
+   as a light card with white inner icon chip on mobile. Repaint
+   to navy plate + transparent inner chip so the icon sits
+   directly on the plate. Icon bumped to 32px, plate padding
+   increased for breathing room. Spotlight ::before killed on
+   mobile so the chip's overflow-hidden box doesn't clip the
+   glow into a visible square. */
+@media (max-width: 991px) {
+  .lp2-dark[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div {
+    background-color: #161b2e !important;
+    padding: 30px 16px !important;
+    gap: 14px !important;
+  }
+  .lp2-dark[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div > div:first-child {
+    background-color: transparent !important;
+    border: 0 !important;
+    width: auto !important;
+    height: auto !important;
+  }
+  .lp2-dark[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div > div:first-child img {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  .lp2-dark[data-lp-root] #about > div.max-w-\[1408px\] > div:nth-child(3) > div > div:first-child::before {
+    display: none !important;
+  }
+}
+
+
+/* ── REVIEW CARD + SOURCE BUBBLE + NAV ARROW: navy plate ──
+   Mirror of /lp3 — solid `#161b2e` (navy-tinted dark) on all
+   three so the review block reads as one consistent surface
+   family. No blur, no border. */
 .lp2-dark[data-lp-root] #reviews .lp1-review-card {
-  background-color: var(--lp-white-08) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-color: var(--lp-white-12) !important;
+  background-color: #161b2e !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0 !important;
+  box-shadow: none !important;
   color: var(--lp-white);
 }
-
-
-/* ── REVIEW SOURCE BUBBLE + NAV ARROW: glass ────────────────
-   Match the card glass aesthetic; bubbles + arrows pick up the
-   tint from the page behind. */
 .lp2-dark[data-lp-root] #reviews .lp1-source-bubble {
-  background-color: var(--lp-white-10);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background-color: #161b2e;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0;
 }
 .lp2-dark[data-lp-root] #reviews .lp1-nav-arrow {
-  background-color: var(--lp-white-10);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--lp-white-12);
+  background-color: #161b2e;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0;
 }
 .lp2-dark[data-lp-root] #reviews .lp1-nav-arrow:hover:not(:disabled) {
-  background-color: var(--lp-white-15);
+  background-color: #1c2238;
 }
 .lp2-dark[data-lp-root] #reviews .lp1-nav-arrow:disabled {
-  background-color: var(--lp-white-08);
+  background-color: #10142a;
 }
 .lp2-dark[data-lp-root] #reviews .lp1-nav-arrow img {
   filter: brightness(0) invert(1);
 }
 
 
-/* ── SERVICE AREA chips: frosted glass ──────────────────────
-   Same glass treatment as the stat chips — barely-tinted white
-   surface + blur picks up body gradient + hairline white border. */
+/* ── SERVICE AREA chips: navy-tinted dark plate ─────────────
+   Mirror of /lp3 — same `#161b2e` tone as Reviews. Solid
+   plate, no blur, no border. */
 .lp2-dark[data-lp-root] #service-area .group.flex.items-center {
-  background-color: var(--lp-white-08) !important;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--lp-white-12) !important;
+  background-color: #161b2e !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 0 !important;
   color: var(--lp-white);
 }
 .lp2-dark[data-lp-root] #service-area .group.flex.items-center h3 {
@@ -345,11 +399,21 @@ body:has(.lp2-dark[data-lp-root]) {
    islands, leave as-is. */
 
 
-/* FOOTER — kept DARK on /lp2.
-   Earlier we re-applied the lp1 blue-island paint here, but that
-   bumps up against the rest of the dark theme. Footer now stays
-   at its JSX `bg-[#141414]` Tailwind class which renders as dark
-   grey (no theme-light flip on lp2, so no recolour). Text inside
-   was already set white by the page-level rules.
-   (lp3 still has its own blue-footer override — change there
-   independently if needed.) */
+/* ── FOOTER: transparent → body gradient shows through ────
+   Same treatment as /lp3 — the body uses
+   `background-attachment: fixed` with the page gradient, and a
+   solid footer bg reads as a hard seam against it. Setting the
+   footer transparent lets the body's fixed gradient continue
+   into the footer region; a subtle linear blue fade layered on
+   top adds a "brand horizon" hint without breaking continuity. */
+.lp2-dark[data-lp-root] footer,
+.lp2-dark[data-lp-root] footer.bg-\[\#141414\] {
+  background-color: transparent !important;
+  background-image:
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(0, 102, 255, 0.06) 50%,
+      rgba(0, 102, 255, 0.12) 100%
+    ) !important;
+}

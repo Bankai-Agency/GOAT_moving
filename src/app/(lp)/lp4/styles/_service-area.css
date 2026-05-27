@@ -1,0 +1,99 @@
+/* LP1 — Service Area section styles. Extracted from lp-theme.css
+   (L1). Two blocks: chip cards + grid template.
+
+   NOTE: the multi-section "white plates on gradient body" rule
+   (#about + #reviews + #service-area together) stayed in
+   lp-theme.css as shared infrastructure. */
+
+
+/* ── SERVICE AREA — clean 4-column chip grid ───────────────────
+   Replaces the original photo-list-with-arrow look with a tidy
+   uniform-cell grid: 4 cols desktop · 2 cols mobile, consistent
+   chip dimensions, subtle bg, pin icon prefix, no hover noise. */
+[data-lp-root] #service-area .group.flex.items-center {
+  background-color: var(--lp-surface) !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  padding: 12px 16px !important;
+  cursor: default !important;
+  /* Disable click / hover — these are passive reference chips, not
+     CTAs; default JSX wires an `open-quote-modal` click handler we
+     want to neutralise on LP. */
+  pointer-events: none !important;
+  position: relative;
+  gap: 8px !important;
+  width: auto !important;
+  max-width: 100%;
+  justify-content: flex-start !important;
+}
+[data-lp-root] #service-area .group.flex.items-center:hover {
+  background-color: var(--lp-surface) !important;
+}
+/* Hide trailing arrow circle (not a navigable card on LP). */
+[data-lp-root] #service-area .group.flex.items-center > .shrink-0,
+[data-lp-root] #service-area .group.flex.items-center img[src*="arrow"] {
+  display: none !important;
+}
+/* City name h3 — compact, ink, weight 500 (less heavy than default
+   semibold text-xl), 16px floor. */
+[data-lp-root] #service-area .group.flex.items-center h3 {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.3px !important;
+  line-height: 1.3 !important;
+}
+/* Location-pin icon BEFORE the neighborhood name. */
+[data-lp-root] #service-area .group.flex.items-center::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFE533'><path d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z'/></svg>");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* Section bottom padding — keep compact. */
+@media (max-width: 991px) {
+  [data-lp-root] #service-area {
+    padding-bottom: 40px !important;
+  }
+}
+
+/* Desktop — bigger chips for better presence next to the 82px h2. */
+@media (min-width: 1024px) {
+  [data-lp-root] #service-area .group.flex.items-center {
+    padding: 18px 22px !important;
+    border-radius: var(--lp-r-md) !important;
+    gap: 12px !important;
+  }
+  [data-lp-root] #service-area .group.flex.items-center h3 {
+    font-size: 18px !important;
+    letter-spacing: -0.4px !important;
+  }
+  [data-lp-root] #service-area .group.flex.items-center::before {
+    width: 20px;
+    height: 20px;
+  }
+  /* Tiny bump in grid gap to match the larger card scale. */
+  [data-lp-root] #service-area .grid {
+    gap: 10px !important;
+  }
+}
+
+
+/* ── Service Area — uniform 4-col grid ──────────────────────────
+   Replaces the default `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`
+   spacing with consistent 4-col desktop / 2-col mobile rows and a
+   tighter 8px gap so the block reads as a clean reference card. */
+[data-lp-root] #service-area .grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+@media (max-width: 991px) {
+  [data-lp-root] #service-area .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

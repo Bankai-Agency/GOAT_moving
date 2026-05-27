@@ -253,8 +253,8 @@ export function LPTerminalNav() {
                  reads as part of the same atmospheric palette. */
               backgroundColor: "#0c0c0c",
               backgroundImage: `
-                radial-gradient(ellipse 80% 60% at 15% 15%, rgba(0, 102, 255, 0.20), transparent 60%),
-                linear-gradient(160deg, #0c0c0c 0%, #0a1530 100%)
+                radial-gradient(ellipse 80% 60% at 15% 15%, rgba(255, 229, 51, 0.20), transparent 60%),
+                linear-gradient(160deg, #0c0c0c 0%, #18140a 100%)
               `,
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
@@ -347,7 +347,7 @@ export function LPTerminalNav() {
                   transition: "background-color .2s ease, border-color .2s ease",
                 }}
               >
-                <PhoneSvg style={{ color: "#0066ff" }} />
+                <PhoneSvg style={{ color: "#FFE533" }} />
                 {PHONE_DISPLAY}
               </a>
               <LPButton
@@ -378,8 +378,13 @@ function PhoneLink() {
       style={{
         width: 44,
         height: 44,
-        backgroundColor: "#ffffff",
-        color: "#0066ff",
+        /* /lp4 brand-yellow pill with dark icon — the /lp3 pattern
+           was white bg + brand-blue icon. White + yellow icon
+           (after perl swap) reads as washed-out, so flip to
+           yellow bg + dark icon to match the rest of the yellow
+           accent system. */
+        backgroundColor: "#FFE533",
+        color: "#0c0c0c",
         border: "0",
         textDecoration: "none",
         transition: "transform .25s ease, background-color .25s ease",

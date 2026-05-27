@@ -54,7 +54,7 @@ export function LPCtaForm({
             {/* Left — heading + tagline (top-aligned) */}
             <div className="flex flex-col gap-4 lg:gap-6 lg:justify-start">
               <div className="flex items-center gap-2.5">
-                <span className="w-2 h-2 rounded-full bg-[#0066ff]" />
+                <span className="w-2 h-2 rounded-full bg-[#FFE533]" />
                 <span
                   style={{
                     fontFamily: "var(--font-mono, ui-monospace, monospace)",
@@ -81,11 +81,9 @@ export function LPCtaForm({
             </div>
 
             {/* Right — shared LPQuoteForm in glass surface. Same
-                treatment as the hero form on /lp2 (mobile = frosted
+                treatment as the hero form on /lp3 (mobile = frosted
                 glass, desktop = dark glass; both painted via the
-                `_lp2-invert.css` glass-form rule). The #cta scoped
-                override below pins this form to dark glass at all
-                viewports — it's always overlaid on a dark photo. */}
+                `_lp2-invert.css` glass-form rule). */}
             <div className="lg:max-w-[520px] lg:ml-auto w-full">
               <LPQuoteForm city={city} surface="glass" />
             </div>
