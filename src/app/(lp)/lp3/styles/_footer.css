@@ -1,0 +1,128 @@
+/* LP1 — Footer / ContactFooter section styles. Extracted from
+   lp-theme.css (L1).
+
+   ContactFooter is rendered as `<footer id="contact">`. Most of
+   the form-related rules apply even though the form itself is
+   hidden on /lp1 (see "Hide the contact-form section" rule). The
+   styles remain so future re-enabling is a one-line change. */
+
+/* ── LP footer — RE-SHOW the contact form section ───────────────
+   mainpage-5/accent.css hides the form on `data-accent="blue"`
+   (used by both mainpage-5 AND LP). LP wants the form back.
+   Override with a more specific selector chaining BOTH attribute
+   markers so mainpage-5's hide rule still wins there. */
+[data-lp-root] #contact > div > div:first-child,
+[data-lp-root] #contact > div > div:nth-child(2) {
+  display: block !important;
+}
+/* Hide the "CONTACTS" eyebrow + its border-bottom divider at the
+   top of the contact form section — user-requested cleanup. */
+[data-lp-root] #contact > div > div:first-child > div.border-b {
+  display: none !important;
+}
+
+/* Wider gap between heading column + form column on desktop so the
+   subtitle paragraph doesn't crowd the inputs. */
+@media (min-width: 1024px) {
+  [data-lp-root] #contact > div > div:first-child > div.flex.flex-col.gap-5.lg\:flex-row {
+    gap: 48px !important;
+  }
+}
+
+/* Step indicator — the default 2 short pills (`h-1.5`) read as a
+   stray dashes / line at the top of the form. Add a visible
+   "STEP 1 OF 2" mono label above and bump pill height so the
+   multi-step nature of the form is obvious. */
+[data-lp-root] #contact form > div.flex.gap-1\.5 {
+  position: relative;
+  padding-top: 24px;
+  margin-top: 4px;
+}
+[data-lp-root] #contact form > div.flex.gap-1\.5::before {
+  content: "Step 1 of 2";
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--lp-white-90);
+}
+[data-lp-root] #contact form > div.flex.gap-1\.5 > span {
+  height: 6px !important;
+}
+[data-lp-root] #contact form > div.flex.gap-1\.5 > span.w-8 {
+  width: 40px !important;
+}
+[data-lp-root] #contact form > div.flex.gap-1\.5 > span.w-2 {
+  width: 12px !important;
+}
+/* INPUTS — solid white card on the blue island. */
+[data-lp-root] #contact form input,
+[data-lp-root] #contact form textarea {
+  background-color: var(--lp-white) !important;
+  color: var(--lp-ink) !important;
+  border: 0 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+  border-radius: var(--lp-r-md) !important;
+  height: 56px !important;
+  font-size: 16px !important;
+  padding: 0 18px !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.3px !important;
+}
+[data-lp-root] #contact form textarea {
+  height: auto !important;
+  min-height: 140px !important;
+  padding: 16px 18px !important;
+  line-height: 1.5 !important;
+}
+[data-lp-root] #contact form input::placeholder,
+[data-lp-root] #contact form textarea::placeholder {
+  color: var(--lp-ink-45) !important;
+  opacity: 1 !important;
+}
+[data-lp-root] #contact form input:focus,
+[data-lp-root] #contact form textarea:focus {
+  background-color: var(--lp-white) !important;
+  box-shadow: 0 0 0 2px var(--lp-white-55) !important;
+}
+/* Hide the contact-form section inside ContactFooter — its content
+   moved to a dedicated `LPCtaForm` block above the footer. The
+   footer keeps only nav links / contact info / bottom bar. */
+[data-lp-root] #contact > div > div:first-child {
+  display: none !important;
+}
+/* Also remove the first divider (separated the form from the rest)
+   since the form is no longer there. */
+[data-lp-root] #contact > div > div.h-px:first-of-type {
+  display: none !important;
+}
+/* Footer form labels — match the hero form's input labels:
+   sans 500, 18px, -1px tracking, sentence-case. Color stays
+   white-ish so it reads on the dark/blue island bg. */
+[data-lp-root] #contact form label {
+  color: var(--lp-white-85) !important;
+  font-family: var(--font-sans, system-ui, sans-serif) !important;
+  font-weight: 500 !important;
+  font-size: 18px !important;
+  letter-spacing: -1px !important;
+  text-transform: none !important;
+  line-height: 1.2 !important;
+}
+[data-lp-root] #contact form .text-red-400 {
+  color: #ffb4b4 !important;
+  font-size: 14px !important;
+}
+
+/* Optional info row (Additional Information textarea label) — keep
+   white at 85% same as other labels (overrides accent.css's
+   white/40). */
+[data-lp-root] #contact form .text-white\/40 {
+  color: var(--lp-white-85) !important;
+}
