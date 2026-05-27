@@ -171,27 +171,36 @@ export function LPSolution({
     let currentTx = 0;
     let raf = 0;
 
-    /* Pin range = maxTx × SCROLL_RATIO. The ratio controls how
-       much vertical scroll is needed to translate the cards by
-       1px horizontally:
-         • ratio = 1.0 — 1:1 (cards move with scroll, can feel
-           snappy on a long card track)
-         • ratio > 1   — cards move SLOWER than scroll (more
-           comfortable, longer section)
-       Section height is sized DYNAMICALLY (stickyHeight + pin
-       range), so trailing empty space below the last card is
-       always 0 — the sticky child releases the moment the cards
-       finish their horizontal travel. Previously the section
-       used a hardcoded `h-[240vh]` which didn't adapt to the
-       actual viewport-dependent maxTx — wider phones had a long
-       empty trailing scroll, narrower phones clipped cards
-       before they finished. */
+    /* JS-controlled pin instead of CSS `position: sticky`. The
+       sticky approach inherently leaves a `stickyHeight`-tall
+       exit phase where the sticky child slides up out of viewport
+       — visible as an empty section bg after the cards finish.
+       Switching to manual position: fixed lets the section be
+       sized EXACTLY to the scroll budget needed (pinRange) with
+       no trailing empty area: the moment cards finish scrubbing,
+       the section ends and the next section starts.
+
+       Section height = pinRange (NOT stickyHeight + pinRange).
+       The sticky child is positioned via JS:
+         • before section: position relative (in natural flow at
+           section top)
+         • during pin:    position fixed at viewport top
+         • after section: position absolute at section bottom
+           (immediately above viewport, out of sight)
+
+       Pin range = maxTx × SCROLL_RATIO. Ratio > 1 → cards move
+       slower than scroll (more comfortable). */
     const stickyEl = el.firstElementChild as HTMLElement | null;
+    if (!stickyEl) return;
     const SCROLL_RATIO_MOBILE = 1.5;
     const SCROLL_RATIO_DESKTOP = 1.2;
 
+    let cachedPinRange = 0;
+    let cachedStickyHeight = 0;
+
     const compute = () => {
-      const stickyHeight = stickyEl?.offsetHeight ?? window.innerHeight;
+      const stickyHeight = stickyEl.offsetHeight;
+      cachedStickyHeight = stickyHeight;
       const containerWidth = Math.min(1408, window.innerWidth);
       /* On mobile the container is full-bleed (no centring inset)
          so trackLeft collapses to the left padding only. */
@@ -205,38 +214,51 @@ export function LPSolution({
         trackLeft + track.scrollWidth - window.innerWidth + cardGap,
       );
 
-      /* Size the section to exactly contain the sticky child +
-         the pin range needed for cards to scrub from 0 to maxTx
-         at the desired ratio. */
       const ratio =
         window.innerWidth >= 1024 ? SCROLL_RATIO_DESKTOP : SCROLL_RATIO_MOBILE;
       const pinRange = maxTx * ratio;
-      const desiredHeight = stickyHeight + pinRange;
+      cachedPinRange = pinRange;
+      const desiredHeight = pinRange;
       if (Math.abs(el.offsetHeight - desiredHeight) > 1) {
         el.style.height = `${desiredHeight}px`;
       }
-      /* Pull the NEXT section up by `stickyHeight` via negative
-         margin-bottom — the sticky-pin pattern inherently has a
-         `stickyHeight`-tall exit phase where the sticky child
-         slides up out of viewport, leaving an empty section bg
-         behind it (the user's "after the cards, 10-15 scrolls
-         of empty" complaint). Overlapping the next section onto
-         that area kills the empty perception: by default sibling
-         DOM order makes the next section paint above the exiting
-         sticky child, so the user sees the next section appear
-         right when the cards finish scrubbing. The section still
-         occupies its full scroll length in document flow — only
-         the visual margin collapses. */
-      if (Math.abs(parseFloat(el.style.marginBottom || "0") + stickyHeight) > 1) {
-        el.style.marginBottom = `${-stickyHeight}px`;
-      }
 
       const rect = el.getBoundingClientRect();
-      const total = el.offsetHeight - stickyHeight;
-      const scrolled = Math.max(0, Math.min(total, -rect.top));
-      const progress = total > 0 ? scrolled / total : 0;
+      const scrolled = Math.max(0, Math.min(pinRange, -rect.top));
+      const progress = pinRange > 0 ? scrolled / pinRange : 0;
       targetTx = progress * maxTx;
+
+      /* Pin state: position the sticky child based on where the
+         section is relative to the viewport. Match section's
+         left/right so the sticky child stretches full-width when
+         fixed. */
+      const rectLeft = rect.left;
+      const rectWidth = rect.width;
+      if (rect.top >= 0) {
+        // Before pin
+        stickyEl.style.position = "absolute";
+        stickyEl.style.top = "0";
+        stickyEl.style.left = "0";
+        stickyEl.style.width = "100%";
+      } else if (-rect.top < pinRange) {
+        // During pin — fixed at viewport top
+        stickyEl.style.position = "fixed";
+        stickyEl.style.top = "0";
+        stickyEl.style.left = `${rectLeft}px`;
+        stickyEl.style.width = `${rectWidth}px`;
+      } else {
+        // After pin — anchored to section bottom (above viewport)
+        stickyEl.style.position = "absolute";
+        stickyEl.style.top = "auto";
+        stickyEl.style.bottom = "0";
+        stickyEl.style.left = "0";
+        stickyEl.style.width = "100%";
+      }
     };
+    /* Suppress unused-var warnings for the cached values
+       (reserved for potential future use, e.g. resize debouncing). */
+    void cachedPinRange;
+    void cachedStickyHeight;
 
     const tick = () => {
       /* LERP: easing factor controls smoothness (lower = smoother /
@@ -287,11 +309,15 @@ export function LPSolution({
           CityLandingPage so the gradient flows continuously from
           Our Solution into Social Proof. No section-local backdrop
           needed here. */}
-      {/* Sticky child fills the viewport on every breakpoint —
-          guarantees nothing peeks under it during the pin phase.
-          The scrub-during-exit strategy on mobile (see compute())
-          handles the seamless hand-off to AboutSection. */}
-      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden">
+      {/* Pin child fills the viewport (h-screen) during the pin
+          phase. Position is controlled by useEffect — fixed during
+          pin, absolute before/after. The CSS `sticky` class is
+          deliberately NOT used: sticky inherently leaves a 100vh
+          exit phase where the child slides up out of viewport
+          (visible as empty section bg), which the user explicitly
+          flagged as a bug. JS-driven fixed-positioning ends the
+          pin sharply and the next section appears immediately. */}
+      <div className="h-screen flex flex-col justify-center overflow-hidden">
         {/* Header — content centered vertically in viewport via
             `justify-center` on the sticky flex-col. No extra mt:
             the center alignment handles the offset from sticky top
