@@ -171,26 +171,27 @@ export function LPSolution({
     let currentTx = 0;
     let raf = 0;
 
-    /* Cards scrub ONLY during the pin phase on every breakpoint —
-       so by the time the sticky releases, every card has been
-       fully visible at the centre of the viewport. The post-pin
-       "exit" phase (sticky_child sliding up out of viewport) is
-       the tradeoff: ~100vh of scroll where the cards are at
-       maxTx but the section is still on screen. There's no way
-       around this with the current card width (≈ 85vw on mobile
-       × 4 cards = ~140vh of scrub needed for a 1:1 ratio); making
-       the scrub continue into the exit phase causes cards 3 & 4
-       to finish their horizontal travel while they're already
-       partially off-screen vertically — which is exactly the
-       "last cards I never see" complaint we just fixed. */
+    /* Pin range = maxTx × SCROLL_RATIO. The ratio controls how
+       much vertical scroll is needed to translate the cards by
+       1px horizontally:
+         • ratio = 1.0 — 1:1 (cards move with scroll, can feel
+           snappy on a long card track)
+         • ratio > 1   — cards move SLOWER than scroll (more
+           comfortable, longer section)
+       Section height is sized DYNAMICALLY (stickyHeight + pin
+       range), so trailing empty space below the last card is
+       always 0 — the sticky child releases the moment the cards
+       finish their horizontal travel. Previously the section
+       used a hardcoded `h-[240vh]` which didn't adapt to the
+       actual viewport-dependent maxTx — wider phones had a long
+       empty trailing scroll, narrower phones clipped cards
+       before they finished. */
     const stickyEl = el.firstElementChild as HTMLElement | null;
+    const SCROLL_RATIO_MOBILE = 1.5;
+    const SCROLL_RATIO_DESKTOP = 1.2;
 
     const compute = () => {
-      const rect = el.getBoundingClientRect();
       const stickyHeight = stickyEl?.offsetHeight ?? window.innerHeight;
-      const total = el.offsetHeight - stickyHeight;
-      const scrolled = Math.max(0, Math.min(total, -rect.top));
-      const progress = total > 0 ? scrolled / total : 0;
       const containerWidth = Math.min(1408, window.innerWidth);
       /* On mobile the container is full-bleed (no centring inset)
          so trackLeft collapses to the left padding only. */
@@ -203,6 +204,22 @@ export function LPSolution({
         0,
         trackLeft + track.scrollWidth - window.innerWidth + cardGap,
       );
+
+      /* Size the section to exactly contain the sticky child +
+         the pin range needed for cards to scrub from 0 to maxTx
+         at the desired ratio. */
+      const ratio =
+        window.innerWidth >= 1024 ? SCROLL_RATIO_DESKTOP : SCROLL_RATIO_MOBILE;
+      const pinRange = maxTx * ratio;
+      const desiredHeight = stickyHeight + pinRange;
+      if (Math.abs(el.offsetHeight - desiredHeight) > 1) {
+        el.style.height = `${desiredHeight}px`;
+      }
+
+      const rect = el.getBoundingClientRect();
+      const total = el.offsetHeight - stickyHeight;
+      const scrolled = Math.max(0, Math.min(total, -rect.top));
+      const progress = total > 0 ? scrolled / total : 0;
       targetTx = progress * maxTx;
     };
 
@@ -242,19 +259,13 @@ export function LPSolution({
          horizontal translate has room to play out. Sticky child below
          pins for the whole envelope. */
       style={{ position: "relative" }}
-      /* Section height = sticky.h + pin_range. Pin range needs
-         to cover maxTx for a 1:1 scrub:
-           • Mobile: maxTx ≈ 140vh on a 400px phone → section
-             needs ≈ 240vh (100vh sticky + 140vh pin).
-           • Desktop: maxTx much smaller (cards capped at 480px),
-             so 220vh is plenty.
-         Don't reduce mobile below ~230vh — cards will be moving
-         faster than scroll and feel like a teleport. The post-pin
-         "exit" of the sticky child (~100vh) is the unavoidable
-         tradeoff with this card width: either we keep it (and
-         every card is fully visible during scrub) or we shrink
-         cards / change layout. */
-      className="pt-[60px] lg:pt-[100px] pb-[60px] lg:pb-[80px] h-[240vh] lg:h-[220vh]"
+      /* Section height is set DYNAMICALLY in the useEffect above
+         (`el.style.height = stickyHeight + maxTx × ratio`). No
+         hardcoded `h-[…vh]` here — it would override the JS
+         sizing and reintroduce the trailing-empty-space /
+         scroll-too-fast bugs the dynamic sizing was added to
+         fix. Padding stays static. */
+      className="pt-[60px] lg:pt-[100px] pb-[60px] lg:pb-[80px]"
     >
       {/* Animated blob backdrop is rendered by the BlueBlobBackdrop
           wrapper around this section + AboutSection in
