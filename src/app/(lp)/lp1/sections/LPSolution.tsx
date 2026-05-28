@@ -174,6 +174,7 @@ export function LPSolution({
 }: Props) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
 
   /* Pin+scroll-jack mechanic — DESKTOP ONLY (≥1024px). On mobile
      we render a separate horizontal-scroll container (native
@@ -205,7 +206,11 @@ export function LPSolution({
        to finish their horizontal travel while they're already
        partially off-screen vertically — which is exactly the
        "last cards I never see" complaint we just fixed. */
-    const stickyEl = el.firstElementChild as HTMLElement | null;
+    /* Reference the DESKTOP sticky-child explicitly via ref (was:
+       `el.firstElementChild`, which now points at the mobile-only
+       branch — display:none on desktop → offsetHeight = 0 → pin
+       math off → cards under-scrub while page scrolls past). */
+    const stickyEl = pinRef.current;
 
     const compute = () => {
       const rect = el.getBoundingClientRect();
@@ -347,7 +352,10 @@ export function LPSolution({
           translate. Section's lg:h-[220vh] gives the scroll
           budget; the sticky child below stays pinned for the
           whole envelope. */}
-      <div className="hidden lg:flex lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:justify-center lg:overflow-hidden">
+      <div
+        ref={pinRef}
+        className="hidden lg:flex lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:justify-center lg:overflow-hidden"
+      >
         {header}
 
         <div className="mt-8 lg:mt-12 w-full">
