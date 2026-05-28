@@ -14,3 +14,23 @@
 .theme-light[data-lp-root] #solution h3 {
   font-weight: 600 !important;
 }
+
+
+/* ── Solution cards: dark → pale-blue on light page ─────────
+   LPSolutionCard JSX hardcodes `backgroundColor: #1a1a1a` +
+   white text + white-06 border (designed for dark pages /
+   dark variants). On /lp1's white section this reads as
+   sudden dark islands; flip to pale-blue (matches LPProcess
+   cards on /lp1) + ink text + ink-tinted hairline border.
+   Target via the card's `min-h-[320px]` class which is unique
+   to LPSolutionCard within #solution. */
+.theme-light[data-lp-root] #solution .min-h-\[320px\] {
+  background-color: var(--lp-blue-pale) !important;
+  border-color: rgba(0, 31, 77, 0.08) !important;
+}
+.theme-light[data-lp-root] #solution .min-h-\[320px\] h3 {
+  color: var(--lp-ink) !important;
+}
+.theme-light[data-lp-root] #solution .min-h-\[320px\] p {
+  color: var(--lp-ink-65) !important;
+}
