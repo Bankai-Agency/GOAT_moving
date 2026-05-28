@@ -43,10 +43,19 @@ function LPProcessCard({ step, index }: { step: LPProcessStep; index: number }) 
   const cardRef = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState({ x: 0, y: 0 });
 
-  /* Always-on auto-animation. Trace an ellipse inside the card.
-     `phase` offset (per index) desynchronises the four cards so the
-     effect doesn't look like a single global pulse. */
+  /* Auto-animation on desktop only — orbit ellipse inside card,
+     `phase` offset per index desyncs the four cards. On mobile
+     (<1024px) the spotlight is static at card centre — the orbit
+     loop × 4 cards × setState at 60fps was a measurable lag
+     source on phones. */
   useEffect(() => {
+    if (typeof window !== "undefined" &&
+        window.matchMedia("(max-width: 1023px)").matches) {
+      const el = cardRef.current;
+      if (el) setPos({ x: el.offsetWidth / 2, y: el.offsetHeight / 2 });
+      return;
+    }
+
     let raf = 0;
     const phase = (index * Math.PI * 2) / 4; // 0, 90°, 180°, 270°
     const PERIOD = 6000; // ms — one full ellipse traversal

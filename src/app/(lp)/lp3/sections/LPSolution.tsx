@@ -25,6 +25,18 @@ function LPSolutionCard({
   const [pos, setPos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
+    /* Mobile (<1024px): static spotlight at card centre, no RAF.
+       The orbit animation × 4 cards × setState was the source of
+       Solution-section lag on phones. Desktop keeps the original
+       cosine-driven orbit since it has the CPU budget and the
+       motion reads as intentional polish there. */
+    if (typeof window !== "undefined" &&
+        window.matchMedia("(max-width: 1023px)").matches) {
+      const el = cardRef.current;
+      if (el) setPos({ x: el.offsetWidth / 2, y: el.offsetHeight / 2 });
+      return;
+    }
+
     let raf = 0;
     /* Per-index phase offset — 4 cards get 0, 90°, 180°, 270° so
        they don't all pulse in sync. Pattern matches LPProcessCard. */

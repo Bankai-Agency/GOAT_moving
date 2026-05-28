@@ -400,6 +400,16 @@
 .theme-light[data-lp-root] #solution .lp-process-icon-pulse {
   animation: lpProcessIconPulse 2.4s ease-in-out infinite;
 }
+/* Disable the icon-chip pulse on mobile — the keyframe is cheap
+   in isolation but visually noisy when paired with the static
+   spotlight, and on mid-range phones any always-running animation
+   in a scroll-heavy section contributes to lag. */
+@media (max-width: 1023px) {
+  .theme-light[data-lp-root] #process .lp-process-icon-pulse,
+  .theme-light[data-lp-root] #solution .lp-process-icon-pulse {
+    animation: none;
+  }
+}
 
 
 

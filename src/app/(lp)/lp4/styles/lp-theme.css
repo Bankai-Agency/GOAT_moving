@@ -400,6 +400,13 @@
 [data-lp-root] #solution .lp-process-icon-pulse {
   animation: lpProcessIconPulse 2.4s ease-in-out infinite;
 }
+/* Disable the icon-chip pulse on mobile (perf). */
+@media (max-width: 1023px) {
+  [data-lp-root] #process .lp-process-icon-pulse,
+  [data-lp-root] #solution .lp-process-icon-pulse {
+    animation: none;
+  }
+}
 
 
 
