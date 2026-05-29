@@ -1,15 +1,32 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CityLandingPage } from "../../_shared/CityLandingPage";
-import { cityLPs } from "../../_shared/config/cityConfigs";
-/* Adopt the mainpage-5 visual system on LPs: white bg + #0066ff
-   accent + ink (#001f4d) typography. `theme-light` (in globals.css)
-   flips the original dark surfaces and yellow accents; mainpage-5's
-   accent.css bumps the blue from #005BFF → #0066ff; lp-theme.css
-   covers LP-specific gaps (hero "dark island", ink colour). */
-import "../../_shared/styles/accent.css";
-import "../../_shared/styles/mega-nav.css";
-import "../../_shared/styles/lp-theme.css";
+import { CityLandingPage } from "../../lp4/CityLandingPage";
+import { cityLPs, findCityBySlug } from "../../lp4/config/cities";
+
+/* Production city LPs now render the lp4 design system (dark theme,
+   yellow accent). Slugs are the short city form (`/lp/portland`,
+   `/lp/vancouver-wa`). Style stack + wrapper mirror `/lp4/page.tsx`:
+   - `.theme-light[data-lp-root]` selectors were sed-replaced to
+     `[data-lp-root]` in lp4's CSS, so LP rules fire WITHOUT theme-light.
+   - No `data-accent` on the wrapper — accent.css's
+     `body:has([data-accent="blue"])` cascade would flip native yellow
+     Tailwind classes to blue; omitting it lets the yellow render. */
+import "../../lp4/styles/_tokens.css";
+import "../../lp4/styles/accent.css";
+import "../../lp4/styles/mega-nav.css";
+import "../../lp4/styles/lp-theme.css";
+import "../../lp4/styles/_hero.css";
+import "../../lp4/styles/_services.css";
+import "../../lp4/styles/_solution.css";
+import "../../lp4/styles/_service-area.css";
+import "../../lp4/styles/_faq.css";
+import "../../lp4/styles/_cta.css";
+import "../../lp4/styles/_about.css";
+import "../../lp4/styles/_process.css";
+import "../../lp4/styles/_reviews.css";
+import "../../lp4/styles/_footer.css";
+import "../../lp4/styles/_dark-zone.css";
+import "../../lp4/styles/_lp2-invert.css";
 
 type Params = { slug: string };
 
@@ -24,7 +41,7 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const config = cityLPs.find((c) => c.slug === slug);
+  const config = findCityBySlug(slug);
   if (!config) return {};
   return {
     title: config.metaTitle,
@@ -39,14 +56,10 @@ export default async function CityLPPage({
   params: Promise<Params>;
 }) {
   const { slug } = await params;
-  const config = cityLPs.find((c) => c.slug === slug);
+  const config = findCityBySlug(slug);
   if (!config) notFound();
   return (
-    <div
-      data-accent="blue"
-      data-lp-root=""
-      className="theme-light bg-[#ffffff] min-h-screen"
-    >
+    <div data-lp-root="" className="lp2-dark bg-[#0c0c0c] min-h-screen">
       <CityLandingPage config={config} />
     </div>
   );
