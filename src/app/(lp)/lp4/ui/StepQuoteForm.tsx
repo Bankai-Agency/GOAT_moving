@@ -148,7 +148,9 @@ export function StepQuoteForm({
     setErrors({});
     setStep(1);
     setSubmitting(false);
-    router.push("/thank-you");
+    /* Pass the current LP path so /thank-you's "Back" button can return
+       the user to THIS landing (referrer is unreliable after a soft push). */
+    router.push(`/thank-you?from=${encodeURIComponent(window.location.pathname)}`);
   };
 
   return (

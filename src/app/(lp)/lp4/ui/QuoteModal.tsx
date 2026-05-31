@@ -142,7 +142,9 @@ export function QuoteModal() {
     setStep(1);
     setErrors({});
     setSubmitting(false);
-    router.push("/thank-you");
+    /* Pass the current LP path so /thank-you's "Back" button can return
+       the user to THIS landing (referrer is unreliable after a soft push). */
+    router.push(`/thank-you?from=${encodeURIComponent(window.location.pathname)}`);
   };
 
   if (!isOpen) return null;
