@@ -3,7 +3,10 @@ import { Geist } from "next/font/google";
 import { Roboto_Mono } from "next/font/google";
 import { NavProgress } from "@/components/NavProgress";
 import { ScrollReset } from "@/components/ScrollReset";
-import { Analytics } from "@/components/Analytics";
+import {
+  GoogleTagManager,
+  GoogleTagManagerNoScript,
+} from "@/components/GoogleTagManager";
 import { ShutterTransition } from "@/components/ShutterTransition";
 import "./globals.css";
 
@@ -61,11 +64,15 @@ export default function RootLayout({
       className={`${geist.variable} ${robotoMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">
+        {/* GTM noscript fallback — must be the first element in <body>. */}
+        <GoogleTagManagerNoScript />
         <ScrollReset />
         <NavProgress />
         <ShutterTransition />
         {children}
-        <Analytics />
+        {/* GTM loader. GA4 + Google Ads conversions are configured inside
+            the container, so there is no separate gtag loader. */}
+        <GoogleTagManager />
       </body>
     </html>
   );
