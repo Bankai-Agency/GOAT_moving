@@ -42,9 +42,12 @@ function ModalInput({
   const formatValue = format ?? (isPhone ? formatUsPhone : undefined);
   return (
     <div className="flex-1 flex flex-col gap-2">
-      <label className="lp-label lp-label--light" htmlFor={name ? `modal-${name}` : undefined}>
+      <label
+        className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40"
+        htmlFor={name ? `modal-${name}` : undefined}
+      >
         {label}
-        {required && <span className="lp-label__required"> *</span>}
+        {required && <span className="text-[#FFE533]"> *</span>}
       </label>
       <input
         id={name ? `modal-${name}` : undefined}
@@ -57,7 +60,7 @@ function ModalInput({
         onChange={(e) => onChange(formatValue ? formatValue(e.target.value) : e.target.value)}
         required={required}
         pattern={isEmail ? EMAIL_PATTERN : undefined}
-        className="lp-input lp-input--light invalid:[&:not(:placeholder-shown)]:ring-1 invalid:[&:not(:placeholder-shown)]:ring-[#FF6B6B]"
+        className="w-full backdrop-blur-[20px] bg-white/10 rounded-[10px] h-[56px] px-4 font-sans font-normal text-base lg:text-lg leading-[1.5] lg:leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.36px] text-white placeholder:text-white/60 outline-none focus:bg-white/15 transition-all duration-200 invalid:[&:not(:placeholder-shown)]:ring-1 invalid:[&:not(:placeholder-shown)]:ring-[#FF6B6B]"
       />
     </div>
   );
@@ -176,13 +179,10 @@ export function QuoteModal() {
     <div className="fixed inset-0 z-[200] flex items-center justify-center animate-fade-in">
       <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={handleClose} />
 
-      {/* Modal bg pinned to pure white via `bg-white` (theme-light
-          doesn't touch it). Previously used `bg-[#141414]` which the
-          theme-light flip mapped to #f5f6f8 — the EXACT colour of
-          `.lp-input--light`, so inputs were invisible against the
-          modal surface. White modal + #f5f6f8 inputs gives clear
-          contrast on the LP. */}
-      <div className="relative z-10 w-full max-w-[440px] lg:max-w-[760px] mx-4 bg-white rounded-2xl border border-black/10 overflow-hidden max-h-[90vh] overflow-y-auto">
+      {/* Dark modal surface matching the corporate site modal: #141414
+          card + glass inputs + white text. lp4 no longer uses the
+          theme-light flip, so the dark bg renders as-authored. */}
+      <div className="relative z-10 w-full max-w-[440px] lg:max-w-[760px] mx-4 bg-[#141414] rounded-2xl border border-white/10 overflow-hidden max-h-[90vh] overflow-y-auto">
         {/* Close button — top-right corner */}
         <button
           onClick={handleClose}
@@ -303,19 +303,19 @@ export function QuoteModal() {
                   placeholder="Choose date"
                   value={formData.moveDate}
                   onChange={(val) => setFormData({ ...formData, moveDate: val })}
-                  surface="light"
+                  surface="glass"
                 />
 
                 {/* Optional message */}
                 <div className="flex flex-col gap-2">
-                  <label className="lp-label lp-label--light">
+                  <label className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
                     Additional Information (Optional)
                   </label>
                   <textarea
                     placeholder="Any special requests or details..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="lp-textarea lp-input--light"
+                    className="w-full backdrop-blur-[20px] bg-white/10 rounded-[10px] p-4 h-[120px] font-sans font-normal text-base lg:text-lg leading-[1.5] lg:leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.36px] text-white placeholder:text-white/60 outline-none focus:bg-white/15 transition-all duration-200 resize-none"
                   />
                 </div>
 
