@@ -11,9 +11,6 @@ import { MOVE_SIZES } from "./QuoteForm";
 import type { QuoteFormValues } from "./QuoteForm";
 import { pushLeadEvent } from "./leadEvent";
 
-/** Keep only the 5 ZIP digits as the user types. */
-const formatZip = (v: string) => v.replace(/\D/g, "").slice(0, 5);
-
 /* ════════════════════════════════════════════════════════════════
    StepQuoteForm — 2-step quote form (contact → move details).
    Uses canonical LP primitives (LPInput / LPButton). The `surface`
@@ -28,9 +25,7 @@ const empty: QuoteFormValues = {
   email: "",
   phone: "",
   movingFrom: "",
-  fromZip: "",
   movingTo: "",
-  toZip: "",
   moveDate: "",
   moveSize: "",
   message: "",
@@ -228,40 +223,18 @@ export function StepQuoteForm({
             <LPInput
               name="movingFrom"
               label="Moving from"
-              placeholder="Address"
+              placeholder="ZIP or address"
               value={values.movingFrom}
               onChange={(v) => set("movingFrom", v)}
               surface={surface}
             />
             <LPInput
-              name="fromZip"
-              label="From ZIP"
-              inputMode="numeric"
-              placeholder="ZIP code"
-              value={values.fromZip}
-              onChange={(v) => set("fromZip", v)}
-              surface={surface}
-              format={formatZip}
-            />
-          </div>
-          <div className="flex flex-col sm:flex-row gap-5">
-            <LPInput
               name="movingTo"
               label="Moving to"
-              placeholder="Address"
+              placeholder="ZIP or address"
               value={values.movingTo}
               onChange={(v) => set("movingTo", v)}
               surface={surface}
-            />
-            <LPInput
-              name="toZip"
-              label="To ZIP"
-              inputMode="numeric"
-              placeholder="ZIP code"
-              value={values.toZip}
-              onChange={(v) => set("toZip", v)}
-              surface={surface}
-              format={formatZip}
             />
           </div>
           <DatePicker

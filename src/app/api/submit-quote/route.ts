@@ -9,9 +9,7 @@ type QuoteBody = {
   email: string;
   phone: string;
   movingFrom: string;
-  fromZip: string;
   movingTo: string;
-  toZip: string;
   moveDate: string;
   moveSize: string;
   message: string;
@@ -35,8 +33,8 @@ async function sendToCrm(b: QuoteBody) {
       company_name: "source-website",
       thoroughfare_from: b.movingFrom,
       thoroughfare_to: b.movingTo,
-      moving_from_zip: b.fromZip || "",
-      moving_to_zip: b.toZip || "",
+      moving_from_zip: "",
+      moving_to_zip: "",
       field_date: crmDate,
       field_move_service_type: b.moveSize,
       field_additional_comments: b.message,
@@ -72,9 +70,7 @@ export async function POST(request: Request) {
     email: body.email ?? "",
     phone: body.phone ?? "",
     movingFrom: body.movingFrom ?? "",
-    fromZip: body.fromZip ?? "",
     movingTo: body.movingTo ?? "",
-    toZip: body.toZip ?? "",
     moveDate: body.moveDate ?? "",
     moveSize: body.moveSize ?? "",
     message: body.message ?? "",

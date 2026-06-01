@@ -8,9 +8,6 @@ import { formatUsPhone } from "./FormInput";
 import { LPButton } from "./LPButton";
 import { pushLeadEvent } from "./leadEvent";
 
-/** Keep only the 5 ZIP digits as the user types. */
-const formatZip = (v: string) => v.replace(/\D/g, "").slice(0, 5);
-
 const EMAIL_PATTERN = "[^@\\s]+@[^@\\s]+\\.[^@\\s]+";
 
 function ModalInput({
@@ -71,9 +68,7 @@ type ModalFormData = {
   email: string;
   phone: string;
   movingFrom: string;
-  fromZip: string;
   movingTo: string;
-  toZip: string;
   moveDate: string;
   message: string;
 };
@@ -83,9 +78,7 @@ const emptyForm: ModalFormData = {
   email: "",
   phone: "",
   movingFrom: "",
-  fromZip: "",
   movingTo: "",
-  toZip: "",
   moveDate: "",
   message: "",
 };
@@ -264,38 +257,18 @@ export function QuoteModal() {
                   <ModalInput
                     name="movingFrom"
                     label="Moving from"
-                    placeholder="Address"
+                    placeholder="ZIP or address"
                     value={formData.movingFrom}
                     onChange={(val) => setFormData({ ...formData, movingFrom: val })}
                     required
                   />
                   <ModalInput
-                    name="fromZip"
-                    label="From ZIP"
-                    placeholder="ZIP code"
-                    inputMode="numeric"
-                    format={formatZip}
-                    value={formData.fromZip}
-                    onChange={(val) => setFormData({ ...formData, fromZip: val })}
-                  />
-                </div>
-                <div className="flex flex-col lg:flex-row gap-5">
-                  <ModalInput
                     name="movingTo"
                     label="Moving to"
-                    placeholder="Address"
+                    placeholder="ZIP or address"
                     value={formData.movingTo}
                     onChange={(val) => setFormData({ ...formData, movingTo: val })}
                     required
-                  />
-                  <ModalInput
-                    name="toZip"
-                    label="To ZIP"
-                    placeholder="ZIP code"
-                    inputMode="numeric"
-                    format={formatZip}
-                    value={formData.toZip}
-                    onChange={(val) => setFormData({ ...formData, toZip: val })}
                   />
                 </div>
                 <DatePicker

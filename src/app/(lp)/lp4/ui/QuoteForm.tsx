@@ -36,9 +36,7 @@ export type QuoteFormValues = {
   email: string;
   phone: string;
   movingFrom: string;
-  fromZip: string;
   movingTo: string;
-  toZip: string;
   moveDate: string;
   moveSize: string;
   message: string;
@@ -49,9 +47,7 @@ const empty: QuoteFormValues = {
   email: "",
   phone: "",
   movingFrom: "",
-  fromZip: "",
   movingTo: "",
-  toZip: "",
   moveDate: "",
   moveSize: "",
   message: "",
