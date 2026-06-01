@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useId, type CSSProperties } from "react";
 
 /* ════════════════════════════════════════════════════════════════
    LPInput / LPLabel / LPTextarea — canonical form primitives.
@@ -71,7 +71,11 @@ export function LPInput({
   className = "",
   style,
 }: InputProps) {
-  const inputId = id ?? `lp-input-${name ?? Math.random().toString(36).slice(2, 8)}`;
+  /* Stable id: prefer an explicit id, then a name-derived id, then a
+     SSR-stable React id. Never Math.random() — random ids change on
+     every render, which made analytics capture garbage field params. */
+  const reactId = useId();
+  const inputId = id ?? (name ? `lp-input-${name}` : reactId);
   return (
     <div className={`flex flex-col gap-2 flex-1 min-w-0 ${className}`} style={style}>
       {label && (
@@ -146,13 +150,14 @@ export function LPTextarea({
   );
 }
 
-/* US phone number formatter — re-exported here so callers don't
-   need to know about the legacy FormInput module. */
+/* Canonical US phone formatter — "+1 (XXX) XXX-XXXX". Single source of
+   truth for BOTH forms: FormInput re-exports this, so the embedded and
+   popup forms always produce identically-formatted phone numbers. */
 export function formatUsPhone(input: string): string {
-  const digits = input.replace(/\D/g, "").slice(0, 10);
+  // Strip a leading "1" country code before counting the 10 digits.
+  const digits = input.replace(/\D/g, "").replace(/^1/, "").slice(0, 10);
   if (digits.length === 0) return "";
-  if (digits.length <= 3) return `(${digits}`;
-  if (digits.length <= 6)
-    return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  if (digits.length <= 3) return `+1 (${digits}`;
+  if (digits.length <= 6) return `+1 (${digits.slice(0, 3)}) ${digits.slice(3)}`;
+  return `+1 (${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
 }

@@ -272,11 +272,11 @@ export function DatePicker({
 
               const dayClass = selected
                 ? isLight
-                  ? "bg-[#FFE533] text-white font-semibold scale-110"
+                  ? "bg-[#FFE533] text-[#0c0c0c] font-semibold scale-110"
                   : "bg-[#FFE533] text-black font-semibold scale-110"
                 : todayDay
                   ? isLight
-                    ? "bg-[#eef3ff] text-[#FFE533] font-semibold"
+                    ? "bg-[#eef3ff] text-[#001f4d] font-semibold"
                     : "bg-white/10 text-white font-semibold"
                   : isPast
                     ? isLight ? "text-[#001f4d]/20 cursor-default" : "text-white/15 cursor-default"

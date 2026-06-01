@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 import { DatePicker } from "./DatePicker";
 import { formatUsPhone } from "./FormInput";
 import { LPButton } from "./LPButton";
+import { pushLeadEvent } from "./leadEvent";
+
+/** Keep only the 5 ZIP digits as the user types. */
+const formatZip = (v: string) => v.replace(/\D/g, "").slice(0, 5);
 
 const EMAIL_PATTERN = "[^@\\s]+@[^@\\s]+\\.[^@\\s]+";
 
@@ -16,6 +20,9 @@ function ModalInput({
   value,
   onChange,
   required = false,
+  name,
+  inputMode,
+  format,
 }: {
   label: string;
   placeholder: string;
@@ -23,22 +30,31 @@ function ModalInput({
   value: string;
   onChange: (val: string) => void;
   required?: boolean;
+  /** Stable field name + id — needed so analytics captures consistent
+      params instead of random per-render ids. */
+  name?: string;
+  inputMode?: "text" | "tel" | "email" | "numeric";
+  /** Optional value formatter (phone, ZIP). Overrides the phone default. */
+  format?: (val: string) => string;
 }) {
   const isPhone = type === "tel";
   const isEmail = type === "email";
+  const formatValue = format ?? (isPhone ? formatUsPhone : undefined);
   return (
     <div className="flex-1 flex flex-col gap-2">
-      <label className="lp-label lp-label--light">
+      <label className="lp-label lp-label--light" htmlFor={name ? `modal-${name}` : undefined}>
         {label}
         {required && <span className="lp-label__required"> *</span>}
       </label>
       <input
+        id={name ? `modal-${name}` : undefined}
+        name={name}
         type={type}
-        inputMode={isPhone ? "tel" : isEmail ? "email" : undefined}
+        inputMode={inputMode ?? (isPhone ? "tel" : isEmail ? "email" : undefined)}
         autoComplete={isPhone ? "tel" : isEmail ? "email" : undefined}
         placeholder={placeholder}
         value={value}
-        onChange={(e) => onChange(isPhone ? formatUsPhone(e.target.value) : e.target.value)}
+        onChange={(e) => onChange(formatValue ? formatValue(e.target.value) : e.target.value)}
         required={required}
         pattern={isEmail ? EMAIL_PATTERN : undefined}
         className="lp-input lp-input--light invalid:[&:not(:placeholder-shown)]:ring-1 invalid:[&:not(:placeholder-shown)]:ring-[#FF6B6B]"
@@ -52,7 +68,9 @@ type ModalFormData = {
   email: string;
   phone: string;
   movingFrom: string;
+  fromZip: string;
   movingTo: string;
+  toZip: string;
   moveDate: string;
   message: string;
 };
@@ -62,7 +80,9 @@ const emptyForm: ModalFormData = {
   email: "",
   phone: "",
   movingFrom: "",
+  fromZip: "",
   movingTo: "",
+  toZip: "",
   moveDate: "",
   message: "",
 };
@@ -132,6 +152,9 @@ export function QuoteModal() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      /* Consistent conversion event for GTM/GA4 — same shape as the
+         embedded form so reporting matches across both forms. */
+      pushLeadEvent({ formLocation: "modal" });
     } catch (err) {
       console.error("Submit failed:", err);
     }
@@ -195,6 +218,7 @@ export function QuoteModal() {
                 <div className="flex flex-col lg:flex-row gap-5">
                   <div className="flex-1 flex flex-col gap-2">
                     <ModalInput
+                      name="fullName"
                       label="Full name"
                       placeholder="Enter your name"
                       value={formData.fullName}
@@ -205,6 +229,7 @@ export function QuoteModal() {
                   </div>
                   <div className="flex-1 flex flex-col gap-2">
                     <ModalInput
+                      name="phone"
                       label="Phone number"
                       placeholder="+1 (555) 123-4567"
                       type="tel"
@@ -217,6 +242,7 @@ export function QuoteModal() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <ModalInput
+                    name="email"
                     label="Email"
                     placeholder="your@email.com"
                     type="email"
@@ -236,6 +262,7 @@ export function QuoteModal() {
               <>
                 <div className="flex flex-col lg:flex-row gap-5">
                   <ModalInput
+                    name="movingFrom"
                     label="Moving from"
                     placeholder="Address"
                     value={formData.movingFrom}
@@ -243,11 +270,32 @@ export function QuoteModal() {
                     required
                   />
                   <ModalInput
+                    name="fromZip"
+                    label="From ZIP"
+                    placeholder="ZIP code"
+                    inputMode="numeric"
+                    format={formatZip}
+                    value={formData.fromZip}
+                    onChange={(val) => setFormData({ ...formData, fromZip: val })}
+                  />
+                </div>
+                <div className="flex flex-col lg:flex-row gap-5">
+                  <ModalInput
+                    name="movingTo"
                     label="Moving to"
                     placeholder="Address"
                     value={formData.movingTo}
                     onChange={(val) => setFormData({ ...formData, movingTo: val })}
                     required
+                  />
+                  <ModalInput
+                    name="toZip"
+                    label="To ZIP"
+                    placeholder="ZIP code"
+                    inputMode="numeric"
+                    format={formatZip}
+                    value={formData.toZip}
+                    onChange={(val) => setFormData({ ...formData, toZip: val })}
                   />
                 </div>
                 <DatePicker

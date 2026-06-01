@@ -1,54 +1,21 @@
 import { after } from "next/server";
-import nodemailer from "nodemailer";
 
 /* Lead handling runs AFTER the response is sent (via `after`), so the
-   visitor isn't kept waiting on a slow SMTP handshake + CRM round-trip.
-   Previously both ran sequentially and were fully awaited before the
-   response, so the form spinner = email time + CRM time (often 5–10s).
-   On Vercel `after` keeps the function alive until these settle, so the
-   email + CRM lead still go out reliably. */
+   visitor isn't kept waiting on the CRM round-trip. Email notifications
+   were removed — leads go to the MoveBoard CRM only. */
 
 type QuoteBody = {
   fullName: string;
   email: string;
   phone: string;
   movingFrom: string;
+  fromZip: string;
   movingTo: string;
+  toZip: string;
   moveDate: string;
   moveSize: string;
   message: string;
 };
-
-async function sendEmail(b: QuoteBody) {
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: process.env.SMTP_SECURE === "true",
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-
-  await transporter.sendMail({
-    from: `"GOAT Moving" <${process.env.SMTP_USER}>`,
-    to: process.env.NOTIFICATION_EMAIL,
-    subject: `New Quote Request from ${b.fullName}`,
-    html: `
-      <h2>New Quote Request</h2>
-      <table style="border-collapse:collapse;font-family:sans-serif;">
-        <tr><td style="padding:6px 12px;font-weight:bold;">Name</td><td style="padding:6px 12px;">${b.fullName}</td></tr>
-        <tr><td style="padding:6px 12px;font-weight:bold;">Email</td><td style="padding:6px 12px;">${b.email || "N/A"}</td></tr>
-        <tr><td style="padding:6px 12px;font-weight:bold;">Phone</td><td style="padding:6px 12px;">${b.phone}</td></tr>
-        <tr><td style="padding:6px 12px;font-weight:bold;">Moving From</td><td style="padding:6px 12px;">${b.movingFrom || "N/A"}</td></tr>
-        <tr><td style="padding:6px 12px;font-weight:bold;">Moving To</td><td style="padding:6px 12px;">${b.movingTo || "N/A"}</td></tr>
-        <tr><td style="padding:6px 12px;font-weight:bold;">Move Date</td><td style="padding:6px 12px;">${b.moveDate || "N/A"}</td></tr>
-        <tr><td style="padding:6px 12px;font-weight:bold;">Move Size</td><td style="padding:6px 12px;">${b.moveSize || "N/A"}</td></tr>
-        <tr><td style="padding:6px 12px;font-weight:bold;">Message</td><td style="padding:6px 12px;">${b.message || "N/A"}</td></tr>
-      </table>
-    `,
-  });
-}
 
 async function sendToCrm(b: QuoteBody) {
   // Convert MM/DD/YYYY → YYYY-MM-DD for CRM
@@ -68,8 +35,8 @@ async function sendToCrm(b: QuoteBody) {
       company_name: "source-website",
       thoroughfare_from: b.movingFrom,
       thoroughfare_to: b.movingTo,
-      moving_from_zip: "",
-      moving_to_zip: "",
+      moving_from_zip: b.fromZip || "",
+      moving_to_zip: b.toZip || "",
       field_date: crmDate,
       field_move_service_type: b.moveSize,
       field_additional_comments: b.message,
@@ -105,7 +72,9 @@ export async function POST(request: Request) {
     email: body.email ?? "",
     phone: body.phone ?? "",
     movingFrom: body.movingFrom ?? "",
+    fromZip: body.fromZip ?? "",
     movingTo: body.movingTo ?? "",
+    toZip: body.toZip ?? "",
     moveDate: body.moveDate ?? "",
     moveSize: body.moveSize ?? "",
     message: body.message ?? "",
@@ -118,18 +87,13 @@ export async function POST(request: Request) {
     );
   }
 
-  /* Fire email + CRM in parallel AFTER responding — the visitor gets an
-     instant confirmation while delivery happens in the background. */
+  /* Send to CRM AFTER responding so the visitor gets an instant
+     confirmation while the lead is delivered in the background. */
   after(async () => {
-    const [emailResult, crmResult] = await Promise.allSettled([
-      sendEmail(lead),
-      sendToCrm(lead),
-    ]);
-    if (emailResult.status === "rejected") {
-      console.error("Email send failed:", emailResult.reason);
-    }
-    if (crmResult.status === "rejected") {
-      console.error("CRM send failed:", crmResult.reason);
+    try {
+      await sendToCrm(lead);
+    } catch (err) {
+      console.error("CRM send failed:", err);
     }
   });
 

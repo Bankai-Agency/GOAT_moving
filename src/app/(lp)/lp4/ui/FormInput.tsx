@@ -1,18 +1,11 @@
 "use client";
 
-/**
- * Format a raw string of digits as a US phone number: "+1 (XXX) XXX-XXXX".
- * Strips everything non-digit first, then builds up the display string
- * incrementally as the user types.
- */
-export function formatUsPhone(raw: string): string {
-  // Strip leading "+1" / "1" country code before counting digits.
-  const digits = raw.replace(/\D/g, "").replace(/^1/, "").slice(0, 10);
-  if (digits.length === 0) return "";
-  if (digits.length <= 3) return `+1 (${digits}`;
-  if (digits.length <= 6) return `+1 (${digits.slice(0, 3)}) ${digits.slice(3)}`;
-  return `+1 (${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
-}
+/* Phone formatter lives in LPInput (single source of truth). Imported for
+   local use AND re-exported so existing `./FormInput` importers (e.g.
+   QuoteModal) get the exact same "+1 (XXX) XXX-XXXX" formatting as the
+   embedded form. */
+import { formatUsPhone } from "./LPInput";
+export { formatUsPhone };
 
 /** RFC 5322-lite email regex, good enough for client-side UX validation. */
 const EMAIL_PATTERN = "[^@\\s]+@[^@\\s]+\\.[^@\\s]+";

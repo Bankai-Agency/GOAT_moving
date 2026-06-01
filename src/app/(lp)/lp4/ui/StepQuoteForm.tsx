@@ -9,6 +9,10 @@ import { DatePicker } from "./DatePicker";
 import { SelectDropdown } from "./SelectDropdown";
 import { MOVE_SIZES } from "./QuoteForm";
 import type { QuoteFormValues } from "./QuoteForm";
+import { pushLeadEvent } from "./leadEvent";
+
+/** Keep only the 5 ZIP digits as the user types. */
+const formatZip = (v: string) => v.replace(/\D/g, "").slice(0, 5);
 
 /* ════════════════════════════════════════════════════════════════
    StepQuoteForm — 2-step quote form (contact → move details).
@@ -24,7 +28,9 @@ const empty: QuoteFormValues = {
   email: "",
   phone: "",
   movingFrom: "",
+  fromZip: "",
   movingTo: "",
+  toZip: "",
   moveDate: "",
   moveSize: "",
   message: "",
@@ -141,6 +147,9 @@ export function StepQuoteForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
+      /* Consistent conversion event for GTM/GA4 — fire a custom
+         `generate_lead` trigger off this dataLayer push. */
+      pushLeadEvent({ formLocation: "embedded_hero", city: _city });
     } catch (err) {
       console.error("Submit failed:", err);
     }
@@ -164,6 +173,7 @@ export function StepQuoteForm({
       {step === 1 && (
         <div className="flex flex-col gap-5">
           <LPInput
+            name="fullName"
             label="Full name"
             placeholder="Enter your name"
             required
@@ -173,9 +183,10 @@ export function StepQuoteForm({
             error={errors.fullName}
           />
           <LPInput
+            name="phone"
             label="Phone number"
             type="tel"
-            placeholder="(555) 123-4567"
+            placeholder="+1 (555) 123-4567"
             required
             value={values.phone}
             onChange={(v) => set("phone", v)}
@@ -184,6 +195,7 @@ export function StepQuoteForm({
             format={formatUsPhone}
           />
           <LPInput
+            name="email"
             label="Email"
             type="email"
             placeholder="your@email.com"
@@ -214,6 +226,7 @@ export function StepQuoteForm({
               narrow widths so the labels never wrap. */}
           <div className="flex flex-col sm:flex-row gap-5">
             <LPInput
+              name="movingFrom"
               label="Moving from"
               placeholder="Address"
               value={values.movingFrom}
@@ -221,11 +234,34 @@ export function StepQuoteForm({
               surface={surface}
             />
             <LPInput
+              name="fromZip"
+              label="From ZIP"
+              inputMode="numeric"
+              placeholder="ZIP code"
+              value={values.fromZip}
+              onChange={(v) => set("fromZip", v)}
+              surface={surface}
+              format={formatZip}
+            />
+          </div>
+          <div className="flex flex-col sm:flex-row gap-5">
+            <LPInput
+              name="movingTo"
               label="Moving to"
               placeholder="Address"
               value={values.movingTo}
               onChange={(v) => set("movingTo", v)}
               surface={surface}
+            />
+            <LPInput
+              name="toZip"
+              label="To ZIP"
+              inputMode="numeric"
+              placeholder="ZIP code"
+              value={values.toZip}
+              onChange={(v) => set("toZip", v)}
+              surface={surface}
+              format={formatZip}
             />
           </div>
           <DatePicker
