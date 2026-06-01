@@ -83,6 +83,16 @@ export async function POST(request: Request) {
     );
   }
 
+  /* CRM delivery is gated by the CRM_ENABLED env var so it can be paused
+     during testing without a code change:
+       • unset / "true"  → leads are sent to the CRM (default)
+       • "false"         → leads are NOT sent (forms + /thank-you still work)
+     Flip the var in Vercel and redeploy to resume. */
+  if (process.env.CRM_ENABLED === "false") {
+    console.log("CRM disabled (CRM_ENABLED=false) — lead not sent:", lead.phone);
+    return Response.json({ success: true, crm: "disabled" });
+  }
+
   /* Send to CRM AFTER responding so the visitor gets an instant
      confirmation while the lead is delivered in the background. */
   after(async () => {
