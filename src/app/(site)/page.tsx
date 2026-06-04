@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Touchbar } from "@site/layout/Touchbar";
-import { QuoteModal } from "@site/ui/QuoteModal";
+import { QuoteModalLazy } from "@site/ui/QuoteModalLazy";
 import { FAQSection } from "@site/sections/FAQSection";
 import { JsonLd } from "@site/seo/JsonLd";
 import { localBusinessSchema, websiteSchema } from "@site/seo/schema";
@@ -34,6 +34,14 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <SmoothScrollProvider>
+      {/* Preload the hero's first frame (the LCP paint) — home-scoped, so
+          corp pages never request it. */}
+      <link
+        rel="preload"
+        as="image"
+        href="/frames-vhero/frame_0001.webp"
+        type="image/webp"
+      />
       <JsonLd data={[localBusinessSchema(), websiteSchema()]} />
       <main>
         <TerminalDraftClient />
@@ -41,7 +49,7 @@ export default function Home() {
       </main>
       <ContactFooter />
       <Touchbar />
-      <QuoteModal />
+      <QuoteModalLazy />
     </SmoothScrollProvider>
   );
 }

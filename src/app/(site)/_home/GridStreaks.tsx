@@ -212,9 +212,28 @@ export function GridStreaks({
 
       raf = requestAnimationFrame(draw);
     };
-    raf = requestAnimationFrame(draw);
+    let running = false;
+    const start = () => {
+      if (running) return;
+      running = true;
+      last = performance.now();
+      raf = requestAnimationFrame(draw);
+    };
+    const stop = () => {
+      if (!running) return;
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+    // Only animate while the canvas is on-screen — no need to run the
+    // streak RAF for the whole page lifetime.
+    const io = new IntersectionObserver(
+      ([entry]) => (entry.isIntersecting ? start() : stop()),
+      { rootMargin: "200px" },
+    );
+    io.observe(canvas);
 
     return () => {
+      io.disconnect();
       cancelAnimationFrame(raf);
       ro.disconnect();
     };

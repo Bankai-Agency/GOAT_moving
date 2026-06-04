@@ -264,9 +264,28 @@ export default function MagicRings({
 
       renderer.render(scene, camera);
     };
-    frameId = requestAnimationFrame(animate);
+
+    let running = false;
+    const startLoop = () => {
+      if (running) return;
+      running = true;
+      frameId = requestAnimationFrame(animate);
+    };
+    const stopLoop = () => {
+      if (!running) return;
+      running = false;
+      cancelAnimationFrame(frameId);
+    };
+    // Decorative WebGL — only render while the rings are on-screen so the
+    // RAF loop doesn't run for the whole page lifetime.
+    const visObserver = new IntersectionObserver(
+      ([entry]) => (entry.isIntersecting ? startLoop() : stopLoop()),
+      { rootMargin: "200px" },
+    );
+    visObserver.observe(mount);
 
     return () => {
+      visObserver.disconnect();
       cancelAnimationFrame(frameId);
       window.removeEventListener("resize", resize);
       ro.disconnect();

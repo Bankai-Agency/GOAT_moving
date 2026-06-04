@@ -5,10 +5,16 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type Ref } from "react";
 import { gsap, ScrollTrigger, registerGsapPlugins } from "@site/motion/gsap";
 import { MP5Button } from "@site/ui/MP5Button";
+import dynamic from "next/dynamic";
 import { GridStreaks } from "./GridStreaks";
-import MagicRings from "./MagicRings";
 import { BenefitsVariantsStack } from "./sections/BenefitsVariants";
 import { TestimonialVariantsStack } from "./sections/TestimonialVariants";
+
+/* THREE.js is heavy and has exactly one consumer (MagicRings), used only
+   in the CTA section below the fold — code-split it so the THREE chunk
+   loads when the rings mount, not in the home's initial JS. Client-only
+   (WebGL) so ssr:false. */
+const MagicRings = dynamic(() => import("./MagicRings"), { ssr: false });
 
 /* /mainpage-5 — terminal-industries.com-style draft.
 
@@ -85,8 +91,7 @@ const trustedLogos = [
    compression_level 4. ~28 MB desktop / ~15 MB mobile. */
 /* Hero source = v.mov (1920×1080, 24fps, 18.6s) extracted to
    webp at fps=12 / scale 1280 → 222 frames (~9.4 MB), scrubbed by scroll
-   (same frame-sequence mechanic as the print-foundry hero). Old
-   multi-clip frame sets kept in /frames + /frames-mobile as backup. */
+   (same frame-sequence mechanic as the print-foundry hero). */
 const FRAMES_DESKTOP = {
   count: 222,
   path: (i: number) =>
@@ -176,14 +181,8 @@ const stickySteps = [
   },
 ];
 
-/* Inline color constants — Tailwind v4 arbitrary values use these
-   throughout. Kept in one place so a brand tweak is one PR. */
-/* Dark-theme palette. INK was "#000000" on the light theme; flipped to
-   white so SVG grids, marquee text, and inline color={INK} usages all
-   read on the dark page. Per-scope local INK_LOCAL constants in the
-   morph + sticky-steps useEffects also point at white now. */
-const INK = "#ffffff";
-const PAPER = "#ffffff";
+/* Brand accent used by the hero char-wave (~L399). The morph + sticky-steps
+   waves declare their own local INK/BLUE constants where needed. */
 const BLUE = "#FFE533";
 
 export function TerminalDraftClient() {
@@ -228,8 +227,6 @@ export function TerminalDraftClient() {
   const benefitImageRefs = useRef<HTMLDivElement[]>([]);
   const benefitTextRefs = useRef<HTMLDivElement[]>([]);
 
-  const testimonialPhotoRef = useRef<HTMLDivElement>(null);
-
   /* ── HERO: canvas frame-scrub + char-stagger headline reveal ─────────── */
   useEffect(() => {
     registerGsapPlugins();
@@ -246,7 +243,9 @@ export function TerminalDraftClient() {
     const FRAME_COUNT = FRAMES.count;
     const FRAME_PATH = FRAMES.path;
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Cap at 1.5 (was 2): the source frames are only 1280px wide, so a 2×
+    // backing store on retina just costs GPU/memory for upscaled pixels.
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const images: HTMLImageElement[] = [];
     let lastDrawn = -1;
 
@@ -257,9 +256,32 @@ export function TerminalDraftClient() {
       canvasEl.height = h * dpr;
     };
 
+    /* Lazy windowed frame loading: instead of eagerly fetching all ~222
+       frames (9.4 MB racing the LCP), fetch a forward-biased window around
+       the current frame on demand. Frames the user never scrolls to are
+       never fetched. Trade-off: on a very fast scroll over a slow network
+       a frame may briefly lag (draw() holds the nearest loaded frame —
+       never blank). */
+    const requested = new Set<number>();
+    const loadFrame = (i: number) => {
+      if (i < 0 || i >= FRAME_COUNT || requested.has(i)) return;
+      requested.add(i);
+      const img = new window.Image();
+      img.src = FRAME_PATH(i);
+      img.onload = () => {
+        if (lastDrawn < 0) draw(0);
+        else if (i === lastDrawn) draw(i);
+      };
+      images[i] = img;
+    };
+    const ensureWindow = (idx: number) => {
+      for (let i = idx - 4; i <= idx + 24; i++) loadFrame(i);
+    };
+
     const draw = (idx: number) => {
       const c = canvasEl.getContext("2d");
       if (!c) return;
+      ensureWindow(idx);
       let img = images[idx];
       if (!img || !img.complete || !img.naturalWidth) {
         for (let j = idx; j >= 0; j--) {
@@ -289,15 +311,9 @@ export function TerminalDraftClient() {
     };
 
     fitCanvas();
-    for (let i = 0; i < FRAME_COUNT; i++) {
-      const img = new window.Image();
-      img.src = FRAME_PATH(i);
-      img.onload = () => {
-        if (lastDrawn < 0) draw(0);
-        else if (i === lastDrawn) draw(i);
-      };
-      images.push(img);
-    }
+    // Seed the first window so frame 0 (the LCP paint) loads immediately;
+    // the rest stream in as the scroll advances (ensureWindow in draw()).
+    ensureWindow(0);
 
     const onResize = () => {
       fitCanvas();
@@ -316,6 +332,10 @@ export function TerminalDraftClient() {
       const original = el.dataset.original ?? el.textContent ?? "";
       el.dataset.original = original;
       el.innerHTML = "";
+      // Un-hide the container now that we control its chars (each starts
+      // opacity:0 below). CSS keeps phrases hidden until this runs so they
+      // never flash-overlap before the scroll reveal initialises.
+      el.style.opacity = "1";
       // Split on whitespace AND hyphens, keeping the delimiters as
       // their own segments so hyphens become independent line-break
       // candidates (otherwise long hyphenated words like
@@ -623,6 +643,10 @@ export function TerminalDraftClient() {
 
     let elements: HTMLElement[] = [];
     let lastProgress = 0;
+    // Cache the last applied geometry per element so we can skip the
+    // path() rebuild + style write when nothing changed — eliminates the
+    // bulk of redundant per-tick work during fine scrolling.
+    const lastKey = new WeakMap<HTMLElement, string>();
 
     const apply = (progress: number) => {
       lastProgress = progress;
@@ -630,7 +654,10 @@ export function TerminalDraftClient() {
         const W = el.clientWidth;
         const H = el.clientHeight;
         if (!W || !H) continue;
-        const cy = notchYAtProgress(H, progress);
+        const cy = Math.round(notchYAtProgress(H, progress));
+        const key = `${W}|${H}|${cy}`;
+        if (lastKey.get(el) === key) continue;
+        lastKey.set(el, key);
         const d = composePath(W, H, cy);
         el.style.clipPath = `path("${d}")`;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -874,6 +901,59 @@ export function TerminalDraftClient() {
 
     return () => {
       trigger.kill();
+    };
+  }, []);
+
+  /* ── SERVICES videos: play only the ACTIVE step's video, and only while
+     the section is on-screen — cuts up to 4 concurrent decodes to 1 and
+     stops all decoding once scrolled past. Videos keep autoPlay as a
+     graceful fallback; this effect pauses the ones that shouldn't run. */
+  useEffect(() => {
+    const root = stickyStepsRef.current;
+    if (!root) return;
+    const items = Array.from(
+      root.querySelectorAll<HTMLElement>("[data-sticky-steps-item]"),
+    );
+    const mobileVideo = root.querySelector<HTMLVideoElement>(
+      ".sticky-steps__mobile video",
+    );
+    let inView = false;
+    const sync = () => {
+      items.forEach((item) => {
+        const v = item.querySelector<HTMLVideoElement>("video");
+        if (!v) return;
+        const active =
+          item.getAttribute("data-sticky-steps-item-status") === "active";
+        if (inView && active) void v.play().catch(() => {});
+        else v.pause();
+      });
+      if (mobileVideo) {
+        if (inView) void mobileVideo.play().catch(() => {});
+        else mobileVideo.pause();
+      }
+    };
+    const mo = new MutationObserver(sync);
+    items.forEach((item) =>
+      mo.observe(item, {
+        attributes: true,
+        attributeFilter: ["data-sticky-steps-item-status"],
+      }),
+    );
+    const io = new IntersectionObserver(
+      ([e]) => {
+        inView = e.isIntersecting;
+        sync();
+      },
+      { rootMargin: "100px" },
+    );
+    io.observe(root);
+    return () => {
+      mo.disconnect();
+      io.disconnect();
+      items.forEach((item) =>
+        item.querySelector<HTMLVideoElement>("video")?.pause(),
+      );
+      mobileVideo?.pause();
     };
   }, []);
 
@@ -1310,30 +1390,6 @@ export function TerminalDraftClient() {
     return () => ctx.revert();
   }, []);
 
-  /* ── TESTIMONIAL: parallax on the photo ─────────────────────────────── */
-  useEffect(() => {
-    registerGsapPlugins();
-    const photoEl = testimonialPhotoRef.current;
-    if (!photoEl) return;
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        photoEl,
-        { yPercent: -10 },
-        {
-          yPercent: 10,
-          ease: "none",
-          scrollTrigger: {
-            trigger: photoEl,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 0.5,
-          },
-        },
-      );
-    });
-    return () => ctx.revert();
-  }, []);
-
   return (
     <>
       {/* ── 1. HERO — 300vh wrapper, sticky inner pinned screen ───────────── */}
@@ -1450,7 +1506,7 @@ export function TerminalDraftClient() {
                           loop
                           muted
                           playsInline
-                          preload="auto"
+                          preload="none"
                         />
                       </div>
                     </div>
@@ -1526,7 +1582,7 @@ export function TerminalDraftClient() {
                 loop
                 muted
                 playsInline
-                preload="auto"
+                preload="none"
               />
             </div>
           </div>
@@ -1745,16 +1801,8 @@ export function TerminalDraftClient() {
          chosen variant (see sections/BenefitsVariants.tsx). ──────── */}
       <BenefitsVariantsStack />
 
-      {/* ── 7. TESTIMONIAL — 5 design variants stacked for A/B comparison.
-         Originally a single parallax-photo + centered quote.
-         Replaced with `TestimonialVariantsStack` for the same A/B
-         selection pattern. Pick a winner then collapse the stack. */}
-      <div ref={testimonialPhotoRef} style={{ display: "none" }} aria-hidden />
+      {/* ── 7. TESTIMONIAL — A/B variant stack (pick a winner, then collapse) ── */}
       <TestimonialVariantsStack />
-
-      {/* Suppress unused-var warnings for the constants we keep around for
-          future tweaks (PAPER, INK referenced in inline styles where needed). */}
-      <span aria-hidden style={{ display: "none", color: PAPER, background: INK }} />
     </>
   );
 }

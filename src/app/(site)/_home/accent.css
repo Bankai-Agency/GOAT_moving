@@ -187,6 +187,15 @@ body:has([data-accent="blue"]) .bg-\[\#FFE533\] .text-\[\#0c0c0c\] {
   }
 }
 
+/* Hero phrases start hidden — the per-char scroll reveal (JS) un-hides
+   each phrase's container (sets inline opacity:1) and staggers its chars
+   in. Without this, on first paint all 8 phrases flash visible and
+   overlap into an unreadable stack before the reveal script runs. The
+   inline opacity:1 the script sets overrides this rule. */
+[data-hero-phrase] {
+  opacity: 0;
+}
+
 /* ── Hero phrases: mobile re-anchor ──────────────────────────────
    On desktop each phrase is absolutely positioned to a "wandering"
    zone (inline styles from heroPhrasePositions). On portrait there's
