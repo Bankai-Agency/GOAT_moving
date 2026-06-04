@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Header } from "@site/layout/Header";
 import { ContactFooter } from "@site/sections/ContactFooter";
 import { Touchbar } from "@site/layout/Touchbar";
 import { QuoteModal } from "@site/ui/QuoteModal";
@@ -112,7 +111,6 @@ function MapSection() {
 export default function ContactsClient() {
   return (
     <div className="page-zoom">
-      <Header />
       <main>
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Contacts" }]} />
         <ContactsHeroWithCards />

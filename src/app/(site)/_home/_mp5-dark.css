@@ -1,0 +1,199 @@
+/* ════════════════════════════════════════════════════════════════
+   mainpage-5 — DARK THEME INVERSION
+
+   Override layer that flips the mainpage-5 light theme to dark.
+   Loaded LAST in `page.tsx` so it wins cascade ties against
+   per-section base rules.
+
+   Wrapper carries `.mp5-dark` (instead of `.theme-light`). The
+   globals.css flip cascade is therefore NOT active — Tailwind
+   hex classes render their authored values (mostly fine, since
+   `bg-[#0c0c0c]` now renders as dark instead of being flipped
+   to white).
+
+   What this file does:
+     • Solid dark page bg (NO gradient — explicit user requirement).
+     • Flips light-theme Tailwind classes (`text-[#001f4d]`,
+       `bg-[#ffffff]`, `bg-white`, etc.) to dark-appropriate values.
+     • Overrides inline-styled JS constants (INK/PAPER in
+       TerminalDraftClient) via CSS with !important.
+     • Per-section adjustments (hero text shadow, sticky-steps
+       eyebrow, FAQ ink, ContactFooter island).
+
+   Spec source: lp3 `_lp2-invert.css` (gradient-less). Selectors
+   adapted from `.lp2-dark[data-lp-root]` → `.mp5-dark[data-accent="blue"]`.
+   ══════════════════════════════════════════════════════════════ */
+
+
+/* ── PAGE: solid dark bg, NO gradient ─────────────────────── */
+body:has(.mp5-dark[data-accent="blue"]) {
+  background-color: var(--mp5-dark) !important;
+  background-image: none !important;
+}
+
+html:has(.mp5-dark[data-accent="blue"]) {
+  background-color: var(--mp5-dark) !important;
+}
+
+
+/* ── PAGE-LEVEL TEXT: ink → white ────────────────────────── */
+.mp5-dark[data-accent="blue"] {
+  color: var(--mp5-white);
+}
+.mp5-dark[data-accent="blue"] h1,
+.mp5-dark[data-accent="blue"] h2,
+.mp5-dark[data-accent="blue"] h3,
+.mp5-dark[data-accent="blue"] h4 {
+  color: var(--mp5-white);
+}
+
+
+/* ── Ink-coloured Tailwind classes → white ────────────────
+   Cover the alpha ladder used in mp5 JSX (verified via curl + grep
+   on rendered HTML: /55 /60 /65 /70 are present; /40 covered for
+   safety since the shared FAQ/Contact components use it). */
+.mp5-dark[data-accent="blue"] .text-\[\#000000\]       { color: var(--mp5-white) !important; }
+.mp5-dark[data-accent="blue"] .text-\[\#000000\]\/85   { color: var(--mp5-white) !important; }
+.mp5-dark[data-accent="blue"] .text-\[\#000000\]\/70   { color: rgba(255, 255, 255, 0.75) !important; }
+.mp5-dark[data-accent="blue"] .text-\[\#000000\]\/65   { color: var(--mp5-white-70) !important; }
+.mp5-dark[data-accent="blue"] .text-\[\#000000\]\/60   { color: var(--mp5-white-70) !important; }
+.mp5-dark[data-accent="blue"] .text-\[\#000000\]\/55   { color: rgba(255, 255, 255, 0.65) !important; }
+.mp5-dark[data-accent="blue"] .text-\[\#000000\]\/45   { color: rgba(255, 255, 255, 0.55) !important; }
+.mp5-dark[data-accent="blue"] .text-\[\#000000\]\/40   { color: rgba(255, 255, 255, 0.45) !important; }
+.mp5-dark[data-accent="blue"] .text-\[\#0c0c0c\]       { color: var(--mp5-white) !important; }
+
+/* Border ink → white-15 (subtle hairline). */
+.mp5-dark[data-accent="blue"] .border-\[\#000000\]\/12,
+.mp5-dark[data-accent="blue"] .border-\[\#000000\]\/15,
+.mp5-dark[data-accent="blue"] .border-\[\#000000\]\/18 {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+
+/* ── White Tailwind classes (bg-[#ffffff] / bg-white) → page-flush ─
+   `bg-[#ffffff]` in mp5 JSX is only used for full-section wrappers
+   (morph 400vh, marquee, sticky-steps top). On dark these should be
+   page-flush dark, NOT elevated surfaces. Use --mp5-dark. */
+.mp5-dark[data-accent="blue"] .bg-\[\#ffffff\]   { background-color: var(--mp5-dark) !important; }
+.mp5-dark[data-accent="blue"] .bg-white          { background-color: var(--mp5-dark) !important; }
+
+
+/* ── FAQ inversions ─────────────────────────────────────────
+   Moved to @site/styles/footer-faq.css (loaded by (site)/layout.tsx)
+   so the corp pages get the same dark FAQ as the home. ───────── */
+
+
+/* ── Mega-nav dropdown panels → dark ────────────────────────
+   The Services / Locations dropdown panels were a white plate with
+   pale-blue accent column + ink links. Flip to dark surface with
+   white text and white-low-alpha accents. */
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__dropdown-bg {
+  background-color: var(--mp5-dark-surface) !important;
+}
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__panel-grid-label,
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__panel-label {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+/* Vertical separator between columns: black-10 hairline → white-10. */
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__panel-col {
+  border-right-color: rgba(255, 255, 255, 0.1) !important;
+}
+/* "Colored" highlight column #f5f8ff → subtle white-03 elevation. */
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__panel-col.is--colored {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+/* Link rows: ink text → white, hover bg #f4f4f4 → white-08. */
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__panel-link {
+  color: var(--mp5-white) !important;
+}
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__panel-link:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: var(--mp5-blue) !important;
+}
+
+
+/* ── Services visual: terminal-industries notch silhouette ───
+   The `clip-path: path('M ...')` is composed in JS per-element
+   and tied to scroll progress (see notch useEffect in
+   TerminalDraftClient). It's set as an INLINE style — no CSS
+   reset needed here. The original `.sticky-steps__visual` rule
+   in sticky-steps.css uses `clip-path: inset(0% round 1.5em)`
+   without `!important`, so the inline path() naturally wins.
+
+   IMPORTANT: do NOT add `clip-path: ... !important` here — that
+   would beat the inline style and the notch silhouette would
+   vanish. */
+
+
+/* ── services → GOAT morph transition ───────────────────────
+   Previously the photo panel ended with a hard rectangle against
+   the dark page. Now the JS-driven notch silhouette + rounded
+   outer corners give the panel a distinct character — no bottom
+   fade needed (it would conflict with the silhouette anyway).
+
+   Kept: morph grid backdrop fade-IN from the top so the grid
+   doesn't slam in abruptly under the dissolving panel above. */
+body:has(.mp5-dark[data-accent="blue"]) .mp5-morph-grid {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 25%, #000 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 25%, #000 100%);
+}
+
+
+/* ── Section base flips ──────────────────────────────────────
+   sticky-steps.css and other per-section CSS use `var(--mp5-white)` /
+   `var(--mp5-ink)` for surface + text. Override at the section level
+   so the cascade gives dark surfaces + white text without touching
+   the tokens themselves (vars are still needed light-theme values for
+   buttons / forms). */
+.mp5-dark[data-accent="blue"] .sticky-steps {
+  background-color: var(--mp5-dark) !important;
+  color: var(--mp5-white) !important;
+}
+.mp5-dark[data-accent="blue"] .sticky-steps__h2 {
+  color: var(--mp5-white) !important;
+}
+.mp5-dark[data-accent="blue"] .sticky-steps__p {
+  color: var(--mp5-white) !important;
+  opacity: 0.7;
+}
+
+
+/* ── Inline-styled hex / rgba ink colors → white ─────────────
+   Both TerminalDraftClient JS constants (INK = "#001f4d") and
+   mobile-menu inline style props use ink colors. The mobile menu
+   renders via createPortal to document.body — so the selector uses
+   `body:has(.mp5-dark[data-accent="blue"])` to reach portal content,
+   not just `.mp5-dark[...]` descendants.
+
+   Substring [style*="..."] matches authored string (browsers preserve
+   the rgb()/hex form used in JSX, not the computed `rgb()` form). */
+body:has(.mp5-dark[data-accent="blue"]) [style*="color: rgb(0, 31, 77)"],
+body:has(.mp5-dark[data-accent="blue"]) [style*="color:rgb(0, 31, 77)"],
+body:has(.mp5-dark[data-accent="blue"]) [style*='color: "#001f4d"'],
+body:has(.mp5-dark[data-accent="blue"]) [style*="color: #001f4d"] {
+  color: var(--mp5-white) !important;
+}
+/* ink alphas: rgba(0, 0, 0,X) — flip to white at near-equivalent alpha */
+body:has(.mp5-dark[data-accent="blue"]) [style*="color: rgba(0, 0, 0,0.45)"],
+body:has(.mp5-dark[data-accent="blue"]) [style*="color:rgba(0, 0, 0,0.45)"] {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+body:has(.mp5-dark[data-accent="blue"]) [style*="color: rgba(0, 0, 0,0.6)"],
+body:has(.mp5-dark[data-accent="blue"]) [style*="color: rgba(0, 0, 0,0.7)"],
+body:has(.mp5-dark[data-accent="blue"]) [style*="color:rgba(0, 0, 0,0.7)"] {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+/* ink border (mobile menu hairline) */
+body:has(.mp5-dark[data-accent="blue"]) [style*="border: 1px solid rgba(0, 0, 0,0.18)"],
+body:has(.mp5-dark[data-accent="blue"]) [style*="border:1px solid rgba(0, 0, 0,0.18)"] {
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* `backgroundColor: "#ffffff"` inline (PAPER from TerminalDraftClient,
+   plus arrow-nub on the morph CTA which has been removed but kept for
+   safety on other instances). */
+body:has(.mp5-dark[data-accent="blue"]) [style*="background-color: rgb(255, 255, 255)"],
+body:has(.mp5-dark[data-accent="blue"]) [style*='background-color: "#ffffff"'],
+body:has(.mp5-dark[data-accent="blue"]) [style*="background-color: #ffffff"] {
+  background-color: var(--mp5-dark-surface) !important;
+}

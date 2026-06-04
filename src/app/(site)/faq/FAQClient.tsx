@@ -1,7 +1,6 @@
 "use client";
 // FAQ page v2
 import { useState } from "react";
-import { Header } from "@site/layout/Header";
 import { ContactFooter } from "@site/sections/ContactFooter";
 import { Touchbar } from "@site/layout/Touchbar";
 import { QuoteModal } from "@site/ui/QuoteModal";
@@ -38,7 +37,7 @@ function FAQItem({
   onToggle: () => void;
 }) {
   return (
-    <div className="bg-[#181818] rounded-lg lg:rounded-2xl overflow-hidden">
+    <div className="faq-item bg-[#181818] rounded-lg lg:rounded-2xl overflow-hidden">
       <button
         onClick={onToggle}
         className="w-full flex items-center gap-[10px] p-4 lg:p-6 cursor-pointer group"
@@ -94,7 +93,7 @@ function FAQContent() {
   };
 
   return (
-    <section className="bg-[#0c0c0c] px-4 pb-[60px] lg:pb-[100px]">
+    <section id="faq" className="bg-[#0c0c0c] px-4 pb-[60px] lg:pb-[100px]">
       <div className="max-w-[1408px] mx-auto flex flex-col gap-8 lg:gap-12">
         {/* Tabs */}
         <div className="flex flex-nowrap lg:flex-wrap gap-2 lg:gap-3 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0 scrollbar-hide">
@@ -113,8 +112,8 @@ function FAQContent() {
           ))}
         </div>
 
-        {/* FAQ cards */}
-        <div className="flex flex-col gap-3 lg:gap-4">
+        {/* FAQ cards — flat-list styling inherited from footer-faq.css (#faq .faq-list .faq-item) */}
+        <div className="faq-list flex flex-col gap-3 lg:gap-4">
           {currentCategory.faqs.map((faq, i) => (
             <FAQItem
               key={`${activeCategory}-${i}`}
@@ -134,7 +133,6 @@ function FAQContent() {
 export default function FAQClient() {
   return (
     <div className="page-zoom min-h-screen bg-[#0c0c0c]">
-      <Header />
       <main>
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "FAQ" }]} />
         <FAQHero />

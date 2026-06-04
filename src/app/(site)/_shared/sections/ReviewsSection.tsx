@@ -26,7 +26,7 @@ export type ReviewsSectionProps = {
 const defaultReviews: ReviewItem[] = [
   {
     name: "Amanda J.",
-    location: "Beaverton, OR",
+    location: "Beaverton,\u00A0OR",
     rating: 5,
     text: "These guys are AMAZING – super professional experienced movers at a fair price, they arrived early with all the needed tools to take furniture apart and put back together. Easy local move done right! Thank you GOAT Movers!",
     source: "yelp" as const,
@@ -34,7 +34,7 @@ const defaultReviews: ReviewItem[] = [
   },
   {
     name: "Mike T.",
-    location: "Vancouver, WA",
+    location: "Vancouver,\u00A0WA",
     rating: 5,
     text: "Hands down the best moving experience I've ever had. The crew showed up on time, wrapped everything carefully, and had us fully moved into our new place in under 4 hours. Will absolutely use them again.",
     source: "yelp" as const,
@@ -42,7 +42,7 @@ const defaultReviews: ReviewItem[] = [
   },
   {
     name: "Sarah K.",
-    location: "Portland, OR",
+    location: "Portland,\u00A0OR",
     rating: 5,
     text: "I was dreading my cross-state move but these guys made it completely stress-free. They disassembled my furniture, loaded everything efficiently, and nothing was damaged. Highly recommend for long distance moves!",
     source: "yelp" as const,
@@ -50,7 +50,7 @@ const defaultReviews: ReviewItem[] = [
   },
   {
     name: "David R.",
-    location: "Seattle, WA",
+    location: "Seattle,\u00A0WA",
     rating: 5,
     text: "Used GOAT Movers for our office relocation. They handled all the equipment with care, labeled everything perfectly, and we were back up and running the next morning. Professional and reliable team.",
     source: "yelp" as const,
@@ -58,7 +58,7 @@ const defaultReviews: ReviewItem[] = [
   },
   {
     name: "Jessica L.",
-    location: "Portland, OR",
+    location: "Portland,\u00A0OR",
     rating: 5,
     text: "Moved my 3-bedroom house and couldn't be happier. The team was friendly, efficient, and super careful with my grandmother's antique furniture. Fair pricing with no hidden fees. 10/10 would recommend!",
     source: "yelp" as const,
@@ -66,7 +66,7 @@ const defaultReviews: ReviewItem[] = [
   },
   {
     name: "Chris M.",
-    location: "Vancouver, WA",
+    location: "Vancouver,\u00A0WA",
     rating: 5,
     text: "Third time using GOAT Movers and they never disappoint. Quick, careful, and always on schedule. They even helped me rearrange furniture in the new place. These guys truly go above and beyond!",
     source: "yelp" as const,

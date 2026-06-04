@@ -1,0 +1,320 @@
+/* ════════════════════════════════════════════════════════════════
+   SHARED FOOTER + FAQ — site-wide parity with the home (ex-mainpage-5)
+
+   Loaded by (site)/layout.tsx so EVERY corp page gets the same
+   ContactFooter (#contact) + FAQSection (#faq) treatment the home has.
+   Selectors are keyed on the layout wrapper's attributes:
+     • body:has([data-accent="blue"])          — every (site) page
+     • body:has(.mp5-dark[data-accent="blue"])  — dark-theme inversions
+
+   These rules used to live in the home-only accent.css / _mp5-dark.css
+   (route-scoped to "/"). Moving them here makes the corp pages identical
+   to the home. The (legacy)/mainpage-5 archive is in a different route
+   group and does NOT load this file, so it keeps its original flat footer.
+
+   Order within this file matters for the FAQ: the light-theme structural
+   rules come first, then the .mp5-dark inversions flip colours back to
+   white (higher specificity via the extra class, so they win regardless).
+   ══════════════════════════════════════════════════════════════ */
+
+
+/* ════════════════ CONTACT FOOTER (#contact) ════════════════ */
+
+/* Yellow-glow island: two #FFE533 radial washes (top-right +
+   bottom-left) over a diagonal dark fade. Replaces the component's
+   flat bg-[#141414] base on (site) pages. Padding tightened (no
+   wordmark backdrop). */
+body:has([data-accent="blue"]) #contact {
+  background-color: #0c0c0c !important;
+  background-image:
+    radial-gradient(ellipse 75% 65% at 88% 18%, rgba(255, 229, 51, 0.22), transparent 55%),
+    radial-gradient(ellipse 65% 55% at 12% 82%, rgba(255, 229, 51, 0.18), transparent 55%),
+    linear-gradient(140deg, #0c0c0c 0%, #18140a 100%) !important;
+  padding-top: 80px !important;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #contact {
+    padding-top: 120px !important;
+  }
+}
+
+/* Hover-to-yellow on the dark island would make text vanish; swap to a
+   soft warm white so the hover state stays visible. */
+body:has([data-accent="blue"]) #contact .hover\:text-\[\#FFE533\]:hover {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Hide the contact-form section + its trailing divider. The footer keeps
+   only the FooterContent (logo, about, nav, phone, email, social) and the
+   bottom bar — quote capture happens via the QuoteModal (open-quote-modal).
+   The shared component markup is untouched; these rules just hide it. */
+body:has([data-accent="blue"]) #contact > div > div:first-child {
+  display: none !important;
+}
+body:has([data-accent="blue"]) #contact > div > div:nth-child(2) {
+  display: none !important;
+}
+
+/* Hide the FAQ nav link in the footer — not surfaced as a primary
+   footer destination on the home. */
+body:has([data-accent="blue"]) #contact a[href="/faq"] {
+  display: none !important;
+}
+
+/* Section heading "Get a free moving estimate…" — drops to normal weight,
+   page type scale. (The form is hidden above, but keep the rule for parity
+   / in case the form is ever re-enabled.) */
+body:has([data-accent="blue"]) #contact h3,
+body:has([data-accent="blue"]) #contact h3.font-semibold {
+  font-weight: 400 !important;
+  font-size: 28px !important;
+  letter-spacing: -1px !important;
+  line-height: 1.05 !important;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #contact h3,
+  body:has([data-accent="blue"]) #contact h3.font-semibold {
+    font-size: 48px !important;
+    letter-spacing: -1.6px !important;
+  }
+}
+
+/* Eyebrow labels ("About", "Navigation", "Phone", …) — 11px mono
+   uppercase, tracking 2px, medium weight. */
+body:has([data-accent="blue"]) #contact .font-mono.font-bold.uppercase {
+  font-weight: 500 !important;
+  font-size: 11px !important;
+  letter-spacing: 2px !important;
+  line-height: 1.2 !important;
+}
+
+/* Link / list items (nav links, phone, email, address) — normal weight,
+   body-text scale. */
+body:has([data-accent="blue"]) #contact .font-semibold {
+  font-weight: 400 !important;
+  font-size: 16px !important;
+  letter-spacing: -0.3px !important;
+  line-height: 1.5 !important;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #contact .font-semibold {
+    font-size: 18px !important;
+  }
+}
+
+/* About paragraph — normalise tracking. */
+body:has([data-accent="blue"]) #contact p {
+  letter-spacing: -0.3px !important;
+}
+
+/* Any remaining font-bold → medium. */
+body:has([data-accent="blue"]) #contact .font-bold {
+  font-weight: 500 !important;
+}
+
+/* QuoteForm step indicator pills (live only if the form is re-enabled) —
+   white instead of yellow so they stay visible. */
+body:has([data-accent="blue"]) #contact .h-1\.5.rounded-full {
+  background-color: rgba(255, 255, 255, 0.45) !important;
+}
+body:has([data-accent="blue"]) #contact .h-1\.5.rounded-full.w-8 {
+  background-color: var(--mp5-white) !important;
+}
+
+/* Footer left/right column gap — widen to 8rem on desktop. Excludes the
+   bottom bar (which uses lg:items-center — different selector shape). */
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row:not(.lg\:items-center) {
+    gap: 8rem !important;
+  }
+}
+
+/* Bottom bar (copyright, Privacy policy, credit) — smallest type on the
+   page: 13/14px. */
+body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row.lg\:items-center p,
+body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row.lg\:items-center a,
+body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row.lg\:items-center span {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  letter-spacing: -0.1px !important;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row.lg\:items-center p,
+  body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row.lg\:items-center a,
+  body:has([data-accent="blue"]) #contact > div > div.flex.flex-col.lg\:flex-row.lg\:items-center span {
+    font-size: 14px !important;
+  }
+}
+
+/* Social icons — force white at rest via filter (override globals.css
+   `.social-icon img { opacity: 0.6 }`); hover keeps the colour shift but
+   locks the shape to a circle and disables the scale-up + sibling-dim. */
+body:has([data-accent="blue"]) #contact .social-icon img {
+  filter: brightness(0) invert(1) !important;
+  opacity: 1 !important;
+}
+body:has([data-accent="blue"]) #contact .social-icon--yelp:hover,
+body:has([data-accent="blue"]) #contact .social-icon--google:hover,
+body:has([data-accent="blue"]) #contact .social-icon--instagram:hover {
+  border-radius: 9999px !important;
+  transform: none !important;
+}
+body:has([data-accent="blue"]) #contact .social-card:has(.social-icon:hover) .social-icon:not(:hover) {
+  transform: none !important;
+  opacity: 1 !important;
+}
+
+
+/* ════════════════ FAQ (#faq) ════════════════
+   Terminal-industries-style flat list: drop the chunky card grid for
+   hairline dividers, plain plus/minus icons, generous padding, large
+   normal-weight questions. ──────────────────────────────────────── */
+
+/* Drop the dot+stripe eyebrow row; heading weight down to medium. */
+body:has([data-accent="blue"]) #faq .border-b.border-white\/16 {
+  display: none !important;
+}
+body:has([data-accent="blue"]) #faq h2 {
+  font-weight: 500 !important;
+}
+
+/* List + container: no grey wrapper, no padding/radius, items flush. */
+body:has([data-accent="blue"]) #faq .faq-list {
+  background-color: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  gap: 0 !important;
+}
+
+/* Items: transparent, thin ink divider between rows (flipped to white on
+   the dark theme below). Last item: section edge handles the bottom. */
+body:has([data-accent="blue"]) #faq .faq-list .faq-item {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+  overflow: visible !important;
+}
+body:has([data-accent="blue"]) #faq .faq-list .faq-item:first-child {
+  border-top: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Button row: generous vertical breathing room, no horizontal padding. */
+body:has([data-accent="blue"]) #faq .faq-list .faq-item button {
+  padding: 24px 0 !important;
+  align-items: center !important;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #faq .faq-list .faq-item button {
+    padding: 30px 0 !important;
+  }
+}
+
+/* Question text: large normal weight, tight tracking. */
+body:has([data-accent="blue"]) #faq .faq-list .faq-item button > span {
+  font-weight: 400 !important;
+  font-size: 18px !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.4px !important;
+  color: var(--mp5-ink) !important;
+  transition: color .25s ease;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #faq .faq-list .faq-item button > span {
+    font-size: 24px !important;
+    letter-spacing: -0.6px !important;
+  }
+}
+body:has([data-accent="blue"]) #faq .faq-list .faq-item button:hover > span {
+  color: var(--mp5-blue) !important;
+}
+
+/* Icon container: drop the chunky grey square → tiny inline glyph. */
+body:has([data-accent="blue"]) #faq .faq-list .faq-item .bg-\[\#242424\] {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #faq .faq-list .faq-item .bg-\[\#242424\] {
+    width: 22px !important;
+    height: 22px !important;
+  }
+}
+body:has([data-accent="blue"]) #faq .faq-list .faq-item button > div svg {
+  width: 100% !important;
+  height: 100% !important;
+  transition: transform .25s ease;
+}
+body:has([data-accent="blue"]) #faq .faq-list .faq-item button > div svg path {
+  stroke: var(--mp5-ink) !important;
+  stroke-width: 1.8 !important;
+  transition: stroke .25s ease;
+}
+body:has([data-accent="blue"]) #faq .faq-list .faq-item button:hover > div svg path {
+  stroke: var(--mp5-blue) !important;
+}
+
+/* Answer paragraph. */
+body:has([data-accent="blue"]) #faq .faq-list .faq-item p {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-bottom: 24px !important;
+  font-size: 16px !important;
+  line-height: 1.55 !important;
+  letter-spacing: -0.2px !important;
+  color: rgba(0, 0, 0, 0.65) !important;
+  max-width: 720px;
+}
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #faq .faq-list .faq-item p {
+    padding-bottom: 30px !important;
+    font-size: 18px !important;
+  }
+}
+
+/* FAQ desktop layout mirrors the footer's column grid: heading column on
+   the left + list column on the right, both flex-1 with the same 8rem gap
+   as the FooterContent. */
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) #faq .lg\:flex-row {
+    gap: 8rem !important;
+  }
+  body:has([data-accent="blue"]) #faq .lg\:flex-row > h2 {
+    flex: 1 1 0 !important;
+    max-width: none !important;
+  }
+  body:has([data-accent="blue"]) #faq .faq-list.hidden.lg\:flex {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
+
+/* ── FAQ dark-theme inversions ───────────────────────────────
+   The structural rules above paint the FAQ in ink (designed for a light
+   theme). On the dark site, flip text + dividers back to white. Higher
+   specificity (extra .mp5-dark class inside :has) wins regardless of
+   load order. */
+body:has(.mp5-dark[data-accent="blue"]) #faq h2 {
+  color: var(--mp5-white) !important;
+}
+body:has(.mp5-dark[data-accent="blue"]) #faq .faq-list .faq-item button > span {
+  color: var(--mp5-white) !important;
+}
+body:has(.mp5-dark[data-accent="blue"]) #faq .faq-list .faq-item p {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+body:has(.mp5-dark[data-accent="blue"]) #faq .faq-list .faq-item button > div svg path {
+  stroke: var(--mp5-white) !important;
+}
+body:has(.mp5-dark[data-accent="blue"]) #faq .faq-list .faq-item {
+  border-bottom-color: rgba(255, 255, 255, 0.12) !important;
+}
+body:has(.mp5-dark[data-accent="blue"]) #faq .faq-list .faq-item:first-child {
+  border-top-color: rgba(255, 255, 255, 0.12) !important;
+}

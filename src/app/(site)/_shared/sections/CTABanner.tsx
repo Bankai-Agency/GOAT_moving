@@ -51,9 +51,14 @@ export function CTABanner({
                 <p className="font-sans font-normal text-sm lg:text-base leading-[1.4] text-[#0c0c0c]/80 lg:whitespace-nowrap">
                   {tagline}
                 </p>
+                {/* Dark pill on the yellow island — no MP5Button variant
+                   fits a dark-on-accent button (primary would be
+                   yellow-on-yellow), so this stays a bespoke dark pill,
+                   retyped to the MP5 button language (sans / 500 /
+                   non-uppercase / rounded-12 / -0.3px). */}
                 <button
                   onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
-                  className="bg-[#0c0c0c] text-white h-[40px] lg:h-[44px] px-5 lg:px-7 rounded-lg font-mono font-bold text-sm lg:text-base uppercase tracking-[-0.64px] leading-[1.2] flex items-center justify-center hover:bg-[#1a1a1a] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer whitespace-nowrap shrink-0"
+                  className="bg-[#0c0c0c] text-white h-[44px] lg:h-[48px] px-6 lg:px-7 rounded-xl font-sans font-medium text-[15px] lg:text-base tracking-[-0.3px] leading-none flex items-center justify-center hover:bg-[#1a1a1a] hover:-translate-y-px transition-all duration-300 ease-out cursor-pointer whitespace-nowrap shrink-0"
                 >
                   {buttonText}
                 </button>

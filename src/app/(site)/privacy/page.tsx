@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Header } from "@site/layout/Header";
 import { ContactFooter } from "@site/sections/ContactFooter";
 import { Touchbar } from "@site/layout/Touchbar";
 import { QuoteModal } from "@site/ui/QuoteModal";
@@ -32,7 +31,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function PrivacyPolicyPage() {
   return (
     <div className="page-zoom">
-      <Header />
       <main>
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Privacy Policy" }]} />
 

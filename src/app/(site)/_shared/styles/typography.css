@@ -1,0 +1,46 @@
+/* ════════════════════════════════════════════════════════════════
+   SHARED HEADING TYPOGRAPHY — site-wide weight parity
+
+   Loaded by (site)/layout.tsx so EVERY (site) page (the home + all
+   corp pages) renders headings at the same weight. Before this rule:
+     • home  — h1/h2/h3 ran 400–500 (Tailwind font-normal/-medium)
+     • corp  — h1/h2 ran 700 (font-bold), h3 ran 600–700 (font-semibold)
+   The corp headings read noticeably heavier than the home. This levels
+   ALL headings to weight 500 (font-medium), matching the home's section
+   titles + FAQ heading, which were already 500.
+
+   Selector specificity (0,1,2) — body + :has([attr]) + :is(h-tag) —
+   beats the Tailwind weight utilities (.font-bold / .font-semibold /
+   .font-normal = (0,1,0)) regardless of stylesheet load order, so no
+   !important is needed and per-page size / letter-spacing / line-height
+   (set by their own utilities and page CSS) are untouched.
+
+   Scope note: keyed on the layout wrapper's [data-accent="blue"], so it
+   only affects (site) pages. The (legacy)/(lp)/(catalog) groups don't
+   load this file and aren't matched.
+
+   NOTE — hero + display headings: the home's hero phrases and the big
+   "Moving done right" / "Make the next move…" display lines were authored
+   at weight 400 to mirror the terminal-industries reference. This rule
+   bumps them to 500 along with everything else (per the "all headings →
+   500" instruction). To carve them back out to 400, add a :not() guard
+   here (e.g. :not([data-hero-phrase])) plus a per-element exception.
+   ══════════════════════════════════════════════════════════════ */
+
+body:has([data-accent="blue"]) :is(h1, h2, h3, h4) {
+  font-weight: 500;
+}
+
+/* ── Heading line balancing — corp pages only ─────────────────────
+   Balances heading line lengths so a short trailing word / state code
+   (e.g. the "OR" in "…Moving in Portland, OR") can't orphan onto its
+   own line. `text-wrap: balance` evens out the lines instead.
+
+   Scoped to corp pages via `html:not(.lenis)`: the home runs Lenis
+   smooth-scroll, which tags <html> with `.lenis`, so the home is
+   excluded — its hero/display headings are authored with deliberate
+   wrapping. The `:not([data-hero-phrase])` guard additionally protects
+   the home hero during the pre-hydration frame before Lenis mounts. */
+html:not(.lenis) body:has([data-accent="blue"]) :is(h1, h2, h3):not([data-hero-phrase]) {
+  text-wrap: balance;
+}

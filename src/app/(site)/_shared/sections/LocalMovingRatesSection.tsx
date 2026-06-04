@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { MP5Button } from "@site/ui/MP5Button";
 
 export type RatesEstimate = {
   title: string;
@@ -115,12 +116,13 @@ export function LocalMovingRatesSection({
                 </p>
                 {!hideCta && (
                   <>
-                    <button
+                    <MP5Button
+                      size="md"
                       onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
-                      className="btn-shine mt-4 bg-[#FFE533] h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-[#0c0c0c] uppercase tracking-[-0.64px] leading-[1.2] hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out w-full lg:w-fit cursor-pointer"
+                      className="mt-4 w-full lg:w-auto"
                     >
                       {ctaLabel}
-                    </button>
+                    </MP5Button>
                     {ctaFootnote && (
                       <span className="font-sans text-xs text-white/50">{ctaFootnote}</span>
                     )}
@@ -196,12 +198,12 @@ export function LocalMovingRatesSection({
           {/* CTA + footnote — rendered below estimates when the anchor card is hidden and CTA is not suppressed */}
           {hideHourlyCard && !hideCta && (
             <div className="flex flex-col items-center gap-3">
-              <button
+              <MP5Button
+                size="md"
                 onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
-                className="btn-shine bg-[#FFE533] h-[52px] px-8 rounded-lg font-mono font-bold text-base uppercase tracking-[-0.64px] text-[#0c0c0c] hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer"
               >
                 {ctaLabel}
-              </button>
+              </MP5Button>
               {ctaFootnote && (
                 <span className="font-sans text-xs text-white/50">{ctaFootnote}</span>
               )}

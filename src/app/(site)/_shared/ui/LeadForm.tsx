@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { FormInput } from "@site/ui/FormInput";
+import { MP5Button } from "@site/ui/MP5Button";
 
 export type LeadFormProps = {
   /** Heading rendered above the form (omit to hide). */
@@ -56,14 +57,9 @@ export function LeadForm({
         onChange={setPhone}
       />
 
-      <button
-        type="submit"
-        className="btn-shine bg-white lg:bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out"
-      >
-        <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
-          {submitLabel}
-        </span>
-      </button>
+      <MP5Button type="submit" fullWidth>
+        {submitLabel}
+      </MP5Button>
 
       {footnote && (
         <p className="font-sans text-sm text-white/50 text-center">{footnote}</p>

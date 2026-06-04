@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Header } from "@site/layout/Header";
+import { MP5Button } from "@site/ui/MP5Button";
 import { ReviewsSection } from "@site/sections/ReviewsSection";
 import { WhatsIncludedSection } from "@site/sections/WhatsIncludedSection";
 import { ServiceOptionsSection } from "@site/sections/ServiceOptionsSection";
@@ -27,25 +27,19 @@ function PKHero() {
           <h1 className="font-sans font-bold text-[40px] lg:text-[96px] leading-none tracking-[-1.2px] lg:tracking-[-2.88px]">
             <span className="text-[#FFE533]">Packing & Labor </span>
             <br />
-            <span className="text-white">in Vancouver, WA &&nbsp;Portland,&nbsp;OR</span>
+            <span className="text-white">in Vancouver,&nbsp;WA &&nbsp;Portland,&nbsp;OR</span>
           </h1>
           <div className="flex flex-col gap-5 lg:gap-7 max-w-[720px]">
             <p className="font-sans font-normal text-base lg:text-2xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.72px] text-white">
               Full-service packing, labor-only loading, PODS & U-Haul help. Quality materials, fragile specialists, same-day availability.
             </p>
             <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
-              <button
-                onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
-                className="btn-shine bg-[#FFE533] h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-[#0c0c0c] uppercase tracking-[-0.64px] leading-[1.2] hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer"
-              >
+              <MP5Button size="md" onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}>
                 Get Free Estimate
-              </button>
-              <a
-                href="tel:+13805240846"
-                className="border border-white h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-white uppercase tracking-[-0.64px] leading-[1.2] hover:bg-white/10 hover:shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:scale-[1.02] transition-all duration-300 ease-out"
-              >
+              </MP5Button>
+              <MP5Button size="md" variant="secondary" href="tel:+13805240846">
                 +1 (380) 524-0846
-              </a>
+              </MP5Button>
             </div>
           </div>
         </div>
@@ -299,7 +293,6 @@ function PKOtherServices() {
 export default function PackingServicesClient() {
   return (
     <div className="page-zoom">
-      <Header />
       <main>
         <PKHero />
         <PKServiceTypes />

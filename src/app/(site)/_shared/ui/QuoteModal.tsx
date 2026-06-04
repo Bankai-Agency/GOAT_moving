@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { DatePicker } from "@site/ui/DatePicker";
 import { formatUsPhone } from "@site/ui/FormInput";
+import { MP5Button } from "@site/ui/MP5Button";
 
 const EMAIL_PATTERN = "[^@\\s]+@[^@\\s]+\\.[^@\\s]+";
 
@@ -215,15 +216,14 @@ export function QuoteModal() {
                   {errors.email && <span className="text-sm text-red-400">{errors.email}</span>}
                 </div>
 
-                <button
+                <MP5Button
                   type="button"
                   onClick={handleContinue}
-                  className="btn-shine bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out mt-2"
+                  fullWidth
+                  className="mt-2"
                 >
-                  <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
-                    Continue
-                  </span>
-                </button>
+                  Continue
+                </MP5Button>
               </>
             )}
 
@@ -265,22 +265,22 @@ export function QuoteModal() {
                   />
                 </div>
 
-                <button
+                <MP5Button
                   type="submit"
                   disabled={submitting}
-                  className="btn-shine bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+                  fullWidth
+                  className="mt-2"
                 >
-                  <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
-                    {submitting ? "Sending..." : "Submit Request"}
-                  </span>
-                </button>
-                <button
+                  {submitting ? "Sending..." : "Submit Request"}
+                </MP5Button>
+                <MP5Button
                   type="button"
+                  variant="ghost"
                   onClick={() => setStep(1)}
-                  className="font-mono font-bold text-sm uppercase tracking-[-0.48px] text-white/40 hover:text-white/70 transition-colors cursor-pointer self-center"
+                  className="self-center"
                 >
                   Back
-                </button>
+                </MP5Button>
               </>
             )}
           </form>

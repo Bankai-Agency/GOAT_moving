@@ -1,5 +1,7 @@
 "use client";
 
+import { MP5Button } from "@site/ui/MP5Button";
+
 /**
  * Unified post-submit confirmation shown after any quote / contact form is sent.
  * Dark-brand version of the classic "Success" card — yellow checkmark-in-bubble,
@@ -41,12 +43,9 @@ export function SuccessState({
       </p>
 
       {onButtonClick && (
-        <button
-          onClick={onButtonClick}
-          className="btn-shine bg-[#FFE533] h-[48px] lg:h-[52px] w-full lg:w-auto lg:px-10 rounded-lg font-mono font-bold text-sm lg:text-base uppercase tracking-[-0.64px] leading-[1.2] text-[#0c0c0c] hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer mt-2"
-        >
+        <MP5Button onClick={onButtonClick} className="w-full lg:w-auto mt-2">
           {buttonLabel}
-        </button>
+        </MP5Button>
       )}
     </div>
   );

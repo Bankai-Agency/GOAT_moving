@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { QuoteForm } from "@site/ui/QuoteForm";
+import { FooterParallax } from "./FooterParallax";
 
 function ContactForm() {
   return (
@@ -167,6 +168,7 @@ function FooterContent() {
 
 export function ContactFooter() {
   return (
+    <FooterParallax>
     <footer id="contact" className="bg-[#141414] px-4 pt-16 lg:pt-20 pb-[76px] lg:pb-10">
       <div className="max-w-[1408px] mx-auto flex flex-col gap-8">
         {/* Contact form section */}
@@ -222,5 +224,6 @@ export function ContactFooter() {
         </div>
       </div>
     </footer>
+    </FooterParallax>
   );
 }

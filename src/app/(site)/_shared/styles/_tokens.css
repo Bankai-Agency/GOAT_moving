@@ -1,0 +1,67 @@
+/* ════════════════════════════════════════════════════════════════
+   Corp-site design tokens (formerly mainpage-5 `_tokens.css`).
+
+   Single source of truth for the hex colors used across mega-nav.css,
+   _mp5-btn.css, mega-nav-dark.css and section TSX inline styles.
+   To change the palette: edit values here, not call sites.
+
+   Scope: `:root, [data-accent="blue"]`. The vars cascade down to all
+   descendants of the page wrapper, AND are defined on :root so that
+   `body:has([data-accent="blue"])` rules (body is ancestor of the
+   wrapper) can resolve them.
+
+   Token names keep the `--mp5-` prefix for code-stability — the
+   mainpage-5 chrome was promoted to the corp site wholesale.
+   ══════════════════════════════════════════════════════════════ */
+
+:root,
+[data-accent="blue"] {
+  /* ── Brand accent — now YELLOW (was blue #0066ff).
+     Var names kept as `--mp5-blue*` for code-stability — they're
+     the accent slot, not literally blue. Swap back to blue here
+     to revert the page colour direction. */
+  --mp5-blue: #FFE533;
+  --mp5-blue-hover: #f0d820;
+  --mp5-blue-deep: #FFE533;
+
+  /* ── Ink (text on light surfaces) ───────────────────────── */
+  /* Ink (dark text on light surfaces) — was navy #001f4d; flipped
+     to pure black per yellow-theme readability. */
+  --mp5-ink: #000000;
+
+  /* ── Light surfaces ─────────────────────────────────────── */
+  --mp5-white: #ffffff;
+  --mp5-paper: #f5f8ff;            /* pale brand-blue paper tint */
+  --mp5-hairline: #e8ebf1;
+
+  /* ── Dark surfaces ──────────────────────────────────────── */
+  --mp5-dark: #0c0c0c;
+  --mp5-dark-surface: #242424;
+  --mp5-dark-glass-bg: rgba(0, 0, 0, 0.3);   /* canonical glass tint */
+
+  /* ── Legacy yellow ─────────────────────────────────────────
+     accent.css flips this to --mp5-blue everywhere it appears in
+     Tailwind escape-classes (`.bg-\[\#FFE533\]`). Kept tokenised so
+     downstream tweaks propagate. */
+  --mp5-yellow: #FFE533;
+
+  /* ── Greys ────────────────────────────────────────────── */
+  --mp5-grey-text: #6c6c6c;
+  --mp5-grey-mute: #a8adb8;
+
+  /* ── Ink / White alphas ────────────────────────────────── */
+  --mp5-ink-60: rgba(0, 0, 0, 0.6);
+  --mp5-white-70: rgba(255, 255, 255, 0.7);
+  --mp5-white-80: rgba(255, 255, 255, 0.8);
+  --mp5-black-10: rgba(0, 0, 0, 0.1);
+  --mp5-black-25: rgba(0, 0, 0, 0.25);
+
+  /* ── Glass blur (same value used inline in JSX too) ────── */
+  --mp5-glass-blur: 30px;
+
+  /* ── Radii ─────────────────────────────────────────────── */
+  --mp5-r-sm: 8px;
+  --mp5-r-md: 12px;
+  --mp5-r-lg: 16px;
+  --mp5-r-pill: 999px;
+}

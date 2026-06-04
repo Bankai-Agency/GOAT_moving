@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { RatingCards } from "@site/ui/RatingCards";
+import { MP5Button } from "@site/ui/MP5Button";
 
 export function HeroSection() {
   return (
@@ -41,19 +41,15 @@ export function HeroSection() {
               </p>
 
               <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
-                <button
-                  type="button"
+                <MP5Button
+                  size="md"
                   onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
-                  className="btn-shine bg-[#FFE533] h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-[#0c0c0c] uppercase tracking-[-0.64px] leading-[1.2] hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer"
                 >
                   Get Free Estimate
-                </button>
-                <Link
-                  href="#services"
-                  className="border border-white h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-white uppercase tracking-[-0.64px] leading-[1.2] hover:bg-white/10 hover:shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:scale-[1.02] transition-all duration-300 ease-out"
-                >
+                </MP5Button>
+                <MP5Button size="md" variant="secondary" href="#services">
                   Our Services
-                </Link>
+                </MP5Button>
               </div>
             </div>
           </div>

@@ -7,6 +7,7 @@ import { DatePicker } from "@site/ui/DatePicker";
 import { SelectDropdown } from "@site/ui/SelectDropdown";
 import { MOVE_SIZES } from "@site/ui/QuoteForm";
 import type { QuoteFormValues } from "@site/ui/QuoteForm";
+import { MP5Button } from "@site/ui/MP5Button";
 
 /* 2-step form: contact details → move details. The previous step 3
    ("Additional Information" / optional message) was removed — most LP
@@ -57,28 +58,22 @@ function StepIndicator({ current }: { current: number }) {
 /* ── Shared button styles ── */
 function ContinueButton({ label, onClick, disabled }: { label: string; onClick: () => void; disabled?: boolean }) {
   return (
-    <button
+    <MP5Button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="btn-shine bg-[#FFE533] rounded-lg h-[52px] lg:h-[56px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out w-full shrink-0 lg:w-auto lg:px-8 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full lg:w-auto shrink-0"
     >
-      <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
-        {label}
-      </span>
-    </button>
+      {label}
+    </MP5Button>
   );
 }
 
 function BackButton({ onClick }: { onClick: () => void }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="font-mono font-bold text-sm uppercase tracking-[-0.48px] text-white/40 hover:text-white/70 transition-colors cursor-pointer self-center"
-    >
+    <MP5Button type="button" variant="ghost" onClick={onClick} className="self-center">
       &larr; Back
-    </button>
+    </MP5Button>
   );
 }
 

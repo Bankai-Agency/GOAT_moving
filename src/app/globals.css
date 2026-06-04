@@ -785,36 +785,32 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 }
 
 /* Button shine sweep */
-@keyframes shine-sweep {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
+/* btn-shine — the shine "sweep" was removed project-wide. The class
+   now only carries a HEADER-STYLE hover: the button's own hover:bg-*
+   darkens the accent, plus a subtle 1px lift (matches the site/lp/mp5
+   primary buttons). The ::after guard below neutralises any per-theme
+   redefinition of the old sweep pseudo-element so it never reappears. */
 .btn-shine {
   position: relative;
   overflow: hidden;
+  transition: background-color 0.25s ease, transform 0.25s ease, color 0.25s ease;
 }
 
 .btn-shine::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    105deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.25) 50%,
-    transparent 60%
-  );
-  transform: translateX(-100%);
-  transition: none;
-  pointer-events: none;
+  display: none !important;
+  content: none !important;
 }
 
-.btn-shine:hover::after {
-  animation: shine-sweep 0.6s ease-out;
+.btn-shine:hover:not(:disabled) {
+  /* !important neutralises legacy per-button hover:scale-[1.02] /
+     hover:shadow utilities so every shine button gets the same
+     header-style lift (no scale, no glow). */
+  transform: translateY(-1px) !important;
+  box-shadow: none !important;
+}
+
+.btn-shine:active:not(:disabled) {
+  transform: translateY(0) !important;
 }
 
 /* Gallery image zoom */

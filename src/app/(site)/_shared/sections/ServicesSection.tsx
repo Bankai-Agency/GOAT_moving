@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 export type ServiceItem = {
   title: string;
@@ -55,26 +54,6 @@ const defaultServices: ServiceItem[] = [
 ];
 
 function ServiceCard({ title, description, number, image, href }: ServiceItem) {
-  const [el, setEl] = useState<HTMLElement | null>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [el]);
-
   const commonClass =
     "relative bg-[#181818] h-[360px] lg:h-[515px] rounded-2xl overflow-hidden flex flex-col justify-between group hover-lift";
 
@@ -85,19 +64,16 @@ function ServiceCard({ title, description, number, image, href }: ServiceItem) {
         {number}
       </span>
 
-      {/* Background image — always visible on mobile (scroll-triggered), hover on desktop */}
-      <div
-        className={`absolute inset-0 transition-opacity duration-700 ease-out ${
-          isVisible ? "opacity-100 lg:opacity-0" : "opacity-0"
-        } lg:group-hover:opacity-100 lg:transition-opacity lg:duration-500`}
-      >
+      {/* Background image — always visible (part of the default card state).
+         Was previously hidden behind a hover/scroll reveal whose IntersectionObserver
+         never fires under the page's `zoom: 0.9` (.page-zoom), leaving the photo
+         stuck hidden on desktop. Rendered statically now. */}
+      <div className="absolute inset-0">
         <Image
           src={image}
           alt={title}
           fill
-          className={`object-cover transition-transform duration-[1.2s] ease-out ${
-            isVisible ? "scale-100" : "scale-110"
-          } lg:scale-100`}
+          className="object-cover"
         />
         {/* Dark overlay 20% */}
         <div className="absolute inset-0 bg-black/20" />
@@ -105,13 +81,13 @@ function ServiceCard({ title, description, number, image, href }: ServiceItem) {
 
       {/* Content */}
       <div className="relative z-10 p-5 pb-16 lg:p-8 lg:pb-20 overflow-hidden">
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{background: 'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 55%, transparent 100%)'}} />
+        <div className="absolute inset-0" style={{background: 'linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 55%, transparent 100%)'}} />
         <h3 className="relative font-sans font-semibold text-[28px] lg:text-[42px] leading-[1.2] tracking-[-0.84px] lg:tracking-[-1.26px] text-white">
           {title}
         </h3>
       </div>
       <div className="relative z-10 p-5 pt-16 lg:p-8 lg:pt-20 overflow-hidden">
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 55%, transparent 100%)'}} />
+        <div className="absolute inset-0" style={{background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 55%, transparent 100%)'}} />
         <div className="relative flex gap-4 lg:gap-6 items-end">
         <p className="flex-1 font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white">
           {description}
@@ -132,7 +108,7 @@ function ServiceCard({ title, description, number, image, href }: ServiceItem) {
 
   if (href) {
     return (
-      <Link ref={setEl} href={href} className={commonClass}>
+      <Link href={href} className={commonClass}>
         {inner}
       </Link>
     );
@@ -140,7 +116,6 @@ function ServiceCard({ title, description, number, image, href }: ServiceItem) {
 
   return (
     <div
-      ref={setEl}
       onClick={() => window.dispatchEvent(new Event("open-quote-modal"))}
       role="button"
       tabIndex={0}
@@ -153,7 +128,7 @@ function ServiceCard({ title, description, number, image, href }: ServiceItem) {
 
 export function ServicesSection({
   label = "Our Services",
-  title = "Affordable Moving Services in Vancouver, WA & Portland, OR",
+  title = "Affordable Moving Services in Vancouver,\u00A0WA & Portland,\u00A0OR",
   subtitle = "Full-service moving — from packing to unloading. No hidden fees, no charge for stairs.",
   services = defaultServices,
 }: ServicesSectionProps = {}) {

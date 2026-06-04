@@ -2,7 +2,6 @@
 
 import React, { useRef, useState } from "react";
 import Image from "next/image";
-import { Header } from "@site/layout/Header";
 import { ContactFooter } from "@site/sections/ContactFooter";
 import { Touchbar } from "@site/layout/Touchbar";
 import { QuoteModal } from "@site/ui/QuoteModal";
@@ -292,7 +291,6 @@ export default function ReviewsClient() {
 
   return (
     <div className="page-zoom">
-      <Header />
       <main>
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Reviews" }]} />
         <ReviewsHero />

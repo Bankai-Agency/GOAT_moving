@@ -329,7 +329,7 @@ body:has([data-accent="blue"]) [class*="z-[200]"] button.btn-shine {
 }
 body:has([data-accent="blue"]) [class*="z-[200]"] button.btn-shine:hover {
   box-shadow: none !important;
-  transform: none !important;
+  transform: translateY(-1px) !important;
 }
 body:has([data-accent="blue"]) [class*="z-[200]"] button.btn-shine > span {
   font-family: var(--font-sans, system-ui, sans-serif) !important;

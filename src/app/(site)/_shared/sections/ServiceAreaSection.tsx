@@ -78,7 +78,7 @@ function AreaCard({ city, state, href }: ServiceArea) {
 
 export function ServiceAreaSection({
   label = "Service Area",
-  title = "Serving Vancouver, WA — Portland, OR — and Beyond",
+  title = "Serving Vancouver,\u00A0WA — Portland,\u00A0OR — and Beyond",
   subtitle = "Based in Vancouver, Washington, we cover the entire I-5 corridor. Whether you're moving across town or across states — we've got you covered.",
   areas = defaultAreas,
   columns = "auto",

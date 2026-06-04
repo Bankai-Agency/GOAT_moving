@@ -1,0 +1,48 @@
+/* ════════════════════════════════════════════════════════════════
+   mega-nav-dark.css — dark-surface overrides for the header dropdown.
+
+   The base mega-nav.css authors the Services / Locations dropdown as a
+   LIGHT plate (white bg, pale-blue accent column, ink links). On the
+   corp site the chrome wrapper carries `.mp5-dark[data-accent="blue"]`,
+   so flip the dropdown to a dark surface with white text + low-alpha
+   white accents.
+
+   Extracted from the home's `_mp5-dark.css` so corp pages get a correct
+   dark dropdown WITHOUT pulling in any page-specific (hero / FAQ /
+   sticky-steps / inline-style) overrides.
+
+   Scope uses `body:has(.mp5-dark[data-accent="blue"])` rather than a
+   descendant selector because the dropdown panels can render anywhere
+   inside the chrome wrapper — body is a safe common ancestor.
+
+   NOTE on the logo: the base header logo (`/icons/logo.svg`) is natively
+   #FFE533 (yellow) and renders yellow on the dark glass bar — high
+   contrast, on-brand. This intentionally matches the home (mainpage-5),
+   where the old `.theme-light` white-logo rule never matched the
+   `.mp5-dark` wrapper. Do NOT add a logo recolor here.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Dropdown plate → dark surface. */
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__dropdown-bg {
+  background-color: var(--mp5-dark-surface) !important;
+}
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__panel-grid-label,
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__panel-label {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+/* Vertical separator between columns: black-10 hairline → white-10. */
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__panel-col {
+  border-right-color: rgba(255, 255, 255, 0.1) !important;
+}
+/* "Colored" highlight column #f5f8ff → subtle white-03 elevation. */
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__panel-col.is--colored {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+/* Link rows: ink text → white, hover bg #f4f4f4 → white-08. */
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__panel-link {
+  color: var(--mp5-white) !important;
+}
+body:has(.mp5-dark[data-accent="blue"]) .mega-nav__panel-link:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: var(--mp5-blue) !important;
+}

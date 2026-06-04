@@ -1,0 +1,207 @@
+/* Mainpage-5 accent override: replace brand yellow (#FFE533) with the
+   page's accent blue (#0066ff) across header, touchbar, modal, the
+   global NavProgress bar and any other shared component rendered while
+   this page is mounted.
+
+   Scope: body:has([data-accent="blue"]) — works for descendants of the
+   page wrapper AND for elements rendered higher up (NavProgress lives
+   in the root layout, outside this page's tree). On every other page
+   the data-accent attribute is absent, so the rules don't apply. */
+
+body:has([data-accent="blue"]) .bg-\[\#FFE533\] {
+  background-color: var(--mp5-blue) !important;
+}
+body:has([data-accent="blue"]) .bg-\[\#FFE533\]\/60 {
+  background-color: rgba(255, 229, 51, 0.6) !important;
+}
+body:has([data-accent="blue"]) .text-\[\#FFE533\] {
+  color: var(--mp5-blue) !important;
+}
+body:has([data-accent="blue"]) .text-\[\#FFE533\]\/80 {
+  color: rgba(255, 229, 51, 0.8) !important;
+}
+body:has([data-accent="blue"]) .border-\[\#FFE533\] {
+  border-color: var(--mp5-blue) !important;
+}
+body:has([data-accent="blue"]) .hover\:bg-\[\#FFE533\]:hover {
+  background-color: var(--mp5-blue) !important;
+}
+body:has([data-accent="blue"]) .hover\:bg-\[\#f0d820\]:hover {
+  background-color: var(--mp5-blue-hover) !important;
+}
+body:has([data-accent="blue"]) .hover\:text-\[\#FFE533\]:hover {
+  color: var(--mp5-blue) !important;
+}
+
+/* Glow shadow tinted from yellow to blue (e.g. NavProgress, hover effects). */
+body:has([data-accent="blue"]) .shadow-\[0_0_10px_rgba\(255\2c 229\2c 51\2c 0\.7\)\] {
+  box-shadow: 0 0 10px rgba(0, 102, 255, 0.7) !important;
+}
+body:has([data-accent="blue"]) .hover\:shadow-\[0_4px_20px_rgba\(255\2c 229\2c 51\2c 0\.35\)\]:hover {
+  box-shadow: 0 4px 20px rgba(0, 102, 255, 0.35) !important;
+}
+
+/* Inline SVG fills/strokes hard-coded to yellow. */
+body:has([data-accent="blue"]) svg [fill="#FFE533"],
+body:has([data-accent="blue"]) svg[fill="#FFE533"] {
+  fill: var(--mp5-blue) !important;
+}
+body:has([data-accent="blue"]) svg [stroke="#FFE533"],
+body:has([data-accent="blue"]) svg[stroke="#FFE533"] {
+  stroke: var(--mp5-blue) !important;
+}
+
+/* Header logo — force white. theme-light's global svg-recolor rule
+   in globals.css would otherwise tint the logo blue; we override
+   with `brightness(0) invert(1)` so the source yellow becomes pure
+   white. Works on the dark glass header where blue logo lacked
+   contrast against the MagicRings backdrop. */
+.theme-light[data-accent="blue"] [data-menu-logo] img[src*="logo"] {
+  filter: brightness(0) invert(1) !important;
+}
+
+/* Benefits/Steps block (Step 01-04) mobile layout — image was eating
+   ~80% of viewport in the native layout. Re-balance so image gets
+   the upper ~55vh and text gets the rest (still bumped + lifted
+   above the Touchbar). */
+@media (max-width: 991px) {
+  body:has([data-accent="blue"]) section.grid-rows-\[1fr_auto\] {
+    grid-template-rows: 55vh 1fr !important;
+    padding-bottom: 5em !important;
+  }
+  body:has([data-accent="blue"]) section.grid-rows-\[1fr_auto\] h3 {
+    font-size: 26px !important;
+    letter-spacing: -0.8px !important;
+    line-height: 1.1 !important;
+  }
+  body:has([data-accent="blue"]) section.grid-rows-\[1fr_auto\] p {
+    font-size: 17px !important;
+    line-height: 1.5 !important;
+  }
+  body:has([data-accent="blue"]) section.grid-rows-\[1fr_auto\] .font-mono {
+    font-size: 11px !important;
+    letter-spacing: 2px !important;
+  }
+}
+
+/* QuoteModal inputs — on the light-flipped modal the original
+   `bg-white/10 text-white placeholder:text-white/60` reads as
+   invisible-white-placeholder on near-white input bg. Re-tune for
+   clear contrast on light theme:
+   - Input bg: distinct grey so the field is visible against the
+     light-grey modal card. Bg stays the same on hover + focus
+     (user feedback: focus-flipping to white felt jarring).
+   - Text: ink colour both at rest and when typing. */
+/* DARK theme (matches the DatePicker trigger): translucent-white
+   glass field + white text. Was light grey #e8ebf1 / ink text from
+   the page's light-card era — illegible on the dark modal. */
+body:has([data-accent="blue"]) .input-glow {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  border: 1px solid transparent !important;
+  transition: background-color .2s ease, border-color .2s ease !important;
+}
+body:has([data-accent="blue"]) .input-glow::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+  opacity: 1 !important;
+}
+body:has([data-accent="blue"]) .input-glow:hover,
+body:has([data-accent="blue"]) .input-glow:focus {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+}
+body:has([data-accent="blue"]) .input-glow:focus {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  /* Kill the yellow ring from globals.css :874. */
+  box-shadow: none !important;
+}
+
+/* QuoteModal Continue / Submit buttons — globals/JSX renders them as
+   `btn-shine bg-[#FFE533] rounded-lg` with a mono-uppercase label.
+   Restyle to match the page's AccentPill aesthetic: rounded-full
+   blue pill, sans medium white label. Hover keeps the bg-darken
+   from JSX but loses the yellow glow shadow. */
+body:has([data-accent="blue"]) [class*="z-[200]"] button.btn-shine {
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+/* Header-style hover (matches MP5Button primary): darken the accent +
+   a 1px lift. No shine sweep, no scale, no glow shadow. */
+body:has([data-accent="blue"]) [class*="z-[200]"] button.btn-shine:hover {
+  background-color: var(--mp5-blue-hover) !important;
+  box-shadow: none !important;
+  transform: translateY(-1px) !important;
+}
+body:has([data-accent="blue"]) [class*="z-[200]"] button.btn-shine:active {
+  transform: translateY(0) !important;
+}
+/* Neutralise the shine pseudo-element on these buttons regardless of
+   the global .btn-shine rule. */
+body:has([data-accent="blue"]) [class*="z-[200]"] button.btn-shine::after {
+  display: none !important;
+}
+/* Black label on the yellow button (white was invisible). */
+body:has([data-accent="blue"]) [class*="z-[200]"] button.btn-shine > span {
+  font-family: var(--font-sans, system-ui, sans-serif) !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  text-transform: none !important;
+  letter-spacing: -0.3px !important;
+  color: var(--mp5-ink) !important;
+}
+
+/* Modal field labels — white/55 on the dark modal (was ink/70 from
+   the light-card era, which read as black-on-dark = invisible). */
+body:has([data-accent="blue"]) .fixed.z-\[200\] label,
+body:has([data-accent="blue"]) [class*="z-[200]"] label {
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* Yellow phone icon (SVG referenced as <img src>) — recolor to brand
+   blue (#0066ff) with a precomputed filter chain. */
+body:has([data-accent="blue"]) img[src*="phone-yellow"] {
+  filter: brightness(0) saturate(100%) invert(28%) sepia(99%)
+    saturate(3500%) hue-rotate(216deg) brightness(99%) contrast(105%);
+}
+
+/* Contrast fix: anywhere we swapped yellow → blue, the original near-black
+   foreground text loses contrast (#0c0c0c on #0066ff ≈ 2.6:1). Force the
+   foreground to white on those elements so the AA contrast holds. */
+body:has([data-accent="blue"]) .bg-\[\#FFE533\].text-\[\#0c0c0c\],
+body:has([data-accent="blue"]) .bg-\[\#FFE533\] .text-\[\#0c0c0c\] {
+  color: var(--mp5-white) !important;
+}
+
+/* Header layout — desktop only: anchor the nav to the centre of the
+   header row, leaving phone + CTA on the right and logo on the left. */
+@media (min-width: 1024px) {
+  body:has([data-accent="blue"]) header > div {
+    position: relative;
+  }
+  body:has([data-accent="blue"]) header > div nav {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+  }
+}
+
+/* ── Hero phrases: mobile re-anchor ──────────────────────────────
+   On desktop each phrase is absolutely positioned to a "wandering"
+   zone (inline styles from heroPhrasePositions). On portrait there's
+   no room to wander and the truck fills the frame, so pin every phrase
+   to the bottom band, full-width, centered. CSS (not JS) so it's
+   right on first paint. !important overrides the inline top/left/right/
+   transform/max-width/text-align. */
+@media (max-width: 991px) {
+  [data-hero-phrase] {
+    top: auto !important;
+    bottom: 13% !important;
+    left: 5% !important;
+    right: 5% !important;
+    transform: none !important;
+    max-width: 90vw !important;
+    text-align: center !important;
+  }
+}

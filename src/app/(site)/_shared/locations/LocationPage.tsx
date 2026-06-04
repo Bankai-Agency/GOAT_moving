@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Header } from "@site/layout/Header";
+import { MP5Button } from "@site/ui/MP5Button";
 import { ServicesSection } from "@site/sections/ServicesSection";
 import { WhyTrustSection } from "@site/sections/WhyTrustSection";
 import { WhatsIncludedSection, defaultIncludedItems } from "@site/sections/WhatsIncludedSection";
@@ -22,6 +22,12 @@ export function LocationPage({ config }: { config: LocationConfig }) {
     heroImage,
     heroImagePosition = "object-center",
   } = config;
+
+  /* Non-breaking "City, ST" so the two-letter state code never orphans onto
+     its own line in a heading (e.g. "…in Portland, OR"). Used for the visible
+     headings + hero only; alt/sr-only text keeps the plain form. */
+  const cityNb = cityDisplay.replace(/,\s+/g, ",\u00A0");
+  const h1HighlightNb = config.h1Highlight.replace(/,\s+/g, ",\u00A0");
 
   /* ─── Services block: four cards with city-specific Local Moving copy ─── */
   const services = [
@@ -66,7 +72,6 @@ export function LocationPage({ config }: { config: LocationConfig }) {
 
   return (
     <div className="page-zoom">
-      <Header />
       <main>
 
       {/* ========================== HERO ========================== */}
@@ -96,7 +101,7 @@ export function LocationPage({ config }: { config: LocationConfig }) {
 
             {/* H1 */}
             <h1 className="font-sans font-bold text-[40px] lg:text-[80px] leading-[1.05] tracking-[-1.2px] lg:tracking-[-2.4px] text-white">
-              <span className="text-[#FFE533]">{config.h1Highlight}</span>{" "}
+              <span className="text-[#FFE533]">{h1HighlightNb}</span>{" "}
               {config.h1Suffix}
             </h1>
 
@@ -105,18 +110,15 @@ export function LocationPage({ config }: { config: LocationConfig }) {
             </p>
 
             <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 pt-2">
-              <button
+              <MP5Button
+                size="md"
                 onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
-                className="btn-shine bg-[#FFE533] h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-[#0c0c0c] uppercase tracking-[-0.64px] leading-[1.2] hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer"
               >
                 Get Free Estimate
-              </button>
-              <a
-                href="tel:+13805240846"
-                className="border border-white h-[48px] lg:h-[52px] flex items-center justify-center px-8 rounded-lg font-mono font-bold text-sm lg:text-base text-white uppercase tracking-[-0.64px] leading-[1.2] hover:bg-white/10 hover:scale-[1.02] transition-all duration-300 ease-out"
-              >
+              </MP5Button>
+              <MP5Button size="md" variant="secondary" href="tel:+13805240846">
                 +1 (380) 524-0846
-              </a>
+              </MP5Button>
             </div>
           </div>
         </div>
@@ -125,7 +127,7 @@ export function LocationPage({ config }: { config: LocationConfig }) {
       {/* ========================== OUR SERVICES ========================== */}
       <ServicesSection
         label="Our Services"
-        title={`Full-Service Moving in ${cityDisplay}`}
+        title={`Full-Service Moving in ${cityNb}`}
         subtitle={config.servicesSubtitle}
         services={services}
       />
@@ -149,7 +151,7 @@ export function LocationPage({ config }: { config: LocationConfig }) {
 
       {/* ========================== REVIEWS ========================== */}
       <ReviewsSection
-        title={`What ${cityDisplay} Customers Say`}
+        title={`What ${cityNb} Customers Say`}
       />
 
       {/* ========================== HOW IT WORKS ========================== */}
@@ -166,7 +168,7 @@ export function LocationPage({ config }: { config: LocationConfig }) {
 
       {/* ========================== FAQ ========================== */}
       <FAQSection
-        title={`Frequently Asked Questions — ${cityDisplay} Movers`}
+        title={`Frequently Asked Questions — ${cityNb} Movers`}
         items={config.faqs}
       />
 

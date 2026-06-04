@@ -1,18 +1,21 @@
 import type { Metadata } from "next";
-import { Header } from "@site/layout/Header";
-import { JsonLd } from "@site/seo/JsonLd";
-import { localBusinessSchema, websiteSchema } from "@site/seo/schema";
-import { HeroSection } from "@site/sections/HeroSection";
-import { AboutSection } from "@site/sections/AboutSection";
-import { ServicesSection } from "@site/sections/ServicesSection";
-import { ServiceAreaSection } from "@site/sections/ServiceAreaSection";
-import { ReviewsSection } from "@site/sections/ReviewsSection";
-import { GallerySection } from "@site/sections/GallerySection";
-import { CTABanner } from "@site/sections/CTABanner";
-import { FAQSection } from "@site/sections/FAQSection";
-import { ContactFooter } from "@site/sections/ContactFooter";
 import { Touchbar } from "@site/layout/Touchbar";
 import { QuoteModal } from "@site/ui/QuoteModal";
+import { FAQSection } from "@site/sections/FAQSection";
+import { JsonLd } from "@site/seo/JsonLd";
+import { localBusinessSchema, websiteSchema } from "@site/seo/schema";
+import { SmoothScrollProvider } from "@site/motion/SmoothScrollProvider";
+import { ContactFooter } from "@site/sections/ContactFooter";
+import { TerminalDraftClient } from "./_home/TerminalDraftClient";
+/* Home-only Tier-B CSS. Imported here (NOT in (site)/layout.tsx) so Next.js
+   route-scopes it to "/" — corp pages carry data-accent="blue" but never load
+   these files, so they don't inherit the home's page-specific overrides.
+   Order mirrors the original draft: the layout ships _tokens/mega-nav/_mp5-btn/
+   mega-nav-dark; the page adds sticky-steps → accent → _mp5-dark last so the
+   dark inversion layer wins the final cascade tie. */
+import "./_home/sticky-steps.css";
+import "./_home/accent.css";
+import "./_home/_mp5-dark.css";
 
 export const metadata: Metadata = {
   title: "Movers in Vancouver, WA & Portland, OR | $125/hr — GOAT Movers",
@@ -30,22 +33,15 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <div className="page-zoom">
+    <SmoothScrollProvider>
       <JsonLd data={[localBusinessSchema(), websiteSchema()]} />
-      <Header />
       <main>
-        <HeroSection />
-        <AboutSection />
-        <ServicesSection />
-        <ServiceAreaSection />
-        <ReviewsSection />
-        <GallerySection />
-        <CTABanner />
+        <TerminalDraftClient />
         <FAQSection />
       </main>
       <ContactFooter />
       <Touchbar />
       <QuoteModal />
-    </div>
+    </SmoothScrollProvider>
   );
 }

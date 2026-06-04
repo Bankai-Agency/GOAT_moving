@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { DatePicker } from "@site/ui/DatePicker";
 import { SelectDropdown } from "@site/ui/SelectDropdown";
 import { FormInput } from "@site/ui/FormInput";
+import { MP5Button } from "@site/ui/MP5Button";
 
 export const MOVE_SIZES = [
   "Room or Less",
@@ -135,15 +136,9 @@ export function QuoteForm({
             {errors.email && <span className="text-sm text-red-400">{errors.email}</span>}
           </div>
 
-          <button
-            type="button"
-            onClick={handleContinue}
-            className="btn-shine bg-white lg:bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out"
-          >
-            <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
-              Continue
-            </span>
-          </button>
+          <MP5Button type="button" onClick={handleContinue} fullWidth>
+            Continue
+          </MP5Button>
         </>
       )}
 
@@ -168,22 +163,17 @@ export function QuoteForm({
               className="flex-1 backdrop-blur-[20px] bg-white/10 rounded-[10px] p-4 font-sans font-normal text-base lg:text-lg leading-[1.5] lg:leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.36px] text-white placeholder:text-white/60 outline-none focus:bg-white/15 input-glow transition-all duration-200 resize-none"
             />
           </div>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="btn-shine bg-white lg:bg-[#FFE533] rounded-lg h-[52px] flex items-center justify-center cursor-pointer hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-[#0c0c0c]">
-              {submitting ? "Sending..." : submitLabel}
-            </span>
-          </button>
-          <button
+          <MP5Button type="submit" disabled={submitting} fullWidth>
+            {submitting ? "Sending..." : submitLabel}
+          </MP5Button>
+          <MP5Button
             type="button"
+            variant="ghost"
             onClick={() => setStep(1)}
-            className="font-mono font-bold text-sm uppercase tracking-[-0.48px] text-white/40 hover:text-white/70 transition-colors cursor-pointer self-center"
+            className="self-center"
           >
             Back
-          </button>
+          </MP5Button>
         </>
       )}
 
