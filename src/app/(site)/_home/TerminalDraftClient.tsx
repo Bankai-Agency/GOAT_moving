@@ -92,16 +92,10 @@ const trustedLogos = [
 /* Hero source = v.mov (1920×1080, 24fps, 18.6s) extracted to
    webp at fps=12 / scale 1280 → 222 frames (~9.4 MB), scrubbed by scroll
    (same frame-sequence mechanic as the print-foundry hero). */
-const FRAMES_DESKTOP = {
-  count: 222,
-  path: (i: number) =>
-    `/frames-vhero/frame_${String(i + 1).padStart(4, "0")}.webp`,
-};
-const FRAMES_MOBILE = {
-  count: 222,
-  path: (i: number) =>
-    `/frames-vhero/frame_${String(i + 1).padStart(4, "0")}.webp`,
-};
+/* Hero is now a single <video> (public/videos/hero.mp4, 1280×720 @ 24fps)
+   scrubbed by scroll — see the hero effect below. Replaced the old
+   222-webp canvas frame-sequence (main-thread decode + 222 requests +
+   12fps). frame_0001.webp is kept only as the <video> poster. */
 
 const heroPhrases = [
   "Your move, handled from the first box to the last.",
@@ -198,7 +192,7 @@ export function TerminalDraftClient() {
   );
 
   const heroWrapperRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const heroTextRef = useRef<HTMLDivElement>(null);
 
   const introRefs = useRef<HTMLDivElement[]>([]);
@@ -231,95 +225,34 @@ export function TerminalDraftClient() {
   useEffect(() => {
     registerGsapPlugins();
     const wrapperEl = heroWrapperRef.current;
-    const canvasEl = canvasRef.current;
-    if (!wrapperEl || !canvasEl) return;
+    const videoEl = videoRef.current;
+    if (!wrapperEl || !videoEl) return;
 
-    /* Pick frame set once at mount based on viewport width. No live
-       switching on resize — the two videos have different content
-       (landscape vs portrait crop) so swapping mid-scroll would jar.
-       Reload on cross-breakpoint is acceptable. */
+    /* Hero is a native <video> scrubbed by scroll (was a canvas webp
+       frame-sequence). Hardware-accelerated decode + one streamed file
+       instead of 222 separate webp requests → smooth, no load lag. We
+       never call play(); the scroll timeline drives `currentTime`. */
+    let videoDuration = videoEl.duration || 0;
+    const onMeta = () => { videoDuration = videoEl.duration || 0; };
+    videoEl.addEventListener("loadedmetadata", onMeta);
+    // Kick off buffering even though we never autoplay.
+    try { videoEl.load(); } catch { /* ignore */ }
+
+    /* Mobile horizontal focal point (replaces the old per-frame
+       `mobileFocalX`). The opening truck shot keeps its cab on the LEFT of
+       the 16:9 frame, so a centred object-cover crop on a portrait phone
+       hides it. Bias the crop left (object-position 20%) for that shot,
+       then ease to centre (50%) across the dissolve into the map/rooftops
+       (~halfway through). Desktop stays centred (the class default). The
+       composition itself isn't moved — only the crop window. Breakpoint
+       picked once at mount; cross-breakpoint reload is acceptable. */
     const isMobile = window.matchMedia("(max-width: 991px)").matches;
-    const FRAMES = isMobile ? FRAMES_MOBILE : FRAMES_DESKTOP;
-    const FRAME_COUNT = FRAMES.count;
-    const FRAME_PATH = FRAMES.path;
-
-    // Cap at 1.5 (was 2): the source frames are only 1280px wide, so a 2×
-    // backing store on retina just costs GPU/memory for upscaled pixels.
-    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    const images: HTMLImageElement[] = [];
-    let lastDrawn = -1;
-
-    const fitCanvas = () => {
-      const w = canvasEl.clientWidth;
-      const h = canvasEl.clientHeight;
-      canvasEl.width = w * dpr;
-      canvasEl.height = h * dpr;
+    const applyFocal = (p: number) => {
+      if (!isMobile) return;
+      const f = Math.min(1, Math.max(0, (p - 0.43) / (0.56 - 0.43)));
+      videoEl.style.objectPosition = `${(0.2 + 0.3 * f) * 100}% 50%`;
     };
-
-    /* Lazy windowed frame loading: instead of eagerly fetching all ~222
-       frames (9.4 MB racing the LCP), fetch a forward-biased window around
-       the current frame on demand. Frames the user never scrolls to are
-       never fetched. Trade-off: on a very fast scroll over a slow network
-       a frame may briefly lag (draw() holds the nearest loaded frame —
-       never blank). */
-    const requested = new Set<number>();
-    const loadFrame = (i: number) => {
-      if (i < 0 || i >= FRAME_COUNT || requested.has(i)) return;
-      requested.add(i);
-      const img = new window.Image();
-      img.src = FRAME_PATH(i);
-      img.onload = () => {
-        if (lastDrawn < 0) draw(0);
-        else if (i === lastDrawn) draw(i);
-      };
-      images[i] = img;
-    };
-    const ensureWindow = (idx: number) => {
-      for (let i = idx - 4; i <= idx + 24; i++) loadFrame(i);
-    };
-
-    const draw = (idx: number) => {
-      const c = canvasEl.getContext("2d");
-      if (!c) return;
-      ensureWindow(idx);
-      let img = images[idx];
-      if (!img || !img.complete || !img.naturalWidth) {
-        for (let j = idx; j >= 0; j--) {
-          if (images[j]?.complete && images[j].naturalWidth) {
-            img = images[j];
-            break;
-          }
-        }
-      }
-      if (!img) return;
-      const cw = canvasEl.width;
-      const ch = canvasEl.height;
-      const scale = Math.max(cw / img.naturalWidth, ch / img.naturalHeight);
-      const dw = img.naturalWidth * scale;
-      const dh = img.naturalHeight * scale;
-      /* Mobile (portrait crop of a 16:9 frame) focal point, per shot:
-         the opening truck shot (frames 1–110, idx < 110) has the CAB on
-         the LEFT, so bias the crop left (0.2) to keep it in view. After
-         it dissolves into the map + rooftops (idx ≥ 110) the subject is
-         centred, so use a centred crop (0.5). Desktop is always centred. */
-      const mobileFocalX = idx < 110 ? 0.2 : 0.5;
-      const dx = isMobile ? (cw - dw) * mobileFocalX : (cw - dw) / 2;
-      const dy = (ch - dh) / 2;
-      c.clearRect(0, 0, cw, ch);
-      c.drawImage(img, dx, dy, dw, dh);
-      lastDrawn = idx;
-    };
-
-    fitCanvas();
-    // Seed the first window so frame 0 (the LCP paint) loads immediately;
-    // the rest stream in as the scroll advances (ensureWindow in draw()).
-    ensureWindow(0);
-
-    const onResize = () => {
-      fitCanvas();
-      if (lastDrawn >= 0) draw(lastDrawn);
-    };
-    window.addEventListener("resize", onResize);
+    applyFocal(0);
 
     // Per-char split for every phrase — each phrase gets its own
     // staggered reveal window during scroll. StrictMode safe.
@@ -374,7 +307,7 @@ export function TerminalDraftClient() {
     });
 
     const ctx = gsap.context(() => {
-      const scrubObj = { f: 0 };
+      const vid = { t: 0 };
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: wrapperEl,
@@ -384,14 +317,26 @@ export function TerminalDraftClient() {
         },
       });
 
+      // Scrub the video playhead across the pinned scroll. `vid.t` is a
+      // normalised 0→1 progress mapped onto currentTime; the browser
+      // decodes the needed frame on the GPU. Same timeline position/length
+      // as the old frame tween, so the phrase reveals below stay in sync.
       tl.to(
-        scrubObj,
+        vid,
         {
-          f: FRAME_COUNT - 1,
+          t: 1,
           ease: "none",
-          snap: { f: 1 },
           duration: 1,
-          onUpdate: () => draw(Math.round(scrubObj.f)),
+          onUpdate: () => {
+            applyFocal(vid.t);
+            if (!videoDuration || videoEl.readyState < 2) return;
+            // Clamp just shy of the end — some browsers snap an exact
+            // `duration` seek back to 0.
+            videoEl.currentTime = Math.min(
+              vid.t * videoDuration,
+              videoDuration - 0.05,
+            );
+          },
         },
         0,
       );
@@ -459,7 +404,7 @@ export function TerminalDraftClient() {
     });
 
     return () => {
-      window.removeEventListener("resize", onResize);
+      videoEl.removeEventListener("loadedmetadata", onMeta);
       ctx.revert();
     };
   }, []);
@@ -1400,9 +1345,14 @@ export function TerminalDraftClient() {
         style={{ height: "500vh" }}
       >
         <section className="sticky top-0 h-screen w-full overflow-hidden">
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full"
+          <video
+            ref={videoRef}
+            className="absolute inset-0 w-full h-full object-cover"
+            src="/videos/hero.mp4"
+            poster="/frames-vhero/frame_0001.webp"
+            muted
+            playsInline
+            preload="auto"
             aria-hidden
           />
           <div
