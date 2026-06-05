@@ -4,6 +4,7 @@ import "@site/styles/_mp5-btn.css";
 import "@site/styles/mega-nav-dark.css";
 import "@site/styles/footer-faq.css";
 import "@site/styles/typography.css";
+import "@site/styles/_page-gradient.css";
 import { TerminalNav } from "@site/layout/TerminalNav";
 
 /* Shared chrome for every corp page under (site)/.

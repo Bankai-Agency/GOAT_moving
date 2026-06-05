@@ -1,0 +1,49 @@
+/* ════════════════════════════════════════════════════════════════
+   Page gradient background — ported from the landing pages.
+
+   Source: lp4 `_lp2-invert.css` (`body:has(.lp2-dark[data-lp-root])`):
+   a dark base (#0c0c0c) with two faint yellow radial glows and a warm
+   diagonal wash, pinned with `background-attachment: fixed`.
+
+   Scope: `body:has(.mp5-dark .page-zoom)` — every corp page that wraps
+   its content in `.page-zoom` (service, city, reviews, FAQ, contacts,
+   privacy). This deliberately EXCLUDES:
+     • mainpage-5 — it renders <main> directly, no `.page-zoom`
+       (and brings its own flat `_mp5-dark.css` background).
+     • the home `/` — legacy route, has `.page-zoom` but no `.mp5-dark`.
+
+   The full-width section/footer bands are made transparent so the fixed
+   gradient shows through uniformly (mirrors how the LP dark theme lets
+   its body gradient show). Cards/tiles inside sections keep their own
+   surface colours and pop against the gradient.
+   ════════════════════════════════════════════════════════════════ */
+
+body:has(.mp5-dark .page-zoom) {
+  background-color: #0c0c0c;
+  background-image:
+    radial-gradient(ellipse 75% 65% at 88% 18%, rgba(255, 229, 51, 0.22), transparent 55%),
+    radial-gradient(ellipse 65% 55% at 12% 82%, rgba(255, 229, 51, 0.18), transparent 55%),
+    linear-gradient(140deg, #0c0c0c 0%, #18140a 100%);
+  background-attachment: fixed;
+}
+
+/* Let the gradient show through the dark section bands. */
+body:has(.mp5-dark .page-zoom) section,
+body:has(.mp5-dark .page-zoom) footer {
+  background-color: transparent !important;
+}
+
+/* The footer (#contact) carries its OWN copy of this gradient in
+   footer-faq.css, but as a LOCAL background (attachment: scroll,
+   positioned to the footer box) — so its radial glows restart at the
+   footer and don't line up with the body's viewport-fixed gradient,
+   leaving a visible seam at the footer top. Drop the footer's own
+   background so the single continuous body gradient shows through.
+   (Can't just set the footer's gradient to `fixed`: it sits inside the
+   FooterParallax layer which has `will-change: transform`, so a fixed
+   background there anchors to that layer, not the viewport.)
+   Higher specificity than footer-faq's `#contact` rule so it wins. */
+body:has(.mp5-dark .page-zoom) #contact {
+  background-color: transparent !important;
+  background-image: none !important;
+}
