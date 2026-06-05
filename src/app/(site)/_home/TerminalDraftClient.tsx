@@ -228,6 +228,14 @@ export function TerminalDraftClient() {
     const videoEl = videoRef.current;
     if (!wrapperEl || !videoEl) return;
 
+    /* Pick the source by viewport — a lighter 960×540 file on phones, the
+       1280×720 file on desktop. Chosen once at mount (cross-breakpoint
+       reload acceptable). Set in JS rather than JSX so SSR and client
+       agree on the src (a static mobile src would double-download on
+       desktop and vice-versa). */
+    const isMobile = window.matchMedia("(max-width: 991px)").matches;
+    videoEl.src = isMobile ? "/videos/hero-mobile.mp4" : "/videos/hero.mp4";
+
     /* Hero is a native <video> scrubbed by scroll (was a canvas webp
        frame-sequence). Hardware-accelerated decode + one streamed file
        instead of 222 separate webp requests → smooth, no load lag. We
@@ -246,7 +254,6 @@ export function TerminalDraftClient() {
        (~halfway through). Desktop stays centred (the class default). The
        composition itself isn't moved — only the crop window. Breakpoint
        picked once at mount; cross-breakpoint reload is acceptable. */
-    const isMobile = window.matchMedia("(max-width: 991px)").matches;
     const applyFocal = (p: number) => {
       if (!isMobile) return;
       const f = Math.min(1, Math.max(0, (p - 0.43) / (0.56 - 0.43)));
@@ -1348,7 +1355,6 @@ export function TerminalDraftClient() {
           <video
             ref={videoRef}
             className="absolute inset-0 w-full h-full object-cover"
-            src="/videos/hero.mp4"
             poster="/frames-vhero/frame_0001.webp"
             muted
             playsInline
