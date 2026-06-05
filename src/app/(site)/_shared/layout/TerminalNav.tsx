@@ -75,13 +75,21 @@ export function TerminalNav() {
   useEffect(() => { setPortalMounted(true); }, []);
 
   useEffect(() => {
+    /* Lock BOTH <html> and <body>. The viewport scroller here is the
+       documentElement (globals sets `html { overflow-x: clip }`, so its
+       overflow-y stays `visible` and it owns the scroll), so locking only
+       <body> left the page scrolling behind the open menu. */
+    const html = document.documentElement;
     if (mobileMenuOpen) {
+      html.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
     } else {
+      html.style.overflow = "";
       document.body.style.overflow = "";
       setMobileSubmenu(null);
     }
     return () => {
+      html.style.overflow = "";
       document.body.style.overflow = "";
     };
   }, [mobileMenuOpen]);
@@ -938,27 +946,6 @@ export function TerminalNav() {
                     <PanelLink href={item.href} label={item.label} desc={item.desc} />
                   </div>
                 ))}
-                <div data-menu-fade="">
-                  <PanelLink
-                    href="/reviews"
-                    label="Reviews"
-                    desc="See what customers say"
-                  />
-                </div>
-                <div data-menu-fade="">
-                  <PanelLink
-                    href="/faq"
-                    label="FAQ"
-                    desc="Common questions"
-                  />
-                </div>
-                <div data-menu-fade="">
-                  <PanelLink
-                    href="/contacts"
-                    label="Contact"
-                    desc="Get in touch"
-                  />
-                </div>
               </div>
             </div>
           </div>

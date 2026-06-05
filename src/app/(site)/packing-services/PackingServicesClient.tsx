@@ -33,11 +33,11 @@ function PKHero() {
             <p className="font-sans font-normal text-base lg:text-2xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.72px] text-white">
               Full-service packing, labor-only loading, PODS & U-Haul help. Quality materials, fragile specialists, same-day availability.
             </p>
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
-              <MP5Button size="md" onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}>
+            <div className="mp5-hero-cta flex flex-col lg:flex-row gap-3 lg:gap-6">
+              <MP5Button size="sm" onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}>
                 Get Free Estimate
               </MP5Button>
-              <MP5Button size="md" variant="secondary" href="tel:+13805240846">
+              <MP5Button size="sm" variant="secondary" href="tel:+13805240846">
                 +1 (380) 524-0846
               </MP5Button>
             </div>

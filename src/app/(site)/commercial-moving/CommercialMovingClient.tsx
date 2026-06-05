@@ -32,14 +32,14 @@ function CMHero() {
             <p className="font-sans font-normal text-base lg:text-2xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.72px] text-white">
               Office relocations with minimal downtime. After-hours & weekend moves, IT equipment specialists, fully licensed and insured.
             </p>
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
+            <div className="mp5-hero-cta flex flex-col lg:flex-row gap-3 lg:gap-6">
               <MP5Button
-                size="md"
+                size="sm"
                 onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
               >
                 Get Free Estimate
               </MP5Button>
-              <MP5Button size="md" variant="secondary" href="tel:+13805240846">
+              <MP5Button size="sm" variant="secondary" href="tel:+13805240846">
                 +1 (380) 524-0846
               </MP5Button>
             </div>
@@ -54,28 +54,28 @@ function CMHero() {
 const cmTrust = [
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" fill="#0c0c0c"/></svg>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" fill="#FFE533"/></svg>
     ),
     title: "Minimal Downtime",
     subtitle: "Weekend, evening, phased moves",
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" fill="#0c0c0c"/></svg>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" fill="#FFE533"/></svg>
     ),
     title: "Licensed & Insured",
     subtitle: "USDOT #4232069, $1M liability",
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z" fill="#0c0c0c"/></svg>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z" fill="#FFE533"/></svg>
     ),
     title: "After-Hours & Weekends",
     subtitle: "No overtime surcharge",
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" fill="#0c0c0c"/></svg>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" fill="#FFE533"/></svg>
     ),
     title: "Dedicated Project Manager",
     subtitle: "One point of contact, always",

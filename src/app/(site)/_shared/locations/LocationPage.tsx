@@ -109,14 +109,14 @@ export function LocationPage({ config }: { config: LocationConfig }) {
               {config.heroSubtitle}
             </p>
 
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 pt-2">
+            <div className="mp5-hero-cta flex flex-col lg:flex-row gap-3 lg:gap-4 pt-2">
               <MP5Button
-                size="md"
+                size="sm"
                 onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
               >
                 Get Free Estimate
               </MP5Button>
-              <MP5Button size="md" variant="secondary" href="tel:+13805240846">
+              <MP5Button size="sm" variant="secondary" href="tel:+13805240846">
                 +1 (380) 524-0846
               </MP5Button>
             </div>

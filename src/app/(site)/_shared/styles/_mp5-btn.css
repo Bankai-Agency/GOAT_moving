@@ -75,3 +75,21 @@ body:has([data-accent="blue"]) .mp5-btn:disabled {
     border-radius: 10px !important;
   }
 }
+
+/* Hero CTA — match the header's true 1:1 button size.
+   The hero sits inside .page-zoom (scaled down), so a plain `sm` button
+   renders smaller on screen than the header CTA, which lives OUTSIDE the
+   zoom. Multiply each dimension by --zoom-comp (the inverse of the active
+   page zoom) so the zoom cancels out and the on-screen size equals the
+   header's sm button — 44 / 18 / 16 / 12 — at every breakpoint.
+   Can't nest `zoom` to undo it (off by 5-15% in Chrome, see globals.css);
+   compensate with calc instead. !important overrides MP5Button's inline
+   sizing (same pattern as .mp5-morph-cta above). */
+body:has([data-accent="blue"]) .mp5-hero-cta .mp5-btn {
+  height: calc(44px * var(--zoom-comp, 1)) !important;
+  padding-left: calc(18px * var(--zoom-comp, 1)) !important;
+  padding-right: calc(18px * var(--zoom-comp, 1)) !important;
+  font-size: calc(16px * var(--zoom-comp, 1)) !important;
+  letter-spacing: calc(-0.3px * var(--zoom-comp, 1)) !important;
+  border-radius: calc(12px * var(--zoom-comp, 1)) !important;
+}

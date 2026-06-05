@@ -59,13 +59,19 @@ export function Header() {
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
+    const html = document.documentElement;
     if (mobileMenuOpen) {
+      html.style.overflow = "hidden";
       document.body.style.overflow = "hidden";
     } else {
+      html.style.overflow = "";
       document.body.style.overflow = "";
       setMobileSubmenu(null);
     }
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      html.style.overflow = "";
+      document.body.style.overflow = "";
+    };
   }, [mobileMenuOpen]);
 
   // Scroll listener — sticky from the first pixel of scroll. Hide on any

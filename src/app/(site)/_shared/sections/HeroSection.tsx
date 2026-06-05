@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { RatingCards } from "@site/ui/RatingCards";
-import { MP5Button } from "@site/ui/MP5Button";
 
 export function HeroSection() {
   return (
@@ -40,16 +39,22 @@ export function HeroSection() {
                 reviews, fully licensed & insured
               </p>
 
-              <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
-                <MP5Button
-                  size="md"
-                  onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
+              {/* CTA — same button as the home header (Header.tsx). Both live
+                 inside .page-zoom, so they scale together; no zoom-comp here
+                 (unlike the service-page heroes under TerminalNav). */}
+              <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
+                <button
+                  onClick={() => window.dispatchEvent(new Event("open-quote-modal"))}
+                  className="btn-shine bg-[#FFE533] px-4 py-3 rounded-[4px] font-mono text-sm font-bold uppercase tracking-[-0.64px] leading-[1.2] text-[#0c0c0c] whitespace-nowrap hover:bg-[#f0d820] hover:shadow-[0_4px_20px_rgba(255,229,51,0.35)] hover:scale-[1.02] transition-all duration-300 ease-out cursor-pointer"
                 >
                   Get Free Estimate
-                </MP5Button>
-                <MP5Button size="md" variant="secondary" href="#services">
+                </button>
+                <a
+                  href="#services"
+                  className="inline-flex items-center justify-center px-4 py-3 rounded-[4px] font-mono text-sm font-medium uppercase tracking-[-0.56px] leading-[1.2] text-white whitespace-nowrap ring-1 ring-inset ring-white/30 hover:bg-white/10 hover:ring-white/50 transition-all duration-200 ease-out"
+                >
                   Our Services
-                </MP5Button>
+                </a>
               </div>
             </div>
           </div>

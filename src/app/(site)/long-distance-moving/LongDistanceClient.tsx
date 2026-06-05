@@ -41,14 +41,14 @@ function LDHero() {
             <p className="font-sans font-normal text-base lg:text-2xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.72px] text-white">
               Interstate relocations across the US — fully licensed, fully insured, zero hidden fees.
             </p>
-            <div className="flex flex-col lg:flex-row gap-3 lg:gap-6">
+            <div className="mp5-hero-cta flex flex-col lg:flex-row gap-3 lg:gap-6">
               <MP5Button
-                size="md"
+                size="sm"
                 onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}
               >
                 Get Free Estimate
               </MP5Button>
-              <MP5Button size="md" variant="secondary" href="tel:+13805240846">
+              <MP5Button size="sm" variant="secondary" href="tel:+13805240846">
                 +1 (380) 524-0846
               </MP5Button>
             </div>
@@ -62,22 +62,22 @@ function LDHero() {
 /* ===================== WHY TRUST GOAT ===================== */
 const ldTrustPoints = [
   {
-    icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" fill="#0c0c0c"/></svg>,
+    icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" fill="#FFE533"/></svg>,
     title: "Federally Licensed",
     subtitle: "FMCSA interstate authority, USDOT #4232069",
   },
   {
-    icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#0c0c0c"/></svg>,
+    icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#FFE533"/></svg>,
     title: "Fully Insured",
     subtitle: "Protected from loading to final delivery",
   },
   {
-    icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0020 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z" fill="#0c0c0c"/></svg>,
+    icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58C.48 14.9 0 15.62 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0020 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z" fill="#FFE533"/></svg>,
     title: "One Team, Start to Finish",
     subtitle: "Same crew loads and delivers, no hand-offs",
   },
   {
-    icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.31 16.86V19h-1.73v-1.67c-1.47-.3-2.76-1.27-2.85-2.99h1.72c.09.92.72 1.64 2.32 1.64 1.71 0 2.1-.86 2.1-1.39 0-.72-.39-1.41-2.34-1.87-2.17-.52-3.66-1.42-3.66-3.21 0-1.51 1.21-2.49 2.72-2.81V5h1.73v1.69c1.62.4 2.44 1.63 2.49 2.97h-1.71c-.04-.98-.56-1.64-1.94-1.64-1.31 0-2.1.59-2.1 1.43 0 .73.57 1.22 2.34 1.67 1.75.46 3.64 1.22 3.65 3.42-.01 1.61-1.21 2.48-2.73 2.77z" fill="#0c0c0c"/></svg>,
+    icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm.31 16.86V19h-1.73v-1.67c-1.47-.3-2.76-1.27-2.85-2.99h1.72c.09.92.72 1.64 2.32 1.64 1.71 0 2.1-.86 2.1-1.39 0-.72-.39-1.41-2.34-1.87-2.17-.52-3.66-1.42-3.66-3.21 0-1.51 1.21-2.49 2.72-2.81V5h1.73v1.69c1.62.4 2.44 1.63 2.49 2.97h-1.71c-.04-.98-.56-1.64-1.94-1.64-1.31 0-2.1.59-2.1 1.43 0 .73.57 1.22 2.34 1.67 1.75.46 3.64 1.22 3.65 3.42-.01 1.61-1.21 2.48-2.73 2.77z" fill="#FFE533"/></svg>,
     title: "No Hidden Fees",
     subtitle: "Transparent pricing, no surprises at delivery",
   },
