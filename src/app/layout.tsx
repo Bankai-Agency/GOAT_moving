@@ -8,6 +8,7 @@ import {
   GoogleTagManagerNoScript,
 } from "@/components/GoogleTagManager";
 import { ShutterTransition } from "@/components/ShutterTransition";
+import { Preloader } from "@/components/Preloader";
 import "./globals.css";
 
 const geist = Geist({
@@ -66,6 +67,17 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         {/* GTM noscript fallback — must be the first element in <body>. */}
         <GoogleTagManagerNoScript />
+        {/* Pre-hydration: decide whether the logo-reveal preloader runs.
+            Runs once per session and never on the LP funnel — by adding a
+            `.preloaded` class to <html> BEFORE paint (so repeat visits / LP
+            never flash the loader). The Preloader reads that class. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var k='goat_preloaded',p=location.pathname,lp=p.indexOf('/lp')===0||p==='/thank-you',h=document.documentElement;if(lp){h.classList.add('preloaded');return;}if(sessionStorage.getItem(k)){h.classList.add('preloaded');}else{sessionStorage.setItem(k,'1');}}catch(e){}})();",
+          }}
+        />
+        <Preloader />
         <ScrollReset />
         <NavProgress />
         <ShutterTransition />

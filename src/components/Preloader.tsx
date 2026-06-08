@@ -5,21 +5,31 @@ import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import "./preloader.css";
 
-/* Logo-reveal preloader (Osmo "Logo Reveal Loader" port) for mainpage-5.
+/* Logo-reveal preloader (Osmo "Logo Reveal Loader" port). Mounted once in
+   the root layout so it can cover any page.
 
-   Covers the screen on first load while the hero <video> buffers, then
-   wipes the GOAT logo in, fills a progress bar, and lifts away. Unlike
-   the stock resource (a fixed 3s timeline) the EXIT is gated on REAL
-   readiness: it won't lift until the hero video has buffered enough
-   (readyState >= 3) — or a safety timeout — so the hero plays smoothly
-   the moment the loader clears. Text is split per-char manually (no
-   SplitText dependency). data-* hooks are load-bearing. */
+   Shows ONCE per session and never on the LP funnel — decided
+   pre-hydration by the inline script in the root layout, which adds a
+   `.preloaded` class to <html> (CSS then hides the loader, no flash). This
+   component bails when that class is present.
+
+   The EXIT is gated on REAL readiness: on a page with a hero <video>
+   (mainpage-5) it won't lift until the video has buffered (readyState >= 3)
+   — or a safety timeout — so the hero plays smoothly the instant the loader
+   clears. Image-hero pages have no video, so they just play the intro.
+   Text is split per-char manually (no SplitText dependency). data-* hooks
+   are load-bearing. */
 export function Preloader() {
   const wrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const wrap = wrapRef.current;
     if (!wrap) return;
+
+    // Repeat visit this session / LP funnel → the pre-hydration script
+    // already marked <html>.preloaded and CSS hides the loader. Do nothing
+    // (don't lock scroll, don't animate).
+    if (document.documentElement.classList.contains("preloaded")) return;
 
     gsap.registerPlugin(CustomEase);
     if (!gsap.parseEase("loaderEase")) {
@@ -91,7 +101,11 @@ export function Preloader() {
         const v = document.querySelector<HTMLVideoElement>(
           "[data-hero-region] video",
         );
-        if ((v && v.readyState >= 3) || performance.now() - t0 > MAX_MS) {
+        // A page with a hero <video> waits for it to buffer; image-hero
+        // pages have no such element → ready immediately (the intro min
+        // time still applies).
+        const mediaReady = !v || v.readyState >= 3;
+        if (mediaReady || performance.now() - t0 > MAX_MS) {
           resolve();
           return;
         }

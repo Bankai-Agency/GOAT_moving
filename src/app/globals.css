@@ -915,3 +915,10 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   z-index: 1;
 }
 
+/* Logo-reveal preloader: hide it instantly when the pre-hydration script
+   (root layout) marks <html> as already-loaded this session, or on the LP
+   funnel — so it only ever shows once per visit and never flashes. */
+html.preloaded [data-load-wrap] {
+  display: none !important;
+}
+
