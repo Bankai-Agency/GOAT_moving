@@ -5,6 +5,7 @@ import { FAQSection } from "@site/sections/FAQSection";
 import { SmoothScrollProvider } from "@site/motion/SmoothScrollProvider";
 import { ContactFooter } from "@site/sections/ContactFooter";
 import { TerminalDraftClient } from "../_home/TerminalDraftClient";
+import { Preloader } from "../_home/Preloader";
 /* Terminal-industries-style redesign, parked at /mainpage-5 (the live home
    is the original layout at `/`). Stays in the (site) group so it keeps the
    shared TerminalNav chrome from (site)/layout.tsx; the home-only Tier-B CSS
@@ -23,7 +24,11 @@ export const metadata: Metadata = {
 
 export default function Mainpage5Preview() {
   return (
-    <SmoothScrollProvider>
+    <>
+      {/* Logo-reveal preloader — covers the screen while the hero video
+          buffers, then lifts (see Preloader.tsx). */}
+      <Preloader />
+      <SmoothScrollProvider>
       {/* Preload the hero's first frame (the LCP paint). */}
       <link
         rel="preload"
@@ -38,6 +43,7 @@ export default function Mainpage5Preview() {
       <ContactFooter />
       <Touchbar />
       <QuoteModalLazy />
-    </SmoothScrollProvider>
+      </SmoothScrollProvider>
+    </>
   );
 }

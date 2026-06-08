@@ -1,0 +1,96 @@
+/* ════════════════════════════════════════════════════════════════
+   Logo-reveal preloader (Osmo "Logo Reveal Loader" port) — GOAT brand.
+   Used on mainpage-5. Dark cover + GOAT logo wipe-in + progress bar.
+   Driven by Preloader.tsx; data-* attributes are load-bearing.
+   ════════════════════════════════════════════════════════════════ */
+
+.loader {
+  z-index: 10000;
+  color: #fff;
+  width: 100%;
+  height: 100dvh;
+  position: fixed;
+  inset: 0 0 auto;
+}
+
+.loader__bg {
+  background-color: #0c0c0c;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+}
+
+.loader__bg-bar {
+  z-index: 1;
+  transform-origin: 0%;
+  background-color: #ffe533;
+  width: 100%;
+  height: 0.35em;
+  position: absolute;
+  inset: auto 0 0;
+  transform: scaleX(0);
+}
+
+.loader__container {
+  z-index: 2;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.loader__logo-wrap {
+  position: relative;
+  /* Match the GOAT logo viewBox ratio (82.4061 × 38.6467) so the
+     preserveAspectRatio="none" SVG never stretches. */
+  width: 240px;
+  aspect-ratio: 82.4061 / 38.6467;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+@media (max-width: 991px) {
+  .loader__logo-wrap { width: 176px; }
+}
+
+.loader__logo-item {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.loader__logo-item.is--base { opacity: 0.18; }
+.loader__logo-item.is--top { clip-path: inset(0% 100% 0% 0%); }
+
+.loader__logo-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.loader__text-wrap {
+  position: absolute;
+  bottom: 3.5em;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader__text-el {
+  position: absolute;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-family: var(--font-roboto-mono), ui-monospace, monospace;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* FOUC guard — hidden until the GSAP timeline sets the initial state. */
+[data-load-reset] { opacity: 0; }
