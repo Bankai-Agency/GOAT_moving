@@ -807,14 +807,22 @@ export function TerminalDraftClient() {
     const h2El = mobileH2Ref.current;
     const pEl = mobilePRef.current;
     const totalSteps = stickySteps.length;
+    // Single pinned mobile <video> — its src is swapped per step (desktop
+    // renders one <video> per step instead). This was missing, so on mobile
+    // the clip never changed while the text did.
+    const mobileVideo = mobileWrapper.querySelector<HTMLVideoElement>("video");
     let currentIdx = 0;
     const swapTo = (idx: number) => {
       if (idx === currentIdx) return;
       currentIdx = idx;
       const step = stickySteps[idx];
       if (!step || !eyebrowEl || !h2El || !pEl) return;
-      // Fade-out current, swap content, fade-in.
-      gsap.to([eyebrowEl, h2El, pEl], {
+      // Fade out text + video, swap the content AND the pinned video's clip,
+      // then fade back in.
+      const fadeTargets = [eyebrowEl, h2El, pEl, mobileVideo].filter(
+        Boolean,
+      ) as HTMLElement[];
+      gsap.to(fadeTargets, {
         opacity: 0,
         y: -10,
         duration: 0.25,
@@ -823,8 +831,14 @@ export function TerminalDraftClient() {
           eyebrowEl.textContent = step.eyebrow;
           h2El.textContent = step.h2;
           pEl.textContent = step.p;
+          if (mobileVideo && mobileVideo.getAttribute("src") !== step.video) {
+            mobileVideo.setAttribute("poster", step.image);
+            mobileVideo.setAttribute("src", step.video);
+            mobileVideo.load();
+            void mobileVideo.play().catch(() => {});
+          }
           gsap.fromTo(
-            [eyebrowEl, h2El, pEl],
+            fadeTargets,
             { opacity: 0, y: 14 },
             {
               opacity: 1,
