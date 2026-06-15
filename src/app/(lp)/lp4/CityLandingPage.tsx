@@ -182,7 +182,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
               fill
               sizes="100vw"
               quality={90}
-              className={`object-cover object-center lg:object-[center_25%]`}
+              className={`object-cover object-[62%_center] lg:object-[center_25%]`}
               priority
             />
             {/* Gradient overlays — dark where text is, clear where mover is.

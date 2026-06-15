@@ -46,7 +46,7 @@ export const portlandConfig: LP1Config = {
   city: "Portland",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Portland — $125/Hour | Goat Movers",
   metaDescription:
@@ -93,7 +93,7 @@ export const hillsboroConfig: LP1Config = {
   city: "Hillsboro",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Hillsboro — $125/Hour | Goat Movers",
   metaDescription:
@@ -140,7 +140,7 @@ export const tigardConfig: LP1Config = {
   city: "Tigard",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Tigard — $125/Hour | Goat Movers",
   metaDescription:
@@ -187,7 +187,7 @@ export const lakeOswegoConfig: LP1Config = {
   city: "Lake Oswego",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Lake Oswego — $125/Hour | Goat Movers",
   metaDescription:
@@ -234,7 +234,7 @@ export const oregonCityConfig: LP1Config = {
   city: "Oregon City",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Oregon City — $125/Hour | Goat Movers",
   metaDescription:
@@ -281,7 +281,7 @@ export const greshamConfig: LP1Config = {
   city: "Gresham",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Gresham — $125/Hour | Goat Movers",
   metaDescription:
@@ -326,7 +326,7 @@ export const happyValleyConfig: LP1Config = {
   city: "Happy Valley",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Happy Valley — $125/Hour | Goat Movers",
   metaDescription:
@@ -372,7 +372,7 @@ export const salemConfig: LP1Config = {
   city: "Salem",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Salem — $125/Hour | Goat Movers",
   metaDescription:
@@ -419,7 +419,7 @@ export const vancouverWaConfig: LP1Config = {
   city: "Vancouver",
   state: "WA",
   licenseState: "Washington",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Vancouver — $125/Hour | Goat Movers",
   metaDescription:
@@ -468,7 +468,7 @@ export const seattleConfig: LP1Config = {
   city: "Seattle",
   state: "WA",
   licenseState: "Washington",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Seattle — $125/Hour | Goat Movers",
   metaDescription:
@@ -514,7 +514,7 @@ export const tacomaConfig: LP1Config = {
   city: "Tacoma",
   state: "WA",
   licenseState: "Washington",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Tacoma — $125/Hour | Goat Movers",
   metaDescription:
@@ -560,7 +560,7 @@ export const redmondConfig: LP1Config = {
   city: "Redmond",
   state: "WA",
   licenseState: "Washington",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Redmond — $125/Hour | Goat Movers",
   metaDescription:
@@ -606,7 +606,7 @@ export const issaquahConfig: LP1Config = {
   city: "Issaquah",
   state: "WA",
   licenseState: "Washington",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Issaquah — $125/Hour | Goat Movers",
   metaDescription:
@@ -652,7 +652,7 @@ export const everettConfig: LP1Config = {
   city: "Everett",
   state: "WA",
   licenseState: "Washington",
-  heroImage: "/images/home-hero.png",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Everett — $125/Hour | Goat Movers",
   metaDescription:
