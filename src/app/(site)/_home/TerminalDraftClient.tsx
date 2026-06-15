@@ -336,9 +336,7 @@ export function TerminalDraftClient() {
           duration: 1,
           onUpdate: () => {
             applyFocal(vid.t);
-            // readyState >= 1 (metadata) is enough to seek — the seek itself
-            // pulls the needed range on demand (hero is preload="metadata").
-            if (!videoDuration || videoEl.readyState < 1) return;
+            if (!videoDuration || videoEl.readyState < 2) return;
             // Clamp just shy of the end — some browsers snap an exact
             // `duration` seek back to 0.
             videoEl.currentTime = Math.min(
@@ -1374,7 +1372,7 @@ export function TerminalDraftClient() {
             poster="/frames-vhero/frame_0001.webp"
             muted
             playsInline
-            preload="metadata"
+            preload="auto"
             aria-hidden
           />
           <div
