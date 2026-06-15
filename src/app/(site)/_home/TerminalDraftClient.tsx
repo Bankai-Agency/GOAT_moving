@@ -837,6 +837,14 @@ export function TerminalDraftClient() {
             mobileVideo.load();
             void mobileVideo.play().catch(() => {});
           }
+          // The packing clip is a single tall vase — `cover` crops its
+          // neck/base on the portrait mobile card, so show it whole with
+          // `contain`. The other clips are full-frame footage → keep cover.
+          if (mobileVideo) {
+            mobileVideo.style.objectFit = step.video.includes("service-packing")
+              ? "contain"
+              : "cover";
+          }
           gsap.fromTo(
             fadeTargets,
             { opacity: 0, y: 14 },
