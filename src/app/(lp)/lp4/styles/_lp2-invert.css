@@ -192,13 +192,11 @@ body:has(.lp2-dark[data-lp-root]) {
 }
 
 
-/* ── LOGO: white in header ───────────────────────────────────
-   accent.css has `.theme-light[data-accent="blue"] [data-menu-logo]
-   img[src*="logo"] { filter: brightness(0) invert(1) }` which DOES
-   the white-logo recolour but requires `theme-light` (not on lp2).
-   Re-apply the same filter chain under .lp2-dark. */
+/* ── LOGO: native brand colours in header (yellow GOAT + white MOVERS).
+   Override accent.css's `brightness(0) invert(1)` white-recolour so the
+   logo keeps logo.svg's native yellow GOAT mark on the dark glass nav. */
 .lp2-dark[data-lp-root] [data-menu-logo] img[src*="logo"] {
-  filter: brightness(0) invert(1) !important;
+  filter: none !important;
 }
 
 

@@ -170,20 +170,30 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
            light theme — keeps text/border whites white over the photo
            bg, see _shared/lp-theme.css. */}
         <div data-lp-hero="" className="relative bg-[#181818] h-[100dvh] overflow-hidden">
-          {/* Image + overlays fill the full hero box — no clip radius. */}
-          <div className="absolute inset-0">
+          {/* Image + overlays. Desktop: full-bleed (inset-0). Mobile: a
+             BAND from below the floating nav (top-[88px]) down to just
+             above the headline (bottom-[38dvh]); both edges dissolve
+             gradually into the hero's solid #181818 so the image → dark
+             transition is smooth, not a hard cut. */}
+          <div className="absolute inset-0 max-lg:top-[88px] max-lg:bottom-[38dvh]">
             <Image
               src={heroImage}
               alt={`Professional movers in ${city}`}
               fill
               sizes="100vw"
               quality={90}
-              className={`object-cover object-[45%_center] lg:object-[center_25%]`}
+              className={`object-cover object-center lg:object-[center_25%]`}
               priority
             />
-            {/* Gradient overlays — dark where text is, clear where mover is */}
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 45%, transparent 70%)' }} />
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 40%, transparent 65%)' }} />
+            {/* Gradient overlays — dark where text is, clear where mover is.
+               Desktop: dark on the LEFT (text column) + bottom. */}
+            <div className="hidden lg:block absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.4) 45%, transparent 70%)' }} />
+            <div className="hidden lg:block absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 40%, transparent 65%)' }} />
+            {/* Mobile: the image is a band sitting below the nav. Dissolve
+               BOTH edges into the hero's solid #181818 — top into the dark
+               nav strip, bottom into the dark headline area. */}
+            <div className="lg:hidden absolute inset-0" style={{ background: 'linear-gradient(to bottom, #181818 0%, rgba(24,24,24,0.5) 15%, rgba(24,24,24,0.15) 30%, transparent 46%)' }} />
+            <div className="lg:hidden absolute inset-0" style={{ background: 'linear-gradient(to top, #181818 0%, rgba(24,24,24,0.82) 14%, rgba(24,24,24,0.45) 32%, rgba(24,24,24,0.15) 46%, transparent 62%)' }} />
           </div>
 
           {/* Content layer — h-full so it stretches exactly to 100dvh.
