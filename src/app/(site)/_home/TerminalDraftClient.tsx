@@ -149,28 +149,28 @@ const stickySteps = [
     eyebrow: "Service 01",
     h2: "Local Moving",
     p: "Residential moves across Vancouver, WA, Portland, OR, and the surrounding metro. Packing, loading, transportation, unloading, unpacking — all included, no hidden fees.",
-    image: "/images/service-local.png",
+    image: "/images/service-local.webp",
     video: STEP_VIDEO,
   },
   {
     eyebrow: "Service 02",
     h2: "Long Distance",
     p: "Interstate relocations from the Pacific Northwest. USDOT-licensed (#4232069) and fully insured for cross-state moves of any size.",
-    image: "/images/service-longdistance.jpg",
+    image: "/images/service-longdistance.webp",
     video: "/videos/service-long-distance.mp4",
   },
   {
     eyebrow: "Service 03",
     h2: "Commercial Moving",
     p: "Office and commercial relocations in Vancouver and Portland with minimal downtime. Equipment, furniture, and sensitive documents handled safely and on schedule.",
-    image: "/images/service-commercial.png",
+    image: "/images/service-commercial.webp",
     video: "/videos/service-commercial.mp4",
   },
   {
     eyebrow: "Service 04",
     h2: "Full-Service Packing",
     p: "We pack everything — every room, every drawer, every fragile item. You keep working, we handle the boxes. Best for busy professionals, last-minute moves, and families with young kids.",
-    image: "/images/service-packing.png",
+    image: "/images/service-packing.webp",
     video: "/videos/service-packing.mp4",
   },
 ];
@@ -336,7 +336,9 @@ export function TerminalDraftClient() {
           duration: 1,
           onUpdate: () => {
             applyFocal(vid.t);
-            if (!videoDuration || videoEl.readyState < 2) return;
+            // readyState >= 1 (metadata) is enough to seek — the seek itself
+            // pulls the needed range on demand (hero is preload="metadata").
+            if (!videoDuration || videoEl.readyState < 1) return;
             // Clamp just shy of the end — some browsers snap an exact
             // `duration` seek back to 0.
             videoEl.currentTime = Math.min(
@@ -1372,7 +1374,7 @@ export function TerminalDraftClient() {
             poster="/frames-vhero/frame_0001.webp"
             muted
             playsInline
-            preload="auto"
+            preload="metadata"
             aria-hidden
           />
           <div

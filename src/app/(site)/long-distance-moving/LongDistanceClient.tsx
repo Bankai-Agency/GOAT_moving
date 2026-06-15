@@ -244,9 +244,9 @@ function LDFAQSection() {
 }
 
 const ldOtherServices = [
-  { title: "Local Moving", description: "Professional local moves in Vancouver, WA and Portland, OR metro area.", href: "/local-moving", image: "/images/service-local.png" },
-  { title: "Commercial Moving", description: "Office and business relocations with minimal downtime.", href: "/commercial-moving", image: "/images/service-commercial.png" },
-  { title: "Packing Services", description: "Full-service packing with quality materials for a stress-free move.", href: "/packing-services", image: "/images/service-packing.png" },
+  { title: "Local Moving", description: "Professional local moves in Vancouver, WA and Portland, OR metro area.", href: "/local-moving", image: "/images/service-local.webp" },
+  { title: "Commercial Moving", description: "Office and business relocations with minimal downtime.", href: "/commercial-moving", image: "/images/service-commercial.webp" },
+  { title: "Packing Services", description: "Full-service packing with quality materials for a stress-free move.", href: "/packing-services", image: "/images/service-packing.webp" },
 ];
 
 function LDOtherServices() {

@@ -280,9 +280,9 @@ function PKFAQSection() {
 
 /* ===================== OTHER SERVICES ===================== */
 const pkOtherServices = [
-  { title: "Local Moving", description: "Residential moves in Vancouver, WA and Portland, OR metro.", href: "/local-moving", image: "/images/service-local.png" },
-  { title: "Long Distance Moving", description: "Interstate moves, licensed FMCSA carrier.", href: "/long-distance-moving", image: "/images/service-longdistance.jpg" },
-  { title: "Commercial Moving", description: "Office relocations with minimal downtime.", href: "/commercial-moving", image: "/images/service-commercial.png" },
+  { title: "Local Moving", description: "Residential moves in Vancouver, WA and Portland, OR metro.", href: "/local-moving", image: "/images/service-local.webp" },
+  { title: "Long Distance Moving", description: "Interstate moves, licensed FMCSA carrier.", href: "/long-distance-moving", image: "/images/service-longdistance.webp" },
+  { title: "Commercial Moving", description: "Office relocations with minimal downtime.", href: "/commercial-moving", image: "/images/service-commercial.webp" },
 ];
 
 function PKOtherServices() {

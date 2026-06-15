@@ -35,7 +35,7 @@ export function LocationPage({ config }: { config: LocationConfig }) {
       title: "Local Moving",
       description: config.localMovingDescription,
       number: "1",
-      image: "/images/service-local.png",
+      image: "/images/service-local.webp",
       href: "/local-moving",
     },
     {
@@ -44,7 +44,7 @@ export function LocationPage({ config }: { config: LocationConfig }) {
         config.longDistanceDescription ??
         `Interstate moves out of ${city} across the US. Fully licensed (USDOT #4232069) with door-to-door delivery and same-crew service.`,
       number: "2",
-      image: "/images/service-longdistance.jpg",
+      image: "/images/service-longdistance.webp",
       href: "/long-distance-moving",
     },
     {
@@ -53,7 +53,7 @@ export function LocationPage({ config }: { config: LocationConfig }) {
         config.commercialDescription ??
         `Office relocations in ${city} with minimal downtime. After-hours and weekend scheduling available.`,
       number: "3",
-      image: "/images/service-commercial.png",
+      image: "/images/service-commercial.webp",
       href: "/commercial-moving",
     },
     {
@@ -62,7 +62,7 @@ export function LocationPage({ config }: { config: LocationConfig }) {
         config.packingDescription ??
         "Full-service packing, partial packing, and labor-only loading for PODS & U-Haul. Quality materials, fragile specialists, same-day availability.",
       number: "4",
-      image: "/images/service-packing.png",
+      image: "/images/service-packing.webp",
       href: "/packing-services",
     },
   ];

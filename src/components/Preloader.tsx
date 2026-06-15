@@ -14,9 +14,11 @@ import "./preloader.css";
    component bails when that class is present.
 
    The EXIT is gated on REAL readiness: on a page with a hero <video>
-   (mainpage-5) it won't lift until the video has buffered (readyState >= 3)
-   — or a safety timeout — so the hero plays smoothly the instant the loader
-   clears. Image-hero pages have no video, so they just play the intro.
+   (mainpage-5) it won't lift until the video has loaded its metadata
+   (readyState >= 1) — or a safety timeout. The hero is preload="metadata"
+   and scrubs on demand (the poster shows the first frame), so metadata is
+   enough to lift; we no longer block on full buffering. Image-hero pages
+   have no video, so they just play the intro.
    Text is split per-char manually (no SplitText dependency). data-* hooks
    are load-bearing. */
 export function Preloader() {
@@ -81,8 +83,8 @@ export function Preloader() {
     // ── Intro: progress fill + logo wipe + two-word char sequence ──
     const intro = gsap.timeline({ defaults: { ease: "loaderEase" } });
     intro
-      .to(progressBar, { scaleX: 0.9, duration: 2.6 }, 0)
-      .to(logo, { clipPath: "inset(0% 0% 0% 0%)", duration: 2.6 }, 0);
+      .to(progressBar, { scaleX: 0.9, duration: 1.2 }, 0)
+      .to(logo, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2 }, 0);
     if (firstChars.length) {
       intro.to(firstChars, { autoAlpha: 1, yPercent: 0, duration: 0.6, stagger: 0.02 }, 0.15);
       intro.to(firstChars, { autoAlpha: 0, yPercent: -125, duration: 0.4, stagger: 0.02 }, ">+=0.5");
@@ -92,8 +94,8 @@ export function Preloader() {
       intro.to(secondChars, { autoAlpha: 0, yPercent: -125, duration: 0.4, stagger: 0.02 }, ">+=0.5");
     }
 
-    // ── Readiness gate: hero video buffered (readyState>=3) or timeout ──
-    const MAX_MS = 7000;
+    // ── Readiness gate: hero video metadata loaded (readyState>=1) or timeout ──
+    const MAX_MS = 3500;
     const t0 = performance.now();
     let rafId = 0;
     const ready = new Promise<void>((resolve) => {
@@ -101,10 +103,11 @@ export function Preloader() {
         const v = document.querySelector<HTMLVideoElement>(
           "[data-hero-region] video",
         );
-        // A page with a hero <video> waits for it to buffer; image-hero
+        // A page with a hero <video> waits for its metadata; image-hero
         // pages have no such element → ready immediately (the intro min
-        // time still applies).
-        const mediaReady = !v || v.readyState >= 3;
+        // time still applies). The hero scrubs on demand, so metadata
+        // (readyState>=1) is enough — no need to wait for full buffering.
+        const mediaReady = !v || v.readyState >= 1;
         if (mediaReady || performance.now() - t0 > MAX_MS) {
           resolve();
           return;

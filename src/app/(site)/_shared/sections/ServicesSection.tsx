@@ -24,7 +24,7 @@ const defaultServices: ServiceItem[] = [
     description:
       "Residential moves within Vancouver, WA, Portland, OR, and surrounding areas. Packing, loading, transportation, unloading, and unpacking — all included with no hidden fees.",
     number: "1",
-    image: "/images/service-local.png",
+    image: "/images/service-local.webp",
     href: "/local-moving",
   },
   {
@@ -32,7 +32,7 @@ const defaultServices: ServiceItem[] = [
     description:
       "Interstate moves across the US from the Pacific Northwest. Fully licensed (USDOT #4232069) and insured for cross-state relocations of any size.",
     number: "2",
-    image: "/images/service-longdistance.jpg",
+    image: "/images/service-longdistance.webp",
     href: "/long-distance-moving",
   },
   {
@@ -40,7 +40,7 @@ const defaultServices: ServiceItem[] = [
     description:
       "Office and commercial relocations in Vancouver and Portland with minimal downtime. We handle equipment, furniture, and sensitive documents safely and on schedule.",
     number: "3",
-    image: "/images/service-commercial.png",
+    image: "/images/service-commercial.webp",
     href: "/commercial-moving",
   },
   {
@@ -48,7 +48,7 @@ const defaultServices: ServiceItem[] = [
     description:
       "Professional packing with quality materials for any size move. Same-building moves, loading/unloading labor, and expert handling of fragile and specialty items.",
     number: "4",
-    image: "/images/service-packing.png",
+    image: "/images/service-packing.webp",
     href: "/packing-services",
   },
 ];

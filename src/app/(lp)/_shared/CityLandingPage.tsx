@@ -98,13 +98,13 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       title: "Local Moving",
       description: config.localMovingDescription,
       number: "1",
-      image: "/images/service-local.png",
+      image: "/images/service-local.webp",
     },
     {
       title: "Long Distance Moving",
       description: `Interstate moves out of ${city} across the US. Fully licensed (USDOT #4232069) and insured for cross-state relocations of any size.`,
       number: "2",
-      image: "/images/service-longdistance.jpg",
+      image: "/images/service-longdistance.webp",
     },
     {
       title: "Commercial Moving",
@@ -112,14 +112,14 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         config.commercialDescription ??
         `Office and commercial relocations across ${city} with minimal downtime. Equipment, furniture, and sensitive documents handled safely and on schedule.`,
       number: "3",
-      image: "/images/service-commercial.png",
+      image: "/images/service-commercial.webp",
     },
     {
       title: "Packing & Labor",
       description:
         "Professional packing with quality materials, same-building moves, and loading/unloading labor. Expert handling of fragile and specialty items.",
       number: "4",
-      image: "/images/service-packing.png",
+      image: "/images/service-packing.webp",
     },
   ];
 

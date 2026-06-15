@@ -73,6 +73,29 @@ export function GridStreaks({
     let offsetX = 0;
     let offsetY = 0;
 
+    /* Static cell grid — clears the canvas then strokes the centred grid
+       lines. Used every animation frame, and (when streaks are disabled)
+       as the ONLY paint. */
+    const drawGrid = () => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.strokeStyle = GRID_STROKE;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      const vLineCount = Math.floor(w / cell) + 1;
+      for (let i = 0; i < vLineCount; i++) {
+        const x = offsetX + i * cell;
+        ctx.moveTo(Math.round(x) + 0.5, 0);
+        ctx.lineTo(Math.round(x) + 0.5, h);
+      }
+      const hLineCount = Math.floor(h / cell) + 1;
+      for (let i = 0; i < hLineCount; i++) {
+        const y = offsetY + i * cell;
+        ctx.moveTo(0, Math.round(y) + 0.5);
+        ctx.lineTo(w, Math.round(y) + 0.5);
+      }
+      ctx.stroke();
+    };
+
     const resize = () => {
       const r = canvas.getBoundingClientRect();
       w = r.width;
@@ -83,10 +106,20 @@ export function GridStreaks({
       cell = window.innerWidth < MOBILE_BREAKPOINT ? CELL_MOBILE : CELL;
       offsetX = (w % cell) / 2;
       offsetY = (h % cell) / 2;
+      // Streaks disabled → repaint the static grid here (no rAF loop runs).
+      if (maxStreaks === 0) drawGrid();
     };
     resize();
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
+
+    // maxStreaks === 0 (the default): only the static grid is ever drawn.
+    // resize() paints it (initial + on every resize); skip the rAF loop and
+    // IntersectionObserver entirely — no point repainting an unchanging grid
+    // 60×/sec for the whole page lifetime.
+    if (maxStreaks === 0) {
+      return () => ro.disconnect();
+    }
 
     const spawn = () => {
       /* Streak axis driven by the `streakAxis` prop. "h" travels
@@ -120,29 +153,9 @@ export function GridStreaks({
       const dt = Math.min(0.05, (t - last) / 1000);
       last = t;
 
-      ctx.clearRect(0, 0, w, h);
-
-      /* Static grid lines, drawn from a CENTRED origin so the pattern
-         is visually symmetric on every viewport.
-         Line count = floor(span / cell) + 1, positions: offset + i*cell
-         (i = 0..N). Left and right margins both equal `offset` — true
-         symmetry. 0.5 offset keeps strokes crisp at 1px. */
-      ctx.strokeStyle = GRID_STROKE;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      const vLineCount = Math.floor(w / cell) + 1;
-      for (let i = 0; i < vLineCount; i++) {
-        const x = offsetX + i * cell;
-        ctx.moveTo(Math.round(x) + 0.5, 0);
-        ctx.lineTo(Math.round(x) + 0.5, h);
-      }
-      const hLineCount = Math.floor(h / cell) + 1;
-      for (let i = 0; i < hLineCount; i++) {
-        const y = offsetY + i * cell;
-        ctx.moveTo(0, Math.round(y) + 0.5);
-        ctx.lineTo(w, Math.round(y) + 0.5);
-      }
-      ctx.stroke();
+      /* Static grid (clear + centred lines) — shared with the
+         streaks-disabled path via drawGrid(). */
+      drawGrid();
 
       /* Spawn timer. */
       spawnTimer -= dt;

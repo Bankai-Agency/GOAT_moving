@@ -179,10 +179,10 @@ function TypeRow({ label, sample, className, style }: { label: string; sample: s
 /* Demo data shared between themes. */
 
 const demoServices = [
-  { title: "Local Moving", description: "Hourly local moves with truck, fuel and equipment included.", number: "1", image: "/images/service-local.png" },
-  { title: "Long Distance", description: "Interstate relocations — fully licensed (USDOT #4232069).", number: "2", image: "/images/service-longdistance.jpg" },
-  { title: "Commercial", description: "Office and commercial moves with minimal downtime.", number: "3", image: "/images/service-commercial.png" },
-  { title: "Packing & Labor", description: "Professional packing, loading-only labor, fragile handling.", number: "4", image: "/images/service-packing.png" },
+  { title: "Local Moving", description: "Hourly local moves with truck, fuel and equipment included.", number: "1", image: "/images/service-local.webp" },
+  { title: "Long Distance", description: "Interstate relocations — fully licensed (USDOT #4232069).", number: "2", image: "/images/service-longdistance.webp" },
+  { title: "Commercial", description: "Office and commercial moves with minimal downtime.", number: "3", image: "/images/service-commercial.webp" },
+  { title: "Packing & Labor", description: "Professional packing, loading-only labor, fragile handling.", number: "4", image: "/images/service-packing.webp" },
 ];
 
 const demoSteps = [
@@ -798,13 +798,13 @@ const mp5StickySteps = [
     eyebrow: "Service 01",
     h2: "Local Moving",
     p: "Residential moves across Vancouver, WA and Portland, OR. Packing, loading, transportation, unloading — all included.",
-    image: "/images/service-local.png",
+    image: "/images/service-local.webp",
   },
   {
     eyebrow: "Service 02",
     h2: "Long Distance",
     p: "Interstate relocations from the Pacific Northwest. USDOT-licensed and fully insured.",
-    image: "/images/service-longdistance.jpg",
+    image: "/images/service-longdistance.webp",
   },
 ];
 

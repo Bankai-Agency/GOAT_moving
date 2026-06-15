@@ -314,9 +314,9 @@ function CMFAQSection() {
 
 /* ===================== OTHER SERVICES ===================== */
 const cmOtherServices = [
-  { title: "Local Moving", description: "Residential moves in Vancouver, WA and Portland, OR metro.", href: "/local-moving", image: "/images/service-local.png" },
-  { title: "Long Distance Moving", description: "Interstate moves, licensed FMCSA carrier.", href: "/long-distance-moving", image: "/images/service-longdistance.jpg" },
-  { title: "Packing Services", description: "Professional packing with quality materials.", href: "/packing-services", image: "/images/service-packing.png" },
+  { title: "Local Moving", description: "Residential moves in Vancouver, WA and Portland, OR metro.", href: "/local-moving", image: "/images/service-local.webp" },
+  { title: "Long Distance Moving", description: "Interstate moves, licensed FMCSA carrier.", href: "/long-distance-moving", image: "/images/service-longdistance.webp" },
+  { title: "Packing Services", description: "Professional packing with quality materials.", href: "/packing-services", image: "/images/service-packing.webp" },
 ];
 
 function CMOtherServices() {
