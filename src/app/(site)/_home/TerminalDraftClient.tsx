@@ -1550,6 +1550,10 @@ export function TerminalDraftClient() {
                 borderRadius: "1.25em",
                 overflow: "hidden",
                 minHeight: "32vh",
+                // Black fill so the `contain` letterbox on the packing clip
+                // blends seamlessly with the clip's own black background
+                // (other steps use cover and fully hide this).
+                background: "#000",
               }}
             >
               <video
@@ -1604,15 +1608,20 @@ export function TerminalDraftClient() {
                 "linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%)",
             }}
           >
+            {/* One centred emitter with a large radius: the ring's LEFT
+                arc reads as "(" near the left edge and its RIGHT arc as ")"
+                near the right edge, while the centre (ring hole) stays clear
+                and the top/bottom are faded by the mask — two edge waves
+                that curve toward their own edges, no visible full circle. */}
             <MagicRings
               color="#FFE533"
               colorTwo="#FFF788"
-              ringCount={isMobileView ? 7 : 5}
+              ringCount={5}
               speed={0.7}
               attenuation={isMobileView ? 8 : 10}
               lineThickness={isMobileView ? 3 : 2.2}
-              baseRadius={isMobileView ? 0.7 : 0.65}
-              radiusStep={isMobileView ? 0.1 : 0.12}
+              baseRadius={isMobileView ? 0.3 : 0.5}
+              radiusStep={isMobileView ? 0.025 : 0.05}
               scaleRate={0.1}
               opacity={isMobileView ? 0.45 : 0.35}
               blur={0}
