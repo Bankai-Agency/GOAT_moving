@@ -128,7 +128,7 @@ export function WhyTrustSection({
             </div>
           </div>
           <div className="flex flex-col gap-4 lg:gap-5 max-w-[720px]">
-            <h2 className="font-sans font-bold text-[32px] lg:text-[56px] leading-[1.05] tracking-[-0.96px] lg:tracking-[-2.24px] text-white">
+            <h2 className="font-sans font-bold text-[32px] sm:text-[56px] lg:text-[64px] leading-[1.05] tracking-[-1.5px] lg:tracking-[-2px] text-white">
               {title}
             </h2>
             {description && (

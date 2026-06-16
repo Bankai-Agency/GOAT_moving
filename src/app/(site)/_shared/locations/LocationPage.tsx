@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { MP5Button } from "@site/ui/MP5Button";
+import { HeroMobileFade } from "@site/sections/HeroMobileFade";
 import { ServicesSection } from "@site/sections/ServicesSection";
 import { WhyTrustSection } from "@site/sections/WhyTrustSection";
 import { WhatsIncludedSection, defaultIncludedItems } from "@site/sections/WhatsIncludedSection";
@@ -75,8 +76,9 @@ export function LocationPage({ config }: { config: LocationConfig }) {
       <main>
 
       {/* ========================== HERO ========================== */}
-      <section className="relative h-screen min-h-[720px] lg:min-h-[900px] overflow-hidden">
-        <div className="absolute inset-0">
+      <section className="relative h-screen min-h-[720px] lg:min-h-[900px] overflow-hidden bg-black">
+        <div aria-hidden className="lg:hidden absolute inset-0" style={{ background: "linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%)" }} />
+        <div className="absolute inset-0 max-lg:top-[88px] max-lg:bottom-[52dvh]">
           <Image
             src={heroImage}
             alt={`Professional movers in ${cityDisplay}`}
@@ -86,7 +88,8 @@ export function LocationPage({ config }: { config: LocationConfig }) {
             className={`object-cover ${heroImagePosition} lg:object-center`}
             priority
           />
-          <div className="absolute inset-0 bg-[rgba(7,7,7,0.35)]" />
+          <div className="hidden lg:block absolute inset-0 bg-[rgba(7,7,7,0.35)]" />
+          <HeroMobileFade />
         </div>
 
         <div className="relative h-full max-w-[1408px] mx-auto px-4 flex items-end pb-8 lg:pb-[72px]">

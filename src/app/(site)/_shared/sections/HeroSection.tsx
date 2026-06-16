@@ -2,12 +2,16 @@
 
 import Image from "next/image";
 import { RatingCards } from "@site/ui/RatingCards";
+import { HeroMobileFade } from "./HeroMobileFade";
 
 export function HeroSection() {
   return (
-    <section className="relative h-screen min-h-[700px] lg:min-h-[900px] overflow-hidden">
-      {/* Background image + overlay */}
-      <div className="absolute inset-0">
+    <section className="relative h-screen min-h-[700px] lg:min-h-[900px] overflow-hidden bg-black">
+      {/* Background image + overlay. On mobile the image is inset into a
+         band so the hero reads like the LP: dark above (nav) + below
+         (headline), image in the middle, edges smoothed by HeroMobileFade. */}
+      <div aria-hidden className="lg:hidden absolute inset-0" style={{ background: "linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%)" }} />
+      <div className="absolute inset-0 max-lg:top-[88px] max-lg:bottom-[53dvh]">
         <Image
           src="/images/home-hero.png"
           alt="Professional movers at work"
@@ -17,7 +21,8 @@ export function HeroSection() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-[rgba(7,7,7,0.3)]" />
+        <div className="hidden lg:block absolute inset-0 bg-[rgba(7,7,7,0.3)]" />
+        <HeroMobileFade />
       </div>
 
       {/* Content */}

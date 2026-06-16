@@ -2,119 +2,148 @@
 
 import React, { useEffect, useRef, useState } from "react";
 
-function IncludedCard({ item, index }: { item: { icon: React.ReactNode; title: string; description: string }; index: number }) {
-  const [isActive, setIsActive] = useState(false);
+export type IncludedItem = { icon: React.ReactNode; title: string; description: string };
+
+/* ════════════════════════════════════════════════════════════════
+   SolutionCard — dark card with an auto-orbiting yellow spotlight +
+   ring-glow + pulsing icon chip. Ported from the landing-page
+   "Our Solution" block (lp4) into the site so the corp pages get the
+   same look WITHOUT importing from (lp). Card surface is dark #1a1a1a;
+   the icon SVG is recolored to dark-on-yellow inside the chip.
+   ════════════════════════════════════════════════════════════════ */
+function SolutionCard({
+  item,
+  index,
+  flexBasis = "min(480px, calc(100vw - 40px))",
+}: {
+  item: IncludedItem;
+  index: number;
+  flexBasis?: string;
+}) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const hasHoverRef = useRef(true);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
 
-  // Different delays/positions per card so the blobs don't move in sync
-  const a = index % 3;
-  const b = index % 5;
-  const c = (index + 2) % 4;
-
-  /* On touch / mobile: trigger the lit state by scroll position (card in
-     middle viewport band → light up; leaves band → fade). Sequential
-     because cards are taller than the mid-band. On desktop keep hover.
-
-     Detection: width ≤ 991px is the LP mobile breakpoint. Don't rely on
-     matchMedia("(hover: hover)") — some mobile browsers report true,
-     blocking the scroll trigger. */
   useEffect(() => {
-    const isMobile = typeof window !== "undefined"
-      && window.matchMedia("(max-width: 991px)").matches;
-    hasHoverRef.current = !isMobile;
+    /* Mobile (<1024px): static spotlight at card centre, no RAF —
+       the orbit × N cards × setState was the source of scroll lag on
+       phones. Desktop keeps the cosine-driven orbit. */
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 1023px)").matches
+    ) {
+      const el = cardRef.current;
+      if (el) setPos({ x: el.offsetWidth / 2, y: el.offsetHeight / 2 });
+      return;
+    }
 
-    if (!isMobile) return;
+    let raf = 0;
+    /* Per-index phase offset so cards don't all pulse in sync. */
+    const phase = (index * Math.PI * 2) / 4;
+    const PERIOD = 6000;
+    const start = performance.now();
 
-    const el = cardRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setIsActive(entry.isIntersecting),
-      { rootMargin: "-40% 0px -40% 0px", threshold: 0 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+    const tick = (t: number) => {
+      const el = cardRef.current;
+      if (el) {
+        const w = el.offsetWidth;
+        const h = el.offsetHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const a = ((t - start) / PERIOD) * Math.PI * 2 + phase;
+        const rx = w * 0.35;
+        const ry = h * 0.32;
+        setPos({ x: cx + Math.cos(a) * rx, y: cy + Math.sin(a) * ry });
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [index]);
 
   return (
     <div
       ref={cardRef}
-      onMouseEnter={() => { if (hasHoverRef.current) setIsActive(true); }}
-      onMouseLeave={() => { if (hasHoverRef.current) setIsActive(false); }}
-      className="group relative rounded-xl lg:rounded-2xl min-h-[180px] lg:min-h-[280px] overflow-hidden bg-[#181818]"
+      className="relative overflow-hidden min-h-[320px] lg:min-h-[460px] h-full"
+      style={{
+        flex: `0 0 ${flexBasis}`,
+        backgroundColor: "#1a1a1a",
+        border: "1px solid rgba(255, 255, 255, 0.06)",
+        borderRadius: 20,
+        padding: 32,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        gap: 24,
+      }}
     >
-      {/* Animated yellow glow blobs — always floating, but hidden behind opaque layer until hover */}
+      {/* Inner spotlight — orbits the card centre, blurred so the glow
+          smudges across the whole surface. `overflow:hidden` clips the
+          halo at the card edge. */}
       <div
-        aria-hidden
-        className="absolute top-[20%] left-[10%] w-48 h-48 lg:w-64 lg:h-64 rounded-full pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(255,229,51,0.55) 0%, rgba(255,229,51,0) 70%)",
+          background: `radial-gradient(420px circle at ${pos.x}px ${pos.y}px, rgba(255, 229, 51, 0.38), rgba(255, 229, 51, 0.14) 55%, transparent 95%)`,
           filter: "blur(40px)",
-          animation: "blob-float-a 6s ease-in-out infinite",
-          animationDelay: `-${a * 1.5}s`,
-          willChange: "transform",
         }}
       />
+      {/* Border ring glow — radial-mask trick brightens the ring near
+          the spotlight. */}
       <div
-        aria-hidden
-        className="absolute bottom-[5%] right-[10%] w-40 h-40 lg:w-56 lg:h-56 rounded-full pointer-events-none"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(255,229,51,0.45) 0%, rgba(255,229,51,0) 70%)",
-          filter: "blur(45px)",
-          animation: "blob-float-b 5s ease-in-out infinite",
-          animationDelay: `-${b * 1.1}s`,
-          willChange: "transform",
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute top-[40%] right-[25%] w-32 h-32 lg:w-44 lg:h-44 rounded-full pointer-events-none"
-        style={{
-          background: "radial-gradient(circle, rgba(255,229,51,0.35) 0%, rgba(255,229,51,0) 70%)",
-          filter: "blur(35px)",
-          animation: "blob-float-c 7s ease-in-out infinite",
-          animationDelay: `-${c * 1.3}s`,
-          willChange: "transform",
+          borderRadius: 20,
+          background: `radial-gradient(320px circle at ${pos.x}px ${pos.y}px, rgba(255, 229, 51, 0.70), transparent 60%)`,
+          mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          maskComposite: "exclude",
+          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMaskComposite: "xor",
+          padding: "1.5px",
         }}
       />
 
-      {/* Default opaque layer → becomes frosted glass on hover, revealing the blobs through it */}
       <div
-        aria-hidden
-        className="absolute inset-0 pointer-events-none transition-[background,backdrop-filter] duration-700 ease-out"
+        className="solution-icon-pulse relative z-10 flex items-center justify-center [&_svg]:w-10 [&_svg]:h-10 [&_svg_path]:!fill-[#0c0c0c] [&_svg_circle]:!fill-[#0c0c0c] [&_svg_ellipse]:!fill-[#0c0c0c] [&_svg_rect]:!fill-[#0c0c0c]"
         style={{
-          background: isActive ? "rgba(24, 24, 24, 0.4)" : "rgba(24, 24, 24, 1)",
-          backdropFilter: isActive ? "blur(22px)" : "blur(0px)",
-          WebkitBackdropFilter: isActive ? "blur(22px)" : "blur(0px)",
+          width: 72,
+          height: 72,
+          borderRadius: 16,
+          backgroundColor: "#FFE533",
         }}
-      />
-
-      {/* Content */}
-      <div className="relative z-10 h-full p-6 lg:p-8 flex flex-col justify-between gap-8 lg:gap-0">
-        {/* Top row: title left, icon right */}
-        <div className="flex items-start justify-between gap-4">
-          <h3 className="font-sans font-bold text-xl lg:text-[26px] leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.78px] text-white whitespace-pre-line">
-            {item.title}
-          </h3>
-          <div
-            className="shrink-0 transition-opacity duration-500"
-            style={{ opacity: isActive ? 0.9 : 0.55 }}
-          >
-            {item.icon}
-          </div>
-        </div>
-
-        {/* Bottom: description */}
-        <p className="font-sans font-normal text-[15px] lg:text-base leading-[1.5] tracking-[-0.48px] text-white/60">
+      >
+        {item.icon}
+      </div>
+      <div className="relative z-10 flex flex-col gap-3">
+        <h3
+          style={{
+            fontFamily: "var(--font-sans, system-ui, sans-serif)",
+            fontWeight: 600,
+            fontSize: 26,
+            lineHeight: 1.2,
+            letterSpacing: "-0.6px",
+            color: "#ffffff",
+            margin: 0,
+            whiteSpace: "pre-line",
+          }}
+        >
+          {item.title}
+        </h3>
+        <p
+          style={{
+            fontFamily: "var(--font-sans, system-ui, sans-serif)",
+            fontWeight: 400,
+            fontSize: 18,
+            lineHeight: 1.5,
+            letterSpacing: "-0.3px",
+            color: "rgba(255, 255, 255, 0.65)",
+            margin: 0,
+          }}
+        >
           {item.description}
         </p>
       </div>
     </div>
   );
 }
-
-export type IncludedItem = { icon: React.ReactNode; title: string; description: string };
 
 export const defaultIncludedItems: IncludedItem[] = [
   {
@@ -182,53 +211,164 @@ export const defaultIncludedItems: IncludedItem[] = [
   },
 ];
 
+/* ════════════════════════════════════════════════════════════════
+   WhatsIncludedSection — sticky-pin horizontal-scroll "Our Solution"
+   layout (ported from lp4) adapted for the DARK corp site. Header +
+   cards live inside a sticky h-screen container so they stay pinned
+   together while the cards translate horizontally on desktop scroll.
+   Mobile renders a native horizontal-swipe carousel. Public API
+   (props + `defaultIncludedItems` + `IncludedItem`) is unchanged so
+   every existing call site keeps working.
+   ════════════════════════════════════════════════════════════════ */
 export function WhatsIncludedSection({
   label = "What's Included",
   title = "What's Included in Every Local Move",
   subtitle = "One hourly rate — everything covered",
   items: itemsProp,
-  columns = "auto",
 }: {
   label?: string;
   title?: string;
   subtitle?: string;
   items?: IncludedItem[];
-  /** "auto" (default): 3 on lg · "2": always 2 on lg (better for 4-item blocks). */
-  columns?: "auto" | "2";
 } = {}) {
-  const data = itemsProp ?? defaultIncludedItems;
-  const gridCols =
-    columns === "2"
-      ? "grid-cols-1 md:grid-cols-2"
-      : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+  const items = itemsProp ?? defaultIncludedItems;
+
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
+
+  /* Pin + scroll-jack — DESKTOP ONLY (≥1024px). Mobile uses native
+     overflow-x swipe (see JSX below), so no scroll-jack fighting the
+     platform. */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(max-width: 1023px)").matches) return;
+
+    const el = sectionRef.current;
+    const track = trackRef.current;
+    if (!el || !track) return;
+
+    let targetTx = 0;
+    let currentTx = 0;
+    let raf = 0;
+
+    const stickyEl = pinRef.current;
+
+    const compute = () => {
+      const rect = el.getBoundingClientRect();
+      const stickyHeight = stickyEl?.offsetHeight ?? window.innerHeight;
+      const total = el.offsetHeight - stickyHeight;
+      const scrolled = Math.max(0, Math.min(total, -rect.top));
+      const progress = total > 0 ? scrolled / total : 0;
+      const containerWidth = Math.min(1408, window.innerWidth);
+      const trackLeft =
+        window.innerWidth >= 1024
+          ? (window.innerWidth - containerWidth) / 2 + 16
+          : 16;
+      const cardGap = 20;
+      const maxTx = Math.max(
+        0,
+        trackLeft + track.scrollWidth - window.innerWidth + cardGap,
+      );
+      targetTx = progress * maxTx;
+    };
+
+    const tick = () => {
+      /* LERP toward target so wheel scroll reads as smooth scrub. */
+      currentTx += (targetTx - currentTx) * 0.18;
+      if (Math.abs(targetTx - currentTx) < 0.5) currentTx = targetTx;
+      track.style.transform = `translateX(-${currentTx}px)`;
+      raf = requestAnimationFrame(tick);
+    };
+
+    const onScroll = () => compute();
+    const onResize = () => compute();
+    compute();
+    raf = requestAnimationFrame(tick);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  /* Header block — shared between mobile + desktop renders. White on
+     the dark site (vs. the LP's ink-on-light original). */
+  const header = (
+    <div className="max-w-[1408px] mx-auto px-4 w-full flex flex-col gap-3 lg:gap-4">
+      <div className="border-b border-white/16 pb-3 lg:pb-4">
+        <div className="flex items-center gap-2.5">
+          <span className="w-2 h-2 rounded-full bg-[#FFE533]" />
+          <span className="font-mono font-bold text-base uppercase tracking-[-0.64px] leading-[1.2] text-white/60">
+            {label}
+          </span>
+        </div>
+      </div>
+      <h2 className="font-sans font-bold text-[32px] sm:text-[56px] lg:text-[64px] leading-[1.05] tracking-[-1.5px] lg:tracking-[-2px] text-white m-0">
+        {title}
+      </h2>
+      <p
+        className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] text-white/60 m-0"
+        style={{ maxWidth: 720 }}
+      >
+        {subtitle}
+      </p>
+    </div>
+  );
+
   return (
-    <section className="bg-[#0c0c0c] px-4 py-[60px] lg:py-[100px]">
-      <div className="max-w-[1408px] mx-auto flex flex-col gap-10 lg:gap-16">
-        {/* Section header */}
-        <div className="flex flex-col gap-6 lg:gap-8">
-          <div className="border-b border-white/16 pb-6">
-            <div className="flex items-center gap-2.5">
-              <span className="w-2 h-2 rounded-full bg-[#FFE533]" />
-              <span className="font-mono font-bold text-base uppercase tracking-[-0.64px] leading-[1.2] text-white/60">
-                {label}
-              </span>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4">
-            <h2 className="font-sans font-bold text-[32px] lg:text-[64px] leading-[1.2] tracking-[-0.96px] lg:tracking-[-2.56px] text-white">
-              {title}
-            </h2>
-            <p className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] text-white/60 max-w-[600px]">
-              {subtitle}
-            </p>
+    <section
+      ref={sectionRef}
+      style={{ position: "relative" }}
+      className="bg-[#0c0c0c] pt-[60px] lg:pt-[100px] pb-[60px] lg:pb-[80px] lg:h-[220vh]"
+    >
+      {/* MOBILE (<1024px) — header in flow + native horizontal-swipe
+          cards. No pin, no scroll-jack. */}
+      <div className="lg:hidden">
+        {header}
+        <div
+          className="mt-8 overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-pl-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
+          <div className="flex gap-3 px-4" style={{ width: "max-content" }}>
+            {items.map((it, i) => (
+              <div
+                key={i}
+                className="snap-start shrink-0"
+                style={{ width: "calc(100vw - 70px)" }}
+              >
+                <SolutionCard item={it} index={i} flexBasis="100%" />
+              </div>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Cards grid */}
-        <div className={`grid ${gridCols} gap-4 lg:gap-5`}>
-          {data.map((item, i) => (
-            <IncludedCard key={i} item={item} index={i} />
-          ))}
+      {/* DESKTOP (≥1024px) — sticky-pin + JS-driven horizontal
+          translate. Section's lg:h-[220vh] gives the scroll budget. */}
+      <div
+        ref={pinRef}
+        className="hidden lg:flex lg:sticky lg:top-0 lg:h-screen lg:flex-col lg:justify-center lg:overflow-hidden"
+      >
+        {header}
+
+        <div className="mt-8 lg:mt-12 w-full">
+          <div className="px-4 lg:max-w-[1408px] lg:mx-auto lg:px-4 w-full overflow-visible">
+            <div
+              ref={trackRef}
+              className="flex gap-4 lg:gap-5"
+              style={{
+                willChange: "transform",
+                width: "max-content",
+              }}
+            >
+              {items.map((it, i) => (
+                <SolutionCard key={i} item={it} index={i} />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>

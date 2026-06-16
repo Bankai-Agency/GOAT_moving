@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { MP5Button } from "@site/ui/MP5Button";
+import { HeroMobileFade } from "@site/sections/HeroMobileFade";
 import { ReviewsSection } from "@site/sections/ReviewsSection";
 import { WhatsIncludedSection } from "@site/sections/WhatsIncludedSection";
 import { ServiceOptionsSection } from "@site/sections/ServiceOptionsSection";
@@ -17,10 +18,12 @@ import { QuoteModal } from "@site/ui/QuoteModal";
 /* ===================== HERO ===================== */
 function PKHero() {
   return (
-    <section className="relative h-screen min-h-[700px] lg:min-h-[900px] overflow-hidden">
-      <div className="absolute inset-0">
+    <section className="relative h-screen min-h-[700px] lg:min-h-[900px] overflow-hidden bg-black">
+      <div aria-hidden className="lg:hidden absolute inset-0" style={{ background: "linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%)" }} />
+      <div className="absolute inset-0 max-lg:top-[88px] max-lg:bottom-[46dvh]">
         <Image src="/images/packing-hero.png" alt="Packing and labor services in Vancouver WA and Portland OR" fill sizes="(max-width: 1024px) 200vw, 100vw" quality={90} className="object-cover object-[30%_top] lg:object-center" priority />
-        <div className="absolute inset-0 bg-[rgba(7,7,7,0.55)]" />
+        <div className="hidden lg:block absolute inset-0 bg-[rgba(7,7,7,0.55)]" />
+        <HeroMobileFade />
       </div>
       <div className="relative h-full max-w-[1408px] mx-auto px-4 flex items-end pb-8 lg:pb-[72px]">
         <div className="flex flex-col gap-4 lg:gap-6">

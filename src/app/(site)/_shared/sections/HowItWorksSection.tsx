@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export type HowItWorksStep = {
   icon: React.ReactNode;
@@ -14,135 +14,114 @@ export type HowItWorksSectionProps = {
   steps?: HowItWorksStep[];
 };
 
-function HowItWorksCard({ step }: { step: HowItWorksStep }) {
+/* ProcessCard — dark #1a1a1a card with an always-on orbiting yellow
+   spotlight + ring-glow + pulsing icon chip. Ported from the
+   landing-page "How It Works" block (lp4 LPProcess) into the site so
+   the corp pages get the same look WITHOUT importing from (lp). The
+   icon SVG (yellow) is recolored to dark-on-yellow inside the chip. */
+function ProcessCard({ step, index }: { step: HowItWorksStep; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isActive, setIsActive] = useState(false);
-  const hasHoverRef = useRef(true);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  }, []);
-
-  /* On touch devices: trigger active state by scroll (card sits in middle
-     viewport band). Center the cursor-following spotlight in the card.
-     On hover-capable devices (desktop), keep the original mouse-driven UX.
-
-     Detection: width ≤ 991px is the LP mobile breakpoint. Don't rely on
-     matchMedia("(hover: hover)") — some mobile browsers report true,
-     blocking the scroll trigger. Width-based check is reliable. */
   useEffect(() => {
-    const isMobile = typeof window !== "undefined"
-      && window.matchMedia("(max-width: 991px)").matches;
-    hasHoverRef.current = !isMobile;
+    /* Mobile (<1024px): static spotlight at card centre, no RAF —
+       the orbit × N cards × setState was a measurable lag source on
+       phones. Desktop keeps the cosine-driven orbit. */
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 1023px)").matches
+    ) {
+      const el = cardRef.current;
+      if (el) setPos({ x: el.offsetWidth / 2, y: el.offsetHeight / 2 });
+      return;
+    }
 
-    if (!isMobile) return;
+    let raf = 0;
+    const phase = (index * Math.PI * 2) / 4; // 0, 90°, 180°, 270°
+    const PERIOD = 6000;
+    const start = performance.now();
 
-    const el = cardRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsActive(entry.isIntersecting);
-        if (entry.isIntersecting) {
-          // Center the spotlight in the card on mobile.
-          setMousePos({ x: el.offsetWidth / 2, y: el.offsetHeight / 2 });
-        }
-      },
-      { rootMargin: "-40% 0px -40% 0px", threshold: 0 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+    const tick = (t: number) => {
+      const el = cardRef.current;
+      if (el) {
+        const w = el.offsetWidth;
+        const h = el.offsetHeight;
+        const cx = w / 2;
+        const cy = h / 2;
+        const a = ((t - start) / PERIOD) * Math.PI * 2 + phase;
+        const rx = w * 0.35;
+        const ry = h * 0.32;
+        setPos({ x: cx + Math.cos(a) * rx, y: cy + Math.sin(a) * ry });
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [index]);
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Icon card with cursor-following spotlight */}
+    <div
+      ref={cardRef}
+      className="relative overflow-hidden flex flex-col justify-between min-h-[260px] lg:min-h-[400px] p-6 lg:p-9 gap-4 lg:gap-6"
+      style={{ backgroundColor: "#1a1a1a", borderRadius: 24 }}
+    >
+      {/* Orbiting spotlight — blurred so the glow smudges across the
+          surface; the card's overflow:hidden clips the halo. */}
       <div
-        ref={cardRef}
-        onMouseMove={(e) => { if (hasHoverRef.current) handleMouseMove(e); }}
-        onMouseEnter={() => { if (hasHoverRef.current) setIsActive(true); }}
-        onMouseLeave={() => { if (hasHoverRef.current) setIsActive(false); }}
-        className="relative rounded-2xl overflow-hidden flex flex-col lg:items-center lg:justify-center transition-[background-color] duration-500 aspect-[5/4] lg:aspect-[74/91]"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundColor: isActive ? "#2a2718" : "#242424",
-          backgroundImage: "radial-gradient(circle, #373737 1px, transparent 1px)",
-          backgroundSize: "16px 16px",
-          boxShadow: "inset 0 4px 144px 50px #242424",
+          background: `radial-gradient(420px circle at ${pos.x}px ${pos.y}px, rgba(255, 229, 51, 0.38), rgba(255, 229, 51, 0.14) 55%, transparent 95%)`,
+          filter: "blur(40px)",
         }}
+      />
+      {/* Border ring glow — radial-mask trick brightens the ring near
+          the spotlight. */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          borderRadius: 24,
+          background: `radial-gradient(320px circle at ${pos.x}px ${pos.y}px, rgba(255, 229, 51, 0.70), transparent 60%)`,
+          mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          maskComposite: "exclude",
+          WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+          WebkitMaskComposite: "xor",
+          padding: "1.5px",
+        }}
+      />
+
+      {/* Yellow icon chip — pulsing halo; SVG recolored dark-on-yellow. */}
+      <div
+        className="solution-icon-pulse relative z-10 flex items-center justify-center w-14 h-14 lg:w-[88px] lg:h-[88px] [&_svg_path]:!fill-[#0c0c0c] [&_svg_circle]:!fill-[#0c0c0c] [&_svg_ellipse]:!fill-[#0c0c0c] [&>div>svg]:w-7 [&>div>svg]:h-7 lg:[&>div>svg]:w-12 lg:[&>div>svg]:h-12"
+        style={{ borderRadius: 14, backgroundColor: "#FFE533" }}
       >
-        {/* Cursor-following yellow spotlight — much more visible */}
-        <div
-          className="absolute inset-0 pointer-events-none transition-opacity duration-500"
-          style={{
-            opacity: isActive ? 1 : 0,
-            background: `radial-gradient(360px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255, 229, 51, 0.28), rgba(255, 229, 51, 0.08) 40%, transparent 70%)`,
-          }}
-        />
-
-        {/* Cursor-following border glow */}
-        <div
-          className="absolute inset-0 pointer-events-none rounded-2xl transition-opacity duration-500"
-          style={{
-            opacity: isActive ? 1 : 0,
-            background: `radial-gradient(420px circle at ${mousePos.x}px ${mousePos.y}px, rgba(255, 229, 51, 0.55), transparent 55%)`,
-            mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-            maskComposite: "exclude",
-            WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-            WebkitMaskComposite: "xor",
-            padding: "1.5px",
-          }}
-        />
-
-        {/* Mobile: icon centered in upper portion */}
-        <div className="flex-1 flex items-center justify-center lg:flex-none lg:absolute lg:inset-0 lg:flex">
-          <div
-            className="flex items-center justify-center transition-all duration-500 relative z-10 w-[60px] h-[60px] lg:w-20 lg:h-20"
-            style={{
-              borderRadius: 10,
-              backgroundColor: isActive ? "#FFE533" : "#303030",
-              boxShadow: isActive
-                ? "0 8px 24px rgba(255,229,51,0.35), 0 0 60px rgba(255,229,51,0.25), 0 0 0 8px rgba(255,229,51,0.18)"
-                : "0 2.5px 5px rgba(255,255,255,0.08), 0 0 7.5px rgba(255,255,255,0.02), 0 0 0 6px rgba(255,255,255,0.06)",
-              transform: isActive
-                ? `translate(${(mousePos.x - (cardRef.current?.offsetWidth || 0) / 2) * 0.03}px, ${(mousePos.y - (cardRef.current?.offsetHeight || 0) / 2) * 0.03}px) scale(1.08)`
-                : "translate(0, 0) scale(1)",
-            }}
-          >
-            <div
-              className="transition-[filter] duration-500 [&>svg]:w-[29px] [&>svg]:h-[29px] lg:[&>svg]:w-9 lg:[&>svg]:h-9 flex items-center justify-center"
-              style={{
-                // SVG icons are yellow on dark; invert them to dark on yellow on hover
-                filter: isActive ? "brightness(0)" : "brightness(1)",
-              }}
-            >
-              {step.icon}
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile-only text inside the card */}
-        <div className="lg:hidden relative z-10 px-5 pb-6 flex flex-col gap-1.5 items-center text-center">
-          <h3 className="font-sans font-semibold text-lg leading-[1.2] tracking-[-0.54px] text-white">
-            {step.title}
-          </h3>
-          <p className="font-sans font-normal text-sm leading-[1.4] tracking-[-0.42px] text-white/60">
-            {step.description}
-          </p>
-        </div>
+        <div className="flex items-center justify-center">{step.icon}</div>
       </div>
 
-      {/* Desktop-only text below the card */}
-      <div className="hidden lg:flex flex-col gap-2">
-        <h3 className="font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white">
+      <div className="relative z-10 flex flex-col gap-2 lg:gap-3">
+        <h3
+          className="text-[22px] lg:text-[34px]"
+          style={{
+            fontFamily: "var(--font-sans, system-ui, sans-serif)",
+            fontWeight: 600,
+            lineHeight: 1.15,
+            letterSpacing: "-0.6px",
+            color: "#ffffff",
+            margin: 0,
+          }}
+        >
           {step.title}
         </h3>
-        <p className="font-sans font-normal text-base leading-[1.5] tracking-[-0.48px] text-white/60">
+        <p
+          className="text-[15px] lg:text-[18px]"
+          style={{
+            fontFamily: "var(--font-sans, system-ui, sans-serif)",
+            fontWeight: 400,
+            lineHeight: 1.45,
+            letterSpacing: "-0.2px",
+            color: "rgba(255, 255, 255, 0.65)",
+            margin: 0,
+          }}
+        >
           {step.description}
         </p>
       </div>
@@ -226,27 +205,31 @@ export function HowItWorksSection({
 }: HowItWorksSectionProps = {}) {
   return (
     <section className="bg-[#0c0c0c] px-4 py-[60px] lg:py-[100px]">
-      <div className="max-w-[1408px] mx-auto flex flex-col gap-10 lg:gap-16">
-        {/* Section header */}
-        <div className="flex flex-col gap-6 lg:gap-8">
-          <div className="border-b border-white/16 pb-6">
-            <div className="flex items-center gap-2.5">
-              <span className="w-2 h-2 rounded-full bg-[#FFE533]" />
-              <span className="font-mono font-bold text-base uppercase tracking-[-0.64px] leading-[1.2] text-white/60">
-                {label}
-              </span>
-            </div>
+      <div className="max-w-[1408px] mx-auto flex flex-col gap-6 lg:gap-10">
+        {/* Eyebrow row */}
+        <div className="border-b border-white/16 pb-3 lg:pb-4">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2 h-2 rounded-full bg-[#FFE533]" />
+            <span className="font-mono font-bold text-base uppercase tracking-[-0.64px] leading-[1.2] text-white/60">
+              {label}
+            </span>
           </div>
-          <h2 className="font-sans font-bold text-[32px] lg:text-[64px] leading-[1.2] tracking-[-0.96px] lg:tracking-[-2.56px] text-white">
-            {title}
-          </h2>
         </div>
 
-        {/* Steps */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
-          {steps.map((step, i) => (
-            <HowItWorksCard key={i} step={step} />
-          ))}
+        {/* Two-column: sticky heading on the left, cards stacked on the
+            right (terminal-industries "Our Value" pattern). */}
+        <div className="grid grid-cols-1 lg:grid-cols-[6fr_6fr] gap-10 lg:gap-12">
+          <div className="lg:sticky lg:top-[120px] lg:self-start">
+            <h2 className="font-sans font-bold text-[32px] lg:text-[64px] leading-[1.2] tracking-[-1.28px] lg:tracking-[-2.56px] text-white">
+              {title}
+            </h2>
+          </div>
+
+          <div className="flex flex-col gap-4 lg:gap-5">
+            {steps.map((step, i) => (
+              <ProcessCard key={i} step={step} index={i} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
