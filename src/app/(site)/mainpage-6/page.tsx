@@ -24,13 +24,29 @@ export const metadata: Metadata = {
 /* mainpage-6 keeps the PREVIOUS clips for the services whose videos were
    refreshed on /mainpage-5 (the canonical service-*.mp4). This frozen-clip
    override is the only divergence between the two pages. */
+/* The old mp6 clips are dark throughout (abstract renders on black), so a
+   video first-frame would make a near-black poster. Use the bright service
+   photos as the mp6 posters instead — mp5 keeps its (bright) video frames. */
 const FROZEN: Record<string, Partial<StickyStep>> = {
-  "/videos/service-local-moving.mp4": { video: "/videos/service-local-moving-prev.mp4" },
-  "/videos/service-long-distance.mp4": { video: "/videos/service-long-distance-prev.mp4" },
-  "/videos/service-commercial.mp4": { video: "/videos/service-commercial-prev.mp4" },
+  "/videos/service-local-moving.mp4": {
+    video: "/videos/service-local-moving-prev.mp4",
+    image: "/images/service-local.webp",
+  },
+  "/videos/service-long-distance.mp4": {
+    video: "/videos/service-long-distance-prev.mp4",
+    image: "/images/service-longdistance.webp",
+  },
+  "/videos/service-commercial.mp4": {
+    video: "/videos/service-commercial-prev.mp4",
+    image: "/images/service-commercial.webp",
+  },
   // Old packing clip is the bubble-wrapped vase → contain on mobile so it
   // isn't cropped (the new mp5 clip is full-frame footage → cover).
-  "/videos/service-packing.mp4": { video: "/videos/service-packing-prev.mp4", fit: "contain" },
+  "/videos/service-packing.mp4": {
+    video: "/videos/service-packing-prev.mp4",
+    image: "/images/service-packing.webp",
+    fit: "contain",
+  },
 };
 const mp6Services = defaultStickySteps.map((step) => {
   const override = FROZEN[step.video];
