@@ -37,6 +37,16 @@ export function FooterParallax({ children }: { children: ReactNode }) {
     const dark = darkRef.current;
     if (!wrap || !inner || !dark) return;
 
+    /* Mobile: no parallax — render the footer static in its natural
+       revealed state (inner at 0, no dark wash). The slide-up + dark
+       reveal stays desktop-only. Breakpoint checked once at mount;
+       cross-breakpoint reload is acceptable (matches the hero). */
+    if (window.matchMedia("(max-width: 991px)").matches) {
+      inner.style.transform = "translateY(0%)";
+      dark.style.opacity = "0";
+      return;
+    }
+
     const FROM_Y = -75; // translateY(%) at progress 0
     const FROM_DARK = 0.85; // overlay opacity at progress 0
     /* Per-frame easing toward the scroll target — flattens the
