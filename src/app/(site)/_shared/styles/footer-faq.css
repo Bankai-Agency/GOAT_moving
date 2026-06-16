@@ -318,3 +318,20 @@ body:has(.mp5-dark[data-accent="blue"]) #faq .faq-list .faq-item {
 body:has(.mp5-dark[data-accent="blue"]) #faq .faq-list .faq-item:first-child {
   border-top-color: rgba(255, 255, 255, 0.12) !important;
 }
+
+/* ── FOOTER PARALLAX: desktop only ──────────────────────────────────
+   The footer slide-up + dark-wash reveal stutters on phones, so it's
+   disabled on <=991px. The JS (FooterParallax.tsx) already early-returns
+   on mobile, but it checks the breakpoint only at mount; this CSS makes
+   the footer STATIC regardless of JS — beats the inline `transform` /
+   `opacity` the effect would set (via !important), and stays correct
+   across resize without a reload. Result on mobile: no slide, no dark
+   overlay — the footer just sits in place. */
+@media (max-width: 991px) {
+  [data-footer-parallax-inner] {
+    transform: none !important;
+  }
+  [data-footer-parallax-dark] {
+    opacity: 0 !important;
+  }
+}
