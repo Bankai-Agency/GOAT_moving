@@ -1000,7 +1000,12 @@ export function TerminalNav() {
         style={{
           position: "fixed",
           inset: 0,
-          zIndex: 1,
+          /* Above all page content (cards use z-10/z-50), the Touchbar
+             (z-50) and the floating nav bar (z-100) so the opaque menu
+             fully covers the page — was `1`, which let `z-10`+ content
+             bleed through. Kept below the QuoteModal (z-200) so the
+             quote popup still opens on top of the menu. */
+          zIndex: 150,
           display: "flex",
           flexDirection: "column",
           opacity: mobileMenuOpen ? 1 : 0,
