@@ -13,28 +13,23 @@ import { Touchbar } from "@site/layout/Touchbar";
 import { QuoteModal } from "@site/ui/QuoteModal";
 import { JsonLd } from "@site/seo/JsonLd";
 import { localBusinessSchema, websiteSchema } from "@site/seo/schema";
-/* The original homepage, live at `/`. Lives in its own (legacy) route group
-   with NO shared layout, so it keeps its own <Header/> (no TerminalNav). The
-   terminal-industries redesign is parked at /mainpage-5.
+/* The original homepage, now PARKED at `/mainpage-6` (the production home
+   `/` is the terminal-industries redesign). Lives in its own (legacy)
+   route group with NO shared layout, so it keeps its own <Header/> (no
+   TerminalNav). noindex — only `/` should be indexed.
    data-accent="blue" activates the body:has(...) .mp5-btn--* button rules. */
 import "@site/styles/_tokens.css";
 import "@site/styles/_mp5-btn.css";
 
 export const metadata: Metadata = {
-  title: "Movers in Vancouver, WA & Portland, OR | $125/hr — GOAT Movers",
+  title: "Homepage (classic, parked) | GOAT Movers",
   description:
-    "Stress-free moving across the I-5 corridor. Local moves at $125/hr, long-distance, commercial & packing. Licensed, insured, 850+ five-star reviews. Get your free quote today.",
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "Movers in Vancouver, WA & Portland, OR | GOAT Movers",
-    description:
-      "Licensed & insured moving company serving Vancouver, WA, Portland, OR, and the I-5 corridor. Flat $125/hr, fixed-price quotes, 850+ five-star reviews.",
-    url: "/",
-    type: "website",
-  },
+    "Classic GOAT Movers homepage — parked preview. The live homepage is the redesigned version at /.",
+  alternates: { canonical: "/mainpage-6" },
+  robots: { index: false, follow: false },
 };
 
-export default function Home() {
+export default function LegacyHome() {
   return (
     <div className="page-zoom" data-accent="blue">
       <JsonLd data={[localBusinessSchema(), websiteSchema()]} />
