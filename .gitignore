@@ -53,3 +53,6 @@ SESSION_CONTEXT.md
 # Generated output PDFs
 /GOAT-Movers-SEO-Metadata.pdf
 .env*.local
+
+# Firecrawl scrape scratch
+.firecrawl/
