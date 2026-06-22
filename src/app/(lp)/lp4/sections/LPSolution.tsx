@@ -65,7 +65,7 @@ function LPSolutionCard({
   return (
     <div
       ref={cardRef}
-      className="relative overflow-hidden min-h-[320px] lg:min-h-[460px] h-full"
+      className="relative overflow-hidden min-h-[320px] lg:min-h-[360px] h-full"
       style={{
         flex: `0 0 ${flexBasis}`,
         backgroundColor: "#1a1a1a",
@@ -281,7 +281,7 @@ export function LPSolution({
           </span>
         </div>
       </div>
-      <h2 className="font-sans font-bold text-[32px] sm:text-[56px] lg:text-[64px] leading-[1.05] tracking-[-1.5px] lg:tracking-[-2px] text-[#001f4d] m-0">
+      <h2 className="font-sans font-bold text-[32px] sm:text-[48px] lg:text-[56px] leading-[1.05] tracking-[-1.5px] lg:tracking-[-1.8px] text-[#001f4d] m-0">
         {title}
       </h2>
       <p
@@ -358,7 +358,7 @@ export function LPSolution({
       >
         {header}
 
-        <div className="mt-8 lg:mt-12 w-full">
+        <div className="mt-8 lg:mt-8 w-full">
           <div className="px-4 lg:max-w-[1408px] lg:mx-auto lg:px-4 w-full overflow-visible">
             <div
               ref={trackRef}
