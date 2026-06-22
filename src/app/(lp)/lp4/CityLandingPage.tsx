@@ -161,7 +161,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
          same 1:1 scale as mainpage-5's TerminalNav (the rest of the
          LP keeps its proportional `zoom` scale-down for visual
          continuity with the existing pages). */}
-      <LPTerminalNav showPhoneNumber={isPortland} />
+      <LPTerminalNav showPhoneNumber />
       <main>
 
       {/* ───────────── 1. HERO ─────────────

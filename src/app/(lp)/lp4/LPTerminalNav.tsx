@@ -26,10 +26,9 @@ const PHONE_RAW = "+13805240846";
 
 /* `showPhoneNumber` surfaces the full tappable number in the bar —
    centered between logo and burger on mobile, and as a number pill
-   (instead of an icon-only button) on desktop. A/B test: enabled for
-   Portland only — every other LP keeps the phone as a desktop icon +
-   inside the burger menu. Defaults off so shared callers (e.g. the
-   thank-you page) stay unchanged. */
+   (instead of an icon-only button) on desktop. Enabled on every city
+   LP (CityLandingPage passes it). Defaults off so other shared callers
+   (e.g. the thank-you page) keep the icon-only / burger-menu phone. */
 export function LPTerminalNav({
   showPhoneNumber = false,
 }: {
