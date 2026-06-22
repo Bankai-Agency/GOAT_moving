@@ -46,11 +46,11 @@ export const portlandConfig: LP1Config = {
   city: "Portland",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/movers-hero.jpg",
+  heroImage: "/images/portland-hero.png",
   heroImagePosition: HERO_MOBILE_POSITION,
-  metaTitle: "Stress-Free Movers in Portland — $125/Hour | Goat Movers",
+  metaTitle: "Top-Rated Portland Movers — $125/Hour | Goat Movers",
   metaDescription:
-    "Professional movers in Portland, OR. Fixed price, no hidden fees. 437+ five-star reviews. Get your exact moving price in 30 seconds.",
+    "Professional movers in Portland, OR. No hidden fees. 437+ five-star reviews. Get your exact moving price in 30 seconds.",
   aboutDescription:
     "We show up on time, handle your belongings with care, and we're licensed and insured for every move across Portland and the I-5 corridor.",
   solutionCopy: {

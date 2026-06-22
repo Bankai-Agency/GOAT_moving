@@ -190,6 +190,13 @@
   margin-left: auto;
 }
 
+/* Mobile-only phone pill (Portland A/B variant). Hidden on desktop;
+   shown via the 991px media query below so it never overlaps the
+   desktop number pill in the 992–1024px band. */
+.lp-nav-mobile-phone {
+  display: none;
+}
+
 .mega-nav__bar-cta {
   color: var(--lp-white);
   background-color: var(--lp-blue);
@@ -405,6 +412,16 @@
 
   .mega-nav__bar-end {
     display: flex;
+    /* Drop the desktop `margin-left: auto`: with space-between on the
+       bar-start row it would absorb all free space and clump logo +
+       phone to the left instead of letting the phone center. */
+    margin-left: 0;
+  }
+
+  /* Centered between logo and burger — it's the middle flex item of
+     .mega-nav__bar-start, which is space-between on mobile. */
+  .lp-nav-mobile-phone {
+    display: inline-flex;
   }
 
   /* Mobile menu overlay — light full-screen panel, terminal-style.

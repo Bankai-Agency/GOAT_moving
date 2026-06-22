@@ -38,6 +38,14 @@ const pricingEstimates = [
 
 export function CityLandingPage({ config }: { config: CityLPConfig }) {
   const { city, heroImage, heroImagePosition = "object-center", socialProofImage } = config;
+  /* A/B test flag — ONLY Portland gets the revised hero (smaller two-
+     line headline, labelled rating strip, price-hook subheads, and a
+     shorter mobile height so the form peeks above the fold). Every
+     other city stays on the original baseline until the test ends. */
+  const isPortland = config.slug === "movers-portland";
+  /* Rating-strip labels (Yelp/Google/Verified) are desktop-only on the
+     baseline; on Portland mobile they stay visible per the hero spec. */
+  const ratingLabelCls = isPortland ? "" : "hidden lg:inline";
 
   /* Footer Navigation column reuses ContactFooter's hard-coded
      /local-moving / /reviews / /contacts <Link>s. On the LP those
@@ -153,7 +161,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
          same 1:1 scale as mainpage-5's TerminalNav (the rest of the
          LP keeps its proportional `zoom` scale-down for visual
          continuity with the existing pages). */}
-      <LPTerminalNav />
+      <LPTerminalNav showPhoneNumber={isPortland} />
       <main>
 
       {/* ───────────── 1. HERO ─────────────
@@ -169,7 +177,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         {/* data-lp-hero marks this card as a "dark island" inside the
            light theme — keeps text/border whites white over the photo
            bg, see _shared/lp-theme.css. */}
-        <div data-lp-hero="" className="relative bg-[#181818] h-[100dvh] overflow-hidden">
+        <div data-lp-hero="" className={`relative bg-[#181818] overflow-hidden h-[100dvh] ${isPortland ? "lp-hero--portland" : ""}`}>
           {/* Image + overlays. Desktop: full-bleed (inset-0). Mobile: a
              BAND from below the floating nav (top-[88px]) down to just
              above the headline (bottom-[38dvh]); both edges dissolve
@@ -182,7 +190,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
               fill
               sizes="100vw"
               quality={90}
-              className={`object-cover object-[62%_center] lg:object-[center_25%]`}
+              className={`object-cover ${isPortland ? "object-center lg:object-[center_35%]" : "object-[62%_center] lg:object-[center_25%]"}`}
               priority
             />
             {/* Gradient overlays — dark where text is, clear where mover is.
@@ -204,10 +212,13 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           <div className="relative z-10 h-full px-4 pt-[100px] lg:pt-[108px] lg:pb-[108px]">
           <div className="max-w-[1408px] mx-auto h-full">
 
-          {/* Hero content — flex justify-center pins copy to the
-              vertical CENTER of the full-screen hero (was justify-end
-              which glued it to the bottom). */}
-          <div className="relative flex flex-col justify-end lg:justify-center h-full pb-6 lg:pb-0 gap-5 lg:gap-5">
+          {/* Hero content. Desktop: justify-start pins the grid below
+              the floating nav (pt-[108px] clears the 20px+78px bar) — the
+              quote form is taller than the centered space, so centering
+              pushed its top edge up under the nav. items-center on the
+              grid still vertically centers the shorter text column next
+              to the tall form. Mobile keeps justify-end. */}
+          <div className="relative flex flex-col justify-end lg:justify-start h-full pb-6 lg:pb-0 gap-5 lg:gap-5">
             {/* Desktop: two columns — text on left, form on right
                 aligned to the bottom (items-end). Mobile collapses
                 to a single column; the form for mobile renders
@@ -218,30 +229,69 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                 {/* Rating strip — same glass settings as the floating
                    nav (rgba(0,0,0,0.3) + blur(30px)) so the bullets
                    read as the same surface family. */}
-                <div className="inline-flex items-center gap-2 lg:backdrop-blur-[30px] lg:bg-[rgba(0,0,0,0.3)] lg:rounded-full lg:px-4 lg:py-2 w-fit lg:overflow-hidden">
+                <div className={`inline-flex items-center gap-2 w-fit lg:backdrop-blur-[30px] lg:bg-[rgba(0,0,0,0.3)] lg:rounded-full lg:px-4 lg:py-2 lg:overflow-hidden ${isPortland ? "max-lg:flex-wrap max-lg:gap-y-1.5" : ""}`}>
                   <a href="https://www.yelp.com/biz/goat-movers-vancouver" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pr-2.5 lg:pr-3 border-r border-white/15 hover:opacity-80 transition-opacity">
                     <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#FF2828] shrink-0"><Image src="/icons/yelp-white.svg" alt="Yelp" width={12} height={12} style={{ width: "auto", height: "12px" }} /></div>
-                    <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className="hidden lg:inline">Yelp </span><span className="text-white">4.79</span><span className="text-white/40">/5</span></span>
+                    <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className={ratingLabelCls}>Yelp </span><span className="text-white">4.79</span><span className="text-white/40">/5</span></span>
                   </a>
                   <a href="https://www.google.com/maps/place/GOAT+MOVERS/@45.5454821,-122.635238,10z/data=!3m1!4b1!4m6!3m5!1s0xa4790ebd1e7ffb07:0x697d406165de98a5!8m2!3d45.5454821!4d-122.635238!16s%2Fg%2F11wbt8363h?entry=ttu" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pl-0.5 lg:pl-1 hover:opacity-80 transition-opacity">
                     <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-white shrink-0"><Image src="/icons/google-color.svg" alt="Google" width={14} height={14} /></div>
-                    <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className="hidden lg:inline">Google </span><span className="text-white">4.98</span><span className="text-white/40">/5</span></span>
+                    <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className={ratingLabelCls}>Google </span><span className="text-white">4.98</span><span className="text-white/40">/5</span></span>
                   </a>
-                  <span className="inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-sans font-medium text-xs lg:text-sm tracking-[-0.3px] text-white/70 whitespace-nowrap">437+<span className="hidden lg:inline"> Verified</span> Reviews</span>
+                  <span className={`inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-sans font-medium text-xs lg:text-sm tracking-[-0.3px] text-white/70 whitespace-nowrap ${isPortland ? "max-lg:border-l-0 max-lg:pl-0 max-lg:ml-0" : ""}`}>437+<span className={ratingLabelCls}> Verified</span> Reviews</span>
                 </div>
-                {/* Typography matched to mainpage-5: font-normal (not
-                   bold), larger sizes, tighter tracking, lower line-
-                   height for big text. */}
-                <h1 className="font-sans font-normal text-[56px] sm:text-[72px] lg:text-[112px] leading-[0.95] tracking-[-1.4px] sm:tracking-[-2px] lg:tracking-[-3.4px] text-white">
-                  Stress-Free
-                  <br />
-                  Movers in
-                  <br />
-                  <span className="text-[#FFE533]">{city}</span>
-                </h1>
-                <p className="font-sans font-normal text-base lg:text-xl leading-[1.5] tracking-[-0.3px] text-white/80 max-w-[560px]">
-                  We show up on time, handle your belongings with care, and give you a clear quote upfront. Most moves in {city} cost $400–$900.
-                </p>
+                {/* Hero headline + subheads.
+                   A/B test: ONLY Portland (slug "movers-portland") gets
+                   the revised "Top-Rated …" headline + price-hook subheads.
+                   Every other city keeps the original "Stress-Free Movers
+                   in {city}" variant as the A/B baseline — do not unify
+                   these until the test concludes. */}
+                {isPortland ? (
+                  <>
+                    {/* Single white color — no accent span. Two lines on
+                       every viewport: "Top-Rated" / "{city} Movers".
+                       At lg:88px "Portland Movers" still fits the left
+                       column on one line. */}
+                    <h1 className="font-sans font-normal text-[44px] sm:text-[64px] lg:text-[88px] leading-[0.98] lg:leading-[0.95] tracking-[-1.2px] sm:tracking-[-2px] lg:tracking-[-2.6px] text-white">
+                      Top-Rated
+                      <br />
+                      {city} Movers
+                    </h1>
+                    {/* Primary line carries the price hook (rate
+                       highlighted); secondary line (smaller, dimmer) adds
+                       proof points + budget range — each a distinct
+                       argument, not a repeat of the headline. */}
+                    <div className="flex flex-col gap-2.5 lg:gap-3">
+                      <p className="font-sans font-normal text-xl sm:text-2xl lg:text-[28px] leading-[1.3] tracking-[-0.5px] text-white max-w-[560px]">
+                        Trusted in&nbsp;{config.licenseState}{" "}from&nbsp;
+                        <span className="inline-block rounded-md bg-[#FFE533] px-2 py-0.5 text-[#181818] font-medium">$125/hr</span>
+                        <br />
+                        Careful handling&nbsp;—&nbsp;no&nbsp;hidden fees
+                      </p>
+                      <p className="font-sans font-normal text-sm lg:text-base leading-[1.5] tracking-[-0.2px] text-white/60 max-w-[560px]">
+                        On-time arrival • Realistic move quotes
+                        <br />
+                        Most {city} moves cost $400–$900
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Original A/B baseline — all non-Portland cities.
+                       Typography matched to mainpage-5: font-normal, big
+                       sizes, tight tracking, low line-height. */}
+                    <h1 className="font-sans font-normal text-[56px] sm:text-[72px] lg:text-[112px] leading-[0.95] tracking-[-1.4px] sm:tracking-[-2px] lg:tracking-[-3.4px] text-white">
+                      Stress-Free
+                      <br />
+                      Movers in
+                      <br />
+                      <span className="text-[#FFE533]">{city}</span>
+                    </h1>
+                    <p className="font-sans font-normal text-base lg:text-xl leading-[1.5] tracking-[-0.3px] text-white/80 max-w-[560px]">
+                      We show up on time, handle your belongings with care, and give you a clear quote upfront. Most moves in {city} cost $400–$900.
+                    </p>
+                  </>
+                )}
               </div>
 
               {/* RIGHT — shared LPQuoteForm (white card) on desktop.
@@ -273,6 +323,14 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       {/* All non-hero sections live INSIDE .page-zoom so they
           scale proportionally to the 1728px reference. */}
       <div className="page-zoom">
+
+      {/* Portland A/B: Reviews section front-loaded directly after the
+          hero. Other cities keep it in its original slot (see #7 below).
+          Only one instance renders per page, so the id="reviews" anchor
+          stays unique. */}
+      {isPortland && (
+        <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} />
+      )}
 
       {/* 2. Services (moved up — was after CTABanner) */}
       <ServicesSection
@@ -350,8 +408,11 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         steps={processSteps}
       />
 
-      {/* 7. Testimonials — plain LIGHT section. */}
-      <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} />
+      {/* 7. Testimonials — non-Portland only. Portland renders this
+            right after the hero (see top of .page-zoom). */}
+      {!isPortland && (
+        <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} />
+      )}
 
       {/* 8. Lead-capture CTA with embedded form — utilitarian
             "fill the form right here, get a real number". Fully

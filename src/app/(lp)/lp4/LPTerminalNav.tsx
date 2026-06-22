@@ -24,7 +24,17 @@ const NAV_LINKS: AnchorLink[] = [
 const PHONE_DISPLAY = "+1 380-524-0846";
 const PHONE_RAW = "+13805240846";
 
-export function LPTerminalNav() {
+/* `showPhoneNumber` surfaces the full tappable number in the bar —
+   centered between logo and burger on mobile, and as a number pill
+   (instead of an icon-only button) on desktop. A/B test: enabled for
+   Portland only — every other LP keeps the phone as a desktop icon +
+   inside the burger menu. Defaults off so shared callers (e.g. the
+   thank-you page) stay unchanged. */
+export function LPTerminalNav({
+  showPhoneNumber = false,
+}: {
+  showPhoneNumber?: boolean;
+}) {
   const navRef = useRef<HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [portalMounted, setPortalMounted] = useState(false);
@@ -173,6 +183,41 @@ export function LPTerminalNav() {
               />
             </button>
 
+            {/* Mobile-only phone (Portland A/B variant). Sits as the
+               MIDDLE flex item of .mega-nav__bar-start, which is
+               space-between on mobile — so it lands between the logo and
+               the burger. Visibility is driven by the .lp-nav-mobile-phone
+               CSS class (mega-nav.css) on the same 991px breakpoint the
+               nav uses, NOT a Tailwind `lg:` (1024px) class, to avoid a
+               992–1024px gap where it would double up with the desktop
+               number pill. Number shown without country code per spec. */}
+            {showPhoneNumber && (
+              <a
+                href={`tel:${PHONE_RAW}`}
+                aria-label={`Call GOAT Movers at ${PHONE_DISPLAY}`}
+                className="lp-nav-mobile-phone"
+                style={{
+                  alignItems: "center",
+                  gap: 6,
+                  height: 36,
+                  padding: "0 0.75em",
+                  borderRadius: 999,
+                  backgroundColor: "#FFE533",
+                  color: "#0c0c0c",
+                  fontFamily: "var(--font-sans, system-ui, sans-serif)",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  letterSpacing: "-0.3px",
+                  lineHeight: 1,
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                <PhoneSvg style={{ width: 14, height: 14 }} />
+                380-524-0846
+              </a>
+            )}
+
             <div data-nav-list="" data-mobile-nav="" className="mega-nav__bar-inner">
               <ul className="mega-nav__bar-list">
                 {NAV_LINKS.map((link) => (
@@ -192,7 +237,7 @@ export function LPTerminalNav() {
 
               <ul data-nav-list-item="" className="mega-nav__bar-list is--actions">
                 <li className="mega-nav__bar-action">
-                  <PhoneLink />
+                  <PhoneLink showNumber={showPhoneNumber} />
                 </li>
                 <li className="mega-nav__bar-action">
                   <LPButton
@@ -368,16 +413,19 @@ export function LPTerminalNav() {
   );
 }
 
-/* Small phone icon pill in the desktop bar (mirrors mainpage-5). */
-function PhoneLink() {
+/* Phone pill in the desktop bar (mirrors mainpage-5). Default is a
+   compact yellow icon-only circle; `showNumber` (Portland A/B variant)
+   expands it to icon + full number written out in digits. */
+function PhoneLink({ showNumber = false }: { showNumber?: boolean }) {
   return (
     <a
       href={`tel:${PHONE_RAW}`}
-      aria-label="Call GOAT Movers"
+      aria-label={showNumber ? `Call GOAT Movers at ${PHONE_DISPLAY}` : "Call GOAT Movers"}
       className="mp5-phone-pill inline-flex items-center justify-center cursor-pointer rounded-full"
       style={{
-        width: 44,
-        height: 44,
+        ...(showNumber
+          ? { height: 44, padding: "0 18px", gap: 8 }
+          : { width: 44, height: 44 }),
         /* /lp4 brand-yellow pill with dark icon — the /lp3 pattern
            was white bg + brand-blue icon. White + yellow icon
            (after perl swap) reads as washed-out, so flip to
@@ -387,10 +435,16 @@ function PhoneLink() {
         color: "#0c0c0c",
         border: "0",
         textDecoration: "none",
+        fontFamily: "var(--font-sans, system-ui, sans-serif)",
+        fontSize: 15,
+        fontWeight: 600,
+        letterSpacing: "-0.3px",
+        whiteSpace: "nowrap",
         transition: "transform .25s ease, background-color .25s ease",
       }}
     >
       <PhoneSvg className="w-4 h-4" />
+      {showNumber && "380-524-0846"}
     </a>
   );
 }

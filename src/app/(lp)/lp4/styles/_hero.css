@@ -30,6 +30,20 @@
   min-height: 100dvh !important;
 }
 
+/* Portland A/B variant — shorter hero on mobile so the quote form
+   below the photo peeks above the fold. Higher specificity (+ the
+   extra class) than the 100dvh floor above, so it overrides BOTH
+   height AND min-height !important. Desktop (>=1024px) is untouched
+   and keeps the full-viewport hero. */
+@media (max-width: 1023px) {
+  [data-lp-root] [data-lp-hero].lp-hero--portland {
+    height: 89vh !important;
+    height: 89dvh !important;
+    min-height: 89vh !important;
+    min-height: 89dvh !important;
+  }
+}
+
 
 /* HERO MOBILE QUOTE-FORM CARD — dead code removed.
    The earlier mobile form used `<div class="lg:hidden bg-[#181818] rounded-2xl">`
