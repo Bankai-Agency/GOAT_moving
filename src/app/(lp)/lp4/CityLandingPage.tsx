@@ -50,7 +50,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
      the floating nav so the quote form isn't glued to the bar; other
      cities keep the tighter baseline. There's ~15dvh of empty space
      below the form, so the taller step-2 still clears the hero bottom. */
-  const heroDesktopTopPad = isPortland ? "lg:pt-[150px]" : "lg:pt-[108px]";
+  const heroDesktopTopPad = isPortland ? "lg:pt-[180px]" : "lg:pt-[108px]";
 
   /* Footer Navigation column reuses ContactFooter's hard-coded
      /local-moving / /reviews / /contacts <Link>s. On the LP those
@@ -188,14 +188,14 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
              above the headline (bottom-[38dvh]); both edges dissolve
              gradually into the hero's solid #181818 so the image → dark
              transition is smooth, not a hard cut. */}
-          <div className="absolute inset-0 max-lg:top-[88px] max-lg:bottom-[38dvh]">
+          <div className="absolute inset-0 max-lg:top-[88px] max-lg:bottom-[38dvh] max-lg:overflow-hidden">
             <Image
               src={heroImage}
               alt={`Professional movers in ${city}`}
               fill
               sizes="100vw"
               quality={90}
-              className={`object-cover ${isPortland ? "object-center lg:object-[center_35%]" : "object-[62%_center] lg:object-[center_25%]"}`}
+              className={`object-cover ${isPortland ? "object-center lg:object-[center_35%] max-lg:scale-[1.28] max-lg:origin-center" : "object-[62%_center] lg:object-[center_25%]"}`}
               priority
             />
             {/* Gradient overlays — dark where text is, clear where mover is.
