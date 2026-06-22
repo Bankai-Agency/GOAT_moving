@@ -195,7 +195,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
               fill
               sizes="100vw"
               quality={90}
-              className={`object-cover ${isPortland ? "object-center lg:object-[center_35%] max-lg:scale-[1.28] max-lg:origin-center" : "object-[62%_center] lg:object-[center_25%]"}`}
+              className={`object-cover ${isPortland ? "object-center lg:object-[center_35%]" : "object-[62%_center] lg:object-[center_25%]"}`}
               priority
             />
             {/* Gradient overlays — dark where text is, clear where mover is.
