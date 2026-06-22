@@ -228,7 +228,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                 aligned to the bottom (items-end). Mobile collapses
                 to a single column; the form for mobile renders
                 below the hero image (lg:hidden block further down). */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_520px] lg:items-center lg:gap-12">
+            <div className={`grid grid-cols-1 lg:grid-cols-[1fr_520px] ${isPortland ? "lg:items-end" : "lg:items-center"} lg:gap-12`}>
               {/* LEFT — rating + h1 + description */}
               <div className="flex flex-col gap-4 lg:gap-5">
                 {/* Rating strip — same glass settings as the floating
