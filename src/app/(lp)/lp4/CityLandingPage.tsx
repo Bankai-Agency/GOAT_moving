@@ -46,6 +46,11 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
   /* Rating-strip labels (Yelp/Google/Verified) are desktop-only on the
      baseline; on Portland mobile they stay visible per the hero spec. */
   const ratingLabelCls = isPortland ? "" : "hidden lg:inline";
+  /* Desktop hero top padding. Portland gets extra breathing room below
+     the floating nav so the quote form isn't glued to the bar; other
+     cities keep the tighter baseline. There's ~15dvh of empty space
+     below the form, so the taller step-2 still clears the hero bottom. */
+  const heroDesktopTopPad = isPortland ? "lg:pt-[150px]" : "lg:pt-[108px]";
 
   /* Footer Navigation column reuses ContactFooter's hard-coded
      /local-moving / /reviews / /contacts <Link>s. On the LP those
@@ -190,7 +195,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
               fill
               sizes="100vw"
               quality={90}
-              className={`object-cover ${isPortland ? "object-center lg:object-[center_35%]" : "object-[62%_center] lg:object-[center_25%]"}`}
+              className={`object-cover ${isPortland ? "object-center lg:object-[center_35%] max-lg:scale-[1.28] max-lg:origin-center" : "object-[62%_center] lg:object-[center_25%]"}`}
               priority
             />
             {/* Gradient overlays — dark where text is, clear where mover is.
@@ -209,7 +214,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                • Outer: full-viewport width + px-4 + top padding for nav.
                • Inner: max-w-[1408px] mx-auto — same container width.
              Image stays full-bleed since it's in a sibling absolute div. */}
-          <div className="relative z-10 h-full px-4 pt-[100px] lg:pt-[108px] lg:pb-[108px]">
+          <div className={`relative z-10 h-full px-4 pt-[100px] ${heroDesktopTopPad} lg:pb-[108px]`}>
           <div className="max-w-[1408px] mx-auto h-full">
 
           {/* Hero content. Desktop: justify-start pins the grid below
