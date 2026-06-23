@@ -235,6 +235,9 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                    nav (rgba(0,0,0,0.3) + blur(30px)) so the bullets
                    read as the same surface family. */}
                 <div className={`inline-flex items-center gap-2 w-fit lg:backdrop-blur-[30px] lg:bg-[rgba(0,0,0,0.3)] lg:rounded-full lg:px-4 lg:py-2 lg:overflow-hidden ${isPortland ? "max-lg:flex-wrap max-lg:gap-y-1.5" : ""}`}>
+                  {/* Yelp + Google grouped so the two ratings never split
+                     across lines on narrow mobile (customer request). */}
+                  <div className="inline-flex items-center gap-2 whitespace-nowrap">
                   <a href="https://www.yelp.com/biz/goat-movers-vancouver" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pr-2.5 lg:pr-3 border-r border-white/15 hover:opacity-80 transition-opacity">
                     <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#FF2828] shrink-0"><Image src="/icons/yelp-white.svg" alt="Yelp" width={12} height={12} style={{ width: "auto", height: "12px" }} /></div>
                     <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className={ratingLabelCls}>Yelp </span><span className="text-white">4.79</span><span className="text-white/40">/5</span></span>
@@ -243,7 +246,8 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                     <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-white shrink-0"><Image src="/icons/google-color.svg" alt="Google" width={14} height={14} /></div>
                     <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className={ratingLabelCls}>Google </span><span className="text-white">4.98</span><span className="text-white/40">/5</span></span>
                   </a>
-                  <span className={`inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-sans font-medium text-xs lg:text-sm tracking-[-0.3px] text-white/70 whitespace-nowrap ${isPortland ? "max-lg:border-l-0 max-lg:pl-0 max-lg:ml-0" : ""}`}>437+<span className={ratingLabelCls}> Verified</span> Reviews</span>
+                  </div>
+                  <span className={`inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-sans font-medium text-xs lg:text-sm tracking-[-0.3px] text-white/70 whitespace-nowrap ${isPortland ? "max-lg:hidden" : ""}`}>437+<span className={ratingLabelCls}> Verified</span> Reviews</span>
                 </div>
                 {/* Hero headline + subheads.
                    A/B test: ONLY Portland (slug "movers-portland") gets
@@ -257,10 +261,10 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                        every viewport: "Top-Rated" / "{city} Movers".
                        At lg:88px "Portland Movers" still fits the left
                        column on one line. */}
-                    <h1 className="font-sans font-normal text-[44px] sm:text-[64px] lg:text-[88px] leading-[0.98] lg:leading-[0.95] tracking-[-1.2px] sm:tracking-[-2px] lg:tracking-[-2.6px] text-white">
+                    <h1 className="font-sans font-normal text-[clamp(32px,9vw,44px)] sm:text-[64px] lg:text-[88px] leading-[0.98] lg:leading-[0.95] tracking-[-1.2px] sm:tracking-[-2px] lg:tracking-[-2.6px] text-white">
                       Top-Rated
                       <br />
-                      {city} Movers
+                      <span className="whitespace-nowrap">{city} Movers</span>
                     </h1>
                     {/* Primary line carries the price hook (rate
                        highlighted); secondary line (smaller, dimmer) adds
