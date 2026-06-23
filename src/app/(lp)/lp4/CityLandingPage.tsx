@@ -269,7 +269,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                     <div className="flex flex-col gap-2.5 lg:gap-3">
                       <p className="font-sans font-normal text-xl sm:text-2xl lg:text-[28px] leading-[1.3] tracking-[-0.5px] text-white max-w-[560px]">
                         Trusted in&nbsp;{config.licenseState}{" "}from&nbsp;
-                        <span className="rounded-[4px] border border-[#FFE533] px-1.5 py-[1px] text-[#FFE533] font-normal leading-[1.1] [box-decoration-break:clone] [-webkit-box-decoration-break:clone]">$125/hr</span>
+                        <span className="text-[#FFE533] font-medium">$125/hr</span>
                         <br />
                         Careful handling&nbsp;—&nbsp;no&nbsp;hidden fees
                       </p>
