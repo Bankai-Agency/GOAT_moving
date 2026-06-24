@@ -424,7 +424,7 @@ function PhoneLink({ showNumber = false }: { showNumber?: boolean }) {
       <a
         href={`tel:${PHONE_RAW}`}
         aria-label={`Call GOAT Movers at ${PHONE_DISPLAY}`}
-        className="inline-flex items-center gap-2 cursor-pointer text-white hover:text-[#FFE533] transition-colors duration-200"
+        className="inline-flex items-center gap-2 mr-4 cursor-pointer text-white hover:text-[#FFE533] transition-colors duration-200"
         style={{
           textDecoration: "none",
           fontFamily: "var(--font-sans, system-ui, sans-serif)",

@@ -131,6 +131,16 @@ function FooterContent() {
 
         <div className="flex flex-col gap-3">
           <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
+            License Information
+          </span>
+          <div className="font-sans font-medium text-lg lg:text-xl leading-[1.5] tracking-[-0.4px] text-white/70 flex flex-col gap-0.5">
+            <span>USDOT #4232069</span>
+            <span>MC #1637475</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
             Social Media
           </span>
           <div className="flex gap-3">
@@ -193,14 +203,9 @@ export function ContactFooter() {
 
         {/* Bottom bar */}
         <div className="flex flex-col lg:flex-row lg:items-center gap-5">
-          <div className="flex flex-col gap-1 lg:w-[638px]">
-            <p className="font-sans font-normal text-lg leading-[1.4] tracking-[-0.36px] text-white/60">
-              Copyright © 2022-2026 GOAT Movers. All Rights Reserved.
-            </p>
-            <p className="font-sans font-normal text-sm leading-[1.4] tracking-[-0.28px] text-white/40">
-              Fully licensed &amp; insured · USDOT #4232069 · MC #1637475
-            </p>
-          </div>
+          <p className="font-sans font-normal text-lg leading-[1.4] tracking-[-0.36px] text-white/60 lg:w-[638px]">
+            Copyright © 2022-2026 GOAT Movers. All Rights Reserved.
+          </p>
           <Link
             href="/privacy"
             className="w-fit font-sans font-normal text-lg leading-[1.4] tracking-[-0.36px] text-white/60 hover:text-[#FFE533] hover:underline transition-colors duration-200"

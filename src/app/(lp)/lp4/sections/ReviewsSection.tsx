@@ -77,10 +77,10 @@ const defaultReviews: ReviewItem[] = [
 /* Portland LP: lead with a real Google review that names the Portland
    route, then the standard set. Passed in via the `reviews` prop. */
 const masonMarshReview: ReviewItem = {
-  name: "Mason Marsh",
+  name: "Mason M.",
   location: "Portland, OR",
   rating: 5,
-  text: "When we needed help moving from Portland to Washougal, I was pleased to find GOAT Movers. The simple and easy quote and booking process was a pleasant surprise in the frenzy of planning our big move, but the biggest gift was the way the crew showed up on time and handled every box and piece of furniture with real care.",
+  text: "When we needed help moving from Portland to Washougal, I was pleased to find GOAT Movers. The simple, easy quote and booking process was a pleasant surprise, and the crew handled our big move with real care.",
   source: "google" as const,
   avatar: "/images/avatar-4.jpg",
 };
