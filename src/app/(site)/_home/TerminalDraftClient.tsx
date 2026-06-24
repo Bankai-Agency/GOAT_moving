@@ -122,13 +122,26 @@ type HeroPos = {
   transform?: string; textAlign: "left" | "right" | "center"; maxWidth: string;
 };
 const heroPhrasePositions: HeroPos[] = [
+  /* 0 ≈0.11 — photoreal truck centre-right & low → top-left over the sky. */
   { top: "14%", left: "5%", textAlign: "left", maxWidth: "min(720px, 90vw)" },
+  /* 1 ≈0.23 — truck centre-right, sun-flare upper-LEFT → top-right, clear of both. */
   { top: "14%", right: "5%", textAlign: "right", maxWidth: "min(740px, 90vw)" },
-  { top: "28%", left: "48%", textAlign: "left", maxWidth: "min(600px, 40vw)" },
-  { bottom: "15%", left: "5%", textAlign: "left", maxWidth: "min(700px, 82vw)" },
-  { top: "16%", right: "5%", textAlign: "right", maxWidth: "min(680px, 90vw)" },
+  /* 2 ≈0.34 — wireframe truck CENTRED & wide (owns the middle). Was sitting on
+     its box; move to the open top band, left, kept above the truck roof. */
+  { top: "13%", left: "5%", textAlign: "left", maxWidth: "min(900px, 66vw)" },
+  /* 3 ≈0.46 — wireframe truck centred. Was lower-left over the cab/wheels →
+     top band, right. */
+  { top: "13%", right: "5%", textAlign: "right", maxWidth: "min(840px, 64vw)" },
+  /* 4 ≈0.57 — wireframe truck centred (brightest). Was upper-right on the box
+     → top band, left. */
+  { top: "13%", left: "5%", textAlign: "left", maxWidth: "min(900px, 66vw)" },
+  /* 5 ≈0.69 — flash (frame washes bright); bottom-left, the text-shadow carries it. */
   { bottom: "15%", left: "5%", textAlign: "left", maxWidth: "min(680px, 90vw)" },
-  { top: "14%", left: "5%", textAlign: "left", maxWidth: "min(720px, 90vw)" },
+  /* 6 ≈0.80 — map; pin + route own the centre-right. Top-left over the open
+     grid, narrowed so it never reaches the pin. */
+  { top: "12%", left: "5%", textAlign: "left", maxWidth: "min(540px, 40vw)" },
+  /* 7 ≈0.92 — map climax; kept at the bottom, centred (the original spot —
+     reads as the closing line under the route). */
   { bottom: "12%", left: "50%", transform: "translateX(-50%)", textAlign: "center", maxWidth: "min(1000px, 92vw)" },
 ];
 
@@ -196,18 +209,30 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
     // Kick off buffering even though we never autoplay.
     try { videoEl.load(); } catch { /* ignore */ }
 
-    /* Mobile horizontal focal point (replaces the old per-frame
-       `mobileFocalX`). The opening truck shot keeps its cab on the LEFT of
-       the 16:9 frame, so a centred object-cover crop on a portrait phone
-       hides it. Bias the crop left (object-position 20%) for that shot,
-       then ease to centre (50%) across the dissolve into the map/rooftops
-       (~halfway through). Desktop stays centred (the class default). The
-       composition itself isn't moved — only the crop window. Breakpoint
-       picked once at mount; cross-breakpoint reload is acceptable. */
+    /* Mobile horizontal focal point — keep the driver cab fully in frame
+       through the whole truck, then re-centre for the map. The 16:9 clip
+       plays: photoreal truck driving → wireframe truck on a grid → flash →
+       map/navigation. In every truck frame the cab (front bumper included)
+       sits LEFT of centre, so a centred object-cover crop on a portrait
+       phone clips the cab nose. The crop only shows a ~26%-wide slice, so
+       we hold it LEFT (object-position 28% → cab nose fully visible) for
+       the entire truck, then ease to centre UNDER the flash so the map +
+       route pin read centred:
+         p<0.62   : hold 28% — whole cab in frame (photoreal AND wireframe)
+         0.62–0.72: ease 28% → 50% under the flash (masks the swing)
+         p>0.72   : 50% — map/navigation centred
+       Desktop stays centred (the class default). Composition isn't moved —
+       only the crop window. Breakpoint picked once at mount. */
     const applyFocal = (p: number) => {
       if (!isMobile) return;
-      const f = Math.min(1, Math.max(0, (p - 0.43) / (0.56 - 0.43)));
-      videoEl.style.objectPosition = `${(0.2 + 0.3 * f) * 100}% 50%`;
+      let x: number;
+      if (p < 0.62) {
+        x = 0.28; // hold left so the whole cab (nose included) stays in frame
+      } else {
+        const f = Math.min(1, Math.max(0, (p - 0.62) / (0.72 - 0.62)));
+        x = 0.28 + 0.22 * f; // 28% → 50% over the flash
+      }
+      videoEl.style.objectPosition = `${x * 100}% 50%`;
     };
     applyFocal(0);
 

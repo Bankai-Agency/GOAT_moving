@@ -7,10 +7,8 @@ import { ContactFooter } from "@site/sections/ContactFooter";
 import { JsonLd } from "@site/seo/JsonLd";
 import { localBusinessSchema, websiteSchema } from "@site/seo/schema";
 import { TerminalDraftClient } from "./_home/TerminalDraftClient";
-import { defaultStickySteps, type StickyStep } from "./_home/stickyServicesData";
-/* Production homepage `/` — the Terminal-industries-style redesign
-   (formerly parked at /mainpage-6). Home-only Tier-B CSS imported here
-   so it's route-scoped to the home, exactly like the mainpage drafts. */
+/* Production homepage `/` — promoted from the /mainpage-5 preview.
+   Home-only Tier-B CSS is imported here so it stays route-scoped. */
 import "./_home/sticky-steps.css";
 import "./_home/accent.css";
 import "./_home/_mp5-dark.css";
@@ -29,37 +27,6 @@ export const metadata: Metadata = {
   },
 };
 
-/* Keep the PREVIOUS clips for the services whose videos were refreshed on
-   /mainpage-5 (the canonical service-*.mp4). The old clips are dark
-   throughout, so a video first-frame would make a near-black poster — use
-   the bright service photos as posters instead. This frozen-clip override
-   is the divergence the home (ex-mp6) carries vs /mainpage-5. */
-const FROZEN: Record<string, Partial<StickyStep>> = {
-  "/videos/service-local-moving.mp4": {
-    video: "/videos/service-local-moving-prev.mp4",
-    image: "/images/service-local.webp",
-  },
-  "/videos/service-long-distance.mp4": {
-    video: "/videos/service-long-distance-prev.mp4",
-    image: "/images/service-longdistance.webp",
-  },
-  "/videos/service-commercial.mp4": {
-    video: "/videos/service-commercial-prev.mp4",
-    image: "/images/service-commercial.webp",
-  },
-  // Old packing clip is the bubble-wrapped vase → contain on mobile so it
-  // isn't cropped (the new mp5 clip is full-frame footage → cover).
-  "/videos/service-packing.mp4": {
-    video: "/videos/service-packing-prev.mp4",
-    image: "/images/service-packing.webp",
-    fit: "contain",
-  },
-};
-const homeServices = defaultStickySteps.map((step) => {
-  const override = FROZEN[step.video];
-  return override ? { ...step, ...override } : step;
-});
-
 export default function Home() {
   return (
     <SmoothScrollProvider>
@@ -72,7 +39,7 @@ export default function Home() {
         type="image/webp"
       />
       <main>
-        <TerminalDraftClient services={homeServices} />
+        <TerminalDraftClient />
         <FAQSection />
       </main>
       <ContactFooter />
