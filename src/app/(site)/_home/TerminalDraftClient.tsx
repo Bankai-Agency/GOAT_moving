@@ -124,16 +124,17 @@ type HeroPos = {
 const heroPhrasePositions: HeroPos[] = [
   /* 0 ≈0.11 — photoreal truck centre-right & low → top-left over the sky. */
   { top: "14%", left: "5%", textAlign: "left", maxWidth: "min(720px, 90vw)" },
-  /* 1 ≈0.23 — truck centre-right, sun-flare upper-LEFT → top-right, clear of both. */
-  { top: "14%", right: "5%", textAlign: "right", maxWidth: "min(740px, 90vw)" },
+  /* 1 ≈0.23 — photoreal truck; after the front trim this beat now has the warm
+     light upper-RIGHT (was upper-left), so anchor top band, LEFT over the darker
+     forest. */
+  { top: "13%", left: "5%", textAlign: "left", maxWidth: "min(700px, 58vw)" },
   /* 2 ≈0.34 — wireframe truck CENTRED & wide (owns the middle). Was sitting on
      its box; move to the open top band, left, kept above the truck roof. */
   { top: "13%", left: "5%", textAlign: "left", maxWidth: "min(900px, 66vw)" },
   /* 3 ≈0.46 — wireframe truck centred. Was lower-left over the cab/wheels →
      top band, right. */
   { top: "13%", right: "5%", textAlign: "right", maxWidth: "min(840px, 64vw)" },
-  /* 4 ≈0.57 — wireframe truck centred (brightest). Was upper-right on the box
-     → top band, left. */
+  /* 4 ≈0.57 — wireframe truck centred (brightest) → top band, left. */
   { top: "13%", left: "5%", textAlign: "left", maxWidth: "min(900px, 66vw)" },
   /* 5 ≈0.69 — flash (frame washes bright); bottom-left, the text-shadow carries it. */
   { bottom: "15%", left: "5%", textAlign: "left", maxWidth: "min(680px, 90vw)" },
