@@ -13,7 +13,7 @@ import { ServicesSection } from "./sections/ServicesSection";
 import { ServiceAreaSection } from "./sections/ServiceAreaSection";
 import { defaultIncludedItems } from "./sections/WhatsIncludedSection";
 import { LPSolution } from "./sections/LPSolution";
-import { ReviewsSection } from "./sections/ReviewsSection";
+import { ReviewsSection, portlandReviews } from "./sections/ReviewsSection";
 import { ContactFooter } from "./sections/ContactFooter";
 /* DarkScrollZone removed in lp3 — uniform dark page, no scroll-veil transitions. */
 import { FooterParallax } from "./FooterParallax";
@@ -338,7 +338,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           Only one instance renders per page, so the id="reviews" anchor
           stays unique. */}
       {isPortland && (
-        <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} />
+        <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} reviews={isPortland ? portlandReviews : undefined} />
       )}
 
       {/* 2. Services (moved up — was after CTABanner) */}
@@ -420,7 +420,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       {/* 7. Testimonials — non-Portland only. Portland renders this
             right after the hero (see top of .page-zoom). */}
       {!isPortland && (
-        <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} />
+        <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} reviews={isPortland ? portlandReviews : undefined} />
       )}
 
       {/* 8. Lead-capture CTA with embedded form — utilitarian

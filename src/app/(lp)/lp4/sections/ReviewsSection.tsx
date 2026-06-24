@@ -13,7 +13,7 @@ export type ReviewItem = {
   location: string;
   rating: number;
   text: string;
-  source: "yelp";
+  source: "yelp" | "google";
   avatar: string;
 };
 
@@ -73,6 +73,19 @@ const defaultReviews: ReviewItem[] = [
     avatar: "/images/reviewer-avatar.jpg",
   },
 ];
+
+/* Portland LP: lead with a real Google review that names the Portland
+   route, then the standard set. Passed in via the `reviews` prop. */
+const masonMarshReview: ReviewItem = {
+  name: "Mason Marsh",
+  location: "Portland, OR",
+  rating: 5,
+  text: "When we needed help moving from Portland to Washougal, I was pleased to find GOAT Movers. The simple and easy quote and booking process was a pleasant surprise in the frenzy of planning our big move, but the biggest gift was the way the crew showed up on time and handled every box and piece of furniture with real care.",
+  source: "google" as const,
+  avatar: "/images/avatar-4.jpg",
+};
+
+export const portlandReviews: ReviewItem[] = [masonMarshReview, ...defaultReviews];
 
 function Stars({ count = 5, variant = "yellow" }: { count?: number; variant?: "yellow" | "black" }) {
   const src = variant === "black" ? "/icons/star-black.svg" : "/icons/star-yellow.svg";
@@ -188,7 +201,11 @@ function ReviewCardDesktop({ name, location, rating, text, avatar, source }: Rev
             <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/60 group-hover/card:text-black/60 transition-colors duration-300 truncate">{location}</span>
           </div>
           <a href={reviewUrl} target="_blank" rel="noopener noreferrer" className="lp1-source-bubble group-hover/card:bg-[#0c0c0c] w-14 h-14 rounded-full flex items-center justify-center shrink-0 hover:scale-110 transition-all duration-300 ease-out z-10" onClick={(e) => e.stopPropagation()}>
-            <Image src="/icons/yelp-white.svg" alt="Yelp" width={17} height={22} />
+            {source === "google" ? (
+              <Image src="/icons/google-color.svg" alt="Google" width={22} height={22} />
+            ) : (
+              <Image src="/icons/yelp-white.svg" alt="Yelp" width={17} height={22} />
+            )}
           </a>
         </div>
         <div className="flex flex-col gap-3">
@@ -217,7 +234,11 @@ function ReviewCardMobile({ name, location, rating, text, avatar, source }: Revi
             <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/60 truncate">{location}</span>
           </div>
           <a href={reviewUrl} target="_blank" rel="noopener noreferrer" className="lp1-source-bubble w-14 h-14 rounded-full flex items-center justify-center shrink-0">
-            <Image src="/icons/yelp-white.svg" alt="Yelp" width={17} height={22} />
+            {source === "google" ? (
+              <Image src="/icons/google-color.svg" alt="Google" width={22} height={22} />
+            ) : (
+              <Image src="/icons/yelp-white.svg" alt="Yelp" width={17} height={22} />
+            )}
           </a>
         </div>
         <div className="flex flex-col gap-3">

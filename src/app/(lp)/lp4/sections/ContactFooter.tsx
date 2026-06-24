@@ -193,9 +193,14 @@ export function ContactFooter() {
 
         {/* Bottom bar */}
         <div className="flex flex-col lg:flex-row lg:items-center gap-5">
-          <p className="font-sans font-normal text-lg leading-[1.4] tracking-[-0.36px] text-white/60 lg:w-[638px]">
-            Copyright © 2022-2026 GOAT Movers. All Rights Reserved.
-          </p>
+          <div className="flex flex-col gap-1 lg:w-[638px]">
+            <p className="font-sans font-normal text-lg leading-[1.4] tracking-[-0.36px] text-white/60">
+              Copyright © 2022-2026 GOAT Movers. All Rights Reserved.
+            </p>
+            <p className="font-sans font-normal text-sm leading-[1.4] tracking-[-0.28px] text-white/40">
+              Fully licensed &amp; insured · USDOT #4232069 · MC #1637475
+            </p>
+          </div>
           <Link
             href="/privacy"
             className="w-fit font-sans font-normal text-lg leading-[1.4] tracking-[-0.36px] text-white/60 hover:text-[#FFE533] hover:underline transition-colors duration-200"

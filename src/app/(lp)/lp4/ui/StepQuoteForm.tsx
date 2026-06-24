@@ -206,7 +206,7 @@ export function StepQuoteForm({
             }}
             fullWidth
           >
-            Continue to Move details
+            Continue to move details
           </LPButton>
           <p className={`lp-form-helper lp-form-helper--${surface}`}>
             Enter your name and phone so we can send you a quote.

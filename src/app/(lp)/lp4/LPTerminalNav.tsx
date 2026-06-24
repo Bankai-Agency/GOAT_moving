@@ -416,34 +416,47 @@ export function LPTerminalNav({
    compact yellow icon-only circle; `showNumber` (Portland A/B variant)
    expands it to icon + full number written out in digits. */
 function PhoneLink({ showNumber = false }: { showNumber?: boolean }) {
+  /* Desktop bar with the number: render as plain TEXT + phone icon (not a
+     filled pill) so it doesn't read as a second CTA button next to
+     "Get a free quote". White text, yellow on hover. */
+  if (showNumber) {
+    return (
+      <a
+        href={`tel:${PHONE_RAW}`}
+        aria-label={`Call GOAT Movers at ${PHONE_DISPLAY}`}
+        className="inline-flex items-center gap-2 cursor-pointer text-white hover:text-[#FFE533] transition-colors duration-200"
+        style={{
+          textDecoration: "none",
+          fontFamily: "var(--font-sans, system-ui, sans-serif)",
+          fontSize: 16,
+          fontWeight: 600,
+          letterSpacing: "-0.3px",
+          whiteSpace: "nowrap",
+        }}
+      >
+        <PhoneSvg className="w-4 h-4" />
+        380-524-0846
+      </a>
+    );
+  }
+  /* Default: compact yellow icon-only circle (e.g. the thank-you page
+     and other bars that don't surface the number). */
   return (
     <a
       href={`tel:${PHONE_RAW}`}
-      aria-label={showNumber ? `Call GOAT Movers at ${PHONE_DISPLAY}` : "Call GOAT Movers"}
+      aria-label="Call GOAT Movers"
       className="mp5-phone-pill inline-flex items-center justify-center cursor-pointer rounded-full"
       style={{
-        ...(showNumber
-          ? { height: 44, padding: "0 18px", gap: 8 }
-          : { width: 44, height: 44 }),
-        /* /lp4 brand-yellow pill with dark icon — the /lp3 pattern
-           was white bg + brand-blue icon. White + yellow icon
-           (after perl swap) reads as washed-out, so flip to
-           yellow bg + dark icon to match the rest of the yellow
-           accent system. */
+        width: 44,
+        height: 44,
         backgroundColor: "#FFE533",
         color: "#0c0c0c",
         border: "0",
         textDecoration: "none",
-        fontFamily: "var(--font-sans, system-ui, sans-serif)",
-        fontSize: 15,
-        fontWeight: 600,
-        letterSpacing: "-0.3px",
-        whiteSpace: "nowrap",
         transition: "transform .25s ease, background-color .25s ease",
       }}
     >
       <PhoneSvg className="w-4 h-4" />
-      {showNumber && "380-524-0846"}
     </a>
   );
 }
