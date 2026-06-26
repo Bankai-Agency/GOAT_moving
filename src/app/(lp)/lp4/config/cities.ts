@@ -93,7 +93,7 @@ export const hillsboroConfig: LP1Config = {
   city: "Hillsboro",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/movers-hero.jpg",
+  heroImage: "/images/hillsboro-hero.webp",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Hillsboro — $125/Hour | Goat Movers",
   metaDescription:
@@ -140,7 +140,7 @@ export const tigardConfig: LP1Config = {
   city: "Tigard",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/movers-hero.jpg",
+  heroImage: "/images/tigard-hero.webp",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Tigard — $125/Hour | Goat Movers",
   metaDescription:
@@ -468,7 +468,7 @@ export const seattleConfig: LP1Config = {
   city: "Seattle",
   state: "WA",
   licenseState: "Washington",
-  heroImage: "/images/movers-hero.jpg",
+  heroImage: "/images/seattle-hero.webp",
   heroImagePosition: HERO_MOBILE_POSITION,
   metaTitle: "Stress-Free Movers in Seattle — $125/Hour | Goat Movers",
   metaDescription:
