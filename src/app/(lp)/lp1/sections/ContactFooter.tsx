@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { BankaiLink } from "@/components/BankaiLink";
 import { QuoteForm } from "../ui/QuoteForm";
 
 function ContactForm() {
@@ -206,18 +207,7 @@ export function ContactFooter() {
             <span className="font-sans font-normal text-lg leading-[1.4] tracking-[-0.36px] text-white/60">
               Design &amp; development by
             </span>
-            <a href="https://bankai.agency/ru" target="_blank" rel="noopener noreferrer" className="group/bankai flex gap-[3.81px] items-center shrink-0 transition-all duration-300 ease-out">
-              <Image
-                src="/icons/bankai-logo.svg"
-                alt=""
-                width={20}
-                height={20}
-                className="w-5 h-5 transition-all duration-300 ease-out group-hover/bankai:scale-125 group-hover/bankai:rotate-[-15deg] group-hover/bankai:drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]"
-              />
-              <span className="font-semibold text-[13.3px] leading-[16.3px] text-white/60 transition-all duration-300 ease-out group-hover/bankai:text-white group-hover/bankai:tracking-[2px]">
-                BANKAI.AGENCY
-              </span>
-            </a>
+            <BankaiLink />
           </div>
         </div>
       </div>
