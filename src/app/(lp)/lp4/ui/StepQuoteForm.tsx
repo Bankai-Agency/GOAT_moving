@@ -96,16 +96,38 @@ function StepIndicator({ current, surface }: { current: number; surface: LPSurfa
   );
 }
 
+/* Small padlock — precedes the Portland trust line. Inherits the
+   helper text color via currentColor. */
+function LockIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      width="12"
+      height="12"
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      aria-hidden
+    >
+      <path d="M8 1a3 3 0 0 0-3 3v2h-.5A1.5 1.5 0 0 0 3 7.5v6A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5v-6A1.5 1.5 0 0 0 11.5 6H11V4a3 3 0 0 0-3-3Zm1.5 5h-3V4a1.5 1.5 0 0 1 3 0v2Z" />
+    </svg>
+  );
+}
+
 export type StepQuoteFormProps = {
   heading?: string;
   city?: string;
   surface?: LPSurface;
+  /* Portland A/B variant: heading + step on one row with a
+     "Fast. No obligation." sub-line, personalized button copy, and a
+     trust line (lock icon) at the foot. */
+  portland?: boolean;
 };
 
 export function StepQuoteForm({
   heading = "Get your free quote",
   city: _city,
   surface = "light",
+  portland = false,
 }: StepQuoteFormProps) {
   const router = useRouter();
   const [values, setValues] = useState<QuoteFormValues>(empty);
@@ -159,11 +181,35 @@ export function StepQuoteForm({
 
   return (
     <div className="flex flex-col gap-6">
-      <StepIndicator current={step} surface={surface} />
-
-      <h3 className={`lp-form-heading lp-form-heading--${surface}`}>
-        {step === 1 ? heading : "Move details"}
-      </h3>
+      {portland ? (
+        /* Portland: heading (left) + step indicator (right) on one row,
+           with "Fast. No obligation." directly beneath the heading. */
+        <div className="flex flex-col gap-1.5">
+          <div className="flex items-center justify-between gap-4">
+            <h3 className={`lp-form-heading lp-form-heading--${surface}`}>
+              {step === 1 ? heading : "Move details"}
+            </h3>
+            <div className="shrink-0">
+              <StepIndicator current={step} surface={surface} />
+            </div>
+          </div>
+          {step === 1 && (
+            <p
+              className={`lp-form-helper lp-form-helper--${surface}`}
+              style={{ textAlign: "left" }}
+            >
+              Fast. No obligation.
+            </p>
+          )}
+        </div>
+      ) : (
+        <>
+          <StepIndicator current={step} surface={surface} />
+          <h3 className={`lp-form-heading lp-form-heading--${surface}`}>
+            {step === 1 ? heading : "Move details"}
+          </h3>
+        </>
+      )}
 
       {step === 1 && (
         <div className="flex flex-col gap-5">
@@ -206,11 +252,20 @@ export function StepQuoteForm({
             }}
             fullWidth
           >
-            Continue to move details
+            {portland ? "See my quote options" : "Continue to move details"}
           </LPButton>
-          <p className={`lp-form-helper lp-form-helper--${surface}`}>
-            Enter your name and phone so we can send you a quote.
-          </p>
+          {portland ? (
+            <p
+              className={`lp-form-helper lp-form-helper--${surface} flex items-center justify-center gap-1.5`}
+            >
+              <LockIcon className="shrink-0" />
+              Your information is safe and secure. No spam, ever.
+            </p>
+          ) : (
+            <p className={`lp-form-helper lp-form-helper--${surface}`}>
+              Enter your name and phone so we can send you a quote.
+            </p>
+          )}
         </div>
       )}
 
@@ -263,7 +318,7 @@ export function StepQuoteForm({
             disabled={submitting || !agreesToPrivacy}
             fullWidth
           >
-            {submitting ? "Sending…" : "Submit Request"}
+            {submitting ? "Sending…" : portland ? "Get My Free Quote" : "Submit Request"}
           </LPButton>
           <LPButton
             variant="ghost"

@@ -25,14 +25,19 @@ const PHONE_DISPLAY = "+1 380-524-0846";
 const PHONE_RAW = "+13805240846";
 
 /* `showPhoneNumber` surfaces the full tappable number in the bar —
-   centered between logo and burger on mobile, and as a number pill
-   (instead of an icon-only button) on desktop. Enabled on every city
-   LP (CityLandingPage passes it). Defaults off so other shared callers
-   (e.g. the thank-you page) keep the icon-only / burger-menu phone. */
+   centered between logo and burger on mobile, and as text + phone icon
+   on desktop. Enabled on every city LP (CityLandingPage passes it).
+   Defaults off so other shared callers (e.g. the thank-you page) keep
+   the icon-only / burger-menu phone.
+   `portland` is the Portland-only desktop variant: drops the duplicate
+   "Get a free quote" button (the form already has one) and adds a
+   "Call for a free quote" sub-line under the number. */
 export function LPTerminalNav({
   showPhoneNumber = false,
+  portland = false,
 }: {
   showPhoneNumber?: boolean;
+  portland?: boolean;
 }) {
   const navRef = useRef<HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -76,13 +81,17 @@ export function LPTerminalNav({
     const apply = (v: boolean) => {
       if (v === visible) return;
       visible = v;
-      nav.style.transform = v ? "translateY(0)" : "translateY(-110%)";
-      nav.style.opacity = v ? "1" : "0";
+      /* Slide only — NO opacity. Animating the nav's opacity made the
+         bar's backdrop-filter blur snap in on reveal (Chrome composites
+         backdrop-filter oddly under an animating ancestor opacity),
+         which read as a jump from transparent → blur on scroll-up.
+         -130% fully clears the bar (its height + the top inset) so it
+         stays hidden without needing opacity. */
+      nav.style.transform = v ? "translateY(0)" : "translateY(-130%)";
       nav.style.pointerEvents = v ? "" : "none";
     };
 
-    nav.style.transition =
-      "transform .35s cubic-bezier(0.16, 1, 0.3, 1), opacity .35s ease-out";
+    nav.style.transition = "transform .35s cubic-bezier(0.16, 1, 0.3, 1)";
 
     const onScroll = () => {
       const y = window.scrollY;
@@ -201,8 +210,16 @@ export function LPTerminalNav({
                   height: 36,
                   padding: "0 0.75em",
                   borderRadius: 999,
-                  backgroundColor: "#FFE533",
-                  color: "#0c0c0c",
+                  /* Portland: transparent pill with yellow border + yellow
+                     text/icon (outlined "call" CTA). Other cities keep the
+                     solid yellow pill. */
+                  ...(portland
+                    ? {
+                        backgroundColor: "transparent",
+                        color: "#FFE533",
+                        border: "1px solid #FFE533",
+                      }
+                    : { backgroundColor: "#FFE533", color: "#0c0c0c" }),
                   fontFamily: "var(--font-sans, system-ui, sans-serif)",
                   fontSize: 14,
                   fontWeight: 600,
@@ -236,18 +253,25 @@ export function LPTerminalNav({
 
               <ul data-nav-list-item="" className="mega-nav__bar-list is--actions">
                 <li className="mega-nav__bar-action">
-                  <PhoneLink showNumber={showPhoneNumber} />
+                  <PhoneLink
+                    showNumber={showPhoneNumber}
+                    subtitle={portland ? "Call for a free quote" : undefined}
+                  />
                 </li>
-                <li className="mega-nav__bar-action">
-                  <LPButton
-                    size="sm"
-                    onClick={() =>
-                      window.dispatchEvent(new CustomEvent("open-quote-modal"))
-                    }
-                  >
-                    Get a free quote
-                  </LPButton>
-                </li>
+                {/* Portland drops this CTA — it duplicates the form's
+                    "Get a free quote" button (see `portland` prop). */}
+                {!portland && (
+                  <li className="mega-nav__bar-action">
+                    <LPButton
+                      size="sm"
+                      onClick={() =>
+                        window.dispatchEvent(new CustomEvent("open-quote-modal"))
+                      }
+                    >
+                      Get a free quote
+                    </LPButton>
+                  </li>
+                )}
               </ul>
             </div>
 
@@ -370,30 +394,35 @@ export function LPTerminalNav({
                 flexShrink: 0,
               }}
             >
-              <a
-                href={`tel:${PHONE_RAW}`}
-                onClick={closeMobileMenu}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 12,
-                  height: 66,
-                  borderRadius: 12,
-                  backgroundColor: "transparent",
-                  border: "1px solid rgba(255,255,255,0.18)",
-                  fontFamily: "var(--font-sans, system-ui, sans-serif)",
-                  fontSize: 18,
-                  fontWeight: 500,
-                  letterSpacing: "-0.3px",
-                  color: "#ffffff",
-                  textDecoration: "none",
-                  transition: "background-color .2s ease, border-color .2s ease",
-                }}
-              >
-                <PhoneSvg style={{ color: "#FFE533" }} />
-                {PHONE_DISPLAY}
-              </a>
+              {/* Portland drops the outlined phone link here — it
+                 duplicates the bar's outlined phone CTA. Other cities keep
+                 it. */}
+              {!portland && (
+                <a
+                  href={`tel:${PHONE_RAW}`}
+                  onClick={closeMobileMenu}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 12,
+                    height: 66,
+                    borderRadius: 12,
+                    backgroundColor: "transparent",
+                    border: "1px solid rgba(255,255,255,0.18)",
+                    fontFamily: "var(--font-sans, system-ui, sans-serif)",
+                    fontSize: 18,
+                    fontWeight: 500,
+                    letterSpacing: "-0.3px",
+                    color: "#ffffff",
+                    textDecoration: "none",
+                    transition: "background-color .2s ease, border-color .2s ease",
+                  }}
+                >
+                  <PhoneSvg style={{ color: "#FFE533" }} />
+                  {PHONE_DISPLAY}
+                </a>
+              )}
               <LPButton
                 size="lg"
                 fullWidth
@@ -402,7 +431,7 @@ export function LPTerminalNav({
                   window.dispatchEvent(new CustomEvent("open-quote-modal"));
                 }}
               >
-                Get a free quote
+                {portland ? "Get my free quote" : "Get a free quote"}
               </LPButton>
             </div>
           </div>,
@@ -415,16 +444,24 @@ export function LPTerminalNav({
 /* Phone pill in the desktop bar (mirrors mainpage-5). Default is a
    compact yellow icon-only circle; `showNumber` (Portland A/B variant)
    expands it to icon + full number written out in digits. */
-function PhoneLink({ showNumber = false }: { showNumber?: boolean }) {
+function PhoneLink({
+  showNumber = false,
+  subtitle,
+}: {
+  showNumber?: boolean;
+  subtitle?: string;
+}) {
   /* Desktop bar with the number: render as plain TEXT + phone icon (not a
      filled pill) so it doesn't read as a second CTA button next to
-     "Get a free quote". White text, yellow on hover. */
+     "Get a free quote". White text, yellow on hover. With `subtitle`
+     (Portland) the number stacks above a yellow "Call for a free quote"
+     sub-line, and the trailing margin is dropped since no CTA follows. */
   if (showNumber) {
     return (
       <a
         href={`tel:${PHONE_RAW}`}
         aria-label={`Call GOAT Movers at ${PHONE_DISPLAY}`}
-        className="inline-flex items-center gap-2 mr-4 cursor-pointer text-white hover:text-[#FFE533] transition-colors duration-200"
+        className={`inline-flex items-center gap-2 ${subtitle ? "" : "mr-4"} cursor-pointer text-white hover:text-[#FFE533] transition-colors duration-200`}
         style={{
           textDecoration: "none",
           fontFamily: "var(--font-sans, system-ui, sans-serif)",
@@ -435,7 +472,23 @@ function PhoneLink({ showNumber = false }: { showNumber?: boolean }) {
         }}
       >
         <PhoneSvg className="w-4 h-4" />
-        380-524-0846
+        {subtitle ? (
+          <span className="flex flex-col leading-[1.15]">
+            <span>380-524-0846</span>
+            <span
+              style={{
+                color: "#FFE533",
+                fontSize: 12,
+                fontWeight: 500,
+                letterSpacing: "-0.2px",
+              }}
+            >
+              {subtitle}
+            </span>
+          </span>
+        ) : (
+          "380-524-0846"
+        )}
       </a>
     );
   }

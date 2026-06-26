@@ -46,11 +46,12 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
   /* Rating-strip labels (Yelp/Google/Verified) are desktop-only on the
      baseline; on Portland mobile they stay visible per the hero spec. */
   const ratingLabelCls = isPortland ? "" : "hidden lg:inline";
-  /* Desktop hero top padding. Portland gets extra breathing room below
+  /* Desktop hero top padding. Portland gets a little extra room below
      the floating nav so the quote form isn't glued to the bar; other
-     cities keep the tighter baseline. There's ~15dvh of empty space
-     below the form, so the taller step-2 still clears the hero bottom. */
-  const heroDesktopTopPad = isPortland ? "lg:pt-[180px]" : "lg:pt-[108px]";
+     cities keep the tighter baseline. Kept modest (120px) — 180px pushed
+     the left column's bottom line past the 100dvh hero edge on shorter
+     viewports, clipping "Most ... moves cost $400–$900". */
+  const heroDesktopTopPad = isPortland ? "lg:pt-[120px]" : "lg:pt-[108px]";
 
   /* Footer Navigation column reuses ContactFooter's hard-coded
      /local-moving / /reviews / /contacts <Link>s. On the LP those
@@ -166,7 +167,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
          same 1:1 scale as mainpage-5's TerminalNav (the rest of the
          LP keeps its proportional `zoom` scale-down for visual
          continuity with the existing pages). */}
-      <LPTerminalNav showPhoneNumber />
+      <LPTerminalNav showPhoneNumber portland={isPortland} />
       <main>
 
       {/* ───────────── 1. HERO ─────────────
@@ -195,7 +196,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
               fill
               sizes="100vw"
               quality={90}
-              className={`object-cover ${isPortland ? "object-center lg:object-[center_35%] max-lg:scale-[1.28] max-lg:origin-center" : "object-[62%_center] lg:object-[center_25%]"}`}
+              className={`object-cover ${isPortland ? "object-center lg:object-[center_35%] lg:scale-[1.08] lg:translate-x-[2.5%] max-lg:scale-[1.28] max-lg:origin-center" : "object-[62%_center] lg:object-[center_25%]"}`}
               priority
             />
             {/* Gradient overlays — dark where text is, clear where mover is.
@@ -231,6 +232,10 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
             <div className={`grid grid-cols-1 lg:grid-cols-[1fr_520px] ${isPortland ? "lg:items-end" : "lg:items-center"} lg:gap-12`}>
               {/* LEFT — rating + h1 + description */}
               <div className="flex flex-col gap-4 lg:gap-5">
+                {/* Ratings with the (Portland) Licensed-&-Insured badge
+                   stacked directly beneath them — same column on every
+                   viewport. */}
+                <div className="flex flex-col items-start gap-2.5 lg:gap-3">
                 {/* Rating strip — same glass settings as the floating
                    nav (rgba(0,0,0,0.3) + blur(30px)) so the bullets
                    read as the same surface family. */}
@@ -248,6 +253,22 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                   </a>
                   </div>
                   <span className={`inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-sans font-medium text-xs lg:text-sm tracking-[-0.3px] text-white/70 whitespace-nowrap ${isPortland ? "max-lg:hidden" : ""}`}>437+<span className={ratingLabelCls}> Verified</span> Reviews</span>
+                </div>
+                {/* Licensed & Insured trust badge (Portland only). The
+                   USDOT/MC line is hidden on mobile (max-lg:hidden) so the
+                   badge stays compact next to the wrapped rating chips. */}
+                {isPortland && (
+                  <div className="inline-flex items-center gap-2.5 w-fit lg:backdrop-blur-[30px] lg:bg-[rgba(0,0,0,0.3)] lg:rounded-2xl lg:px-4 lg:py-2">
+                    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 shrink-0" aria-hidden>
+                      <path d="M12 2.5l7.5 2.8v5.7c0 4.7-3.2 8-7.5 9.5-4.3-1.5-7.5-4.8-7.5-9.5V5.3L12 2.5z" fill="#FFE533" />
+                      <path d="M8.4 12.2l2.4 2.4 4.8-5.2" stroke="#181818" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <div className="flex flex-col leading-[1.2]">
+                      <span className="font-sans font-semibold text-sm lg:text-[15px] text-white whitespace-nowrap">Licensed &amp; Insured</span>
+                      <span className="font-sans font-medium text-xs text-white/60 whitespace-nowrap max-lg:hidden">USDOT&nbsp;#4232069 · MC&nbsp;#1637475</span>
+                    </div>
+                  </div>
+                )}
                 </div>
                 {/* Hero headline + subheads.
                    A/B test: ONLY Portland (slug "movers-portland") gets
@@ -311,7 +332,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                   is taller than step 1) grows downward instead of
                   pushing the top edge up under the floating nav. */}
               <div className="hidden lg:block relative z-40 w-full max-w-[520px] lg:ml-auto lg:self-start">
-                <LPQuoteForm city={city} surface="glass" />
+                <LPQuoteForm city={city} surface="glass" portland={isPortland} />
               </div>
             </div>
           </div>
@@ -325,7 +346,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
             this instance — it sits on the white page bg and the
             shadow reads as a grey halo there. */}
         <div className="lg:hidden mx-4 mt-4">
-          <LPQuoteForm city={city} surface="glass" />
+          <LPQuoteForm city={city} surface="glass" portland={isPortland} />
         </div>
       </section>
 
@@ -403,6 +424,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         heading={`Ready to Move in ${city}?`}
         tagline="No hidden fees. No hourly surprises. Fully licensed and insured."
         buttonText="Get Your Free Quote"
+        image={isPortland ? "/images/cta-portland.webp" : undefined}
       />
 
       {/* 6. Process — uniform dark, no scroll-zone transition. */}
@@ -447,7 +469,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       <FooterParallax>
         <ContactFooter />
       </FooterParallax>
-      <Touchbar />
+      <Touchbar portland={isPortland} />
       <QuoteModal />
       </div>
       </main>

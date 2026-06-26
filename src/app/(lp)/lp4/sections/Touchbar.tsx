@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export function Touchbar() {
+export function Touchbar({ portland = false }: { portland?: boolean }) {
   const [visible, setVisible] = useState(false);
 
   // Show only after the user has scrolled past the hero. If the page
@@ -49,6 +49,30 @@ export function Touchbar() {
       }}
       aria-hidden={!visible}
     >
+      {portland ? (
+        /* Portland: on scroll the form is the primary action, so the
+           touchbar collapses to one full-width, solid-yellow CTA that
+           sits in the thumb zone. */
+        <div
+          className="border-t px-4 py-3"
+          style={{
+            backgroundColor: bgRgba,
+            borderTopColor: borderColor,
+            backdropFilter: "blur(30px)",
+            WebkitBackdropFilter: "blur(30px)",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event("open-quote-modal"))}
+            className="w-full h-12 rounded-xl font-sans font-semibold text-base tracking-[-0.2px] active:opacity-90 transition-opacity"
+            style={{ backgroundColor: "#FFE533", color: "#0c0c0c" }}
+          >
+            Get my free quote
+          </button>
+        </div>
+      ) : (
+      <>
       {/* Adaptive glass touchbar:
             • Dark glass + white text when sitting over a dark zone
               (Solution / Process).
@@ -106,6 +130,8 @@ export function Touchbar() {
           <span className="text-xs font-sans tracking-wide">Get a Quote</span>
         </button>
       </div>
+      </>
+      )}
     </div>
   );
 }

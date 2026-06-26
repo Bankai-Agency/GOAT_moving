@@ -18,6 +18,8 @@ type Props = {
   surface?: LPSurface;
   /** Extra Tailwind classes for the outer card (e.g. max-w / margins). */
   className?: string;
+  /** Portland A/B form variant — see StepQuoteForm. */
+  portland?: boolean;
 };
 
 const SURFACE_CARD: Record<LPSurface, string> = {
@@ -32,6 +34,7 @@ export function LPQuoteForm({
   heading = "Get your free quote",
   surface = "light",
   className = "",
+  portland = false,
 }: Props) {
   return (
     <div
@@ -39,7 +42,7 @@ export function LPQuoteForm({
       data-surface={surface}
       className={`${SURFACE_CARD[surface]} ${className}`.trim()}
     >
-      <StepQuoteForm heading={heading} city={city} surface={surface} />
+      <StepQuoteForm heading={heading} city={city} surface={surface} portland={portland} />
     </div>
   );
 }
