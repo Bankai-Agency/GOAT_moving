@@ -54,7 +54,7 @@ const defaultServices: ServiceItem[] = [
   },
 ];
 
-function ServiceCard({ title, description, number, image, href }: ServiceItem) {
+function ServiceCard({ title, description, image, href }: ServiceItem) {
   const [el, setEl] = useState<HTMLElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -96,11 +96,6 @@ function ServiceCard({ title, description, number, image, href }: ServiceItem) {
         />
       </div>
 
-      {/* Watermark number — softened so it reads as a faint stamp
-          over the photo without competing with the bottom text. */}
-      <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-sans font-light text-[100px] lg:text-[164px] leading-[1.2] tracking-[-4.92px] text-white/15 select-none pointer-events-none z-[1]">
-        {number}
-      </span>
 
       {/* Bottom content cluster — title + description stacked
           together on a single bottom-anchored dark gradient that

@@ -93,8 +93,9 @@ export const hillsboroConfig: LP1Config = {
   city: "Hillsboro",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/hillsboro-hero.webp",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
+  longDistanceImage: "/images/hillsboro-longdistance.webp",
   metaTitle: "Stress-Free Movers in Hillsboro — $125/Hour | Goat Movers",
   metaDescription:
     "Professional movers in Hillsboro, OR. Fixed price, no hidden fees. 437+ five-star reviews. Get your exact moving price in 30 seconds.",
@@ -140,8 +141,9 @@ export const tigardConfig: LP1Config = {
   city: "Tigard",
   state: "OR",
   licenseState: "Oregon",
-  heroImage: "/images/tigard-hero.webp",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
+  longDistanceImage: "/images/tigard-longdistance.webp",
   metaTitle: "Stress-Free Movers in Tigard — $125/Hour | Goat Movers",
   metaDescription:
     "Professional movers in Tigard, OR. Fixed price, no hidden fees. 437+ five-star reviews. Get your exact moving price in 30 seconds.",
@@ -468,8 +470,9 @@ export const seattleConfig: LP1Config = {
   city: "Seattle",
   state: "WA",
   licenseState: "Washington",
-  heroImage: "/images/seattle-hero.webp",
+  heroImage: "/images/movers-hero.jpg",
   heroImagePosition: HERO_MOBILE_POSITION,
+  longDistanceImage: "/images/seattle-longdistance.webp",
   metaTitle: "Stress-Free Movers in Seattle — $125/Hour | Goat Movers",
   metaDescription:
     "Professional movers in Seattle, WA. Fixed price, no hidden fees. 437+ five-star reviews. Get your exact moving price in 30 seconds.",

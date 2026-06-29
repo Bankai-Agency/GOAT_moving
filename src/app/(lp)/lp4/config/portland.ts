@@ -32,6 +32,8 @@ export type LP1Config = {
   };
   localMovingDescription: string;
   commercialDescription?: string;
+  /** Optional override for the "Long Distance Moving" service-card image. */
+  longDistanceImage?: string;
   serviceAreaSubtitle: string;
   neighborhoods: string[];
   faqs: { question: string; answer: string }[];
