@@ -44,6 +44,19 @@
   }
 }
 
+/* Portland desktop — let the hero GROW to contain the tall, fixed-height
+   quote form (step 2) instead of clipping it / letting it spill past the
+   bottom edge. `height: auto` releases the 100dvh hard cap above;
+   `min-height: 100dvh` keeps it at least a full screen, so it only
+   extends on shorter viewports where the form wouldn't otherwise fit. */
+@media (min-width: 1024px) {
+  [data-lp-root] [data-lp-hero].lp-hero--portland {
+    height: auto !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+  }
+}
+
 
 /* HERO MOBILE QUOTE-FORM CARD — dead code removed.
    The earlier mobile form used `<div class="lg:hidden bg-[#181818] rounded-2xl">`

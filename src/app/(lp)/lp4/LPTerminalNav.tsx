@@ -253,10 +253,7 @@ export function LPTerminalNav({
 
               <ul data-nav-list-item="" className="mega-nav__bar-list is--actions">
                 <li className="mega-nav__bar-action">
-                  <PhoneLink
-                    showNumber={showPhoneNumber}
-                    subtitle={portland ? "Call for a free quote" : undefined}
-                  />
+                  <PhoneLink showNumber={showPhoneNumber} portland={portland} />
                 </li>
                 {/* Portland drops this CTA — it duplicates the form's
                     "Get a free quote" button (see `portland` prop). */}
@@ -430,6 +427,7 @@ export function LPTerminalNav({
                   closeMobileMenu();
                   window.dispatchEvent(new CustomEvent("open-quote-modal"));
                 }}
+                className={portland ? "capitalize" : undefined}
               >
                 {portland ? "Get my free quote" : "Get a free quote"}
               </LPButton>
@@ -446,49 +444,33 @@ export function LPTerminalNav({
    expands it to icon + full number written out in digits. */
 function PhoneLink({
   showNumber = false,
-  subtitle,
+  portland = false,
 }: {
   showNumber?: boolean;
-  subtitle?: string;
+  portland?: boolean;
 }) {
-  /* Desktop bar with the number: render as plain TEXT + phone icon (not a
-     filled pill) so it doesn't read as a second CTA button next to
-     "Get a free quote". White text, yellow on hover. With `subtitle`
-     (Portland) the number stacks above a yellow "Call for a free quote"
-     sub-line, and the trailing margin is dropped since no CTA follows. */
+  /* Desktop bar with the number: plain TEXT + phone icon (not a filled
+     pill). White text, yellow on hover. Portland renders it at the
+     form-heading scale (26px / 600 / -0.6px, matching .lp-form-heading)
+     so the number reads as the primary header CTA, and drops the trailing
+     margin since no "Get a free quote" button follows. */
   if (showNumber) {
     return (
       <a
         href={`tel:${PHONE_RAW}`}
         aria-label={`Call GOAT Movers at ${PHONE_DISPLAY}`}
-        className={`inline-flex items-center gap-2 ${subtitle ? "" : "mr-4"} cursor-pointer text-white hover:text-[#FFE533] transition-colors duration-200`}
+        className={`inline-flex items-center gap-2 ${portland ? "" : "mr-4"} cursor-pointer text-white hover:text-[#FFE533] transition-colors duration-200`}
         style={{
           textDecoration: "none",
           fontFamily: "var(--font-sans, system-ui, sans-serif)",
-          fontSize: 16,
+          fontSize: portland ? 19 : 16,
           fontWeight: 600,
-          letterSpacing: "-0.3px",
+          letterSpacing: portland ? "-0.4px" : "-0.3px",
           whiteSpace: "nowrap",
         }}
       >
         <PhoneSvg className="w-4 h-4" />
-        {subtitle ? (
-          <span className="flex flex-col leading-[1.15]">
-            <span>380-524-0846</span>
-            <span
-              style={{
-                color: "#FFE533",
-                fontSize: 12,
-                fontWeight: 500,
-                letterSpacing: "-0.2px",
-              }}
-            >
-              {subtitle}
-            </span>
-          </span>
-        ) : (
-          "380-524-0846"
-        )}
+        380-524-0846
       </a>
     );
   }

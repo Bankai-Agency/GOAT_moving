@@ -180,27 +180,25 @@ export function StepQuoteForm({
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div
+      className={`flex flex-col gap-6 ${
+        /* Portland: reserve step-2's (taller) height so the card doesn't
+           resize between steps. Value is an estimate of step 2 — tune if
+           step 1 shows too much/little slack at the bottom. */
+        portland ? "min-h-[560px] lg:min-h-[500px]" : ""
+      }`}
+    >
       {portland ? (
-        /* Portland: heading (left) + step indicator (right) on one row,
-           with "Fast. No obligation." directly beneath the heading. */
-        <div className="flex flex-col gap-1.5">
-          <div className="flex items-center justify-between gap-4">
-            <h3 className={`lp-form-heading lp-form-heading--${surface}`}>
-              {step === 1 ? heading : "Move details"}
-            </h3>
-            <div className="shrink-0">
-              <StepIndicator current={step} surface={surface} />
-            </div>
+        /* Portland: heading (left) + step indicator (right) on one row.
+           Step indicator is hidden on mobile so the heading keeps to a
+           single line. */
+        <div className="flex items-center justify-between gap-4">
+          <h3 className={`lp-form-heading lp-form-heading--${surface}`}>
+            {step === 1 ? heading : "Move details"}
+          </h3>
+          <div className="shrink-0 max-lg:hidden">
+            <StepIndicator current={step} surface={surface} />
           </div>
-          {step === 1 && (
-            <p
-              className={`lp-form-helper lp-form-helper--${surface}`}
-              style={{ textAlign: "left" }}
-            >
-              Fast. No obligation.
-            </p>
-          )}
         </div>
       ) : (
         <>
@@ -251,15 +249,19 @@ export function StepQuoteForm({
               if (validateStep1()) setStep(2);
             }}
             fullWidth
+            className={portland ? "capitalize" : undefined}
           >
-            {portland ? "See my quote options" : "Continue to move details"}
+            Continue to move details
           </LPButton>
           {portland ? (
             <p
               className={`lp-form-helper lp-form-helper--${surface} flex items-center justify-center gap-1.5`}
             >
               <LockIcon className="shrink-0" />
-              Your information is safe and secure. No spam, ever.
+              <span>
+                Your information is safe and secure.
+                <span className="max-lg:hidden"> No spam, ever.</span>
+              </span>
             </p>
           ) : (
             <p className={`lp-form-helper lp-form-helper--${surface}`}>
@@ -317,6 +319,7 @@ export function StepQuoteForm({
             onClick={handleSubmit}
             disabled={submitting || !agreesToPrivacy}
             fullWidth
+            className={portland ? "capitalize" : undefined}
           >
             {submitting ? "Sending…" : portland ? "Get My Free Quote" : "Submit Request"}
           </LPButton>

@@ -116,7 +116,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       title: "Long Distance Moving",
       description: `Interstate moves out of ${city} across the US. Fully licensed (USDOT #4232069) and insured for cross-state relocations of any size.`,
       number: "2",
-      image: "/images/service-longdistance.webp",
+      image: config.longDistanceImage ?? "/images/service-longdistance.webp",
     },
     {
       title: "Commercial Moving",
@@ -189,14 +189,14 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
              above the headline (bottom-[38dvh]); both edges dissolve
              gradually into the hero's solid #181818 so the image → dark
              transition is smooth, not a hard cut. */}
-          <div className="absolute inset-0 max-lg:top-[88px] max-lg:bottom-[38dvh] max-lg:overflow-hidden">
+          <div className={`absolute inset-0 max-lg:top-[88px] ${isPortland ? "max-lg:bottom-[20dvh]" : "max-lg:bottom-[38dvh]"} max-lg:overflow-hidden`}>
             <Image
               src={heroImage}
               alt={`Professional movers in ${city}`}
               fill
               sizes="100vw"
               quality={90}
-              className={`object-cover ${isPortland ? "object-center lg:object-[center_35%] lg:scale-[1.08] lg:translate-x-[2.5%] max-lg:scale-[1.28] max-lg:origin-center" : "object-[62%_center] lg:object-[center_25%]"}`}
+              className={`object-cover ${isPortland ? "object-[40%_center] lg:object-[center_35%] lg:scale-[1.2] lg:translate-x-[-9%] max-lg:scale-[1.1] max-lg:origin-center" : "object-[62%_center] lg:object-[center_25%]"}`}
               priority
             />
             {/* Gradient overlays — dark where text is, clear where mover is.
@@ -224,18 +224,14 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
               pushed its top edge up under the nav. items-center on the
               grid still vertically centers the shorter text column next
               to the tall form. Mobile keeps justify-end. */}
-          <div className="relative flex flex-col justify-end lg:justify-start h-full pb-6 lg:pb-0 gap-5 lg:gap-5">
+          <div className={`relative flex flex-col justify-end lg:justify-start h-full ${isPortland ? "pb-[2dvh]" : "pb-6"} lg:pb-0 gap-5 lg:gap-5`}>
             {/* Desktop: two columns — text on left, form on right
                 aligned to the bottom (items-end). Mobile collapses
                 to a single column; the form for mobile renders
                 below the hero image (lg:hidden block further down). */}
-            <div className={`grid grid-cols-1 lg:grid-cols-[1fr_520px] ${isPortland ? "lg:items-end" : "lg:items-center"} lg:gap-12`}>
+            <div className={`grid grid-cols-1 ${isPortland ? "lg:grid-cols-[minmax(0,1fr)_520px] lg:items-end" : "lg:grid-cols-[1fr_520px] lg:items-center"} lg:gap-12`}>
               {/* LEFT — rating + h1 + description */}
               <div className="flex flex-col gap-4 lg:gap-5">
-                {/* Ratings with the (Portland) Licensed-&-Insured badge
-                   stacked directly beneath them — same column on every
-                   viewport. */}
-                <div className="flex flex-col items-start gap-2.5 lg:gap-3">
                 {/* Rating strip — same glass settings as the floating
                    nav (rgba(0,0,0,0.3) + blur(30px)) so the bullets
                    read as the same surface family. */}
@@ -254,22 +250,6 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                   </div>
                   <span className={`inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-sans font-medium text-xs lg:text-sm tracking-[-0.3px] text-white/70 whitespace-nowrap ${isPortland ? "max-lg:hidden" : ""}`}>437+<span className={ratingLabelCls}> Verified</span> Reviews</span>
                 </div>
-                {/* Licensed & Insured trust badge (Portland only). The
-                   USDOT/MC line is hidden on mobile (max-lg:hidden) so the
-                   badge stays compact next to the wrapped rating chips. */}
-                {isPortland && (
-                  <div className="inline-flex items-center gap-2.5 w-fit lg:backdrop-blur-[30px] lg:bg-[rgba(0,0,0,0.3)] lg:rounded-2xl lg:px-4 lg:py-2">
-                    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 shrink-0" aria-hidden>
-                      <path d="M12 2.5l7.5 2.8v5.7c0 4.7-3.2 8-7.5 9.5-4.3-1.5-7.5-4.8-7.5-9.5V5.3L12 2.5z" fill="#FFE533" />
-                      <path d="M8.4 12.2l2.4 2.4 4.8-5.2" stroke="#181818" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <div className="flex flex-col leading-[1.2]">
-                      <span className="font-sans font-semibold text-sm lg:text-[15px] text-white whitespace-nowrap">Licensed &amp; Insured</span>
-                      <span className="font-sans font-medium text-xs text-white/60 whitespace-nowrap max-lg:hidden">USDOT&nbsp;#4232069 · MC&nbsp;#1637475</span>
-                    </div>
-                  </div>
-                )}
-                </div>
                 {/* Hero headline + subheads.
                    A/B test: ONLY Portland (slug "movers-portland") gets
                    the revised "Top-Rated …" headline + price-hook subheads.
@@ -285,7 +265,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                     <h1 className="font-sans font-normal text-[clamp(32px,9vw,44px)] sm:text-[64px] lg:text-[88px] leading-[0.98] lg:leading-[0.95] tracking-[-1.2px] sm:tracking-[-2px] lg:tracking-[-2.6px] text-white">
                       Top-Rated
                       <br />
-                      <span className="whitespace-nowrap">{city} Movers</span>
+                      {city} Movers
                     </h1>
                     {/* Primary line carries the price hook (rate
                        highlighted); secondary line (smaller, dimmer) adds
@@ -299,8 +279,6 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                         Careful handling&nbsp;—&nbsp;no&nbsp;hidden fees
                       </p>
                       <p className="font-sans font-normal text-sm lg:text-base leading-[1.5] tracking-[-0.2px] text-white/60 max-w-[560px]">
-                        On-time arrival • Realistic move quotes
-                        <br />
                         Most {city} moves cost $400–$900
                       </p>
                     </div>
@@ -452,6 +430,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
         heading="Tell Us About Your Move"
         tagline={`Share a few details and we'll send a real ${city} quote — not a sales pitch. Most moves estimated in under a minute.`}
         city={city}
+        portland={isPortland}
       />
 
       {/* 9. Service area — neighborhoods */}

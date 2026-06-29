@@ -14,6 +14,8 @@ type Props = {
   tagline?: string;
   city?: string;
   image?: string;
+  /** Portland A/B variant — forwarded to the embedded quote form. */
+  portland?: boolean;
 };
 
 export function LPCtaForm({
@@ -21,6 +23,7 @@ export function LPCtaForm({
   tagline = "Get your free, no-obligation quote — no hidden fees, no obligations.",
   city,
   image = "/lp/cta-movers.jpg",
+  portland = false,
 }: Props) {
   return (
     <section id="cta" className="px-4 py-[60px] lg:py-[100px]">
@@ -85,7 +88,7 @@ export function LPCtaForm({
                 glass, desktop = dark glass; both painted via the
                 `_lp2-invert.css` glass-form rule). */}
             <div className="lg:max-w-[520px] lg:ml-auto w-full">
-              <LPQuoteForm city={city} surface="glass" />
+              <LPQuoteForm city={city} surface="glass" portland={portland} />
             </div>
           </div>
         </div>

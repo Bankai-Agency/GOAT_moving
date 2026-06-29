@@ -65,7 +65,7 @@ export function Touchbar({ portland = false }: { portland?: boolean }) {
           <button
             type="button"
             onClick={() => window.dispatchEvent(new Event("open-quote-modal"))}
-            className="w-full h-12 rounded-xl font-sans font-semibold text-base tracking-[-0.2px] active:opacity-90 transition-opacity"
+            className="w-full h-12 rounded-xl font-sans font-semibold text-base tracking-[-0.2px] capitalize active:opacity-90 transition-opacity"
             style={{ backgroundColor: "#FFE533", color: "#0c0c0c" }}
           >
             Get my free quote
