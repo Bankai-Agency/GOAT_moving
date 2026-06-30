@@ -46,12 +46,12 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
   /* Rating-strip labels (Yelp/Google/Verified) are desktop-only on the
      baseline; on Portland mobile they stay visible per the hero spec. */
   const ratingLabelCls = isPortland ? "" : "hidden lg:inline";
-  /* Desktop hero top padding. Portland gets a little extra room below
-     the floating nav so the quote form isn't glued to the bar; other
-     cities keep the tighter baseline. Kept modest (120px) — 180px pushed
-     the left column's bottom line past the 100dvh hero edge on shorter
-     viewports, clipping "Most ... moves cost $400–$900". */
-  const heroDesktopTopPad = isPortland ? "lg:pt-[120px]" : "lg:pt-[108px]";
+  /* Desktop hero top padding. Portland pushes the whole hero block
+     (text + form) lower per client; other cities keep the tighter
+     baseline. clamp(120px,18dvh,200px) holds the safe 120px on short
+     viewports (≤~667px tall — the form would otherwise clip at the
+     bottom) and scales the block downward only where there's room. */
+  const heroDesktopTopPad = isPortland ? "lg:pt-[clamp(120px,18dvh,200px)]" : "lg:pt-[108px]";
 
   /* Footer Navigation column reuses ContactFooter's hard-coded
      /local-moving / /reviews / /contacts <Link>s. On the LP those
@@ -267,21 +267,16 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                       <br />
                       {city} Movers
                     </h1>
-                    {/* Primary line carries the price hook (rate
-                       highlighted); secondary line (smaller, dimmer) adds
-                       proof points + budget range — each a distinct
-                       argument, not a repeat of the headline. */}
-                    <div className="flex flex-col gap-2.5 lg:gap-3">
-                      <p className="font-sans font-normal text-xl sm:text-2xl lg:text-[28px] leading-[1.3] tracking-[-0.5px] text-white max-w-[560px]">
-                        Trusted in&nbsp;{config.licenseState}{" "}from&nbsp;
-                        <span className="text-[#FFE533] font-semibold">$125/hr</span>
-                        <br />
-                        Careful handling&nbsp;—&nbsp;no&nbsp;hidden fees
-                      </p>
-                      <p className="font-sans font-normal text-sm lg:text-base leading-[1.5] tracking-[-0.2px] text-white/60 max-w-[560px]">
-                        Most {city} moves cost $400–$900
-                      </p>
-                    </div>
+                    {/* Single subhead: price hook (rate highlighted) +
+                       the trust line. The secondary "$400–$900" budget
+                       line was removed per client — a PDF price block
+                       will replace it later. */}
+                    <p className="font-sans font-normal text-xl sm:text-2xl lg:text-[28px] leading-[1.3] tracking-[-0.5px] text-white max-w-[560px]">
+                      Trusted in&nbsp;{config.licenseState}{" "}from&nbsp;
+                      <span className="text-[#FFE533] font-semibold">$125/hr</span>
+                      <br />
+                      Careful handling&nbsp;—&nbsp;no&nbsp;hidden fees
+                    </p>
                   </>
                 ) : (
                   <>
