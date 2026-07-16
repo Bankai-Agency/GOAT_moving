@@ -1305,7 +1305,7 @@ function PhoneLink() {
     <a
       href={`tel:${PHONE_RAW}`}
       aria-label={`Call GOAT Movers at ${PHONE_DISPLAY}`}
-      className="inline-flex items-center gap-2 cursor-pointer text-white hover:text-[#FFE533] transition-colors duration-200"
+      className="inline-flex items-center cursor-pointer text-white hover:text-[#FFE533] transition-colors duration-200"
       style={{
         textDecoration: "none",
         fontFamily: "var(--font-sans, system-ui, sans-serif)",
@@ -1315,7 +1315,6 @@ function PhoneLink() {
         whiteSpace: "nowrap",
       }}
     >
-      <PhoneIcon className="w-4 h-4" />
       360-524-0846
     </a>
   );
@@ -1477,21 +1476,6 @@ function BackIcon({ className }: { className?: string }) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-    </svg>
-  );
-}
-
-
-function PhoneIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 16 16"
-      fill="currentColor"
-      className={className}
-      aria-hidden
-    >
-      <path d="M4.37 11.62c2.49 2.49 5.52 4.41 7.99 4.41 1.11 0 2.08-.39 2.87-1.25.46-.51.74-1.1.74-1.69 0-.43-.16-.84-.58-1.13l-2.64-1.88c-.4-.27-.74-.41-1.05-.41-.4 0-.74.22-1.13.61l-.61.6c-.04.05-.09.08-.15.1-.05.02-.11.03-.17.03-.14 0-.26-.05-.35-.09-.52-.28-1.43-1.06-2.28-1.91-.84-.84-1.62-1.75-1.9-2.29-.06-.11-.09-.22-.09-.34 0-.11.03-.22.13-.31l.6-.63c.39-.4.61-.74.61-1.13 0-.31-.14-.65-.42-1.06L4.04.6C3.74.18 3.32 0 2.86 0 2.29 0 1.7.26 1.21.75.36 1.55 0 2.54 0 3.63c0 2.47 1.88 5.5 4.37 7.99z" />
     </svg>
   );
 }
