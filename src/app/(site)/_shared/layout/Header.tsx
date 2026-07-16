@@ -230,10 +230,10 @@ export function Header() {
               isSticky ? "" : "backdrop-blur-[15px] bg-[rgba(13,13,13,0.4)]"
             }`}>
               <a
-                href="tel:+13805240846"
+                href="tel:+13605240846"
                 className="flex items-center gap-2.5 px-4 py-3 rounded-[4px] font-mono text-sm font-medium uppercase tracking-[-0.56px] leading-[1.2] text-white whitespace-nowrap hover:bg-white/10 transition-all duration-200 ease-out"
               >
-                +1 380-524-0846
+                +1 360-524-0846
                 <Image
                   src="/icons/phone-yellow.svg"
                   alt=""
@@ -253,7 +253,7 @@ export function Header() {
           {/* Mobile: phone + hamburger */}
           <div className="flex lg:hidden items-center gap-3">
             <a
-              href="tel:+13805240846"
+              href="tel:+13605240846"
               className="w-10 h-10 rounded-full backdrop-blur-[15px] bg-[rgba(13,13,13,0.4)] flex items-center justify-center"
             >
               <Image src="/icons/phone-yellow.svg" alt="Call" width={18} height={18} />
@@ -376,11 +376,11 @@ export function Header() {
         {/* Bottom CTA buttons */}
         <div className="px-4 pb-8 flex flex-col gap-3 shrink-0">
           <a
-            href="tel:+13805240846"
+            href="tel:+13605240846"
             className="flex items-center justify-center gap-2.5 h-[56px] rounded-lg bg-white/5 font-mono font-bold text-base uppercase tracking-[-0.64px] text-white hover:bg-white/10 transition-colors"
           >
             <Image src="/icons/phone-yellow.svg" alt="" width={20} height={20} />
-            +1 380-524-0846
+            +1 360-524-0846
           </a>
           <button
             onClick={() => { closeMobileMenu(); window.dispatchEvent(new Event("open-quote-modal")); }}

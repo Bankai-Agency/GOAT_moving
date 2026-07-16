@@ -14,7 +14,7 @@ export const BRAND_NAME = "GOAT Movers";
 export const BUSINESS = {
   name: BRAND_NAME,
   legalName: "GOAT Movers",
-  telephone: "+1-380-524-0846",
+  telephone: "+1-360-524-0846",
   email: "goatmoversla@gmail.com",
   usdot: "4232069",
   priceRange: "$$",

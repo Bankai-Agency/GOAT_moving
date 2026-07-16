@@ -105,7 +105,7 @@ export function Touchbar({ portland = false }: { portland?: boolean }) {
 
         {/* Call */}
         <Link
-          href="tel:+13805240846"
+          href="tel:+13605240846"
           className="flex-1 flex flex-col items-center justify-center gap-1 active:bg-white/5 transition-colors"
           style={{ color: textColor }}
         >

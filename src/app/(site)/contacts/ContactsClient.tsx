@@ -43,7 +43,7 @@ function ClockIcon() {
 
 function ContactsHeroWithCards() {
   const contacts = [
-    { icon: <PhoneIcon />, label: "Phone", value: "+1 (380) 524-0846", href: "tel:+13805240846" },
+    { icon: <PhoneIcon />, label: "Phone", value: "+1 (360) 524-0846", href: "tel:+13605240846" },
     { icon: <EmailIcon />, label: "Email", value: "info@goatmovers.com", href: "mailto:info@goatmovers.com" },
     { icon: <LocationIcon />, label: "Address", value: "1178 Dock St, Tacoma, WA 98402\n8101 NE 14th Pl, Portland, OR 97211", href: "https://maps.google.com/?q=1178+Dock+St+Tacoma+WA+98402" },
     { icon: <ClockIcon />, label: "Hours", value: "Mon–Sun, 8 AM – 6 PM", href: null },

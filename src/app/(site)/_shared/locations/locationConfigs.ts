@@ -65,7 +65,7 @@ const standardAnswers = {
   pricing:
     "$125 per hour for a two-mover crew plus a truck, with a three-hour minimum. Most local moves land between $400 and $900 depending on home size, stairs, and distance.",
   booking:
-    "Five to seven days in advance is comfortable, especially May–September. We take last-minute bookings when our schedule allows — call us at (380) 524-0846 to check same-week availability.",
+    "Five to seven days in advance is comfortable, especially May–September. We take last-minute bookings when our schedule allows — call us at (360) 524-0846 to check same-week availability.",
   insurance:
     "Yes. Fully licensed and insured with USDOT #4232069 and $1M liability coverage. A certificate of insurance (COI) is available on request for apartment buildings and commercial leases.",
 };

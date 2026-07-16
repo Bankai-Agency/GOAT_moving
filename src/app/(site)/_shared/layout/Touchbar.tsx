@@ -57,7 +57,7 @@ export function Touchbar() {
 
         {/* Call */}
         <Link
-          href="tel:+13805240846"
+          href="tel:+13605240846"
           className="flex-1 flex flex-col items-center justify-center gap-1 text-white/80 active:bg-white/5 transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFE533" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

@@ -21,8 +21,8 @@ const NAV_LINKS: AnchorLink[] = [
   { label: "Contacts", href: "#contact" },
 ];
 
-const PHONE_DISPLAY = "+1 380-524-0846";
-const PHONE_RAW = "+13805240846";
+const PHONE_DISPLAY = "+1 360-524-0846";
+const PHONE_RAW = "+13605240846";
 
 /* `showPhoneNumber` surfaces the full tappable number in the bar —
    centered between logo and burger on mobile, and as text + phone icon
@@ -230,7 +230,7 @@ export function LPTerminalNav({
                 }}
               >
                 <PhoneSvg style={{ width: 14, height: 14 }} />
-                380-524-0846
+                360-524-0846
               </a>
             )}
 
@@ -470,7 +470,7 @@ function PhoneLink({
         }}
       >
         <PhoneSvg className="w-4 h-4" />
-        380-524-0846
+        360-524-0846
       </a>
     );
   }

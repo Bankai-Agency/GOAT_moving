@@ -40,8 +40,8 @@ function PKHero() {
               <MP5Button size="sm" onClick={() => window.dispatchEvent(new CustomEvent("open-quote-modal"))}>
                 Get Free Estimate
               </MP5Button>
-              <MP5Button size="sm" variant="secondary" href="tel:+13805240846">
-                +1 (380) 524-0846
+              <MP5Button size="sm" variant="secondary" href="tel:+13605240846">
+                +1 (360) 524-0846
               </MP5Button>
             </div>
           </div>

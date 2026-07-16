@@ -21,8 +21,8 @@ const NAV_LINKS: AnchorLink[] = [
   { label: "Contacts", href: "#contact" },
 ];
 
-const PHONE_DISPLAY = "+1 380-524-0846";
-const PHONE_RAW = "+13805240846";
+const PHONE_DISPLAY = "+1 360-524-0846";
+const PHONE_RAW = "+13605240846";
 
 export function LPTerminalNav() {
   const navRef = useRef<HTMLElement>(null);

@@ -92,8 +92,8 @@ function FooterContent() {
           <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
             Phone
           </span>
-          <a href="tel:+13805240846" className="hover-underline w-fit font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
-            +1 380-524-0846
+          <a href="tel:+13605240846" className="hover-underline w-fit font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
+            +1 360-524-0846
           </a>
         </div>
 

@@ -165,8 +165,8 @@ export default function PrivacyPolicyPage() {
                 </li>
                 <li>
                   <span className="text-white/50">Phone:</span>{" "}
-                  <a href="tel:+13805240846" className="text-[#FFE533] hover:underline">
-                    +1 380-524-0846
+                  <a href="tel:+13605240846" className="text-[#FFE533] hover:underline">
+                    +1 360-524-0846
                   </a>
                 </li>
                 <li>

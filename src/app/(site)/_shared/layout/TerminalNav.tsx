@@ -1293,29 +1293,30 @@ export function TerminalNav() {
   );
 }
 
-/* Phone icon — direct `tel:` link, no dropdown. Tap on mobile dials
-   immediately; click on desktop offers the system dial handler. */
-const PHONE_DISPLAY = "+1 380-524-0846";
-const PHONE_RAW = "+13805240846";
+/* Phone — direct `tel:` link, no dropdown. Tap on mobile dials
+   immediately; click on desktop offers the system dial handler.
+   The number is written out in digits (icon + text) rather than an
+   icon-only pill, matching the LP nav so callers see it at a glance. */
+const PHONE_DISPLAY = "+1 360-524-0846";
+const PHONE_RAW = "+13605240846";
 
 function PhoneLink() {
   return (
     <a
       href={`tel:${PHONE_RAW}`}
-      aria-label="Call GOAT Movers"
-      className="mp5-phone-pill inline-flex items-center justify-center cursor-pointer"
+      aria-label={`Call GOAT Movers at ${PHONE_DISPLAY}`}
+      className="inline-flex items-center gap-2 cursor-pointer text-white hover:text-[#FFE533] transition-colors duration-200"
       style={{
-        width: 44,
-        height: 44,
-        borderRadius: 12,
-        backgroundColor: "#ffffff",
-        color: "#000000",
-        border: "0",
         textDecoration: "none",
-        transition: "transform .25s ease, background-color .25s ease",
+        fontFamily: "var(--font-sans, system-ui, sans-serif)",
+        fontSize: 16,
+        fontWeight: 600,
+        letterSpacing: "-0.3px",
+        whiteSpace: "nowrap",
       }}
     >
       <PhoneIcon className="w-4 h-4" />
+      360-524-0846
     </a>
   );
 }
