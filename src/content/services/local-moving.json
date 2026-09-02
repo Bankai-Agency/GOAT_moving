@@ -14,11 +14,11 @@
     "ogDescription": "Residential local moving at $125/hr with truck, fuel, and equipment included. Licensed & insured. Free estimate from GOAT Movers."
   },
   "hero": {
-    "image": "/images/local-moving-hero.jpg",
-    "imageAlt": "Local moving services in Vancouver WA!",
+    "image": "/images/local-moving-hero.png",
+    "imageAlt": "Local moving services in Vancouver WA",
     "h1Highlight": "Local Moving Services",
     "h1Rest": "in Vancouver, WA",
-    "subtitle": "Residential moves in Vancouver, Portland, and the entire I-5 corridor. Professional team, no hidden fees, no charge for stairs.."
+    "subtitle": "Residential moves in Vancouver, Portland, and the entire I-5 corridor. Professional team, no hidden fees, no charge for stairs."
   },
   "rates": {
     "title": "Local Moving Rates",
