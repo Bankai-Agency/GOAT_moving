@@ -11,6 +11,7 @@ import { BenefitsVariantsStack } from "./sections/BenefitsVariants";
 import { TestimonialVariantsStack } from "./sections/TestimonialVariants";
 import { StickyServices } from "./StickyServices";
 import { defaultStickySteps, type StickyStep } from "./stickyServicesData";
+import { homeContent } from "@/lib/content";
 
 /* THREE.js is heavy and has exactly one consumer (MagicRings), used only
    in the CTA section below the fold — code-split it so the THREE chunk
@@ -47,32 +48,8 @@ const MagicRings = dynamic(() => import("./MagicRings"), { ssr: false });
 /* "Benefits" block now carries the real GOAT how-it-works steps — same
    visual (sticky-pin with image + text stacks), different content. Copy
    sourced from `HowItWorksSection.tsx`. */
-const benefits = [
-  {
-    label: "Step 01",
-    title: "Get a Free Estimate",
-    body: "Tell us your move details — pickup, drop-off, date, anything fragile — and we'll send back an honest, all-in quote. No phone tag, no obligations.",
-    image: "/images/mp5-step-01.png",
-  },
-  {
-    label: "Step 02",
-    title: "We Show Up Ready",
-    body: "On move day the crew rolls up on time with the right-size truck, padding, dollies, shrink-wrap, and the materials it takes to start working in the first ten minutes.",
-    image: "/images/long-distance-hero.jpg",
-  },
-  {
-    label: "Step 03",
-    title: "We Pack & Load",
-    body: "Furniture wrapped, boxes stacked, electronics and fragiles boxed with care. Everything secured in the truck so nothing shifts on the road.",
-    image: "/images/packing-hero.png",
-  },
-  {
-    label: "Step 04",
-    title: "Delivery & Setup",
-    body: "We unload at your new place, reassemble the furniture we disassembled, and put boxes in the rooms you want them. The job ends with you settled in, not at the curb.",
-    image: "/images/commercial-moving-hero.png",
-  },
-];
+/* Steps block content — edited in the admin (Главная → Шаги). */
+const benefits = homeContent.steps;
 
 const trustedLogos = [
   "Ryder",
@@ -99,16 +76,8 @@ const trustedLogos = [
    222-webp canvas frame-sequence (main-thread decode + 222 requests +
    12fps). frame_0001.webp is kept only as the <video> poster. */
 
-const heroPhrases = [
-  "Your move, handled from the first box to the last.",
-  "Licensed, bonded, and fully insured.",
-  "Flat-rate quotes — no hidden fees, ever.",
-  "Local, long-distance, and commercial moves.",
-  "Careful crews who treat your home like their own.",
-  "850+ five-star reviews across Oregon & Washington.",
-  "Same-day quotes. On time, every time.",
-  "GOAT Movers — the greatest way to move.",
-];
+/* Hero phrases — edited in the admin (Главная → Hero). */
+const heroPhrases = homeContent.hero.phrases;
 
 /* Per-phrase placement — the text "wanders" to the open zone of the
    frame instead of sitting in one fixed spot (print-foundry style).
@@ -1011,7 +980,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
             {/* No non-breaking spaces — let text-wrap:balance pack
                even, full lines on mobile (a few balanced lines rather
                than ragged phrase-per-line breaks). */}
-            {"Moving done right — same crew, same price, every box accounted for."}
+            {homeContent.mission}
           </h2>
         </div>
       </section>
@@ -1091,7 +1060,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
               className="font-mono text-[11px] uppercase tracking-[2px] text-[#000000]/55"
               style={{ willChange: "transform, opacity" }}
             >
-              Ready when you are
+              {homeContent.ctaBeat.eyebrow}
             </span>
             {/* Headline + GOAT mark share the same centred slot. The
                h2 sits in-flow and defines the box height; the GOAT
@@ -1103,14 +1072,14 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
                 ref={morphHeadlineRef}
                 className="font-sans font-normal text-[40px] sm:text-[64px] lg:text-[112px] leading-[0.96] tracking-[-1.4px] lg:tracking-[-3.4px] text-[#000000] max-w-[1100px]"
               >
-                Make the next move the easy one.
+                {homeContent.ctaBeat.headline}
               </h2>
               <span
                 ref={morphShortRef}
                 aria-hidden
                 className="absolute font-sans font-normal text-[120px] sm:text-[200px] lg:text-[320px] leading-none tracking-[-4px] lg:tracking-[-12px] text-[#000000] inline-block"
               >
-                GOAT®
+                {homeContent.ctaBeat.mark}
               </span>
             </div>
             {/* Accent CTA — MP5Button xl (matches header style at a
@@ -1124,7 +1093,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
                 window.dispatchEvent(new CustomEvent("open-quote-modal"))
               }
             >
-              Get a free quote
+              {homeContent.ctaBeat.buttonLabel}
             </MP5Button>
           </div>
         </section>

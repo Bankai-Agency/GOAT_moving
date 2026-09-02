@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { homeContent } from "@/lib/content";
+import { pageMetadata } from "@/lib/content/metadata";
 import { Touchbar } from "@site/layout/Touchbar";
 import { QuoteModalLazy } from "@site/ui/QuoteModalLazy";
 import { FAQSection } from "@site/sections/FAQSection";
@@ -13,19 +15,8 @@ import "./_home/sticky-steps.css";
 import "./_home/accent.css";
 import "./_home/_mp5-dark.css";
 
-export const metadata: Metadata = {
-  title: "Movers in Vancouver, WA & Portland, OR | $125/hr — GOAT Movers",
-  description:
-    "Stress-free moving across the I-5 corridor. Local moves at $125/hr, long-distance, commercial & packing. Licensed, insured, 850+ five-star reviews. Get your free quote today.",
-  alternates: { canonical: "/" },
-  openGraph: {
-    title: "Movers in Vancouver, WA & Portland, OR | GOAT Movers",
-    description:
-      "Licensed & insured moving company serving Vancouver, WA, Portland, OR, and the I-5 corridor. Flat $125/hr, fixed-price quotes, 850+ five-star reviews.",
-    url: "/",
-    type: "website",
-  },
-};
+/* Title / description are edited in the admin panel (Главная → SEO). */
+export const metadata: Metadata = pageMetadata(homeContent.meta, "/");
 
 export default function Home() {
   return (

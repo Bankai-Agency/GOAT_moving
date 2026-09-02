@@ -1,6 +1,7 @@
 "use client";
 
 import { GridStreaks } from "../GridStreaks";
+import { homeContent } from "@/lib/content";
 
 /* ════════════════════════════════════════════════════════════════
    BenefitsVariants — 5 replacement designs for the current
@@ -13,14 +14,8 @@ import { GridStreaks } from "../GridStreaks";
    Shared data (single source of truth for fair comparison):
    ──────────────────────────────────────────────────────────── */
 
-const TRUST_ITEMS = [
-  { eyebrow: "DOT", value: "#4232069", label: "USDOT registered" },
-  { eyebrow: "Licensed", value: "OR · WA", label: "Fully bonded & insured" },
-  { eyebrow: "Moves", value: "3,000+", label: "Completed in PNW" },
-  { eyebrow: "Reviews", value: "850+", label: "Verified 5-star ratings" },
-  { eyebrow: "Pricing", value: "$0", label: "Hidden fees, ever" },
-  { eyebrow: "Quote", value: "<2h", label: "Same-day response time" },
-] as const;
+/* Trust metrics — edited in the admin (Главная → Цифры доверия). */
+const TRUST_ITEMS = homeContent.trust.items;
 
 const ACCENT = "#FFE533";
 

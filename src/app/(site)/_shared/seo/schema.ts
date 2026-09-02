@@ -7,45 +7,57 @@
  * All builders return plain objects — wrap them with <JsonLd> to render.
  */
 
-export const SITE_URL = "https://thegoatmovers.net";
-export const BRAND_NAME = "GOAT Movers";
+import { siteContent } from "@/lib/content";
+import { phoneSchema } from "@/lib/content/phone";
 
-/* Centralized source of truth. Update here if ratings/addresses change. */
+export const SITE_URL = "https://thegoatmovers.net";
+export const BRAND_NAME = siteContent.brand;
+
+/**
+ * "1178 Dock St, Tacoma, WA 98402" → PostalAddress parts. Addresses that
+ * don't follow the "street, city, ST 12345" shape are skipped (the footer
+ * still shows them as typed).
+ */
+function parseAddress(label: string) {
+  const m = /^(.+?),\s*([^,]+?),\s*([A-Z]{2})\s+(\d{5}(?:-\d{4})?)$/.exec(label.trim());
+  if (!m) return null;
+  return {
+    streetAddress: m[1],
+    addressLocality: m[2],
+    addressRegion: m[3],
+    postalCode: m[4],
+    addressCountry: "US",
+  };
+}
+
+const parsedAddresses = siteContent.addresses
+  .map((a) => parseAddress(a.label))
+  .filter((a): a is NonNullable<typeof a> => a !== null);
+
+/* Centralized source of truth — contact details, rating and social links
+   come from src/content/site.json (admin panel → Контакты). */
 export const BUSINESS = {
   name: BRAND_NAME,
-  legalName: "GOAT Movers",
-  telephone: "+1-360-524-0846",
-  email: "goatmoversla@gmail.com",
-  usdot: "4232069",
+  legalName: siteContent.brand,
+  telephone: phoneSchema(siteContent.phone),
+  email: siteContent.email,
+  usdot: siteContent.usdot,
   priceRange: "$$",
   currenciesAccepted: "USD",
   paymentAccepted: "Cash, Credit Card, Debit Card",
   openingHours: "Mo-Su 08:00-20:00",
-  /* Two operating locations; Portland is used as the primary address. */
-  addresses: [
-    {
-      streetAddress: "8101 NE 14th Pl",
-      addressLocality: "Portland",
-      addressRegion: "OR",
-      postalCode: "97211",
-      addressCountry: "US",
-    },
-    {
-      streetAddress: "1178 Dock St",
-      addressLocality: "Tacoma",
-      addressRegion: "WA",
-      postalCode: "98402",
-      addressCountry: "US",
-    },
-  ],
+  /* Operating locations; the last one listed in site.json (Portland) is
+     used as the primary address. */
+  addresses: [...parsedAddresses].reverse(),
   geo: { latitude: 45.5454821, longitude: -122.635238 },
   /* Aggregate across Yelp + Google, consistent with what the UI advertises. */
-  aggregateRating: { ratingValue: "4.9", reviewCount: 850, bestRating: "5", worstRating: "1" },
-  sameAs: [
-    "https://www.yelp.com/biz/goat-movers-vancouver",
-    "https://www.google.com/maps/place/GOAT+MOVERS/@45.5454821,-122.635238,10z/data=!3m1!4b1!4m6!3m5!1s0xa4790ebd1e7ffb07:0x697d406165de98a5!8m2!3d45.5454821!4d-122.635238!16s%2Fg%2F11wbt8363h?entry=ttu",
-    "https://www.instagram.com/goatmovers",
-  ],
+  aggregateRating: {
+    ratingValue: siteContent.ratings.overall,
+    reviewCount: parseInt(siteContent.ratings.totalReviews.replace(/\D/g, ""), 10) || 0,
+    bestRating: "5",
+    worstRating: "1",
+  },
+  sameAs: [siteContent.social.yelp.split("?")[0], siteContent.social.google, siteContent.social.instagram],
   areaServed: [
     "Vancouver, WA",
     "Portland, OR",

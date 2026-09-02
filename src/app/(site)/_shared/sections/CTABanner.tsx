@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { sharedContent } from "@/lib/content";
 
 export type CTABannerProps = {
   heading?: string;
@@ -9,12 +10,8 @@ export type CTABannerProps = {
   image?: string;
 };
 
-const defaults = {
-  heading: "Ready to experience the difference?",
-  tagline: "Get your free, no-obligation quote today and let our family move yours",
-  buttonText: "Get a Free Quote",
-  image: "/images/cta-bg.png",
-};
+/* Shared defaults — edited in the admin (Общие блоки → CTA banner). */
+const defaults = sharedContent.ctaBanner;
 
 export function CTABanner({
   heading = defaults.heading,

@@ -1,31 +1,13 @@
 import type { Metadata } from "next";
+import { longDistanceContent } from "@/lib/content";
+import { pageMetadata } from "@/lib/content/metadata";
 import LongDistanceClient from "./LongDistanceClient";
 import { JsonLd } from "@site/seo/JsonLd";
 import { serviceSchema, SITE_URL } from "@site/seo/schema";
 import { Breadcrumbs } from "@site/layout/Breadcrumbs";
 
-export const metadata: Metadata = {
-  title: "Long Distance Movers from Vancouver, WA & Portland, OR",
-  description:
-    "Interstate moves out of Vancouver, WA and Portland, OR. Licensed FMCSA carrier (USDOT #4232069), fully insured. Door-to-door delivery, no hidden fees. Free cross-state quote.",
-  keywords: [
-    "long distance movers Vancouver WA",
-    "long distance movers Portland OR",
-    "interstate moving company",
-    "cross-state movers",
-    "FMCSA licensed movers",
-    "USDOT carrier",
-    "Pacific Northwest moving",
-  ],
-  alternates: { canonical: "/long-distance-moving" },
-  openGraph: {
-    title: "Long Distance Movers from Vancouver, WA & Portland, OR",
-    description:
-      "Licensed interstate movers with USDOT #4232069. Door-to-door cross-state relocations, full insurance, transparent pricing. Free estimate from GOAT Movers.",
-    url: "/long-distance-moving",
-    type: "website",
-  },
-};
+/* Title / description / keywords are edited in the admin panel. */
+export const metadata: Metadata = pageMetadata(longDistanceContent.meta, "/long-distance-moving");
 
 export default function LongDistanceMovingPage() {
   return (

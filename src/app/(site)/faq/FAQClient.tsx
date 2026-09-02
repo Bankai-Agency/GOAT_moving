@@ -6,6 +6,7 @@ import { Touchbar } from "@site/layout/Touchbar";
 import { QuoteModal } from "@site/ui/QuoteModal";
 import { faqCategories as categories } from "./faqData";
 import { Breadcrumbs } from "@site/layout/Breadcrumbs";
+import { faqPageContent } from "@/lib/content";
 
 /* ── SVG icons (same as homepage FAQSection) ── */
 function PlusIcon() {
@@ -72,8 +73,8 @@ function FAQHero() {
     <section className="relative bg-[#0c0c0c] overflow-hidden">
       <div className="max-w-[1408px] mx-auto px-4 pt-6 lg:pt-10 pb-[40px] lg:pb-[60px]">
         <h1 className="font-sans font-bold text-[36px] lg:text-[64px] leading-[1.1] tracking-[-1.44px] lg:tracking-[-2.56px]">
-          <span className="text-[#FFE533]">Frequently Asked </span>
-          <span className="text-white">Questions</span>
+          <span className="text-[#FFE533]">{faqPageContent.hero.h1Highlight} </span>
+          <span className="text-white">{faqPageContent.hero.h1Rest}</span>
         </h1>
       </div>
     </section>
@@ -82,10 +83,10 @@ function FAQHero() {
 
 /* ── Main FAQ section with tabs ── */
 function FAQContent() {
-  const [activeCategory, setActiveCategory] = useState("general");
+  const [activeCategory, setActiveCategory] = useState(categories[0]?.id ?? "");
   const [openIndex, setOpenIndex] = useState(-1);
 
-  const currentCategory = categories.find((c) => c.id === activeCategory)!;
+  const currentCategory = categories.find((c) => c.id === activeCategory) ?? categories[0];
 
   const handleCategoryChange = (id: string) => {
     setActiveCategory(id);
@@ -114,7 +115,7 @@ function FAQContent() {
 
         {/* FAQ cards — flat-list styling inherited from footer-faq.css (#faq .faq-list .faq-item) */}
         <div className="faq-list flex flex-col gap-3 lg:gap-4">
-          {currentCategory.faqs.map((faq, i) => (
+          {(currentCategory?.faqs ?? []).map((faq, i) => (
             <FAQItem
               key={`${activeCategory}-${i}`}
               question={faq.question}

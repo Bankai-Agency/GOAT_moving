@@ -1,0 +1,209 @@
+{
+  "meta": {
+    "title": "Long Distance Movers from Vancouver, WA & Portland, OR",
+    "description": "Interstate moves out of Vancouver, WA and Portland, OR. Licensed FMCSA carrier (USDOT #4232069), fully insured. Door-to-door delivery, no hidden fees. Free cross-state quote.",
+    "keywords": [
+      "long distance movers Vancouver WA",
+      "long distance movers Portland OR",
+      "interstate moving company",
+      "cross-state movers",
+      "FMCSA licensed movers",
+      "USDOT carrier",
+      "Pacific Northwest moving"
+    ],
+    "ogTitle": "Long Distance Movers from Vancouver, WA & Portland, OR",
+    "ogDescription": "Licensed interstate movers with USDOT #4232069. Door-to-door cross-state relocations, full insurance, transparent pricing. Free estimate from GOAT Movers."
+  },
+  "hero": {
+    "image": "/images/long-distance-hero.avif",
+    "imageAlt": "Long distance moving services from Vancouver WA and Portland OR",
+    "h1Highlight": "Long Distance Moving",
+    "h1Rest": "from Vancouver, WA & Portland, OR",
+    "subtitle": "Interstate relocations across the US — fully licensed, fully insured, zero hidden fees."
+  },
+  "whatsIncluded": {
+    "title": "What's Included in Your Long Distance Move",
+    "subtitle": "Everything you need for a smooth interstate relocation",
+    "items": [
+      {
+        "icon": "dollar-outline",
+        "title": "Moving Truck & Fuel",
+        "description": "Dedicated truck for your move. Fuel costs included in your quote."
+      },
+      {
+        "icon": "people",
+        "title": "Professional Crew",
+        "description": "Experienced movers trained for long distance relocations."
+      },
+      {
+        "icon": "crate",
+        "title": "Equipment & Materials",
+        "description": "Dollies, blankets, straps, and tools for safe transport."
+      },
+      {
+        "icon": "shield-half",
+        "title": "Furniture Protection",
+        "description": "All furniture wrapped and padded for the road."
+      },
+      {
+        "icon": "wrench",
+        "title": "Disassembly &\nReassembly",
+        "description": "Bed frames and basic furniture taken apart and put back together."
+      },
+      {
+        "icon": "house",
+        "title": "Door-to-Door Delivery",
+        "description": "We pick up at your old home and deliver straight to your new one — no storage stops in between."
+      }
+    ]
+  },
+  "whyTrust": {
+    "title": "Why Trust GOAT Movers with Your Long Distance Move",
+    "description": "Long distance moves have more variables — more miles, more regulations, more ways for things to go sideways. We handle interstate relocations from the Pacific Northwest with federal authority, one dedicated crew, and pricing you can actually plan around.",
+    "image": "/images/long-distance-why-trust.png",
+    "imageAlt": "GOAT movers long distance crew",
+    "items": [
+      {
+        "icon": "shield-half",
+        "title": "Federally Licensed",
+        "subtitle": "FMCSA interstate authority, USDOT #4232069"
+      },
+      {
+        "icon": "checkmark",
+        "title": "Fully Insured",
+        "subtitle": "Protected from loading to final delivery"
+      },
+      {
+        "icon": "people",
+        "title": "One Team, Start to Finish",
+        "subtitle": "Same crew loads and delivers, no hand-offs"
+      },
+      {
+        "icon": "dollar",
+        "title": "No Hidden Fees",
+        "subtitle": "Transparent pricing, no surprises at delivery"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "How Your Long Distance Move Works",
+    "steps": [
+      {
+        "icon": "estimate",
+        "title": "Free Estimate",
+        "description": "Tell us where you’re moving from and to, what you’re moving, and your timeline. We’ll give you an honest quote."
+      },
+      {
+        "icon": "box",
+        "title": "Packing & Loading",
+        "description": "Our crew packs and loads everything securely for the long haul. Furniture wrapped, boxes organized, truck packed tight."
+      },
+      {
+        "icon": "truck",
+        "title": "Transport",
+        "description": "Your belongings travel safely to your new home. We handle the entire route."
+      },
+      {
+        "icon": "home",
+        "title": "Delivery & Setup",
+        "description": "We unload, reassemble furniture, and place everything where you want it."
+      }
+    ]
+  },
+  "routes": {
+    "label": "Where We Move",
+    "title": "Popular Long Distance Routes",
+    "items": [
+      {
+        "fromCode": "VAN",
+        "fromName": "Vancouver, WA",
+        "toCode": "CA",
+        "toName": "California",
+        "desc": "Los Angeles, San Francisco, San Diego, Sacramento and all CA cities"
+      },
+      {
+        "fromCode": "PDX",
+        "fromName": "Portland, OR",
+        "toCode": "TX",
+        "toName": "Texas",
+        "desc": "Houston, Dallas, Austin, San Antonio and all TX cities"
+      },
+      {
+        "fromCode": "VAN",
+        "fromName": "Vancouver, WA",
+        "toCode": "AZ",
+        "toName": "Arizona",
+        "desc": "Phoenix, Tucson, Scottsdale, Mesa and all AZ cities"
+      },
+      {
+        "fromCode": "PDX",
+        "fromName": "Portland, OR",
+        "toCode": "NV",
+        "toName": "Nevada",
+        "desc": "Las Vegas, Reno, Henderson and all NV cities"
+      },
+      {
+        "fromCode": "VAN",
+        "fromName": "Vancouver, WA",
+        "toCode": "CO",
+        "toName": "Colorado",
+        "desc": "Denver, Colorado Springs, Boulder and all CO cities"
+      },
+      {
+        "fromCode": "PDX",
+        "fromName": "Portland, OR",
+        "toCode": "WA",
+        "toName": "Washington",
+        "desc": "Seattle, Tacoma, Spokane, Olympia and all WA cities"
+      }
+    ]
+  },
+  "faq": {
+    "title": "Long Distance Moving FAQ",
+    "items": [
+      {
+        "question": "How much does a long distance move cost?",
+        "answer": "Long distance moving costs depend on the weight of your shipment, distance, and services needed. Most interstate moves from Vancouver/Portland range from $3,000 to $8,000. We provide free binding estimates so you know the exact cost before moving day."
+      },
+      {
+        "question": "How long does a long distance move take?",
+        "answer": "Transit times depend on the distance. Moves within the West Coast typically take 3–5 days. Cross-country moves to the East Coast take 7–14 days. We give you a delivery window and keep you updated throughout."
+      },
+      {
+        "question": "Are my belongings insured during the move?",
+        "answer": "Yes. Every long distance move includes basic carrier liability at $0.60 per pound per item. We also offer full-value protection plans that cover the replacement value of your belongings. Ask us for details during your estimate."
+      },
+      {
+        "question": "Do you store items if my new home isn’t ready?",
+        "answer": "Yes. We offer short-term and long-term storage in our secure, climate-controlled warehouse. Your items stay on our inventory and are delivered whenever you’re ready."
+      },
+      {
+        "question": "What can’t you move long distance?",
+        "answer": "Federal regulations prohibit us from transporting hazardous materials, perishable food, plants, and live animals. We’ll provide a full list of non-allowable items before your move."
+      }
+    ]
+  },
+  "otherServices": {
+    "title": "Explore Our Other Services",
+    "items": [
+      {
+        "title": "Local Moving",
+        "description": "Professional local moves in Vancouver, WA and Portland, OR metro area.",
+        "href": "/local-moving",
+        "image": "/images/service-local.webp"
+      },
+      {
+        "title": "Commercial Moving",
+        "description": "Office and business relocations with minimal downtime.",
+        "href": "/commercial-moving",
+        "image": "/images/service-commercial.webp"
+      },
+      {
+        "title": "Packing Services",
+        "description": "Full-service packing with quality materials for a stress-free move.",
+        "href": "/packing-services",
+        "image": "/images/service-packing.webp"
+      }
+    ]
+  }
+}

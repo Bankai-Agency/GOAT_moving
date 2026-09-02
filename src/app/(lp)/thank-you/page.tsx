@@ -5,6 +5,8 @@ import { Touchbar } from "@/app/(lp)/lp4/sections/Touchbar";
 import { QuoteModal } from "@/app/(lp)/lp4/ui/QuoteModal";
 import { LPButton } from "@/app/(lp)/lp4/ui/LPButton";
 import { BackToOriginLink } from "./BackToOriginLink";
+import { siteContent } from "@/lib/content";
+import { formatPhone, phoneHref } from "@/lib/content/phone";
 /* Thank-you page mirrors the lp4 landing visual system (dark #0c0c0c
    bg + brand-yellow #FFE533 accent). Style stack + wrapper match
    `/lp/[slug]/page.tsx`:
@@ -76,8 +78,8 @@ export default function ThankYouPage() {
 
               {/* Desktop CTA row — primary call + secondary back. */}
               <div className="hidden lg:flex flex-row gap-4 mt-2">
-                <LPButton variant="primary" size="md" href="tel:+13605240846">
-                  Call +1 360-524-0846
+                <LPButton variant="primary" size="md" href={phoneHref(siteContent.phone)}>
+                  Call {formatPhone(siteContent.phone, "dashed")}
                 </LPButton>
                 <BackToOriginLink size="md" />
               </div>
@@ -86,8 +88,8 @@ export default function ThankYouPage() {
             {/* Mobile CTAs pinned to viewport bottom (matches the original layout). */}
             <div className="lg:hidden max-w-[640px] mx-auto w-full flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
-                <LPButton variant="primary" size="md" href="tel:+13605240846" fullWidth>
-                  Call +1 360-524-0846
+                <LPButton variant="primary" size="md" href={phoneHref(siteContent.phone)} fullWidth>
+                  Call {formatPhone(siteContent.phone, "dashed")}
                 </LPButton>
               </div>
               <div className="flex-1">

@@ -1,0 +1,75 @@
+{
+  "meta": {
+    "title": "Local Movers in Vancouver, WA & Portland, OR — $125/hr",
+    "description": "Flat $125/hour local moving in Vancouver, WA and Portland, OR. No hidden fees, no stair charges, 3-hour minimum. Licensed & insured. Free estimate in 30 seconds.",
+    "keywords": [
+      "local movers Vancouver WA",
+      "local movers Portland OR",
+      "residential moving company",
+      "hourly movers",
+      "apartment movers",
+      "small move service"
+    ],
+    "ogTitle": "Local Movers in Vancouver, WA & Portland, OR | $125/hr",
+    "ogDescription": "Residential local moving at $125/hr with truck, fuel, and equipment included. Licensed & insured. Free estimate from GOAT Movers."
+  },
+  "hero": {
+    "image": "/images/local-moving-hero.png",
+    "imageAlt": "Local moving services in Vancouver WA",
+    "h1Highlight": "Local Moving Services",
+    "h1Rest": "in Vancouver, WA",
+    "subtitle": "Residential moves in Vancouver, Portland, and the entire I-5 corridor. Professional team, no hidden fees, no charge for stairs."
+  },
+  "rates": {
+    "title": "Local Moving Rates",
+    "subtitle": "$125/hour flat rate — most local moves cost $400–$900 depending on size, stairs, and distance."
+  },
+  "faq": {
+    "title": "Local Moving FAQ",
+    "items": [
+      {
+        "question": "How long does a local move take?",
+        "answer": "A studio or 1-bedroom typically takes 2-3 hours. A 2-3 bedroom home takes 4-6 hours. Larger homes may take a full day."
+      },
+      {
+        "question": "Do I need to pack everything before you arrive?",
+        "answer": "No — you can add packing services to your move. We offer professional packing with quality materials. Or you can pack yourself and we handle the loading and transport."
+      },
+      {
+        "question": "Can you move just a few items?",
+        "answer": "Yes. We handle single-item moves like couches, dressers, or appliances. The 3-hour minimum still applies."
+      },
+      {
+        "question": "What if I’m moving to or from an apartment?",
+        "answer": "No problem. We move apartments, condos, townhomes, and houses. No extra charge for stairs or elevators."
+      },
+      {
+        "question": "Do you move on weekends?",
+        "answer": "Yes, we’re available Monday through Sunday, 8 AM to 6 PM."
+      }
+    ]
+  },
+  "otherServices": {
+    "title": "Need More Than a Local Move?",
+    "items": [
+      {
+        "title": "Long Distance Moving",
+        "description": "Moving out of state? We’re licensed for interstate relocations.",
+        "href": "/long-distance-moving",
+        "image": "/images/service-longdistance.webp"
+      },
+      {
+        "title": "Commercial Moving",
+        "description": "Office relocation? Minimal downtime, maximum care.",
+        "href": "/commercial-moving",
+        "image": "/images/service-commercial.webp"
+      },
+      {
+        "title": "Packing Services",
+        "description": "Don’t want to pack? We’ll handle it.",
+        "href": "/packing-services",
+        "image": "/images/service-packing.webp"
+      }
+    ]
+  }
+}

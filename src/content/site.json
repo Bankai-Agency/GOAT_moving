@@ -1,0 +1,40 @@
+{
+  "brand": "GOAT Movers",
+  "phone": "+13605240846",
+  "email": "goatmoversla@gmail.com",
+  "hours": "Mon–Sun, 8 AM – 6 PM",
+  "usdot": "4232069",
+  "mc": "1637475",
+  "addresses": [
+    {
+      "label": "1178 Dock St, Tacoma, WA 98402",
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=1178+Dock+St,+Tacoma,+WA+98402"
+    },
+    {
+      "label": "8101 NE 14th Pl, Portland, OR 97211",
+      "mapUrl": "https://www.google.com/maps/search/?api=1&query=8101+NE+14th+Pl,+Portland,+OR+97211"
+    }
+  ],
+  "mapEmbedUrl": "https://maps.google.com/maps?q=1178+Dock+St,+Tacoma,+WA+98402&t=&z=15&ie=UTF8&iwloc=&output=embed",
+  "social": {
+    "yelp": "https://www.yelp.com/biz/goat-movers-vancouver?uid=rwbUOx3Y71juVHVrCkq2OQ&utm_source=ishare",
+    "google": "https://www.google.com/maps/place/GOAT+MOVERS/@45.5454821,-122.635238,10z/data=!3m1!4b1!4m6!3m5!1s0xa4790ebd1e7ffb07:0x697d406165de98a5!8m2!3d45.5454821!4d-122.635238!16s%2Fg%2F11wbt8363h?entry=ttu",
+    "instagram": "https://www.instagram.com/goatmovers"
+  },
+  "ratings": {
+    "overall": "4.9",
+    "totalReviews": "850+",
+    "google": "4.98",
+    "googleReviews": "520+",
+    "yelp": "4.79",
+    "yelpReviews": "330+",
+    "lpVerifiedReviews": "437+",
+    "fiveStarReviews": "500+"
+  },
+  "footer": {
+    "formHeading": "Get a free moving estimate in just 5 minutes",
+    "formText": "Fill out a few quick details about your move and we'll send you a personalized estimate — no hidden fees, no obligations. Safe, fast, and stress-free service in Vancouver, WA and Portland, OR.",
+    "about": "Based in the heart of Vancouver, we started as a small company striving to assist people in the process of moving homes. We aimed to make people's lives easier by helping them move painlessly.",
+    "copyright": "Copyright © 2022-2026 GOAT Movers. All Rights Reserved."
+  }
+}

@@ -1,0 +1,210 @@
+{
+  "meta": {
+    "title": "Professional Packers & Labor-Only Movers — Vancouver, WA & Portland",
+    "description": "Full-service packing, partial packing, and labor-only loading for PODS & U-Haul in Vancouver, WA and Portland, OR. Fragile specialists, quality materials, same-day availability.",
+    "keywords": [
+      "packing services Vancouver WA",
+      "packing services Portland OR",
+      "professional packers",
+      "labor only movers",
+      "PODS loading",
+      "U-Haul loading help",
+      "fragile packing"
+    ],
+    "ogTitle": "Professional Packers & Labor-Only Movers | GOAT Movers",
+    "ogDescription": "Full-service packing, labor-only loading, PODS & U-Haul help. Quality materials, fragile specialists, same-day availability in Vancouver, WA and Portland, OR."
+  },
+  "hero": {
+    "image": "/images/packing-hero.png",
+    "imageAlt": "Packing and labor services in Vancouver WA and Portland OR",
+    "h1Highlight": "Packing & Labor",
+    "h1Rest": "in Vancouver, WA & Portland, OR",
+    "subtitle": "Full-service packing, labor-only loading, PODS & U-Haul help. Quality materials, fragile specialists, same-day availability."
+  },
+  "serviceTypes": {
+    "label": "What We Offer",
+    "title": "Choose the Service That Fits Your Move",
+    "subtitle": "Full, partial, labor-only, or unpacking — pick what you actually need.",
+    "items": [
+      {
+        "icon": "folder",
+        "title": "Full-Service Packing",
+        "description": "We pack everything — every room, every drawer, every fragile item. You keep working, we handle the boxes.",
+        "bestFor": "Best for: busy professionals, last-minute moves, families with young kids"
+      },
+      {
+        "icon": "shield",
+        "title": "Partial Packing",
+        "description": "Pack only the parts you don't want to touch — kitchen, china cabinet, garage, or the whole living room.",
+        "bestFor": "Best for: fragile-heavy rooms, DIY movers who need help with tricky stuff"
+      },
+      {
+        "icon": "people",
+        "title": "Labor Only (Load / Unload)",
+        "description": "You rented the truck, PODS, or U-Haul. We bring the muscle — load it, unload it, or both. No truck, no driving.",
+        "bestFor": "Best for: PODS customers, U-Haul renters, same-building moves, storage loading"
+      },
+      {
+        "icon": "list",
+        "title": "Unpacking Services",
+        "description": "Boxes emptied, items placed where you want them, packing material hauled away. Walk into a livable home.",
+        "bestFor": "Best for: seniors, families settling fast, anyone who hates unpacking"
+      }
+    ]
+  },
+  "whatsIncluded": {
+    "label": "What's Included",
+    "title": "Materials & Services Included",
+    "subtitle": "Everything we bring to pack your home right — no trips to the store",
+    "items": [
+      {
+        "icon": "folder",
+        "title": "Quality Boxes &\nPacking Paper",
+        "description": "Double-walled boxes in small, medium, large, and dish-pack sizes. Acid-free paper for fragile items."
+      },
+      {
+        "icon": "plus-box",
+        "title": "Bubble Wrap & Foam",
+        "description": "Heavy bubble wrap for dishes, electronics, lamps, and décor. Foam padding for furniture edges."
+      },
+      {
+        "icon": "wardrobe",
+        "title": "Wardrobe Boxes",
+        "description": "Hanging clothes stay on hangers — no folding, no wrinkles. Great for closets and suits."
+      },
+      {
+        "icon": "tv",
+        "title": "TV & Mirror Boxes",
+        "description": "Adjustable picture and flat-screen TV boxes with foam corners. No cracked screens."
+      },
+      {
+        "icon": "pin",
+        "title": "Custom Crates",
+        "description": "Wooden crates for artwork, antiques, marble tops, and other pieces that can't go in cardboard."
+      },
+      {
+        "icon": "file-download",
+        "title": "Clear Labeling",
+        "description": "Every box labeled by room and contents. You'll know exactly which box has what before you open it."
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "How Professional Packing Works",
+    "steps": [
+      {
+        "icon": "estimate",
+        "title": "Free Estimate",
+        "description": "Walk-through (in person or via video) to count rooms, identify fragile items, and quote materials + labor."
+      },
+      {
+        "icon": "delivery",
+        "title": "Materials Delivered",
+        "description": "Boxes, paper, tape, and wrap arrive the day before (or same day for fast jobs). Nothing for you to buy."
+      },
+      {
+        "icon": "box",
+        "title": "Professional Packing",
+        "description": "Crew packs room-by-room. Fragile items wrapped individually. Every box labeled, every item inventoried."
+      },
+      {
+        "icon": "truck",
+        "title": "Ready for Transit",
+        "description": "Boxes stacked by destination room. If we're not moving them, they're prepped for your truck or movers."
+      }
+    ]
+  },
+  "fragile": {
+    "label": "Fragile Specialists",
+    "title": "Items We Specialize In",
+    "subtitle": "Delicate pieces that need more than just bubble wrap — handled with care, packed to arrive intact.",
+    "items": [
+      {
+        "icon": "glass",
+        "title": "China & Glassware",
+        "description": "Dish packs with double walls, individual wrapping, cell dividers."
+      },
+      {
+        "icon": "tv",
+        "title": "Flat-Screen TVs",
+        "description": "Custom TV boxes with foam corners, screen-side pads, wardrobe protection."
+      },
+      {
+        "icon": "bowl-art",
+        "title": "Artwork & Mirrors",
+        "description": "Telescoping picture boxes or custom wood crates for large pieces."
+      },
+      {
+        "icon": "laptop",
+        "title": "Electronics & Computers",
+        "description": "Anti-static wrap, original boxes when available, shock-padded transit."
+      },
+      {
+        "icon": "music-note",
+        "title": "Musical Instruments",
+        "description": "Climate-aware handling for pianos, guitars, violins — shipped upright and secured."
+      },
+      {
+        "icon": "ornament",
+        "title": "Antiques & Heirlooms",
+        "description": "White-glove wrapping, photo inventory before packing, extra insurance options."
+      }
+    ]
+  },
+  "faq": {
+    "title": "Packing & Labor FAQ",
+    "items": [
+      {
+        "question": "How much does professional packing cost?",
+        "answer": "Packing is priced per hour plus materials. A standard 2-bedroom home takes 4–6 hours with two packers — typically $400–$700 including boxes and paper. A 3–4 bedroom home runs $700–$1,400. We give you a fixed materials estimate upfront."
+      },
+      {
+        "question": "How long does it take to pack a house?",
+        "answer": "A studio or 1-bedroom: 2–4 hours. A 2-bedroom: 4–6 hours. A 3-bedroom: 6–10 hours. A 4+ bedroom: full day or two. Fragile-heavy homes (lots of china, collectibles) take longer — we'll tell you upfront."
+      },
+      {
+        "question": "Can you pack just the kitchen or fragile rooms?",
+        "answer": "Yes — partial packing is one of our most popular services. Most people can pack clothes and books themselves but want help with kitchens, china cabinets, and garages. Pick any rooms you want covered."
+      },
+      {
+        "question": "Do you offer labor-only for PODS or U-Haul?",
+        "answer": "Yes. Bring your own container or rental truck, we bring the crew. 2-hour minimum. We load, unload, or both. Same hourly rate as full moves."
+      },
+      {
+        "question": "What materials do you bring?",
+        "answer": "Boxes (small, medium, large, dish-pack, wardrobe, TV), packing paper, bubble wrap, tape, furniture pads, and shrink wrap. You don't buy a thing. Leftover unused materials are credited back."
+      },
+      {
+        "question": "Can you pack the day before the move?",
+        "answer": "Yes, and most clients prefer it. Pack day 1, move day 2 — less stress, fewer mistakes. We can also pack and move same day if timeline is tight."
+      },
+      {
+        "question": "Do you unpack at the destination?",
+        "answer": "Yes. Unpacking is a separate service — boxes emptied, items placed on surfaces, debris hauled away. Priced hourly. Most people do it for kitchens and closets only."
+      }
+    ]
+  },
+  "otherServices": {
+    "title": "Explore Our Other Services",
+    "items": [
+      {
+        "title": "Local Moving",
+        "description": "Residential moves in Vancouver, WA and Portland, OR metro.",
+        "href": "/local-moving",
+        "image": "/images/service-local.webp"
+      },
+      {
+        "title": "Long Distance Moving",
+        "description": "Interstate moves, licensed FMCSA carrier.",
+        "href": "/long-distance-moving",
+        "image": "/images/service-longdistance.webp"
+      },
+      {
+        "title": "Commercial Moving",
+        "description": "Office relocations with minimal downtime.",
+        "href": "/commercial-moving",
+        "image": "/images/service-commercial.webp"
+      }
+    ]
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "meta": {
+    "title": "Office & Commercial Movers in Vancouver, WA & Portland, OR",
+    "description": "Office and commercial relocations in Vancouver, WA and Portland, OR. After-hours & weekend moves, minimal downtime, IT equipment specialists. Licensed, insured, COI on request.",
+    "keywords": [
+      "commercial movers Vancouver WA",
+      "commercial movers Portland OR",
+      "office relocation",
+      "business movers",
+      "IT equipment movers",
+      "cubicle moving",
+      "after-hours moving"
+    ],
+    "ogTitle": "Office & Commercial Movers in Vancouver, WA & Portland, OR",
+    "ogDescription": "Commercial moving with minimal downtime. After-hours & weekend service, IT equipment handling, full insurance and COI available. Free quote from GOAT Movers."
+  },
+  "hero": {
+    "image": "/images/commercial-moving-hero.png",
+    "imageAlt": "Commercial moving services in Vancouver WA and Portland OR",
+    "h1Highlight": "Commercial Movers",
+    "h1Rest": "in Vancouver, WA & Portland, OR",
+    "subtitle": "Office relocations with minimal downtime. After-hours & weekend moves, IT equipment specialists, fully licensed and insured."
+  },
+  "whatsIncluded": {
+    "label": "What's Included",
+    "title": "What's Included in Your Commercial Move",
+    "subtitle": "Full-service office relocation from site survey to final setup",
+    "items": [
+      {
+        "icon": "calendar",
+        "title": "Pre-Move Site Survey",
+        "description": "We walk both locations with you, measure doorways, and flag anything unusual before moving day."
+      },
+      {
+        "icon": "checklist",
+        "title": "Labeled Inventory System",
+        "description": "Every item tagged with origin and destination. Your team finds their workstation and supplies on day one."
+      },
+      {
+        "icon": "monitor",
+        "title": "IT & Electronics Handling",
+        "description": "Monitors, servers, printers, and AV equipment wrapped, padded, and loaded by trained crew — not gear hurlers."
+      },
+      {
+        "icon": "folder",
+        "title": "File Cabinets & Documents",
+        "description": "Locking crates for sensitive paperwork. Chain of custody for HR, legal, and financial records."
+      },
+      {
+        "icon": "wrench",
+        "title": "Cubicle & Furniture\nDisassembly",
+        "description": "Workstations, conference tables, standing desks — broken down and rebuilt at the new location."
+      },
+      {
+        "icon": "house",
+        "title": "Setup at New Office",
+        "description": "We don't just drop boxes. Desks placed, equipment reconnected, common areas ready for business."
+      }
+    ]
+  },
+  "whyTrust": {
+    "title": "Why Businesses Choose GOAT for Their Office Move",
+    "description": "Commercial moves aren't just residential with more boxes. They need planning, downtime minimization, and a crew that treats your office like their own. We've relocated offices, showrooms, and law firms across the I-5 corridor — ready before Monday morning, every time.",
+    "image": "/images/hero-bg.jpg",
+    "imageAlt": "GOAT movers commercial move crew",
+    "items": [
+      {
+        "icon": "clock",
+        "title": "Minimal Downtime",
+        "subtitle": "Weekend, evening, phased moves"
+      },
+      {
+        "icon": "shield-check",
+        "title": "Licensed & Insured",
+        "subtitle": "USDOT #4232069, $1M liability"
+      },
+      {
+        "icon": "briefcase",
+        "title": "After-Hours & Weekends",
+        "subtitle": "No overtime surcharge"
+      },
+      {
+        "icon": "calendar",
+        "title": "Dedicated Project Manager",
+        "subtitle": "One point of contact, always"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "How Your Office Move Works",
+    "steps": [
+      {
+        "icon": "estimate",
+        "title": "Free Site Survey",
+        "description": "We visit both locations, talk to your team, and spot obstacles before they become problems."
+      },
+      {
+        "icon": "plan",
+        "title": "Custom Move Plan",
+        "description": "Written timeline with arrival times, packing schedule, and go-live target. Reviewed and approved by you."
+      },
+      {
+        "icon": "truck",
+        "title": "Move Execution",
+        "description": "Crew arrives on time, follows the plan. You get hourly updates — no need to micromanage."
+      },
+      {
+        "icon": "box",
+        "title": "Setup & Sign-off",
+        "description": "Furniture placed per your floor plan. IT reconnected. Walk-through with your PM before we leave."
+      }
+    ]
+  },
+  "industries": {
+    "label": "Industries We Serve",
+    "title": "Industries We Move",
+    "items": [
+      {
+        "icon": "scales",
+        "title": "Law Firms",
+        "description": "Discreet handling of files, libraries, and client records"
+      },
+      {
+        "icon": "heart-plus",
+        "title": "Medical & Dental",
+        "description": "Patient records, exam equipment, HIPAA-aware protocols"
+      },
+      {
+        "icon": "store",
+        "title": "Retail & Showrooms",
+        "description": "Inventory, displays, POS systems — ready to reopen fast"
+      },
+      {
+        "icon": "laptop-outline",
+        "title": "Tech & Startups",
+        "description": "Server racks, monitors, standing desks, kitted workstations"
+      },
+      {
+        "icon": "money-bag",
+        "title": "Financial Services",
+        "description": "Secure document transport, locked crates, sign-off chain"
+      },
+      {
+        "icon": "church",
+        "title": "Nonprofits & Churches",
+        "description": "Budget-friendly planning, flexible scheduling, volunteer coordination"
+      }
+    ]
+  },
+  "faq": {
+    "title": "Commercial Moving FAQ",
+    "items": [
+      {
+        "question": "How much does a commercial move cost?",
+        "answer": "Office moves are quoted per project, not per hour — too many variables. Most small-office moves (under 10 people) run $1,500–$4,000. Mid-size offices (10–40 people) range $4,000–$12,000. We provide a fixed, written quote after a free site survey so there are no surprises."
+      },
+      {
+        "question": "Can you move us after hours or on the weekend?",
+        "answer": "Yes — most commercial moves we do happen Friday evening through Sunday so the team walks in Monday ready to work. No overtime surcharge. Same hourly rate whenever you need us."
+      },
+      {
+        "question": "Do you handle IT equipment and servers?",
+        "answer": "Yes. We wrap, pad, and crate monitors, desktops, printers, and AV gear. For server racks and network closets, we coordinate with your IT team on disconnect/reconnect timing. We don't unplug anything without a sign-off."
+      },
+      {
+        "question": "Are you insured for commercial buildings?",
+        "answer": "Yes. We carry $1M commercial general liability and can provide certificates of insurance (COI) naming your landlord and building management as additional insured. Just let us know who needs to be listed."
+      },
+      {
+        "question": "Can you disassemble and reassemble office furniture?",
+        "answer": "Yes. Cubicles, workstations, conference tables, standing desks — we break them down, transport, and rebuild per your floor plan. Hardware is bagged and labeled by piece."
+      },
+      {
+        "question": "Do you offer storage between move-out and move-in?",
+        "answer": "Yes. If your new space isn't ready, we offer secure short-term storage in our Vancouver warehouse. Inventoried, labeled, and delivered whenever you need it."
+      },
+      {
+        "question": "What areas do you serve for commercial moves?",
+        "answer": "All of the Vancouver, WA and Portland, OR metro — including Beaverton, Hillsboro, Tigard, Camas, Gresham, and surrounding areas. We also handle interstate commercial relocations for growing companies."
+      }
+    ]
+  },
+  "otherServices": {
+    "title": "Explore Our Other Services",
+    "items": [
+      {
+        "title": "Local Moving",
+        "description": "Residential moves in Vancouver, WA and Portland, OR metro.",
+        "href": "/local-moving",
+        "image": "/images/service-local.webp"
+      },
+      {
+        "title": "Long Distance Moving",
+        "description": "Interstate moves, licensed FMCSA carrier.",
+        "href": "/long-distance-moving",
+        "image": "/images/service-longdistance.webp"
+      },
+      {
+        "title": "Packing Services",
+        "description": "Professional packing with quality materials.",
+        "href": "/packing-services",
+        "image": "/images/service-packing.webp"
+      }
+    ]
+  }
+}

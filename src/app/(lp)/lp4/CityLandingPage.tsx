@@ -13,7 +13,7 @@ import { ServicesSection } from "./sections/ServicesSection";
 import { ServiceAreaSection } from "./sections/ServiceAreaSection";
 import { defaultIncludedItems } from "./sections/WhatsIncludedSection";
 import { LPSolution } from "./sections/LPSolution";
-import { ReviewsSection, portlandReviews } from "./sections/ReviewsSection";
+import { ReviewsSection, defaultReviews } from "./sections/ReviewsSection";
 import { ContactFooter } from "./sections/ContactFooter";
 /* DarkScrollZone removed in lp3 — uniform dark page, no scroll-veil transitions. */
 import { FooterParallax } from "./FooterParallax";
@@ -21,11 +21,12 @@ import { Touchbar } from "./sections/Touchbar";
 import { QuoteModal } from "./ui/QuoteModal";
 import { LPQuoteForm } from "./ui/LPQuoteForm";
 import type { CityLPConfig } from "./config/portland";
+import { siteContent } from "@/lib/content";
 
 /* ───────────── Constants shared across cities ───────────── */
 const socialProofStats = [
-  { icon: "/icons/star.svg", value: "4.9", label: "Google Rating" },
-  { icon: "/icons/review.svg", value: "437+", label: "Verified Reviews" },
+  { icon: "/icons/star.svg", value: siteContent.ratings.overall, label: "Google Rating" },
+  { icon: "/icons/review.svg", value: siteContent.ratings.lpVerifiedReviews, label: "Verified Reviews" },
   { icon: "/icons/year.svg", value: "500+", label: "Moves Completed" },
   { icon: "/icons/license.svg", value: "100%", label: "Licensed & Insured" },
 ];
@@ -43,6 +44,10 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
      shorter mobile height so the form peeks above the fold). Every
      other city stays on the original baseline until the test ends. */
   const isPortland = config.slug === "movers-portland";
+  /* City-specific reviews (config.featuredReviews) lead, then the shared list. */
+  const lpReviews = config.featuredReviews?.length
+    ? [...config.featuredReviews, ...defaultReviews]
+    : undefined;
   /* Rating-strip labels (Yelp/Google/Verified) are desktop-only on the
      baseline; on Portland mobile they stay visible per the hero spec. */
   const ratingLabelCls = isPortland ? "" : "hidden lg:inline";
@@ -114,7 +119,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
     },
     {
       title: "Long Distance Moving",
-      description: `Interstate moves out of ${city} across the US. Fully licensed (USDOT #4232069) and insured for cross-state relocations of any size.`,
+      description: `Interstate moves out of ${city} across the US. Fully licensed (USDOT #${siteContent.usdot}) and insured for cross-state relocations of any size.`,
       number: "2",
       image: config.longDistanceImage ?? "/images/service-longdistance.webp",
     },
@@ -239,16 +244,16 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
                   {/* Yelp + Google grouped so the two ratings never split
                      across lines on narrow mobile (customer request). */}
                   <div className="inline-flex items-center gap-2 whitespace-nowrap">
-                  <a href="https://www.yelp.com/biz/goat-movers-vancouver" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pr-2.5 lg:pr-3 border-r border-white/15 hover:opacity-80 transition-opacity">
+                  <a href={siteContent.social.yelp} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pr-2.5 lg:pr-3 border-r border-white/15 hover:opacity-80 transition-opacity">
                     <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-[#FF2828] shrink-0"><Image src="/icons/yelp-white.svg" alt="Yelp" width={12} height={12} style={{ width: "auto", height: "12px" }} /></div>
-                    <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className={ratingLabelCls}>Yelp </span><span className="text-white">4.79</span><span className="text-white/40">/5</span></span>
+                    <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className={ratingLabelCls}>Yelp </span><span className="text-white">{siteContent.ratings.yelp}</span><span className="text-white/40">/5</span></span>
                   </a>
-                  <a href="https://www.google.com/maps/place/GOAT+MOVERS/@45.5454821,-122.635238,10z/data=!3m1!4b1!4m6!3m5!1s0xa4790ebd1e7ffb07:0x697d406165de98a5!8m2!3d45.5454821!4d-122.635238!16s%2Fg%2F11wbt8363h?entry=ttu" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pl-0.5 lg:pl-1 hover:opacity-80 transition-opacity">
+                  <a href={siteContent.social.google} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 lg:gap-2 pl-0.5 lg:pl-1 hover:opacity-80 transition-opacity">
                     <div className="flex items-center justify-center w-5 h-5 lg:w-6 lg:h-6 rounded bg-white shrink-0"><Image src="/icons/google-color.svg" alt="Google" width={14} height={14} /></div>
-                    <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className={ratingLabelCls}>Google </span><span className="text-white">4.98</span><span className="text-white/40">/5</span></span>
+                    <span className="font-sans font-semibold text-xs lg:text-sm text-white whitespace-nowrap"><span className={ratingLabelCls}>Google </span><span className="text-white">{siteContent.ratings.google}</span><span className="text-white/40">/5</span></span>
                   </a>
                   </div>
-                  <span className={`inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-sans font-medium text-xs lg:text-sm tracking-[-0.3px] text-white/70 whitespace-nowrap ${isPortland ? "max-lg:hidden" : ""}`}>437+<span className={ratingLabelCls}> Verified</span> Reviews</span>
+                  <span className={`inline-block pl-2.5 ml-0.5 lg:pl-3 lg:ml-1 border-l border-white/15 font-sans font-medium text-xs lg:text-sm tracking-[-0.3px] text-white/70 whitespace-nowrap ${isPortland ? "max-lg:hidden" : ""}`}>{siteContent.ratings.lpVerifiedReviews}<span className={ratingLabelCls}> Verified</span> Reviews</span>
                 </div>
                 {/* Hero headline + subheads.
                    A/B test: ONLY Portland (slug "movers-portland") gets
@@ -332,7 +337,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
           Only one instance renders per page, so the id="reviews" anchor
           stays unique. */}
       {isPortland && (
-        <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} reviews={isPortland ? portlandReviews : undefined} />
+        <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} reviews={lpReviews} />
       )}
 
       {/* 2. Services (moved up — was after CTABanner) */}
@@ -415,7 +420,7 @@ export function CityLandingPage({ config }: { config: CityLPConfig }) {
       {/* 7. Testimonials — non-Portland only. Portland renders this
             right after the hero (see top of .page-zoom). */}
       {!isPortland && (
-        <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} reviews={isPortland ? portlandReviews : undefined} />
+        <ReviewsSection title={<>Real Moves. Real Reviews. No&nbsp;Surprises.</>} reviews={lpReviews} />
       )}
 
       {/* 8. Lead-capture CTA with embedded form — utilitarian

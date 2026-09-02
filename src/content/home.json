@@ -1,0 +1,188 @@
+{
+  "meta": {
+    "title": "Movers in Vancouver, WA & Portland, OR | $125/hr — GOAT Movers",
+    "description": "Stress-free moving across the I-5 corridor. Local moves at $125/hr, long-distance, commercial & packing. Licensed, insured, 850+ five-star reviews. Get your free quote today.",
+    "ogTitle": "Movers in Vancouver, WA & Portland, OR | GOAT Movers",
+    "ogDescription": "Licensed & insured moving company serving Vancouver, WA, Portland, OR, and the I-5 corridor. Flat $125/hr, fixed-price quotes, 850+ five-star reviews."
+  },
+  "hero": {
+    "phrases": [
+      "Your move, handled from the first box to the last.",
+      "Licensed, bonded, and fully insured.",
+      "Flat-rate quotes — no hidden fees, ever.",
+      "Local, long-distance, and commercial moves.",
+      "Careful crews who treat your home like their own.",
+      "850+ five-star reviews across Oregon & Washington.",
+      "Same-day quotes. On time, every time.",
+      "GOAT Movers — the greatest way to move."
+    ]
+  },
+  "mission": "Moving done right — same crew, same price, every box accounted for.",
+  "services": [
+    {
+      "eyebrow": "Service 01",
+      "h2": "Local Moving",
+      "p": "Residential moves across Vancouver, WA, Portland, OR, and the surrounding metro. Packing, loading, transportation, unloading, unpacking — all included, no hidden fees.",
+      "image": "/images/service-local-moving-poster.webp",
+      "video": "/videos/service-local-moving.mp4"
+    },
+    {
+      "eyebrow": "Service 02",
+      "h2": "Long Distance",
+      "p": "Interstate relocations from the Pacific Northwest. USDOT-licensed (#4232069) and fully insured for cross-state moves of any size.",
+      "image": "/images/service-long-distance-poster.webp",
+      "video": "/videos/service-long-distance.mp4"
+    },
+    {
+      "eyebrow": "Service 03",
+      "h2": "Commercial Moving",
+      "p": "Office and commercial relocations in Vancouver and Portland with minimal downtime. Equipment, furniture, and sensitive documents handled safely and on schedule.",
+      "image": "/images/service-commercial-poster.webp",
+      "video": "/videos/service-commercial.mp4"
+    },
+    {
+      "eyebrow": "Service 04",
+      "h2": "Full-Service Packing",
+      "p": "We pack everything — every room, every drawer, every fragile item. You keep working, we handle the boxes. Best for busy professionals, last-minute moves, and families with young kids.",
+      "image": "/images/service-packing-poster.webp",
+      "video": "/videos/service-packing.mp4"
+    }
+  ],
+  "ctaBeat": {
+    "eyebrow": "Ready when you are",
+    "headline": "Make the next move the easy one.",
+    "mark": "GOAT®",
+    "buttonLabel": "Get a free quote"
+  },
+  "steps": [
+    {
+      "label": "Step 01",
+      "title": "Get a Free Estimate",
+      "body": "Tell us your move details — pickup, drop-off, date, anything fragile — and we'll send back an honest, all-in quote. No phone tag, no obligations.",
+      "image": "/images/mp5-step-01.png"
+    },
+    {
+      "label": "Step 02",
+      "title": "We Show Up Ready",
+      "body": "On move day the crew rolls up on time with the right-size truck, padding, dollies, shrink-wrap, and the materials it takes to start working in the first ten minutes.",
+      "image": "/images/long-distance-hero.jpg"
+    },
+    {
+      "label": "Step 03",
+      "title": "We Pack & Load",
+      "body": "Furniture wrapped, boxes stacked, electronics and fragiles boxed with care. Everything secured in the truck so nothing shifts on the road.",
+      "image": "/images/packing-hero.png"
+    },
+    {
+      "label": "Step 04",
+      "title": "Delivery & Setup",
+      "body": "We unload at your new place, reassemble the furniture we disassembled, and put boxes in the rooms you want them. The job ends with you settled in, not at the curb.",
+      "image": "/images/commercial-moving-hero.png"
+    }
+  ],
+  "trust": {
+    "items": [
+      {
+        "eyebrow": "DOT",
+        "value": "#4232069",
+        "label": "USDOT registered"
+      },
+      {
+        "eyebrow": "Licensed",
+        "value": "OR · WA",
+        "label": "Fully bonded & insured"
+      },
+      {
+        "eyebrow": "Moves",
+        "value": "3,000+",
+        "label": "Completed in PNW"
+      },
+      {
+        "eyebrow": "Reviews",
+        "value": "850+",
+        "label": "Verified 5-star ratings"
+      },
+      {
+        "eyebrow": "Pricing",
+        "value": "$0",
+        "label": "Hidden fees, ever"
+      },
+      {
+        "eyebrow": "Quote",
+        "value": "<2h",
+        "label": "Same-day response time"
+      }
+    ]
+  },
+  "testimonials": {
+    "photo": "/images/home-hero.png",
+    "quotes": [
+      {
+        "quote": "We have not seen this kind of accuracy with crew dispatch technology — this is a significant milestone in the race to modernize the moving industry.",
+        "author": "Karen Jones",
+        "role": "Operations Lead, Logistics Partner",
+        "rating": 5
+      },
+      {
+        "quote": "On time, on budget, and every box accounted for. The crew treated my place like it was theirs. Easiest move I've ever done.",
+        "author": "Marcus Rivera",
+        "role": "Customer · Portland → Seattle",
+        "rating": 5
+      },
+      {
+        "quote": "Their estimate was the only one that matched the final invoice. No surprises, no upsells — just a clean, well-run operation.",
+        "author": "Priya Shah",
+        "role": "Customer · Beaverton",
+        "rating": 5
+      },
+      {
+        "quote": "The same-day quote came in under two hours and they showed up two days later. Hard to believe a moving company can actually do this.",
+        "author": "Linnea Vance",
+        "role": "Customer · Vancouver, WA",
+        "rating": 5
+      }
+    ]
+  },
+  "faq": {
+    "label": "FAQ",
+    "title": "Frequently Asked Questions",
+    "items": [
+      {
+        "question": "How much does a local move cost in Vancouver, WA?",
+        "answer": "Our rate is $125/hour. Most studio or 1-bedroom moves take 2-3 hours, a 2-3 bedroom home takes 4-6 hours. 3-hour minimum for all moves. No charge for stairs."
+      },
+      {
+        "question": "How long does a move take?",
+        "answer": "It depends on the size: a studio or 1-bedroom typically takes 2-3 hours, a 2-3 bedroom home 4-6 hours. Larger moves may take a full day."
+      },
+      {
+        "question": "What’s included in the hourly rate?",
+        "answer": "The moving truck, fuel, all equipment (dollies, blankets, straps), and our professional movers. No hidden fees."
+      },
+      {
+        "question": "Do you serve Portland, OR?",
+        "answer": "Yes. We’re based in Vancouver, WA and serve the entire Portland metro — including Beaverton, Hillsboro, Tigard, and Gresham."
+      },
+      {
+        "question": "Do you offer packing services?",
+        "answer": "Yes. Tape, shrink wrap, mattress covers, and boxes are available at additional cost. You’re welcome to use your own materials."
+      },
+      {
+        "question": "Do you disassemble and reassemble furniture?",
+        "answer": "Yes — bed frames and basic furniture disassembly/reassembly is included at no extra charge."
+      },
+      {
+        "question": "Are you licensed and insured?",
+        "answer": "Yes. GOAT Movers is fully licensed (USDOT #4232069, MC #1637475) and insured. Active interstate authority through FMCSA."
+      },
+      {
+        "question": "Do you charge for travel time?",
+        "answer": "Travel time is billed at our standard hourly rate — from our location to yours and back. No hidden surcharges."
+      },
+      {
+        "question": "How do you protect TVs and electronics?",
+        "answer": "Specialized TV boxes and padding. For large screens, we offer custom crating."
+      }
+    ]
+  }
+}

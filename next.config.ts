@@ -16,10 +16,30 @@ const securityHeaders = [
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
 ];
 
+/* The admin panel reads `public/` and `src/content` through Node fs in dev.
+   Vercel's file tracer would otherwise bundle the whole public/ folder
+   (hundreds of MB of photos) into every admin function — in prod those
+   routes talk to the GitHub API instead, so the folders are excluded. */
+const ADMIN_TRACE_EXCLUDES = ["public/**", ".next/**"];
+
 const nextConfig: NextConfig = {
   /* Let next/image serve AVIF/WebP when the browser supports them. */
   images: {
     formats: ["image/avif", "image/webp"],
+  },
+
+  outputFileTracingExcludes: {
+    "*": [".git/**"],
+    "/admin": ADMIN_TRACE_EXCLUDES,
+    "/admin/dashboard": ADMIN_TRACE_EXCLUDES,
+    "/admin/media": ADMIN_TRACE_EXCLUDES,
+    "/admin/content": ADMIN_TRACE_EXCLUDES,
+    "/admin/content/[...path]": ADMIN_TRACE_EXCLUDES,
+    "/admin/settings": ADMIN_TRACE_EXCLUDES,
+    "/admin/users": ADMIN_TRACE_EXCLUDES,
+    "/api/admin/upload": ADMIN_TRACE_EXCLUDES,
+    "/api/admin/file": ADMIN_TRACE_EXCLUDES,
+    "/api/admin/media": ADMIN_TRACE_EXCLUDES,
   },
 
   async headers() {

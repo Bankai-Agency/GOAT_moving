@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BankaiLink } from "@/components/BankaiLink";
+import { siteContent } from "@/lib/content";
+import { formatPhone, phoneHref } from "@/lib/content/phone";
 import { QuoteForm } from "../ui/QuoteForm";
 
 function ContactForm() {
@@ -92,8 +94,8 @@ function FooterContent() {
           <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
             Phone
           </span>
-          <a href="tel:+13605240846" className="hover-underline w-fit font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
-            +1 360-524-0846
+          <a href={phoneHref(siteContent.phone)} className="hover-underline w-fit font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
+            {formatPhone(siteContent.phone, "dashed")}
           </a>
         </div>
 
@@ -102,22 +104,17 @@ function FooterContent() {
             Address
           </span>
           <div className="font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white flex flex-col gap-1">
-            <a
-              href="https://www.google.com/maps/search/?api=1&query=1178+Dock+St,+Tacoma,+WA+98402"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover-underline w-fit hover:text-[#FFE533] transition-colors duration-200"
-            >
-              1178 Dock St, Tacoma, WA 98402
-            </a>
-            <a
-              href="https://www.google.com/maps/search/?api=1&query=8101+NE+14th+Pl,+Portland,+OR+97211"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover-underline w-fit hover:text-[#FFE533] transition-colors duration-200"
-            >
-              8101 NE 14th Pl, Portland, OR 97211
-            </a>
+            {siteContent.addresses.map((a) => (
+              <a
+                key={a.label}
+                href={a.mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover-underline w-fit hover:text-[#FFE533] transition-colors duration-200"
+              >
+                {a.label}
+              </a>
+            ))}
           </div>
         </div>
 
@@ -125,8 +122,8 @@ function FooterContent() {
           <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
             Email
           </span>
-          <a href="mailto:goatmoversla@gmail.com" className="hover-underline w-fit font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200 break-all lg:break-normal">
-            goatmoversla@gmail.com
+          <a href={`mailto:${siteContent.email}`} className="hover-underline w-fit font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200 break-all lg:break-normal">
+            {siteContent.email}
           </a>
         </div>
 
@@ -135,7 +132,7 @@ function FooterContent() {
             License Information
           </span>
           <div className="font-sans font-medium text-lg lg:text-xl leading-[1.5] tracking-[-0.4px] text-white/70 flex flex-col gap-0.5">
-            <span>USDOT #4232069</span>
+            <span>USDOT #{siteContent.usdot}</span>
             <span>MC #1637475</span>
           </div>
         </div>
@@ -146,7 +143,7 @@ function FooterContent() {
           </span>
           <div className="flex gap-3">
             <a
-              href="https://www.yelp.com/biz/goat-movers-vancouver?uid=rwbUOx3Y71juVHVrCkq2OQ&utm_source=ishare"
+              href={siteContent.social.yelp}
               target="_blank"
               rel="noopener noreferrer"
               className="social-icon social-icon--yelp"
@@ -154,7 +151,7 @@ function FooterContent() {
               <Image src="/icons/yelp-footer.svg" alt="Yelp" width={23} height={29} />
             </a>
             <a
-              href="https://www.google.com/maps/place/GOAT+MOVERS/@45.5454821,-122.635238,10z/data=!3m1!4b1!4m6!3m5!1s0xa4790ebd1e7ffb07:0x697d406165de98a5!8m2!3d45.5454821!4d-122.635238!16s%2Fg%2F11wbt8363h?entry=ttu"
+              href={siteContent.social.google}
               target="_blank"
               rel="noopener noreferrer"
               className="social-icon social-icon--google"
@@ -162,7 +159,7 @@ function FooterContent() {
               <Image src="/icons/google-footer.svg" alt="Google" width={27} height={28} />
             </a>
             <a
-              href="https://www.instagram.com/goatmovers"
+              href={siteContent.social.instagram}
               target="_blank"
               rel="noopener noreferrer"
               className="social-icon social-icon--instagram"
@@ -205,7 +202,7 @@ export function ContactFooter() {
         {/* Bottom bar */}
         <div className="flex flex-col lg:flex-row lg:items-center gap-5">
           <p className="font-sans font-normal text-lg leading-[1.4] tracking-[-0.36px] text-white/60 lg:w-[638px]">
-            Copyright © 2022-2026 GOAT Movers. All Rights Reserved.
+            {siteContent.footer.copyright}
           </p>
           <Link
             href="/privacy"

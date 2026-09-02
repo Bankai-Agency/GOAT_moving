@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { homeContent } from "@/lib/content";
 
 export type FAQItemData = {
   question: string;
@@ -13,53 +14,8 @@ export type FAQSectionProps = {
   items?: FAQItemData[];
 };
 
-const defaultItems: FAQItemData[] = [
-  {
-    question: "How much does a local move cost in Vancouver, WA?",
-    answer:
-      "Our rate is $125/hour. Most studio or 1-bedroom moves take 2-3 hours, a 2-3 bedroom home takes 4-6 hours. 3-hour minimum for all moves. No charge for stairs.",
-  },
-  {
-    question: "How long does a move take?",
-    answer:
-      "It depends on the size: a studio or 1-bedroom typically takes 2-3 hours, a 2-3 bedroom home 4-6 hours. Larger moves may take a full day.",
-  },
-  {
-    question: "What\u2019s included in the hourly rate?",
-    answer:
-      "The moving truck, fuel, all equipment (dollies, blankets, straps), and our professional movers. No hidden fees.",
-  },
-  {
-    question: "Do you serve Portland, OR?",
-    answer:
-      "Yes. We\u2019re based in Vancouver, WA and serve the entire Portland metro \u2014 including Beaverton, Hillsboro, Tigard, and Gresham.",
-  },
-  {
-    question: "Do you offer packing services?",
-    answer:
-      "Yes. Tape, shrink wrap, mattress covers, and boxes are available at additional cost. You\u2019re welcome to use your own materials.",
-  },
-  {
-    question: "Do you disassemble and reassemble furniture?",
-    answer:
-      "Yes \u2014 bed frames and basic furniture disassembly/reassembly is included at no extra charge.",
-  },
-  {
-    question: "Are you licensed and insured?",
-    answer:
-      "Yes. GOAT Movers is fully licensed (USDOT #4232069, MC #1637475) and insured. Active interstate authority through FMCSA.",
-  },
-  {
-    question: "Do you charge for travel time?",
-    answer:
-      "Travel time is billed at our standard hourly rate \u2014 from our location to yours and back. No hidden surcharges.",
-  },
-  {
-    question: "How do you protect TVs and electronics?",
-    answer:
-      "Specialized TV boxes and padding. For large screens, we offer custom crating.",
-  },
-];
+/* Home-page FAQ — edited in the admin (Главная → FAQ). */
+const defaultItems: FAQItemData[] = homeContent.faq.items;
 
 function PlusIcon() {
   return (
@@ -117,8 +73,8 @@ function FAQItem({
 }
 
 export function FAQSection({
-  label = "FAQ",
-  title = "Frequently Asked Questions",
+  label = homeContent.faq.label,
+  title = homeContent.faq.title,
   items = defaultItems,
 }: FAQSectionProps = {}) {
   const [openIndex, setOpenIndex] = useState(-1);

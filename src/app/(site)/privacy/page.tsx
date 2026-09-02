@@ -3,6 +3,8 @@ import { ContactFooter } from "@site/sections/ContactFooter";
 import { Touchbar } from "@site/layout/Touchbar";
 import { QuoteModal } from "@site/ui/QuoteModal";
 import { Breadcrumbs } from "@site/layout/Breadcrumbs";
+import { siteContent } from "@/lib/content";
+import { formatPhone, phoneHref } from "@/lib/content/phone";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -122,8 +124,8 @@ export default function PrivacyPolicyPage() {
               </ul>
               <p>
                 To exercise any of these rights, email us at{" "}
-                <a href="mailto:goatmoversla@gmail.com" className="text-[#FFE533] hover:underline">
-                  goatmoversla@gmail.com
+                <a href={`mailto:${siteContent.email}`} className="text-[#FFE533] hover:underline">
+                  {siteContent.email}
                 </a>
                 . We will respond within 30 days.
               </p>
@@ -159,18 +161,18 @@ export default function PrivacyPolicyPage() {
               <ul className="list-none pl-0 flex flex-col gap-1.5">
                 <li>
                   <span className="text-white/50">Email:</span>{" "}
-                  <a href="mailto:goatmoversla@gmail.com" className="text-[#FFE533] hover:underline">
-                    goatmoversla@gmail.com
+                  <a href={`mailto:${siteContent.email}`} className="text-[#FFE533] hover:underline">
+                    {siteContent.email}
                   </a>
                 </li>
                 <li>
                   <span className="text-white/50">Phone:</span>{" "}
-                  <a href="tel:+13605240846" className="text-[#FFE533] hover:underline">
-                    +1 360-524-0846
+                  <a href={phoneHref(siteContent.phone)} className="text-[#FFE533] hover:underline">
+                    {formatPhone(siteContent.phone, "dashed")}
                   </a>
                 </li>
                 <li>
-                  <span className="text-white/50">Mail:</span> GOAT Movers, 8101 NE 14th Pl, Portland, OR 97211
+                  <span className="text-white/50">Mail:</span> {siteContent.brand}, {siteContent.addresses[siteContent.addresses.length - 1]?.label}
                 </li>
               </ul>
             </Section>

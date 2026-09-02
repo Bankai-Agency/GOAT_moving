@@ -74,7 +74,7 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){try{var k='goat_preloaded',p=location.pathname,lp=p.indexOf('/lp')===0||p==='/thank-you',h=document.documentElement;if(lp){h.classList.add('preloaded');return;}if(sessionStorage.getItem(k)){h.classList.add('preloaded');}else{sessionStorage.setItem(k,'1');}}catch(e){}})();",
+              "(function(){try{var k='goat_preloaded',p=location.pathname,lp=p.indexOf('/lp')===0||p==='/thank-you'||p.indexOf('/admin')===0,h=document.documentElement;if(lp){h.classList.add('preloaded');return;}if(sessionStorage.getItem(k)){h.classList.add('preloaded');}else{sessionStorage.setItem(k,'1');}}catch(e){}})();",
           }}
         />
         <Preloader />

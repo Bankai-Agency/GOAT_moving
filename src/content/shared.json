@@ -1,0 +1,230 @@
+{
+  "reviews": {
+    "label": "Reviews",
+    "title": "What Our Customers Say",
+    "items": [
+      {
+        "name": "Amanda J.",
+        "location": "Beaverton, OR",
+        "rating": 5,
+        "text": "These guys are AMAZING – super professional experienced movers at a fair price, they arrived early with all the needed tools to take furniture apart and put back together. Easy local move done right! Thank you GOAT Movers!",
+        "source": "yelp",
+        "avatar": "/images/avatar-1.jpg"
+      },
+      {
+        "name": "Mike T.",
+        "location": "Vancouver, WA",
+        "rating": 5,
+        "text": "Hands down the best moving experience I've ever had. The crew showed up on time, wrapped everything carefully, and had us fully moved into our new place in under 4 hours. Will absolutely use them again.",
+        "source": "yelp",
+        "avatar": "/images/avatar-2.jpg"
+      },
+      {
+        "name": "Sarah K.",
+        "location": "Portland, OR",
+        "rating": 5,
+        "text": "I was dreading my cross-state move but these guys made it completely stress-free. They disassembled my furniture, loaded everything efficiently, and nothing was damaged. Highly recommend for long distance moves!",
+        "source": "yelp",
+        "avatar": "/images/avatar-3.jpg"
+      },
+      {
+        "name": "David R.",
+        "location": "Seattle, WA",
+        "rating": 5,
+        "text": "Used GOAT Movers for our office relocation. They handled all the equipment with care, labeled everything perfectly, and we were back up and running the next morning. Professional and reliable team.",
+        "source": "yelp",
+        "avatar": "/images/avatar-4.jpg"
+      },
+      {
+        "name": "Jessica L.",
+        "location": "Portland, OR",
+        "rating": 5,
+        "text": "Moved my 3-bedroom house and couldn't be happier. The team was friendly, efficient, and super careful with my grandmother's antique furniture. Fair pricing with no hidden fees. 10/10 would recommend!",
+        "source": "yelp",
+        "avatar": "/images/avatar-5.jpg"
+      },
+      {
+        "name": "Chris M.",
+        "location": "Vancouver, WA",
+        "rating": 5,
+        "text": "Third time using GOAT Movers and they never disappoint. Quick, careful, and always on schedule. They even helped me rearrange furniture in the new place. These guys truly go above and beyond!",
+        "source": "yelp",
+        "avatar": "/images/reviewer-avatar.jpg"
+      }
+    ]
+  },
+  "whatsIncluded": {
+    "label": "What's Included",
+    "title": "What's Included in Every Local Move",
+    "subtitle": "One hourly rate — everything covered",
+    "items": [
+      {
+        "icon": "truck-fuel",
+        "title": "Moving Truck & Fuel",
+        "description": "Full-size moving truck included. No mileage charges within your local area."
+      },
+      {
+        "icon": "people",
+        "title": "Professional Movers",
+        "description": "Trained crew. Careful with your belongings from start to finish."
+      },
+      {
+        "icon": "equipment",
+        "title": "Equipment",
+        "description": "Dollies, furniture blankets, straps, and tools — all included."
+      },
+      {
+        "icon": "tools",
+        "title": "Furniture Disassembly/\nReassembly",
+        "description": "Bed frames and basic furniture taken apart and put back together at no extra cost."
+      },
+      {
+        "icon": "shield-half",
+        "title": "Floor & Door Protection",
+        "description": "We protect your floors and doorframes during the move."
+      },
+      {
+        "icon": "clock-dial",
+        "title": "Same-Day Service",
+        "description": "Most local moves completed in one visit — no waiting for a second trip."
+      }
+    ]
+  },
+  "howItWorks": {
+    "label": "How It Works",
+    "title": "How Your Move Works",
+    "steps": [
+      {
+        "icon": "estimate",
+        "title": "Get a Free Estimate",
+        "description": "Tell us your move details — we’ll give you an honest quote with no obligations."
+      },
+      {
+        "icon": "check",
+        "title": "We Show Up Ready",
+        "description": "Our crew arrives on time with the truck, equipment, and materials to get started."
+      },
+      {
+        "icon": "box",
+        "title": "We Pack & Load",
+        "description": "Furniture wrapped, boxes stacked, everything secured in the truck."
+      },
+      {
+        "icon": "truck",
+        "title": "Delivery & Setup",
+        "description": "We unload at your new place, reassemble furniture, and put everything where you want it."
+      }
+    ]
+  },
+  "whyTrust": {
+    "label": "Why GOAT",
+    "title": "Why Businesses Choose GOAT for Their Office Move",
+    "description": "Commercial moves aren't just residential with more boxes. They need planning, downtime minimization, and a crew that treats your office like their own. We've relocated offices, showrooms, and law firms across the I-5 corridor — ready before Monday morning, every time.",
+    "image": "/images/hero-bg.jpg",
+    "imageAlt": "GOAT movers crew",
+    "items": [
+      {
+        "icon": "clock",
+        "title": "Minimal Downtime",
+        "subtitle": "Weekend, evening, phased moves"
+      },
+      {
+        "icon": "shield-check",
+        "title": "Licensed & Insured",
+        "subtitle": "USDOT #4232069, $1M liability"
+      },
+      {
+        "icon": "briefcase",
+        "title": "After-Hours & Weekends",
+        "subtitle": "No overtime surcharge"
+      },
+      {
+        "icon": "calendar",
+        "title": "Dedicated Project Manager",
+        "subtitle": "One point of contact, always"
+      }
+    ]
+  },
+  "serviceArea": {
+    "label": "Service Area",
+    "title": "Serving Vancouver, WA — Portland, OR — and Beyond",
+    "subtitle": "Based in Vancouver, Washington, we cover the entire I-5 corridor. Whether you're moving across town or across states — we've got you covered.",
+    "areas": [
+      {
+        "city": "Vancouver",
+        "state": "WA",
+        "href": "/vancouver-movers"
+      },
+      {
+        "city": "Portland",
+        "state": "OR",
+        "href": "/portland-movers"
+      },
+      {
+        "city": "Beaverton",
+        "state": "OR",
+        "href": "/beaverton-movers"
+      },
+      {
+        "city": "Hillsboro",
+        "state": "OR",
+        "href": "/hillsboro-movers"
+      },
+      {
+        "city": "Tigard",
+        "state": "OR",
+        "href": "/tigard-movers"
+      },
+      {
+        "city": "Tualatin",
+        "state": "OR",
+        "href": "/tualatin-movers"
+      },
+      {
+        "city": "Camas",
+        "state": "WA",
+        "href": "/camas-movers"
+      },
+      {
+        "city": "Gresham",
+        "state": "OR",
+        "href": "/gresham-movers"
+      },
+      {
+        "city": "Oregon City",
+        "state": "OR",
+        "href": "/oregon-city-movers"
+      }
+    ]
+  },
+  "otherServices": {
+    "label": "Our Services",
+    "title": "Need More Than a Local Move?",
+    "items": [
+      {
+        "title": "Long Distance Moving",
+        "description": "Moving out of state? We’re licensed for interstate relocations.",
+        "href": "/long-distance-moving",
+        "image": "/images/service-longdistance.webp"
+      },
+      {
+        "title": "Commercial Moving",
+        "description": "Office relocation? Minimal downtime, maximum care.",
+        "href": "/commercial-moving",
+        "image": "/images/service-commercial.webp"
+      },
+      {
+        "title": "Packing Services",
+        "description": "Don’t want to pack? We’ll handle it.",
+        "href": "/packing-services",
+        "image": "/images/service-packing.webp"
+      }
+    ]
+  },
+  "ctaBanner": {
+    "heading": "Ready to experience the difference?",
+    "tagline": "Get your free, no-obligation quote today and let our family move yours",
+    "buttonText": "Get a Free Quote",
+    "image": "/images/cta-bg.png"
+  }
+}

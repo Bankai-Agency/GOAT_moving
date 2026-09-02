@@ -14,6 +14,8 @@ import { ContactFooter } from "@site/sections/ContactFooter";
 import { Touchbar } from "@site/layout/Touchbar";
 import { QuoteModal } from "@site/ui/QuoteModal";
 import type { LocationConfig } from "./locationConfigs";
+import { siteContent } from "@/lib/content";
+import { formatPhone, phoneHref } from "@/lib/content/phone";
 
 export function LocationPage({ config }: { config: LocationConfig }) {
   const {
@@ -43,7 +45,7 @@ export function LocationPage({ config }: { config: LocationConfig }) {
       title: "Long Distance Moving",
       description:
         config.longDistanceDescription ??
-        `Interstate moves out of ${city} across the US. Fully licensed (USDOT #4232069) with door-to-door delivery and same-crew service.`,
+        `Interstate moves out of ${city} across the US. Fully licensed (USDOT #${siteContent.usdot}) with door-to-door delivery and same-crew service.`,
       number: "2",
       image: "/images/service-longdistance.webp",
       href: "/long-distance-moving",
@@ -119,8 +121,8 @@ export function LocationPage({ config }: { config: LocationConfig }) {
               >
                 Get Free Estimate
               </MP5Button>
-              <MP5Button size="sm" variant="secondary" href="tel:+13605240846">
-                +1 (360) 524-0846
+              <MP5Button size="sm" variant="secondary" href={phoneHref(siteContent.phone)}>
+                {formatPhone(siteContent.phone, "paren")}
               </MP5Button>
             </div>
           </div>

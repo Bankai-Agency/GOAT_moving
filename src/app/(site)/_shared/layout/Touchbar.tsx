@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { siteContent } from "@/lib/content";
+import { phoneHref } from "@/lib/content/phone";
 
 export function Touchbar() {
   const [visible, setVisible] = useState(false);
@@ -42,7 +44,7 @@ export function Touchbar() {
       <div className="flex h-[60px] bg-[#0c0c0c] border-t border-white/10">
         {/* Email */}
         <Link
-          href="mailto:info@goat-moving.com"
+          href={`mailto:${siteContent.email}`}
           className="flex-1 flex flex-col items-center justify-center gap-1 text-white/80 active:bg-white/5 transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFE533" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -57,7 +59,7 @@ export function Touchbar() {
 
         {/* Call */}
         <Link
-          href="tel:+13605240846"
+          href={phoneHref(siteContent.phone)}
           className="flex-1 flex flex-col items-center justify-center gap-1 text-white/80 active:bg-white/5 transition-colors"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFE533" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

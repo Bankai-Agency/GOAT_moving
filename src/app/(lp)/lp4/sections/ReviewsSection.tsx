@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import { useRef, useState, useCallback, useEffect } from "react";
+import { sharedContent, siteContent } from "@/lib/content";
 
-const YELP_URL =
-  "https://www.yelp.com/biz/goat-movers-vancouver?uid=rwbUOx3Y71juVHVrCkq2OQ&utm_source=ishare";
-const GOOGLE_URL =
-  "https://www.google.com/maps/place/GOAT+MOVERS/@45.5454821,-122.635238,10z/data=!3m1!4b1!4m6!3m5!1s0xa4790ebd1e7ffb07:0x697d406165de98a5!8m2!3d45.5454821!4d-122.635238!16s%2Fg%2F11wbt8363h?entry=ttu";
+const YELP_URL = siteContent.social.yelp;
+const GOOGLE_URL = siteContent.social.google;
+const FALLBACK_AVATAR = "/images/reviewer-avatar.jpg";
 
 export type ReviewItem = {
   name: string;
@@ -14,7 +14,7 @@ export type ReviewItem = {
   rating: number;
   text: string;
   source: "yelp" | "google";
-  avatar: string;
+  avatar?: string;
 };
 
 export type ReviewsSectionProps = {
@@ -23,69 +23,9 @@ export type ReviewsSectionProps = {
   reviews?: ReviewItem[];
 };
 
-const defaultReviews: ReviewItem[] = [
-  {
-    name: "Amanda J.",
-    location: "Beaverton, OR",
-    rating: 5,
-    text: "These guys are AMAZING – super professional experienced movers at a fair price, they arrived early with all the needed tools to take furniture apart and put back together. Easy local move done right! Thank you GOAT Movers!",
-    source: "yelp" as const,
-    avatar: "/images/avatar-1.jpg",
-  },
-  {
-    name: "Mike T.",
-    location: "Vancouver, WA",
-    rating: 5,
-    text: "Hands down the best moving experience I've ever had. The crew showed up on time, wrapped everything carefully, and had us fully moved into our new place in under 4 hours. Will absolutely use them again.",
-    source: "yelp" as const,
-    avatar: "/images/avatar-2.jpg",
-  },
-  {
-    name: "Sarah K.",
-    location: "Portland, OR",
-    rating: 5,
-    text: "I was dreading my cross-state move but these guys made it completely stress-free. They disassembled my furniture, loaded everything efficiently, and nothing was damaged. Highly recommend for long distance moves!",
-    source: "yelp" as const,
-    avatar: "/images/avatar-3.jpg",
-  },
-  {
-    name: "David R.",
-    location: "Seattle, WA",
-    rating: 5,
-    text: "Used GOAT Movers for our office relocation. They handled all the equipment with care, labeled everything perfectly, and we were back up and running the next morning. Professional and reliable team.",
-    source: "yelp" as const,
-    avatar: "/images/avatar-4.jpg",
-  },
-  {
-    name: "Jessica L.",
-    location: "Portland, OR",
-    rating: 5,
-    text: "Moved my 3-bedroom house and couldn't be happier. The team was friendly, efficient, and super careful with my grandmother's antique furniture. Fair pricing with no hidden fees. 10/10 would recommend!",
-    source: "yelp" as const,
-    avatar: "/images/avatar-5.jpg",
-  },
-  {
-    name: "Chris M.",
-    location: "Vancouver, WA",
-    rating: 5,
-    text: "Third time using GOAT Movers and they never disappoint. Quick, careful, and always on schedule. They even helped me rearrange furniture in the new place. These guys truly go above and beyond!",
-    source: "yelp" as const,
-    avatar: "/images/reviewer-avatar.jpg",
-  },
-];
-
-/* Portland LP: lead with a real Google review that names the Portland
-   route, then the standard set. Passed in via the `reviews` prop. */
-const masonMarshReview: ReviewItem = {
-  name: "Mason M.",
-  location: "Portland, OR",
-  rating: 5,
-  text: "When we needed help moving from Portland to Washougal, I was pleased to find GOAT Movers. The simple, easy quote and booking process was a pleasant surprise, and the crew handled our big move with real care.",
-  source: "google" as const,
-  avatar: "/images/avatar-4.jpg",
-};
-
-export const portlandReviews: ReviewItem[] = [masonMarshReview, ...defaultReviews];
+/* Shared review list — edited in the admin (Общие блоки → Отзывы). City LPs
+   can prepend their own reviews via `featuredReviews` in lp-cities.json. */
+export const defaultReviews: ReviewItem[] = sharedContent.reviews.items;
 
 function Stars({ count = 5, variant = "yellow" }: { count?: number; variant?: "yellow" | "black" }) {
   const src = variant === "black" ? "/icons/star-black.svg" : "/icons/star-yellow.svg";
@@ -105,7 +45,7 @@ function SummaryCardDesktop() {
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <div className="flex items-baseline gap-0.5">
-            <span className="font-sans font-bold text-[64px] leading-[1.2] tracking-[-2.56px] text-white">4,9</span>
+            <span className="font-sans font-bold text-[64px] leading-[1.2] tracking-[-2.56px] text-white">{siteContent.ratings.overall}</span>
             <span className="font-sans font-bold text-[32px] leading-[1.2] tracking-[-0.96px] text-white/60">/5</span>
           </div>
           {/* Brand-colored hover: Yelp → red, Google → blue.
@@ -134,7 +74,7 @@ function SummaryCardDesktop() {
         </div>
         <div className="flex flex-col gap-1.5 items-end text-right shrink-0">
           <Stars variant="yellow" />
-          <span className="font-mono font-medium text-xs leading-[1.2] tracking-[-0.48px] uppercase text-white/50 whitespace-nowrap">500+ 5-Star Reviews</span>
+          <span className="font-mono font-medium text-xs leading-[1.2] tracking-[-0.48px] uppercase text-white/50 whitespace-nowrap">{siteContent.ratings.fiveStarReviews} 5-Star Reviews</span>
         </div>
       </div>
     </div>
@@ -148,7 +88,7 @@ function SummaryCardMobile() {
       <div className="flex flex-col gap-2">
         <div className="flex items-start justify-between">
           <div className="flex items-baseline gap-0.5">
-            <span className="font-sans font-bold text-[32px] leading-[1.2] tracking-[-0.96px] text-white">4,9</span>
+            <span className="font-sans font-bold text-[32px] leading-[1.2] tracking-[-0.96px] text-white">{siteContent.ratings.overall}</span>
             <span className="font-sans font-bold text-2xl leading-[1.2] tracking-[-0.72px] text-white/60">/5</span>
           </div>
           <div className="flex gap-3 items-center">
@@ -178,7 +118,7 @@ function SummaryCardMobile() {
               <Image key={i} src="/icons/star-yellow.svg" alt="" width={18} height={18} />
             ))}
           </div>
-          <span className="font-mono font-medium text-xs leading-[1.2] tracking-[-0.48px] uppercase text-white/50 whitespace-nowrap">500+ 5-Star Reviews</span>
+          <span className="font-mono font-medium text-xs leading-[1.2] tracking-[-0.48px] uppercase text-white/50 whitespace-nowrap">{siteContent.ratings.fiveStarReviews} 5-Star Reviews</span>
         </div>
       </div>
     </div>
@@ -194,7 +134,7 @@ function ReviewCardDesktop({ name, location, rating, text, avatar, source }: Rev
       <div className="flex flex-col gap-6">
         <div className="flex gap-3 items-center">
           <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0">
-            <Image src={avatar} alt={name} fill className="object-cover" />
+            <Image src={avatar ?? FALLBACK_AVATAR} alt={name} fill className="object-cover" />
           </div>
           <div className="flex-1 flex flex-col gap-1 min-w-0">
             <span className="font-sans font-semibold text-2xl leading-[1.4] tracking-[-0.72px] text-white group-hover/card:text-black transition-colors duration-300 truncate">{name}</span>
@@ -227,7 +167,7 @@ function ReviewCardMobile({ name, location, rating, text, avatar, source }: Revi
       <div className="flex flex-col gap-6">
         <div className="flex gap-3 items-center">
           <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0">
-            <Image src={avatar} alt={name} fill className="object-cover" />
+            <Image src={avatar ?? FALLBACK_AVATAR} alt={name} fill className="object-cover" />
           </div>
           <div className="flex-1 flex flex-col gap-1.5 min-w-0">
             <span className="font-sans font-semibold text-xl leading-[1.4] tracking-[-0.6px] text-white truncate">{name}</span>
@@ -251,8 +191,8 @@ function ReviewCardMobile({ name, location, rating, text, avatar, source }: Revi
 }
 
 export function ReviewsSection({
-  label = "Reviews",
-  title = "What Our Customers Say",
+  label = sharedContent.reviews.label,
+  title = sharedContent.reviews.title,
   reviews = defaultReviews,
 }: ReviewsSectionProps = {}) {
   const scrollRef = useRef<HTMLDivElement>(null);

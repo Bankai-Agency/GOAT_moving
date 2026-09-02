@@ -33,7 +33,8 @@ const MIN_HOLD_MS = 600;
    columns can't get stranded covering the screen. */
 const WATCHDOG_MS = 1800;
 
-const isLpPath = (p: string) => p.startsWith("/lp") || p === "/thank-you";
+/* No column wipe on the LP funnel or inside the admin panel. */
+const isLpPath = (p: string) => p.startsWith("/lp") || p === "/thank-you" || p.startsWith("/admin");
 
 export function ShutterTransition() {
   const currentPath = usePathname();

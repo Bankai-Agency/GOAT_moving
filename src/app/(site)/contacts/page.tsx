@@ -1,26 +1,10 @@
 import type { Metadata } from "next";
+import { contactsPageContent } from "@/lib/content";
+import { pageMetadata } from "@/lib/content/metadata";
 import ContactsClient from "./ContactsClient";
 
-export const metadata: Metadata = {
-  title: "Contact GOAT Movers — Call (360) 524-0846",
-  description:
-    "Reach GOAT Movers by phone at (360) 524-0846 or request a free moving quote online. Licensed, insured movers serving Vancouver, WA, Portland, OR, and the I-5 corridor.",
-  keywords: [
-    "contact GOAT Movers",
-    "moving company phone",
-    "free moving quote",
-    "movers Vancouver WA contact",
-    "movers Portland OR contact",
-  ],
-  alternates: { canonical: "/contacts" },
-  openGraph: {
-    title: "Contact GOAT Movers | Vancouver, WA & Portland, OR",
-    description:
-      "Call (360) 524-0846 or request a free moving quote online. We serve Vancouver, WA, Portland, OR, and the I-5 corridor.",
-    url: "/contacts",
-    type: "website",
-  },
-};
+/* Title / description / keywords are edited in the admin panel. */
+export const metadata: Metadata = pageMetadata(contactsPageContent.meta, "/contacts");
 
 export default function ContactsPage() {
   return <ContactsClient />;

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { homeContent } from "@/lib/content";
 
 /* ════════════════════════════════════════════════════════════════
    TestimonialVariants — 5 replacement designs for the current
@@ -10,38 +11,10 @@ import { useEffect, useRef, useState } from "react";
    Shared quote data (single source of truth):
    ──────────────────────────────────────────────────────────── */
 
-const QUOTES = [
-  {
-    quote:
-      "We have not seen this kind of accuracy with crew dispatch technology — this is a significant milestone in the race to modernize the moving industry.",
-    author: "Karen Jones",
-    role: "Operations Lead, Logistics Partner",
-    rating: 5,
-  },
-  {
-    quote:
-      "On time, on budget, and every box accounted for. The crew treated my place like it was theirs. Easiest move I've ever done.",
-    author: "Marcus Rivera",
-    role: "Customer · Portland → Seattle",
-    rating: 5,
-  },
-  {
-    quote:
-      "Their estimate was the only one that matched the final invoice. No surprises, no upsells — just a clean, well-run operation.",
-    author: "Priya Shah",
-    role: "Customer · Beaverton",
-    rating: 5,
-  },
-  {
-    quote:
-      "The same-day quote came in under two hours and they showed up two days later. Hard to believe a moving company can actually do this.",
-    author: "Linnea Vance",
-    role: "Customer · Vancouver, WA",
-    rating: 5,
-  },
-] as const;
+/* Testimonial carousel — edited in the admin (Главная → Цитаты). */
+const QUOTES = homeContent.testimonials.quotes;
 
-const PHOTO = "/images/home-hero.png";
+const PHOTO = homeContent.testimonials.photo;
 const ACCENT = "#FFE533";
 
 /* ──────────────────────────────────────────────────────────── */

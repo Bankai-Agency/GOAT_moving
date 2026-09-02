@@ -56,3 +56,6 @@ SESSION_CONTEXT.md
 
 # Firecrawl scrape scratch
 .firecrawl/
+
+# admin env template must be committed (the .env* rule above would hide it)
+!.env.example

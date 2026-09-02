@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { LPButton } from "./ui/LPButton";
+import { siteContent } from "@/lib/content";
+import { formatPhone, phoneHref } from "@/lib/content/phone";
 
 /* LP nav — same visual system as mainpage-5's TerminalNav (floating
    pill, mega-nav.css classes, mobile portal menu) but every link is
@@ -21,8 +23,9 @@ const NAV_LINKS: AnchorLink[] = [
   { label: "Contacts", href: "#contact" },
 ];
 
-const PHONE_DISPLAY = "+1 360-524-0846";
-const PHONE_RAW = "+13605240846";
+const PHONE_DISPLAY = formatPhone(siteContent.phone, "dashed");
+const PHONE_HREF = phoneHref(siteContent.phone);
+const PHONE_SHORT = formatPhone(siteContent.phone, "short");
 
 /* `showPhoneNumber` surfaces the full tappable number in the bar —
    centered between logo and burger on mobile, and as text + phone icon
@@ -201,7 +204,7 @@ export function LPTerminalNav({
                number pill. Number shown without country code per spec. */}
             {showPhoneNumber && (
               <a
-                href={`tel:${PHONE_RAW}`}
+                href={PHONE_HREF}
                 aria-label={`Call GOAT Movers at ${PHONE_DISPLAY}`}
                 className="lp-nav-mobile-phone"
                 style={{
@@ -230,7 +233,7 @@ export function LPTerminalNav({
                 }}
               >
                 <PhoneSvg style={{ width: 14, height: 14 }} />
-                360-524-0846
+                {PHONE_SHORT}
               </a>
             )}
 
@@ -396,7 +399,7 @@ export function LPTerminalNav({
                  it. */}
               {!portland && (
                 <a
-                  href={`tel:${PHONE_RAW}`}
+                  href={PHONE_HREF}
                   onClick={closeMobileMenu}
                   style={{
                     display: "flex",
@@ -457,7 +460,7 @@ function PhoneLink({
   if (showNumber) {
     return (
       <a
-        href={`tel:${PHONE_RAW}`}
+        href={PHONE_HREF}
         aria-label={`Call GOAT Movers at ${PHONE_DISPLAY}`}
         className={`inline-flex items-center gap-2 ${portland ? "" : "mr-4"} cursor-pointer text-white hover:text-[#FFE533] transition-colors duration-200`}
         style={{
@@ -470,7 +473,7 @@ function PhoneLink({
         }}
       >
         <PhoneSvg className="w-4 h-4" />
-        360-524-0846
+        {PHONE_SHORT}
       </a>
     );
   }
@@ -478,7 +481,7 @@ function PhoneLink({
      and other bars that don't surface the number). */
   return (
     <a
-      href={`tel:${PHONE_RAW}`}
+      href={PHONE_HREF}
       aria-label="Call GOAT Movers"
       className="mp5-phone-pill inline-flex items-center justify-center cursor-pointer rounded-full"
       style={{

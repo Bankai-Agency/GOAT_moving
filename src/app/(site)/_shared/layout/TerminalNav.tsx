@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { gsap } from "@site/motion/gsap";
-import { locationConfigs } from "@site/locations/locationConfigs";
+import { locationConfigs, siteContent } from "@/lib/content";
+import { formatPhone, phoneHref } from "@/lib/content/phone";
 import { MP5Button } from "@site/ui/MP5Button";
 
 /* Corp-site primary nav — port of Osmo Supply's "Mega Navigation
@@ -1243,7 +1244,7 @@ export function TerminalNav() {
           }}
         >
           <a
-            href={`tel:${PHONE_RAW}`}
+            href={PHONE_HREF}
             onClick={closeMobileMenu}
             style={{
               display: "flex",
@@ -1297,13 +1298,14 @@ export function TerminalNav() {
    immediately; click on desktop offers the system dial handler.
    The number is written out in digits (icon + text) rather than an
    icon-only pill, matching the LP nav so callers see it at a glance. */
-const PHONE_DISPLAY = "+1 360-524-0846";
-const PHONE_RAW = "+13605240846";
+const PHONE_DISPLAY = formatPhone(siteContent.phone, "dashed");
+const PHONE_HREF = phoneHref(siteContent.phone);
+const PHONE_SHORT = formatPhone(siteContent.phone, "short");
 
 function PhoneLink() {
   return (
     <a
-      href={`tel:${PHONE_RAW}`}
+      href={PHONE_HREF}
       aria-label={`Call GOAT Movers at ${PHONE_DISPLAY}`}
       className="inline-flex items-center cursor-pointer text-white hover:text-[#FFE533] transition-colors duration-200"
       style={{
@@ -1315,7 +1317,7 @@ function PhoneLink() {
         whiteSpace: "nowrap",
       }}
     >
-      360-524-0846
+      {PHONE_SHORT}
     </a>
   );
 }

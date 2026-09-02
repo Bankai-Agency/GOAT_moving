@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { sharedContent } from "@/lib/content";
 
 export type OtherServiceItem = {
   title: string;
@@ -14,30 +15,12 @@ export type OtherServicesSectionProps = {
   services?: OtherServiceItem[];
 };
 
-const defaultServices: OtherServiceItem[] = [
-  {
-    title: "Long Distance Moving",
-    description: "Moving out of state? We\u2019re licensed for interstate relocations.",
-    href: "/long-distance-moving",
-    image: "/images/service-longdistance.webp",
-  },
-  {
-    title: "Commercial Moving",
-    description: "Office relocation? Minimal downtime, maximum care.",
-    href: "/commercial-moving",
-    image: "/images/service-commercial.webp",
-  },
-  {
-    title: "Packing Services",
-    description: "Don\u2019t want to pack? We\u2019ll handle it.",
-    href: "/packing-services",
-    image: "/images/service-packing.webp",
-  },
-];
+/* Shared cards — edited in the admin (Общие блоки → Other Services). */
+const defaultServices: OtherServiceItem[] = sharedContent.otherServices.items;
 
 export function OtherServicesSection({
-  label = "Our Services",
-  title = "Need More Than a Local Move?",
+  label = sharedContent.otherServices.label,
+  title = sharedContent.otherServices.title,
   services = defaultServices,
 }: OtherServicesSectionProps = {}) {
   return (

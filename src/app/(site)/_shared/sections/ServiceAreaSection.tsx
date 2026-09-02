@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { nbCity, sharedContent } from "@/lib/content";
 
 export type ServiceArea = {
   city: string;
@@ -17,17 +18,8 @@ export type ServiceAreaSectionProps = {
   columns?: "auto" | "3" | "4";
 };
 
-const defaultAreas: ServiceArea[] = [
-  { city: "Vancouver", state: "WA", href: "/vancouver-movers" },
-  { city: "Portland", state: "OR", href: "/portland-movers" },
-  { city: "Beaverton", state: "OR", href: "/beaverton-movers" },
-  { city: "Hillsboro", state: "OR", href: "/hillsboro-movers" },
-  { city: "Tigard", state: "OR", href: "/tigard-movers" },
-  { city: "Tualatin", state: "OR", href: "/tualatin-movers" },
-  { city: "Camas", state: "WA", href: "/camas-movers" },
-  { city: "Gresham", state: "OR", href: "/gresham-movers" },
-  { city: "Oregon City", state: "OR", href: "/oregon-city-movers" },
-];
+/* Shared area list — edited in the admin (Общие блоки → Service Area). */
+const defaultAreas: ServiceArea[] = sharedContent.serviceArea.areas;
 
 function AreaCard({ city, state, href }: ServiceArea) {
   const content = (
@@ -77,9 +69,9 @@ function AreaCard({ city, state, href }: ServiceArea) {
 }
 
 export function ServiceAreaSection({
-  label = "Service Area",
-  title = "Serving Vancouver,\u00A0WA — Portland,\u00A0OR — and Beyond",
-  subtitle = "Based in Vancouver, Washington, we cover the entire I-5 corridor. Whether you're moving across town or across states — we've got you covered.",
+  label = sharedContent.serviceArea.label,
+  title = nbCity(sharedContent.serviceArea.title),
+  subtitle = sharedContent.serviceArea.subtitle,
   areas = defaultAreas,
   columns = "auto",
 }: ServiceAreaSectionProps = {}) {

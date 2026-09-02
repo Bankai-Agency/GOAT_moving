@@ -1,9 +1,11 @@
 "use client";
 
 import React from "react";
+import { renderIcon } from "@/lib/content/icons";
 
 export type FragileItem = {
-  icon: React.ReactNode;
+  /** Registry icon name (content JSON) or legacy JSX. */
+  icon: React.ReactNode | string;
   title: string;
   description: string;
 };
@@ -65,8 +67,8 @@ export function FragileItemsSection({
               {/* Round icon on the left — uniform 64/72px circle; `[&>svg]:*`
                   forces every icon SVG to render at the same pixel size
                   regardless of its inner viewBox, so icons visually match. */}
-              <div className="shrink-0 w-16 h-16 lg:w-[72px] lg:h-[72px] rounded-full bg-[#FFE533] flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ease-out [&>svg]:w-8 [&>svg]:h-8 lg:[&>svg]:w-9 lg:[&>svg]:h-9">
-                {it.icon}
+              <div className="shrink-0 w-16 h-16 lg:w-[72px] lg:h-[72px] rounded-full bg-[#FFE533] text-[#0c0c0c] flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ease-out [&>svg]:w-8 [&>svg]:h-8 lg:[&>svg]:w-9 lg:[&>svg]:h-9">
+                {renderIcon(it.icon, 24)}
               </div>
 
               {/* Title + description */}

@@ -1,9 +1,11 @@
 "use client";
 
 import React from "react";
+import { renderIcon } from "@/lib/content/icons";
 
 export type ServiceOption = {
-  icon: React.ReactNode;
+  /** Registry icon name (content JSON) or legacy JSX. */
+  icon: React.ReactNode | string;
   title: string;
   description: string;
   /** Optional tagline ("Best for: busy professionals, families..."). */
@@ -68,8 +70,8 @@ export function ServiceOptionsSection({
               }`}
             >
               {/* Icon pill */}
-              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-[#242424] group-hover:bg-[#2a2a2a] flex items-center justify-center shrink-0 transition-colors duration-300">
-                {opt.icon}
+              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-[#242424] group-hover:bg-[#2a2a2a] text-[#FFE533] flex items-center justify-center shrink-0 transition-colors duration-300">
+                {renderIcon(opt.icon, 32)}
               </div>
 
               {/* Title + description */}

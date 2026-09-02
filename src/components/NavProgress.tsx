@@ -11,6 +11,7 @@ export function NavProgress() {
   const pathname = usePathname();
   const [active, setActive] = useState(false);
   const [progress, setProgress] = useState(0);
+  const isAdmin = pathname?.startsWith("/admin") ?? false;
 
   // Listen for internal link clicks → start bar
   useEffect(() => {
@@ -73,6 +74,8 @@ export function NavProgress() {
     }, 4000);
     return () => clearTimeout(t);
   }, [active]);
+
+  if (isAdmin) return null;
 
   return (
     <div

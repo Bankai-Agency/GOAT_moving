@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { siteContent } from "@/lib/content";
+import { phoneHref } from "@/lib/content/phone";
 
 export function Touchbar({ portland = false }: { portland?: boolean }) {
   const [visible, setVisible] = useState(false);
@@ -89,7 +91,7 @@ export function Touchbar({ portland = false }: { portland?: boolean }) {
       >
         {/* Email */}
         <Link
-          href="mailto:info@goat-moving.com"
+          href={`mailto:${siteContent.email}`}
           className="flex-1 flex flex-col items-center justify-center gap-1 active:bg-white/5 transition-colors"
           style={{ color: textColor }}
         >
@@ -105,7 +107,7 @@ export function Touchbar({ portland = false }: { portland?: boolean }) {
 
         {/* Call */}
         <Link
-          href="tel:+13605240846"
+          href={phoneHref(siteContent.phone)}
           className="flex-1 flex flex-col items-center justify-center gap-1 active:bg-white/5 transition-colors"
           style={{ color: textColor }}
         >

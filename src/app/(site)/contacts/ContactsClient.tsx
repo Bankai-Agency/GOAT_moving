@@ -5,6 +5,11 @@ import { ContactFooter } from "@site/sections/ContactFooter";
 import { Touchbar } from "@site/layout/Touchbar";
 import { QuoteModal } from "@site/ui/QuoteModal";
 import { Breadcrumbs } from "@site/layout/Breadcrumbs";
+import { contactsPageContent as content, siteContent } from "@/lib/content";
+import { formatPhone, phoneHref } from "@/lib/content/phone";
+
+/* Hero copy lives in `src/content/contacts.json`; the contact cards read the
+   shared details from `src/content/site.json` (admin panel → Контакты). */
 
 function PhoneIcon() {
   return (
@@ -43,10 +48,15 @@ function ClockIcon() {
 
 function ContactsHeroWithCards() {
   const contacts = [
-    { icon: <PhoneIcon />, label: "Phone", value: "+1 (360) 524-0846", href: "tel:+13605240846" },
-    { icon: <EmailIcon />, label: "Email", value: "info@goatmovers.com", href: "mailto:info@goatmovers.com" },
-    { icon: <LocationIcon />, label: "Address", value: "1178 Dock St, Tacoma, WA 98402\n8101 NE 14th Pl, Portland, OR 97211", href: "https://maps.google.com/?q=1178+Dock+St+Tacoma+WA+98402" },
-    { icon: <ClockIcon />, label: "Hours", value: "Mon–Sun, 8 AM – 6 PM", href: null },
+    { icon: <PhoneIcon />, label: "Phone", value: formatPhone(siteContent.phone, "paren"), href: phoneHref(siteContent.phone) },
+    { icon: <EmailIcon />, label: "Email", value: siteContent.email, href: `mailto:${siteContent.email}` },
+    {
+      icon: <LocationIcon />,
+      label: "Address",
+      value: siteContent.addresses.map((a) => a.label).join("\n"),
+      href: siteContent.addresses[0]?.mapUrl ?? null,
+    },
+    { icon: <ClockIcon />, label: "Hours", value: siteContent.hours, href: null },
   ];
 
   return (
@@ -54,11 +64,11 @@ function ContactsHeroWithCards() {
       <div className="max-w-[1408px] mx-auto flex flex-col gap-10 lg:gap-14">
         <div className="flex flex-col gap-4 lg:gap-5">
           <h1 className="font-sans font-bold text-[36px] lg:text-[72px] leading-none tracking-[-1.08px] lg:tracking-[-2.16px]">
-            <span className="text-[#FFE533]">Get In </span>
-            <span className="text-white">Touch</span>
+            <span className="text-[#FFE533]">{content.hero.h1Highlight} </span>
+            <span className="text-white">{content.hero.h1Rest}</span>
           </h1>
           <p className="font-sans font-normal text-base lg:text-xl leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.6px] text-white/60 max-w-[540px]">
-            Ready to move? Give us a call or fill out the form in the footer for a free estimate.
+            {content.hero.subtitle}
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
@@ -93,14 +103,14 @@ function MapSection() {
       <div className="max-w-[1408px] mx-auto">
         <div className="relative w-full h-[300px] lg:h-[450px] rounded-xl lg:rounded-2xl overflow-hidden">
           <iframe
-            src="https://maps.google.com/maps?q=1178+Dock+St,+Tacoma,+WA+98402&t=&z=15&ie=UTF8&iwloc=&output=embed"
+            src={siteContent.mapEmbedUrl}
             width="100%"
             height="100%"
             style={{ border: 0, filter: "invert(90%) hue-rotate(180deg) saturate(0.4) brightness(1.2)" }}
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            title="GOAT Movers location"
+            title={`${siteContent.brand} location`}
           />
         </div>
       </div>
