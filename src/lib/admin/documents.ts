@@ -477,6 +477,28 @@ export const DOCUMENTS: DocumentDef[] = [
     ],
   },
   {
+    id: "redirects",
+    file: "src/content/redirects.json",
+    label: "Редиректы (301)",
+    description:
+      "Старые адреса, которые ведут на другие страницы. Появляются сами при удалении страницы с редиректом; можно добавить и вручную. Применяются после пересборки.",
+    group: "general",
+    urls: [],
+    kind: "collection",
+    itemKey: "slug",
+    itemTitle: "from",
+    schema: [
+      f.text("slug", "ID записи", {
+        required: true,
+        mono: true,
+        placeholder: "old-page",
+        help: "Только строчные латинские буквы, цифры и дефис. Удобно: старый адрес без «/», слэши заменить на дефис.",
+      }),
+      f.text("from", "Старый адрес", { required: true, mono: true, placeholder: "/old-page", help: "Путь на этом сайте, начиная с «/»." }),
+      f.text("to", "Куда перенаправлять", { required: true, mono: true, placeholder: "/", help: "Путь на этом сайте, начиная с «/». Ответ 301." }),
+    ],
+  },
+  {
     id: "locations",
     file: "src/content/locations.json",
     label: "Города (SEO-страницы)",

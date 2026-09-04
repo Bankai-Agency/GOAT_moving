@@ -1,4 +1,25 @@
 import type { NextConfig } from "next";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+/* 301s kept as content (src/content/redirects.json): the admin writes one
+   when a page is deleted with a "redirect to" target, and this reads them
+   at build time. A malformed entry is skipped rather than failing the build.
+   statusCode 301 rather than permanent:true, which Next answers with 308:
+   equivalent for search engines, but 301 is what the admin promises. */
+function contentRedirects(): { source: string; destination: string; statusCode: 301 }[] {
+  try {
+    const raw = readFileSync(join(process.cwd(), "src/content/redirects.json"), "utf-8");
+    const items: unknown = JSON.parse(raw)?.items;
+    if (!Array.isArray(items)) return [];
+    const ok = (v: unknown): v is string => typeof v === "string" && v.startsWith("/") && !v.startsWith("//") && !/\s/.test(v);
+    return items
+      .filter((r): r is { from: string; to: string } => !!r && ok(r.from) && ok(r.to) && r.from !== r.to)
+      .map((r) => ({ source: r.from, destination: r.to, statusCode: 301 as const }));
+  } catch {
+    return [];
+  }
+}
 
 /** Security + perf headers applied to every response. */
 const securityHeaders = [
@@ -38,6 +59,10 @@ const nextConfig: NextConfig = {
   outputFileTracingExcludes: {
     "*": [".git/**"],
     "/admin": ADMIN_TRACE_EXCLUDES,
+  },
+
+  async redirects() {
+    return contentRedirects();
   },
 
   async headers() {

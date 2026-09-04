@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Copy, ExternalLink, Plus } from "lucide-react";
 import { AdminShell, TopBar } from "@/components/admin/Shell";
+import { DeleteItemDialog } from "@/components/admin/editor/DeleteItemDialog";
 import { DocumentEditor } from "@/components/admin/editor/DocumentEditor";
 import { Button } from "@/components/admin/ui/button";
 import { Alert, Badge, Card, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/admin/ui/card";
@@ -14,7 +15,7 @@ import { emptyObject } from "@/lib/admin/schema";
 export const dynamic = "force-dynamic";
 
 type Params = { path: string[] };
-type Search = { saved?: string; deleted?: string; from?: string };
+type Search = { saved?: string; deleted?: string; redirect?: string; deferred?: string; from?: string };
 
 function savedNotice(saved?: string): string | undefined {
   if (saved === "deferred") {
@@ -64,7 +65,7 @@ export default async function ContentEditorPage({
   searchParams: Promise<Search>;
 }) {
   const { path } = await params;
-  const { saved, deleted, from } = await searchParams;
+  const { saved, deleted, redirect: redirectedTo, deferred, from } = await searchParams;
   const user = await requireUser();
   const r = resolve(path);
   if (!r) notFound();
@@ -108,6 +109,9 @@ export default async function ContentEditorPage({
 
   const keyField = def.itemKey ?? "slug";
   const items = ((doc.data as { items?: Record<string, unknown>[] }).items ?? []) as Record<string, unknown>[];
+  const titleOf = (it: Record<string, unknown>) => String((def.itemTitle && it[def.itemTitle]) || it[keyField] || "");
+  // Redirect targets offered on delete: the home page and this collection's other pages.
+  const pageUrls = ["/", ...items.map((it) => itemUrl(def, String(it[keyField] ?? ""))).filter((u): u is string => !!u)];
 
   /* ── collection: list ── */
   if (!itemKey) {
@@ -125,7 +129,16 @@ export default async function ContentEditorPage({
         />
         <div className="flex-1 space-y-4 p-6">
           <p className="text-sm text-muted-foreground">{def.description}</p>
-          {deleted && <Alert variant="positive">«{deleted}» удалён.</Alert>}
+          {deleted && (
+            <Alert variant="positive">
+              «{deleted}» удалён{redirectedTo ? <>, старый адрес будет перенаправлять на <span className="font-mono">{redirectedTo}</span></> : null}.
+              {deferred
+                ? " Сохранено без публикации: нажмите «Опубликовать накопленное», когда закончите."
+                : github
+                  ? " Сайт пересоберётся через 2-3 минуты."
+                  : ""}
+            </Alert>
+          )}
           <Card className="overflow-hidden">
             <Table>
               <TableHeader>
@@ -168,6 +181,15 @@ export default async function ContentEditorPage({
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="inline-flex gap-2">
+                          <DeleteItemDialog
+                            docId={def.id}
+                            baseHash={doc.hash}
+                            itemKey={key}
+                            title={title}
+                            url={url}
+                            suggestions={pageUrls}
+                            github={github}
+                          />
                           <Button variant="ghost" size="sm" asChild title="Создать копию этой страницы">
                             <Link href={`/admin/content/${def.id}/new?from=${encodeURIComponent(key)}`}>
                               <Copy /> Дублировать
@@ -262,6 +284,7 @@ export default async function ContentEditorPage({
           previewUrls={url ? [url] : []}
           backHref={`/admin/content/${def.id}`}
           duplicateHref={`/admin/content/${def.id}/new?from=${encodeURIComponent(itemKey)}`}
+          deleteProps={{ title: titleOf(item), url, suggestions: pageUrls }}
           github={github}
           notice={savedNotice(saved)}
         />

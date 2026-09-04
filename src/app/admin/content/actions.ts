@@ -7,6 +7,7 @@ import { findDocument, type DocumentDef } from "@/lib/admin/documents";
 import { normalizeObject, type ValidationError } from "@/lib/admin/schema";
 import { publishPendingCommit, readDocument, writeDocument } from "@/lib/admin/content-store";
 import { isGitHubBackend } from "@/lib/admin/github";
+import { REDIRECTS_DOC_ID, normalizeRedirectTarget, removeRedirectFor, upsertRedirect } from "@/lib/admin/redirects";
 import { ICON_NAMES } from "@/lib/content/icons";
 
 /* ───────────── types shared with the editor ───────────── */
@@ -73,6 +74,18 @@ export async function saveDocumentAction(input: SaveInput): Promise<SaveResult> 
 
   const errors: ValidationError[] = [];
   const normalized = normalizeObject(def.schema, input.value, { validIcons: VALID_ICONS, errors });
+  if (def.id === REDIRECTS_DOC_ID) {
+    // Hand-written redirects get the same checks as the ones the delete dialog writes.
+    for (const k of ["from", "to"] as const) {
+      const r = normalizeRedirectTarget(String(normalized[k] ?? ""), null);
+      if (!r.ok) errors.push({ path: k, message: r.error });
+      else if (!r.value) errors.push({ path: k, message: "Обязательное поле" });
+      else normalized[k] = r.value;
+    }
+    if (normalized.from && normalized.from === normalized.to) {
+      errors.push({ path: "to", message: "Адреса совпадают" });
+    }
+  }
   if (errors.length) return { ok: false, error: "Проверьте поля формы.", errors };
 
   const deferBuild = Boolean(input.deferBuild) && isGitHubBackend();
@@ -127,6 +140,15 @@ export async function saveDocumentAction(input: SaveInput): Promise<SaveResult> 
 
   let written;
   try {
+    // A page that appears at an address which still redirects elsewhere would
+    // stay hidden behind the redirect: drop it before the page lands.
+    if (def.kind === "collection" && def.itemUrl) {
+      const key = String(normalized[def.itemKey ?? "slug"] ?? "");
+      const url = itemUrl(def, key);
+      if (url && (input.itemMode === "new" || key !== (input.originalKey ?? key))) {
+        await removeRedirectFor(url, actor);
+      }
+    }
     written = await writeDocument(def, nextData, commitMessage, actor, deferBuild);
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : "Не удалось сохранить документ." };
@@ -148,9 +170,20 @@ export async function saveDocumentAction(input: SaveInput): Promise<SaveResult> 
   return { ok: true, hash: written.hash, deferred: deferBuild, message };
 }
 
-export type DeleteInput = { docId: string; baseHash: string; key: string; deferBuild: boolean };
+export type DeleteInput = {
+  docId: string;
+  baseHash: string;
+  key: string;
+  deferBuild: boolean;
+  /** Pages only: where the old address should 301 to. Empty = plain 404. */
+  redirectTo?: string;
+};
 
-/** Remove one item from a collection document. */
+/**
+ * Remove one item from a collection document. For a page, optionally leave a
+ * 301 behind: the redirect is committed first with the skip marker, so the
+ * page change that follows triggers the one build that ships both.
+ */
 export async function deleteItemAction(input: DeleteInput): Promise<SaveResult> {
   let actor: string;
   try {
@@ -167,24 +200,38 @@ export async function deleteItemAction(input: DeleteInput): Promise<SaveResult> 
     return { ok: false, error: "Документ изменился с момента открытия. Обновите страницу и повторите." };
   }
   const keyField = def.itemKey ?? "slug";
-  const items = ((current.data as { items?: Record<string, unknown>[] }).items ?? []).filter(
-    (it) => it[keyField] !== input.key,
-  );
+  const all = (current.data as { items?: Record<string, unknown>[] }).items ?? [];
+  if (!all.some((it) => it[keyField] === input.key)) {
+    return { ok: false, error: `Элемент «${input.key}» не найден - возможно, его уже удалили.` };
+  }
+  const items = all.filter((it) => it[keyField] !== input.key);
+
+  const pageUrl = itemUrl(def, input.key);
+  const target = normalizeRedirectTarget(input.redirectTo, pageUrl);
+  if (!target.ok) return { ok: false, error: target.error };
+  if (target.value && !pageUrl) {
+    return { ok: false, error: "У этого элемента нет адреса на сайте, редирект не нужен." };
+  }
+
   const deferBuild = Boolean(input.deferBuild) && isGitHubBackend();
   try {
+    if (pageUrl && target.value) await upsertRedirect(pageUrl, target.value, actor);
     await writeDocument(
       def,
       { ...(current.data as object), items },
-      `content(${def.id}): remove ${input.key}`,
+      `content(${def.id}): remove ${input.key}${target.value ? ` (301 → ${target.value})` : ""}`,
       actor,
       deferBuild,
     );
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : "Не удалось удалить." };
   }
-  revalidate([...def.urls, itemUrl(def, input.key), `/admin/content/${def.id}`]);
+  revalidate([...def.urls, pageUrl, target.value, `/admin/content/${def.id}`]);
   // The deleted item's page no longer exists — leave it server-side.
-  redirect(`/admin/content/${def.id}?deleted=${encodeURIComponent(input.key)}`);
+  const q = new URLSearchParams({ deleted: input.key });
+  if (target.value) q.set("redirect", target.value);
+  if (deferBuild) q.set("deferred", "1");
+  redirect(`/admin/content/${def.id}?${q.toString()}`);
 }
 
 export type PublishState = { error?: string; ok?: boolean };

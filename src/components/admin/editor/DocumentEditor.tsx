@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 import Link from "next/link";
-import { ArrowLeft, Copy, ExternalLink, Loader2, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Copy, ExternalLink, Loader2, Save } from "lucide-react";
 import type { Schema } from "@/lib/admin/schema";
-import { deleteItemAction, saveDocumentAction, type SaveResult } from "@/app/admin/content/actions";
+import { saveDocumentAction, type SaveResult } from "@/app/admin/content/actions";
 import { Button } from "../ui/button";
 import { Alert } from "../ui/card";
+import { DeleteItemDialog } from "./DeleteItemDialog";
 import { FieldRenderer, type ErrorMap } from "./FieldRenderer";
 
 export type DocumentEditorProps = {
@@ -22,6 +23,8 @@ export type DocumentEditorProps = {
   backHref: string;
   /** Collections, "edit" mode: where "Дублировать" opens a pre-filled copy. */
   duplicateHref?: string;
+  /** Collections, "edit" mode: what "Удалить" needs to say and offer. */
+  deleteProps?: { title: string; url: string | null; suggestions: string[] };
   github: boolean;
   /** Message to show on load (e.g. after a redirect from "create"). */
   notice?: string;
@@ -43,6 +46,7 @@ export function DocumentEditor({
   previewUrls,
   backHref,
   duplicateHref,
+  deleteProps,
   github,
   notice,
 }: DocumentEditorProps) {
@@ -99,19 +103,6 @@ export function DocumentEditor({
     });
   }
 
-  function remove() {
-    if (!originalKey) return;
-    if (!confirm(`Удалить «${originalKey}»? Страница исчезнет с сайта после пересборки.`)) return;
-    startTransition(async () => {
-      const res = await deleteItemAction({ docId, baseHash, key: originalKey, deferBuild });
-      if (!res) {
-        setDirty(false);
-        return; // redirected server-side to the list
-      }
-      setResult(res);
-    });
-  }
-
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 pb-28">
       <div className="flex flex-wrap items-center gap-2">
@@ -163,10 +154,17 @@ export function DocumentEditor({
       {/* Sticky action bar */}
       <div className="fixed bottom-0 left-0 right-0 z-30 border-t bg-background/90 backdrop-blur lg:left-60">
         <div className="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-3 px-6 py-3">
-          {itemMode === "edit" && originalKey && (
-            <Button variant="ghost" size="sm" onClick={remove} disabled={pending} className="text-muted-foreground hover:text-destructive">
-              <Trash2 /> Удалить
-            </Button>
+          {itemMode === "edit" && originalKey && deleteProps && (
+            <DeleteItemDialog
+              docId={docId}
+              baseHash={baseHash}
+              itemKey={originalKey}
+              title={deleteProps.title}
+              url={deleteProps.url}
+              suggestions={deleteProps.suggestions}
+              github={github}
+              initialDeferBuild={deferBuild}
+            />
           )}
           {itemMode === "edit" && duplicateHref && (
             <Button variant="ghost" size="sm" asChild className="text-muted-foreground" title="Создать новую страницу на основе этой">
