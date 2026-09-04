@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, useTransition } from "react";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Loader2, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Copy, ExternalLink, Loader2, Save, Trash2 } from "lucide-react";
 import type { Schema } from "@/lib/admin/schema";
 import { deleteItemAction, saveDocumentAction, type SaveResult } from "@/app/admin/content/actions";
 import { Button } from "../ui/button";
@@ -20,6 +20,8 @@ export type DocumentEditorProps = {
   /** Site pages affected by this document — shown as preview links. */
   previewUrls: string[];
   backHref: string;
+  /** Collections, "edit" mode: where "Дублировать" opens a pre-filled copy. */
+  duplicateHref?: string;
   github: boolean;
   /** Message to show on load (e.g. after a redirect from "create"). */
   notice?: string;
@@ -40,6 +42,7 @@ export function DocumentEditor({
   originalKey,
   previewUrls,
   backHref,
+  duplicateHref,
   github,
   notice,
 }: DocumentEditorProps) {
@@ -163,6 +166,13 @@ export function DocumentEditor({
           {itemMode === "edit" && originalKey && (
             <Button variant="ghost" size="sm" onClick={remove} disabled={pending} className="text-muted-foreground hover:text-destructive">
               <Trash2 /> Удалить
+            </Button>
+          )}
+          {itemMode === "edit" && duplicateHref && (
+            <Button variant="ghost" size="sm" asChild className="text-muted-foreground" title="Создать новую страницу на основе этой">
+              <Link href={duplicateHref}>
+                <Copy /> Дублировать
+              </Link>
             </Button>
           )}
           <span className="text-xs text-muted-foreground">

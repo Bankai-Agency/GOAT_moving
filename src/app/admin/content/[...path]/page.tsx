@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ExternalLink, Plus } from "lucide-react";
+import { ArrowLeft, Copy, ExternalLink, Plus } from "lucide-react";
 import { AdminShell, TopBar } from "@/components/admin/Shell";
 import { DocumentEditor } from "@/components/admin/editor/DocumentEditor";
 import { Button } from "@/components/admin/ui/button";
@@ -14,7 +14,7 @@ import { emptyObject } from "@/lib/admin/schema";
 export const dynamic = "force-dynamic";
 
 type Params = { path: string[] };
-type Search = { saved?: string; deleted?: string };
+type Search = { saved?: string; deleted?: string; from?: string };
 
 function savedNotice(saved?: string): string | undefined {
   if (saved === "deferred") {
@@ -39,6 +39,17 @@ function itemUrl(def: DocumentDef, key: string): string | null {
   return def.itemUrl ? def.itemUrl.replace("{" + (def.itemKey ?? "slug") + "}", key) : null;
 }
 
+/**
+ * A deep copy of a collection item for the "duplicate" flow. The key gets a
+ * "-copy" suffix so the copy cannot collide with the original on save; the
+ * editor asks the user to rename it anyway.
+ */
+function duplicateItem(item: Record<string, unknown>, keyField: string): Record<string, unknown> {
+  const copy = structuredClone(item);
+  copy[keyField] = `${String(item[keyField] ?? "")}-copy`;
+  return copy;
+}
+
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
   const { path } = await params;
   const r = resolve(path);
@@ -53,7 +64,7 @@ export default async function ContentEditorPage({
   searchParams: Promise<Search>;
 }) {
   const { path } = await params;
-  const { saved, deleted } = await searchParams;
+  const { saved, deleted, from } = await searchParams;
   const user = await requireUser();
   const r = resolve(path);
   if (!r) notFound();
@@ -156,9 +167,16 @@ export default async function ContentEditorPage({
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="outline" size="sm" asChild>
-                          <Link href={`/admin/content/${def.id}/${key}`}>Редактировать</Link>
-                        </Button>
+                        <div className="inline-flex gap-2">
+                          <Button variant="ghost" size="sm" asChild title="Создать копию этой страницы">
+                            <Link href={`/admin/content/${def.id}/new?from=${encodeURIComponent(key)}`}>
+                              <Copy /> Дублировать
+                            </Link>
+                          </Button>
+                          <Button variant="outline" size="sm" asChild>
+                            <Link href={`/admin/content/${def.id}/${key}`}>Редактировать</Link>
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
@@ -185,21 +203,37 @@ export default async function ContentEditorPage({
     );
   }
 
-  /* ── collection: new item ── */
+  /* ── collection: new item, blank or a copy of an existing one (?from=slug) ── */
   if (itemKey === "new") {
+    const source = from ? items.find((it) => it[keyField] === from) : undefined;
+    const initial = source ? duplicateItem(source, keyField) : emptyObject(def.schema);
+    const sourceTitle = source ? String((def.itemTitle && source[def.itemTitle]) || from) : null;
     return (
       <AdminShell username={user.username}>
-        <TopBar title={`${def.label} · новый`} />
+        <TopBar
+          title={source ? `${def.label} · копия «${sourceTitle}»` : `${def.label} · новый`}
+          actions={source ? <span className="font-mono text-xs text-muted-foreground">из {from}</span> : undefined}
+        />
         <div className="flex-1 p-6">
+          {from && !source && (
+            <Alert variant="destructive" className="mx-auto mb-5 max-w-3xl">
+              Элемент «{from}» не найден, форма открыта пустой.
+            </Alert>
+          )}
           <DocumentEditor
             docId={def.id}
             schema={def.schema}
-            initial={emptyObject(def.schema)}
+            initial={initial}
             baseHash={doc.hash}
             itemMode="new"
             previewUrls={[]}
             backHref={`/admin/content/${def.id}`}
             github={github}
+            notice={
+              source
+                ? `Это копия «${sourceTitle}»: все поля заполнены её содержимым. Поменяйте slug, город и тексты и нажмите «Создать».`
+                : undefined
+            }
           />
         </div>
       </AdminShell>
@@ -227,6 +261,7 @@ export default async function ContentEditorPage({
           originalKey={itemKey}
           previewUrls={url ? [url] : []}
           backHref={`/admin/content/${def.id}`}
+          duplicateHref={`/admin/content/${def.id}/new?from=${encodeURIComponent(itemKey)}`}
           github={github}
           notice={savedNotice(saved)}
         />
