@@ -937,13 +937,17 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
             aria-hidden
           />
           {/* Picks the hero clip for this viewport while the HTML is still
-              parsing, so the browser starts fetching it right away instead
-              of after hydration (which arrived ~2.5 s later on a phone). The
+              parsing, so the browser starts fetching it long before
+              hydration (which arrived ~2.5 s later on a phone). It waits for
+              the first rendering frame: that fires once the stylesheets are
+              in, so on a slow connection the 3 MB clip does not share the
+              first second with the CSS, fonts and poster the first paint
+              needs. A 1.5 s timer covers a tab that never gets a frame. The
               effect above repeats the choice for client-side navigation. */}
           <script
             dangerouslySetInnerHTML={{
               __html:
-                "(function(){var v=document.getElementById('hero-video');if(!v||v.getAttribute('src'))return;v.src=window.matchMedia('(max-width: 991px)').matches?'/videos/hero-mobile.mp4':'/videos/hero.mp4';})();",
+                "(function(){var v=document.getElementById('hero-video');if(!v)return;var done=false;function set(){if(done||v.getAttribute('src'))return;done=true;v.src=window.matchMedia('(max-width: 991px)').matches?'/videos/hero-mobile.mp4':'/videos/hero.mp4';}window.requestAnimationFrame(set);setTimeout(set,1500);})();",
             }}
           />
           <div
