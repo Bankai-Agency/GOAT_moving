@@ -20,7 +20,10 @@ export function GoogleTagManager() {
   if (!id) return null;
 
   return (
-    <Script id="gtm-init" strategy="afterInteractive">
+    // lazyOnload, not afterInteractive: the container (GTM + two gtag
+    // loaders + Clarity + CallRail) costs ~2 s of main thread on a phone,
+    // and afterInteractive spent it right when the hero was hydrating.
+    <Script id="gtm-init" strategy="lazyOnload">
       {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=

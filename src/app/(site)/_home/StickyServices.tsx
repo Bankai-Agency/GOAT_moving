@@ -8,6 +8,47 @@ import { defaultStickySteps, type StickyStep } from "./stickyServicesData";
    BLUE for the hero wave). */
 const BLUE = "#FFE533";
 
+/* AV1 twins of the H.264 service clips: about half the bytes at the same
+   picture (each one is checked against its H.264 file at VMAF >= 97 by
+   scripts/video-av1.sh, which is also how to regenerate them). Listed by
+   hand rather than derived from the name, so a clip without an AV1 file
+   simply plays its H.264 one. Browsers that cannot decode AV1 (older
+   iPhones, most of Safari before 17) skip the first <source> by its codecs
+   string without fetching a byte of it. */
+const AV1_CLIPS: Record<string, string> = {
+  // The other three clips are grainier: their AV1 encodes either miss the
+  // VMAF bar or come out no smaller than the H.264 file, so they have none.
+  "/videos/service-long-distance.mp4": "/videos/service-long-distance.av1.mp4",
+};
+const AV1_TYPE = 'video/mp4; codecs="av01.0.08M.08"';
+const H264_TYPE = "video/mp4";
+
+function ClipSources({ src }: { src: string }) {
+  const av1 = AV1_CLIPS[src];
+  return (
+    <>
+      {av1 && <source src={av1} type={AV1_TYPE} />}
+      <source src={src} type={H264_TYPE} />
+    </>
+  );
+}
+
+/* Same thing for the single pinned mobile <video>, whose clip is swapped
+   per step at runtime: replace its <source> children, then load(). */
+function setClipSources(video: HTMLVideoElement, src: string) {
+  video.querySelectorAll("source").forEach((el) => el.remove());
+  const av1 = AV1_CLIPS[src];
+  const add = (href: string, type: string) => {
+    const el = document.createElement("source");
+    el.src = href;
+    el.type = type;
+    video.appendChild(el);
+  };
+  if (av1) add(av1, AV1_TYPE);
+  add(src, H264_TYPE);
+  video.dataset.clip = src;
+}
+
 
 /* ── Second services block (sticky-steps) — extracted so each page can
    pass its own `steps` (e.g. different per-step videos) while sharing the
@@ -322,9 +363,9 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
           eyebrowEl.textContent = step.eyebrow;
           h2El.textContent = step.h2;
           pEl.textContent = step.p;
-          if (mobileVideo && mobileVideo.getAttribute("src") !== step.video) {
+          if (mobileVideo && mobileVideo.dataset.clip !== step.video) {
             mobileVideo.setAttribute("poster", step.image);
-            mobileVideo.setAttribute("src", step.video);
+            setClipSources(mobileVideo, step.video);
             mobileVideo.load();
             void mobileVideo.play().catch(() => {});
           }
@@ -369,8 +410,9 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
 
   /* ── SERVICES videos: play only the ACTIVE step's video, and only while
      the section is on-screen — cuts up to 4 concurrent decodes to 1 and
-     stops all decoding once scrolled past. Videos keep autoPlay as a
-     graceful fallback; this effect pauses the ones that shouldn't run. */
+     stops all decoding once scrolled past. This effect is also what starts
+     playback at all (the <video> tags carry no autoPlay), so a clip is
+     fetched the first time its step is active on screen, not at load. */
   useEffect(() => {
     const root = stickyStepsRef.current;
     if (!root) return;
@@ -449,19 +491,22 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
                           `clip-path: url(#mp5-notch-card-clip)` in the
                           .sticky-steps__visual rule (dark theme). */}
                       <div className="sticky-steps__visual mp5-notch-shaped">
-                        {/* Autoplaying clip — plays on its own (muted, looped),
-                            independent of scroll. Scroll only switches which
-                            step is active. `image` is the poster fallback. */}
+                        {/* Looping clip, started by the effect below only
+                            for the ACTIVE step while the section is on
+                            screen. No `autoPlay`: it overrides
+                            preload="none" and made all four files download
+                            in full at page load, ahead of the hero video.
+                            `image` is the poster until then. */}
                         <video
                           className="sticky-steps__cover-image"
-                          src={step.video}
                           poster={step.image}
-                          autoPlay
                           loop
                           muted
                           playsInline
                           preload="none"
-                        />
+                        >
+                          <ClipSources src={step.video} />
+                        </video>
                       </div>
                     </div>
                   </div>
@@ -534,14 +579,15 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
             >
               <video
                 className="sticky-steps__cover-image"
-                src={steps[0].video}
+                data-clip={steps[0].video}
                 poster={steps[0].image}
-                autoPlay
                 loop
                 muted
                 playsInline
                 preload="none"
-              />
+              >
+                <ClipSources src={steps[0].video} />
+              </video>
             </div>
           </div>
         </div>

@@ -165,9 +165,14 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
        1280×720 file on desktop. Chosen once at mount (cross-breakpoint
        reload acceptable). Set in JS rather than JSX so SSR and client
        agree on the src (a static mobile src would double-download on
-       desktop and vice-versa). */
+       desktop and vice-versa). Normally the inline <script> right after
+       the <video> has already done this while the HTML was parsing, so
+       the download started seconds before hydration; this is the fallback
+       for client-side navigation, where inline scripts do not execute. */
     const isMobile = window.matchMedia("(max-width: 991px)").matches;
-    videoEl.src = isMobile ? "/videos/hero-mobile.mp4" : "/videos/hero.mp4";
+    const wantedSrc = isMobile ? "/videos/hero-mobile.mp4" : "/videos/hero.mp4";
+    const srcAlreadySet = Boolean(videoEl.getAttribute("src"));
+    if (!srcAlreadySet) videoEl.src = wantedSrc;
 
     /* Hero is a native <video> scrubbed by scroll (was a canvas webp
        frame-sequence). Hardware-accelerated decode + one streamed file
@@ -176,8 +181,12 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
     let videoDuration = videoEl.duration || 0;
     const onMeta = () => { videoDuration = videoEl.duration || 0; };
     videoEl.addEventListener("loadedmetadata", onMeta);
-    // Kick off buffering even though we never autoplay.
-    try { videoEl.load(); } catch { /* ignore */ }
+    // Kick off buffering even though we never autoplay - but only when we
+    // set the src ourselves: load() on a source already in flight restarts
+    // the download.
+    if (!srcAlreadySet) {
+      try { videoEl.load(); } catch { /* ignore */ }
+    }
 
     /* Mobile horizontal focal point — keep the driver cab fully in frame
        through the whole truck, then re-centre for the map. The 16:9 clip
@@ -918,6 +927,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
       >
         <section className="sticky top-0 h-screen w-full overflow-hidden">
           <video
+            id="hero-video"
             ref={videoRef}
             className="absolute inset-0 w-full h-full object-cover"
             poster="/frames-vhero/frame_0001.webp"
@@ -925,6 +935,16 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
             playsInline
             preload="auto"
             aria-hidden
+          />
+          {/* Picks the hero clip for this viewport while the HTML is still
+              parsing, so the browser starts fetching it right away instead
+              of after hydration (which arrived ~2.5 s later on a phone). The
+              effect above repeats the choice for client-side navigation. */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html:
+                "(function(){var v=document.getElementById('hero-video');if(!v||v.getAttribute('src'))return;v.src=window.matchMedia('(max-width: 991px)').matches?'/videos/hero-mobile.mp4':'/videos/hero.mp4';})();",
+            }}
           />
           <div
             aria-hidden

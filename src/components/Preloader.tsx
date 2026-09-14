@@ -13,12 +13,14 @@ import "./preloader.css";
    `.preloaded` class to <html> (CSS then hides the loader, no flash). This
    component bails when that class is present.
 
-   The EXIT is gated on REAL readiness: on a page with a hero <video>
-   (mainpage-5) it won't lift until the video has buffered (readyState >= 3)
-   — or a safety timeout — so the hero plays smoothly the instant the loader
-   clears. Image-hero pages have no video, so they just play the intro.
-   Text is split per-char manually (no SplitText dependency). data-* hooks
-   are load-bearing. */
+   The exit follows the intro and nothing else. It used to wait for the hero
+   <video> to buffer (readyState >= 3, up to 7 s): on a phone the clip sat
+   in a queue behind other media, so the loader ran to its timeout and the
+   first paint of the page came at ~10 s. The hero shows its poster until the
+   clip is ready and the scroll scrub skips seeks until then, so there is
+   nothing to wait for. The whole cover is ~2.3 s now (was ~4.6 s plus the
+   wait). Text is split per-char manually (no SplitText dependency). data-*
+   hooks are load-bearing. */
 export function Preloader() {
   const wrapRef = useRef<HTMLDivElement>(null);
 
@@ -79,59 +81,38 @@ export function Preloader() {
     gsap.set([...firstChars, ...secondChars], { autoAlpha: 0, yPercent: 125 });
 
     // ── Intro: progress fill + logo wipe + two-word char sequence ──
+    // Same choreography as before at roughly half the length: the cover
+    // is the one thing between the visitor and the page.
     const intro = gsap.timeline({ defaults: { ease: "loaderEase" } });
     intro
-      .to(progressBar, { scaleX: 0.9, duration: 1.2 }, 0)
-      .to(logo, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.2 }, 0);
+      .to(progressBar, { scaleX: 0.9, duration: 0.8 }, 0)
+      .to(logo, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.8 }, 0);
     if (firstChars.length) {
-      intro.to(firstChars, { autoAlpha: 1, yPercent: 0, duration: 0.6, stagger: 0.02 }, 0.15);
-      intro.to(firstChars, { autoAlpha: 0, yPercent: -125, duration: 0.4, stagger: 0.02 }, ">+=0.5");
+      intro.to(firstChars, { autoAlpha: 1, yPercent: 0, duration: 0.35, stagger: 0.012 }, 0.1);
+      intro.to(firstChars, { autoAlpha: 0, yPercent: -125, duration: 0.25, stagger: 0.012 }, ">+=0.25");
     }
     if (secondChars.length) {
-      intro.to(secondChars, { autoAlpha: 1, yPercent: 0, duration: 0.6, stagger: 0.02 }, "<");
-      intro.to(secondChars, { autoAlpha: 0, yPercent: -125, duration: 0.4, stagger: 0.02 }, ">+=0.5");
+      intro.to(secondChars, { autoAlpha: 1, yPercent: 0, duration: 0.35, stagger: 0.012 }, "<");
+      intro.to(secondChars, { autoAlpha: 0, yPercent: -125, duration: 0.25, stagger: 0.012 }, ">+=0.25");
     }
-
-    // ── Readiness gate: hero video buffered (readyState>=3) or timeout ──
-    const MAX_MS = 7000;
-    const t0 = performance.now();
-    let rafId = 0;
-    const ready = new Promise<void>((resolve) => {
-      const check = () => {
-        const v = document.querySelector<HTMLVideoElement>(
-          "[data-hero-region] video",
-        );
-        // A page with a hero <video> waits for it to buffer; image-hero
-        // pages have no such element → ready immediately (the intro min
-        // time still applies).
-        const mediaReady = !v || v.readyState >= 3;
-        if (mediaReady || performance.now() - t0 > MAX_MS) {
-          resolve();
-          return;
-        }
-        rafId = requestAnimationFrame(check);
-      };
-      rafId = requestAnimationFrame(check);
-    });
 
     let killed = false;
     let exit: gsap.core.Timeline | null = null;
 
-    // Lift only after BOTH the intro has played and the hero is ready.
-    Promise.all([intro.then(() => undefined), ready]).then(() => {
+    // Lift as soon as the intro has played.
+    intro.then(() => {
       if (killed) return;
       exit = gsap.timeline({ defaults: { ease: "loaderEase" }, onComplete: unlock });
       exit
-        .to(progressBar, { scaleX: 1, duration: 0.4 })
-        .to(container, { autoAlpha: 0, duration: 0.5 })
-        .to(progressBar, { scaleX: 0, transformOrigin: "right center", duration: 0.5 }, "<")
-        .to(bg, { yPercent: -101, duration: 1 }, "<0.1")
+        .to(progressBar, { scaleX: 1, duration: 0.25 })
+        .to(container, { autoAlpha: 0, duration: 0.35 })
+        .to(progressBar, { scaleX: 0, transformOrigin: "right center", duration: 0.35 }, "<")
+        .to(bg, { yPercent: -101, duration: 0.7 }, "<0.1")
         .set(wrap, { display: "none" });
     });
 
     return () => {
       killed = true;
-      cancelAnimationFrame(rafId);
       intro.kill();
       exit?.kill();
       unlock();

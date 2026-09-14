@@ -71,6 +71,15 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
+      /* Hero + service clips and the hero poster: static files under public/
+         get max-age=0 by default, so every visit re-validates several MB of
+         video. Names are stable, so a day in cache with a week of
+         stale-while-revalidate is safe: a replaced clip shows up within a
+         day, a returning visitor never re-downloads it. */
+      {
+        source: "/(videos|frames-vhero)/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
     ];
   },
 };
