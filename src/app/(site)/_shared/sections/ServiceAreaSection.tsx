@@ -29,7 +29,7 @@ function AreaCard({ city, state, href }: ServiceArea) {
           {city}
         </h3>
         {state && (
-          <span className="font-mono font-bold text-sm uppercase tracking-[-0.48px] leading-[1.2] text-white/40 bg-white/[0.08] rounded-lg px-2.5 py-1">
+          <span className="font-mono font-bold text-sm uppercase tracking-[-0.48px] leading-[1.2] text-white/55 bg-white/[0.08] rounded-lg px-2.5 py-1">
             {state}
           </span>
         )}

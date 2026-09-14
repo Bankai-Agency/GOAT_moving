@@ -53,7 +53,7 @@ export function BenefitsV1_Grid() {
               className="px-6 py-7 lg:px-8 lg:py-12 flex flex-col gap-4 lg:gap-6 min-h-[150px] lg:min-h-[360px] rounded-2xl"
               style={{ backgroundColor: ACCENT }}
             >
-              <span className="font-mono uppercase text-[11px] lg:text-[10px] tracking-[2px] text-black/55">
+              <span className="font-mono uppercase text-[11px] lg:text-[10px] tracking-[2px] text-black/60">
                 {it.eyebrow}
               </span>
               <span

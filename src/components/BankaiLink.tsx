@@ -28,7 +28,7 @@ export function BankaiLink({
       target="_blank"
       rel="noopener noreferrer"
       className="bankai-link shrink-0"
-      aria-label="Bankai Agency"
+      aria-label="Bankai.agency"
     >
       <span className="bankai-icon" aria-hidden>
         <span className="mini-bolts">

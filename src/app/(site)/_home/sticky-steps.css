@@ -140,7 +140,10 @@
 @media screen and (min-width: 992px) {
   [data-sticky-steps-item-status] .sticky-steps__text {
     transition: opacity 0.5s ease-in-out;
-    opacity: 0.55;
+    /* 0.72, not 0.55: the eyebrow (yellow at .85) and the paragraph
+       (white at .7) sit on #0c0c0c, and the dimmed steps still have to
+       read at 4.5:1 - at .55 they were 3.97 and 3.61. */
+    opacity: 0.72;
   }
 
   [data-sticky-steps-item-status="active"] .sticky-steps__text {

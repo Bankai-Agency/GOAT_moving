@@ -63,7 +63,7 @@ function FooterContent() {
 
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-3">
-            <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
+            <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/55">
               About
             </span>
             <p className="font-sans font-normal text-base lg:text-lg leading-[1.5] lg:leading-[1.4] tracking-[-0.48px] lg:tracking-[-0.36px] text-white max-w-[537px]">
@@ -72,7 +72,7 @@ function FooterContent() {
           </div>
 
           <div className="flex flex-col gap-3">
-            <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
+            <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/55">
               Navigation
             </span>
             <div className="flex flex-wrap gap-4 lg:gap-6 items-center">
@@ -89,7 +89,7 @@ function FooterContent() {
       {/* Right column: contact info */}
       <div className="lg:flex-1 flex flex-col gap-8">
         <div className="flex flex-col gap-3">
-          <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
+          <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/55">
             Phone
           </span>
           <a href={phoneHref(siteContent.phone)} className="hover-underline w-fit font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200">
@@ -98,7 +98,7 @@ function FooterContent() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
+          <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/55">
             Address
           </span>
           <div className="font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white flex flex-col gap-1">
@@ -117,7 +117,7 @@ function FooterContent() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
+          <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/55">
             Email
           </span>
           <a href={`mailto:${siteContent.email}`} className="hover-underline w-fit font-sans font-semibold text-xl lg:text-2xl leading-[1.2] tracking-[-0.6px] lg:tracking-[-0.72px] text-white hover:text-[#FFE533] transition-colors duration-200 break-all lg:break-normal">
@@ -126,7 +126,7 @@ function FooterContent() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/40">
+          <span className="font-mono font-bold text-base leading-[1.2] tracking-[-0.64px] uppercase text-white/55">
             Social Media
           </span>
           <div className="flex gap-3">

@@ -103,23 +103,38 @@ export function TestimonialV5_Carousel() {
             {q.role}
           </span>
         </div>
-        <div className="mt-10 flex items-center justify-center gap-2">
+        {/* The dot is 8px tall by design; the button around it is the
+            24x24 touch target accessibility asks for (8px of padding on
+            every side), so the visual stays and the tap does not. */}
+        <div className="mt-10 flex items-center justify-center">
           {QUOTES.map((_, i) => (
             <button
               key={i}
+              type="button"
               aria-label={`Quote ${i + 1}`}
+              aria-current={i === idx ? "true" : undefined}
               onClick={() => setIdx(i)}
               className="tv5-dot"
               style={{
-                width: i === idx ? 28 : 8,
-                height: 8,
-                borderRadius: 4,
-                background: i === idx ? ACCENT : "rgba(255,255,255,0.2)",
+                padding: 8,
+                background: "transparent",
                 border: 0,
                 cursor: "pointer",
-                transition: "width .35s ease, background-color .35s ease",
+                display: "block",
               }}
-            />
+            >
+              <span
+                aria-hidden
+                style={{
+                  display: "block",
+                  width: i === idx ? 28 : 8,
+                  height: 8,
+                  borderRadius: 4,
+                  background: i === idx ? ACCENT : "rgba(255,255,255,0.2)",
+                  transition: "width .35s ease, background-color .35s ease",
+                }}
+              />
+            </button>
           ))}
         </div>
       </div>

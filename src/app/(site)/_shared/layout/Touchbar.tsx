@@ -40,6 +40,9 @@ export function Touchbar() {
         pointerEvents: visible ? "auto" : "none",
       }}
       aria-hidden={!visible}
+      // inert as well: aria-hidden alone leaves the links in the tab order
+      // while the bar is off screen.
+      inert={!visible}
     >
       <div className="flex h-[60px] bg-[#0c0c0c] border-t border-white/10">
         {/* Email */}

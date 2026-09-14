@@ -998,6 +998,7 @@ export function TerminalNav() {
       <div
         className="lg:hidden"
         aria-hidden={!mobileMenuOpen}
+        inert={!mobileMenuOpen}
         style={{
           position: "fixed",
           inset: 0,
