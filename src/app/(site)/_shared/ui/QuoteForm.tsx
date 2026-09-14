@@ -6,6 +6,7 @@ import { DatePicker } from "@site/ui/DatePicker";
 import { SelectDropdown } from "@site/ui/SelectDropdown";
 import { FormInput } from "@site/ui/FormInput";
 import { MP5Button } from "@site/ui/MP5Button";
+import { submitQuote } from "@/lib/analytics/submit-quote";
 
 export const MOVE_SIZES = [
   "Room or Less",
@@ -86,11 +87,7 @@ export function QuoteForm({
     onSubmit?.(values);
     setSubmitting(true);
     try {
-      await fetch("/api/submit-quote", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+      await submitQuote(values, { formLocation: "embedded_form" });
     } catch (err) {
       console.error("Submit failed:", err);
     }

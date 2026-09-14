@@ -8,6 +8,7 @@ import { SelectDropdown } from "@site/ui/SelectDropdown";
 import { MOVE_SIZES } from "@site/ui/QuoteForm";
 import type { QuoteFormValues } from "@site/ui/QuoteForm";
 import { MP5Button } from "@site/ui/MP5Button";
+import { submitQuote } from "@/lib/analytics/submit-quote";
 
 /* 2-step form: contact details → move details. The previous step 3
    ("Additional Information" / optional message) was removed — most LP
@@ -121,11 +122,7 @@ export function StepQuoteForm({
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      await fetch("/api/submit-quote", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
+      await submitQuote(values, { formLocation: "embedded_hero", city: city });
     } catch (err) {
       console.error("Submit failed:", err);
     }

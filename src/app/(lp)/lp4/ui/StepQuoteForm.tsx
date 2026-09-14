@@ -9,7 +9,7 @@ import { DatePicker } from "./DatePicker";
 import { SelectDropdown } from "./SelectDropdown";
 import { MOVE_SIZES } from "./QuoteForm";
 import type { QuoteFormValues } from "./QuoteForm";
-import { pushLeadEvent } from "./leadEvent";
+import { submitQuote } from "@/lib/analytics/submit-quote";
 
 /* ════════════════════════════════════════════════════════════════
    StepQuoteForm — 2-step quote form (contact → move details).
@@ -159,14 +159,7 @@ export function StepQuoteForm({
   const handleSubmit = async () => {
     setSubmitting(true);
     try {
-      await fetch("/api/submit-quote", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-      /* Consistent conversion event for GTM/GA4 — fire a custom
-         `generate_lead` trigger off this dataLayer push. */
-      pushLeadEvent({ formLocation: "embedded_hero", city: _city });
+      await submitQuote(values, { formLocation: "embedded_hero", city: _city });
     } catch (err) {
       console.error("Submit failed:", err);
     }

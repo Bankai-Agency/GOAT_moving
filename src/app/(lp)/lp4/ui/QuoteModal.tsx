@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { DatePicker } from "./DatePicker";
 import { formatUsPhone } from "./FormInput";
 import { LPButton } from "./LPButton";
-import { pushLeadEvent } from "./leadEvent";
+import { submitQuote } from "@/lib/analytics/submit-quote";
 
 const EMAIL_PATTERN = "[^@\\s]+@[^@\\s]+\\.[^@\\s]+";
 
@@ -143,14 +143,7 @@ export function QuoteModal() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await fetch("/api/submit-quote", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      /* Consistent conversion event for GTM/GA4 — same shape as the
-         embedded form so reporting matches across both forms. */
-      pushLeadEvent({ formLocation: "modal" });
+      await submitQuote(formData, { formLocation: "modal" });
     } catch (err) {
       console.error("Submit failed:", err);
     }
