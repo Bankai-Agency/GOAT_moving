@@ -48,6 +48,16 @@ export function AboutSection({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  /* The city posters are the originals from the content folder (up to
+     5 MB and 5000 px wide) shown in a 665x443 box, and a <video poster>
+     bypasses next/image. Hand a local poster to the same optimizer
+     next/image uses, which serves it resized as AVIF/WebP (~100 KB).
+     `w` must be one of images.deviceSizes and `q` one of images.qualities.
+     Remote posters (the default vidzflow thumbnail) are left alone. */
+  const posterSrc = videoPoster.startsWith("/")
+    ? `/_next/image?url=${encodeURIComponent(videoPoster)}&w=1200&q=75`
+    : videoPoster;
+
   return (
     <section id="about" className="bg-[#0c0c0c] px-4 py-[60px] lg:py-[100px]">
       <div className="max-w-[1408px] mx-auto flex flex-col gap-8 lg:gap-16">
@@ -78,7 +88,7 @@ export function AboutSection({
           <video
             ref={videoRef}
             className="w-full h-full object-cover"
-            poster={videoPoster}
+            poster={posterSrc}
             controls={isPlaying}
             playsInline
             preload="metadata"

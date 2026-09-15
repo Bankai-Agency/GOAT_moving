@@ -302,6 +302,9 @@ export function LPTerminalNav({
           <div
             className="lg:hidden"
             aria-hidden={!mobileMenuOpen}
+            // inert as well: aria-hidden alone leaves the links in the tab
+            // order and focusable inside a hidden panel.
+            inert={!mobileMenuOpen}
             style={{
               position: "fixed",
               inset: 0,

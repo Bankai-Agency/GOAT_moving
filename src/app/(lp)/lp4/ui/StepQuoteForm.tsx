@@ -186,9 +186,11 @@ export function StepQuoteForm({
            Step indicator is hidden on mobile so the heading keeps to a
            single line. */
         <div className="flex items-center justify-between gap-4">
-          <h3 className={`lp-form-heading lp-form-heading--${surface}`}>
+          {/* h2, not h3: the form sits right under the page h1, and a
+              heading level cannot skip a step. */}
+          <h2 className={`lp-form-heading lp-form-heading--${surface}`}>
             {step === 1 ? heading : "Move details"}
-          </h3>
+          </h2>
           <div className="shrink-0 max-lg:hidden">
             <StepIndicator current={step} surface={surface} />
           </div>
@@ -196,9 +198,9 @@ export function StepQuoteForm({
       ) : (
         <>
           <StepIndicator current={step} surface={surface} />
-          <h3 className={`lp-form-heading lp-form-heading--${surface}`}>
+          <h2 className={`lp-form-heading lp-form-heading--${surface}`}>
             {step === 1 ? heading : "Move details"}
-          </h3>
+          </h2>
         </>
       )}
 

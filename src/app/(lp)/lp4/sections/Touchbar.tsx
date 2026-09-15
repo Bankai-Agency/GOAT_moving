@@ -50,6 +50,9 @@ export function Touchbar({ portland = false }: { portland?: boolean }) {
         pointerEvents: visible ? "auto" : "none",
       }}
       aria-hidden={!visible}
+      // inert as well: aria-hidden alone leaves the links in the tab order
+      // while the bar is off screen.
+      inert={!visible}
     >
       {portland ? (
         /* Portland: on scroll the form is the primary action, so the

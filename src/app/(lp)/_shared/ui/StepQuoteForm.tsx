@@ -152,9 +152,9 @@ export function StepQuoteForm({
     <div className="flex flex-col gap-6">
       <StepIndicator current={step} surface={surface} />
 
-      <h3 className={`lp-form-heading lp-form-heading--${surface}`}>
+      <h2 className={`lp-form-heading lp-form-heading--${surface}`}>
         {step === 1 ? heading : "Move details"}
-      </h3>
+      </h2>
 
       {step === 1 && (
         <div className="flex flex-col gap-5">
