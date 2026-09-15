@@ -68,13 +68,16 @@ export default function RootLayout({
         {/* GTM noscript fallback — must be the first element in <body>. */}
         <GoogleTagManagerNoScript />
         {/* Pre-hydration: decide whether the logo-reveal preloader runs.
-            Runs once per session and never on the LP funnel — by adding a
-            `.preloaded` class to <html> BEFORE paint (so repeat visits / LP
-            never flash the loader). The Preloader reads that class. */}
+            Runs once per session, only on desktop-width viewports, and never
+            on the LP funnel — by adding a `.preloaded` class to <html> BEFORE
+            paint (so repeat visits / phones / LP never flash the loader). The
+            Preloader reads that class. Phones skip it because the ~2.3 s cover
+            is what a phone's first paint waited on: the page behind it is
+            ready long before the intro ends. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "(function(){try{var k='goat_preloaded',p=location.pathname,lp=p.indexOf('/lp')===0||p==='/thank-you'||p.indexOf('/admin')===0,h=document.documentElement;if(lp){h.classList.add('preloaded');return;}if(sessionStorage.getItem(k)){h.classList.add('preloaded');}else{sessionStorage.setItem(k,'1');}}catch(e){}})();",
+              "(function(){try{var k='goat_preloaded',p=location.pathname,lp=p.indexOf('/lp')===0||p==='/thank-you'||p.indexOf('/admin')===0,h=document.documentElement,small=window.matchMedia&&window.matchMedia('(max-width: 991px)').matches;if(lp||small){h.classList.add('preloaded');return;}if(sessionStorage.getItem(k)){h.classList.add('preloaded');}else{sessionStorage.setItem(k,'1');}}catch(e){}})();",
           }}
         />
         <Preloader />

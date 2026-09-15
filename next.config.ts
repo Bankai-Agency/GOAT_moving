@@ -51,6 +51,13 @@ const securityHeaders = [
 const ADMIN_TRACE_EXCLUDES = ["public/**"];
 
 const nextConfig: NextConfig = {
+  /* Ship the page's CSS as <style> in the HTML instead of five render-blocking
+     <link> requests (~31 KB raw, Tailwind so nearly all of it is used on
+     every page). Most visitors arrive from ads and see one page, so the
+     first-load win beats the cached-stylesheet win for returning visitors.
+     Experimental flag; if a page ever renders unstyled, drop it. */
+  experimental: { inlineCss: true },
+
   /* Let next/image serve AVIF/WebP when the browser supports them. */
   images: {
     formats: ["image/avif", "image/webp"],

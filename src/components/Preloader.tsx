@@ -8,7 +8,9 @@ import "./preloader.css";
 /* Logo-reveal preloader (Osmo "Logo Reveal Loader" port). Mounted once in
    the root layout so it can cover any page.
 
-   Shows ONCE per session and never on the LP funnel — decided
+   Shows ONCE per session, only on desktop-width viewports (max-width
+   991px skips it: on a phone the cover was the one thing between the
+   visitor and an already-painted page) and never on the LP funnel — decided
    pre-hydration by the inline script in the root layout, which adds a
    `.preloaded` class to <html> (CSS then hides the loader, no flash). This
    component bails when that class is present.

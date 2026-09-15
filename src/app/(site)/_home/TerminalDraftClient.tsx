@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState, type Ref } from "react";
+import { useEffect, useRef, useState, type ReactNode, type Ref } from "react";
 import { gsap, ScrollTrigger, registerGsapPlugins } from "@site/motion/gsap";
 import { MP5Button } from "@site/ui/MP5Button";
 import dynamic from "next/dynamic";
@@ -18,6 +18,40 @@ import { homeContent } from "@/lib/content";
    loads when the rings mount, not in the home's initial JS. Client-only
    (WebGL) so ssr:false. */
 const MagicRings = dynamic(() => import("./MagicRings"), { ssr: false });
+
+/* Mounts its children (and so triggers the dynamic import above) only once
+   the wrapper comes within one viewport of the screen. The rings live in
+   the CTA beat, several screens below the hero, so three.js (~130 KB gz)
+   and its WebGL loop used to load and run during the first seconds for
+   nothing. Visually identical: the section is far below the fold when the
+   import starts, and the rings render before it scrolls into view. */
+function NearViewport({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  // Without IntersectionObserver (old browsers) mount right away.
+  const [near, setNear] = useState(
+    () => typeof window !== "undefined" && !("IntersectionObserver" in window),
+  );
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || near) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setNear(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "100% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [near]);
+  return (
+    <div ref={ref} className="absolute inset-0">
+      {near ? children : null}
+    </div>
+  );
+}
 
 /* /mainpage-5 — terminal-industries.com-style draft.
 
@@ -170,7 +204,22 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
        the download started seconds before hydration; this is the fallback
        for client-side navigation, where inline scripts do not execute. */
     const isMobile = window.matchMedia("(max-width: 991px)").matches;
-    const wantedSrc = isMobile ? "/videos/hero-mobile.mp4" : "/videos/hero.mp4";
+    /* Same choice as the inline script below: on a slow or data-saving
+       connection (Network Information API, Chrome/Android; Safari has no
+       such API and gets the normal file) the 640x360 clip, ~0.8 MB instead
+       of 2.9-4.3: on 3G the full clip is a minute of download, and a scrub
+       that far behind the scroll is worse than a softer picture. */
+    const conn = (navigator as Navigator & {
+      connection?: { saveData?: boolean; effectiveType?: string };
+    }).connection;
+    const slowNet = Boolean(
+      conn && (conn.saveData || /^(slow-)?2g$|^3g$/.test(conn.effectiveType ?? "")),
+    );
+    const wantedSrc = slowNet
+      ? "/videos/hero-lite.mp4"
+      : isMobile
+        ? "/videos/hero-mobile.mp4"
+        : "/videos/hero.mp4";
     const srcAlreadySet = Boolean(videoEl.getAttribute("src"));
     if (!srcAlreadySet) videoEl.src = wantedSrc;
 
@@ -179,8 +228,44 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
        instead of 222 separate webp requests → smooth, no load lag. We
        never call play(); the scroll timeline drives `currentTime`. */
     let videoDuration = videoEl.duration || 0;
-    const onMeta = () => { videoDuration = videoEl.duration || 0; };
+
+    /* Seek only into data the browser already has. A seek into an
+       unbuffered part of the file makes the browser abort the sequential
+       download and open a new range request at that offset; on a slow
+       connection every scroll tick did that, the buffer turned into
+       scattered half-second islands and the clip never finished loading
+       while the phrases kept scrolling past. Now the scroll position is
+       always remembered (even before the metadata arrives) and the frame
+       holds until the bytes for it are in; every loading event then lets
+       the video catch up to the latest scroll position in one seek. The
+       0.1 s margin keeps a seek off the ragged edge of the buffer. */
+    const isBuffered = (t: number) => {
+      const b = videoEl.buffered;
+      const margin = 0.1;
+      for (let i = 0; i < b.length; i++) {
+        if (t >= b.start(i) && Math.min(t + margin, videoDuration) <= b.end(i)) return true;
+      }
+      return false;
+    };
+    let scrollProgress = 0; // 0..1 through the pinned hero, always current
+    let shownProgress = -1; // the progress the video currently displays
+    const syncVideo = () => {
+      if (!videoDuration || shownProgress === scrollProgress) return;
+      // Clamp just shy of the end — some browsers snap an exact
+      // `duration` seek back to 0.
+      const t = Math.min(scrollProgress * videoDuration, videoDuration - 0.05);
+      if (videoEl.readyState < 2 || !isBuffered(t)) return;
+      videoEl.currentTime = t;
+      shownProgress = scrollProgress;
+    };
+    const onMeta = () => {
+      videoDuration = videoEl.duration || 0;
+      syncVideo();
+    };
     videoEl.addEventListener("loadedmetadata", onMeta);
+    videoEl.addEventListener("progress", syncVideo);
+    videoEl.addEventListener("loadeddata", syncVideo);
+    videoEl.addEventListener("canplay", syncVideo);
     // Kick off buffering even though we never autoplay - but only when we
     // set the src ourselves: load() on a source already in flight restarts
     // the download.
@@ -290,13 +375,8 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
           duration: 1,
           onUpdate: () => {
             applyFocal(vid.t);
-            if (!videoDuration || videoEl.readyState < 2) return;
-            // Clamp just shy of the end — some browsers snap an exact
-            // `duration` seek back to 0.
-            videoEl.currentTime = Math.min(
-              vid.t * videoDuration,
-              videoDuration - 0.05,
-            );
+            scrollProgress = vid.t;
+            syncVideo();
           },
         },
         0,
@@ -366,6 +446,9 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
 
     return () => {
       videoEl.removeEventListener("loadedmetadata", onMeta);
+      videoEl.removeEventListener("progress", syncVideo);
+      videoEl.removeEventListener("loadeddata", syncVideo);
+      videoEl.removeEventListener("canplay", syncVideo);
       ctx.revert();
     };
   }, []);
@@ -926,6 +1009,28 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
         style={{ height: "500vh" }}
       >
         <section className="sticky top-0 h-screen w-full overflow-hidden">
+          {/* The first frame as a real image under the <video>. The phrases
+              are invisible until the visitor scrolls (by design), so without
+              this the largest thing painted early is the logo, and the
+              browser's LCP lands on the hero <h1> at the moment hydration
+              un-hides it: on a phone that is seconds after the truck was
+              already on screen. A <video> poster is not a reliable LCP
+              candidate; an <img> is. Same file as the poster, so one request,
+              and the video paints the identical frame over it when ready.
+
+              1 px short of the viewport on purpose: Chrome drops an image
+              that covers the whole viewport from LCP as "probably a
+              background". The video above it still covers the full screen,
+              and the missing line sits in the gradient's black edge. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/frames-vhero/frame_0001.webp"
+            alt=""
+            aria-hidden
+            fetchPriority="high"
+            decoding="async"
+            className="absolute inset-0 w-full h-[calc(100%-1px)] object-cover"
+          />
           <video
             id="hero-video"
             ref={videoRef}
@@ -947,7 +1052,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
           <script
             dangerouslySetInnerHTML={{
               __html:
-                "(function(){var v=document.getElementById('hero-video');if(!v)return;var done=false;function set(){if(done||v.getAttribute('src'))return;done=true;v.src=window.matchMedia('(max-width: 991px)').matches?'/videos/hero-mobile.mp4':'/videos/hero.mp4';}window.requestAnimationFrame(set);setTimeout(set,1500);})();",
+                "(function(){var v=document.getElementById('hero-video');if(!v)return;var done=false;function set(){if(done||v.getAttribute('src'))return;done=true;var c=navigator.connection,slow=!!(c&&(c.saveData||/^(slow-)?2g$|^3g$/.test(c.effectiveType||'')));v.src=slow?'/videos/hero-lite.mp4':window.matchMedia('(max-width: 991px)').matches?'/videos/hero-mobile.mp4':'/videos/hero.mp4';}window.requestAnimationFrame(set);setTimeout(set,1500);})();",
             }}
           />
           <div
@@ -1056,27 +1161,29 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
                 near the right edge, while the centre (ring hole) stays clear
                 and the top/bottom are faded by the mask — two edge waves
                 that curve toward their own edges, no visible full circle. */}
-            <MagicRings
-              color="#FFE533"
-              colorTwo="#FFF788"
-              ringCount={5}
-              speed={0.7}
-              attenuation={isMobileView ? 8 : 10}
-              lineThickness={isMobileView ? 3 : 2.2}
-              baseRadius={isMobileView ? 0.3 : 0.5}
-              radiusStep={isMobileView ? 0.025 : 0.05}
-              scaleRate={0.1}
-              opacity={isMobileView ? 0.45 : 0.35}
-              blur={0}
-              noiseAmount={0.03}
-              rotation={0}
-              ringGap={1.5}
-              fadeIn={0.7}
-              fadeOut={0.5}
-              followMouse={false}
-              parallax={0.05}
-              clickBurst={false}
-            />
+            <NearViewport>
+              <MagicRings
+                color="#FFE533"
+                colorTwo="#FFF788"
+                ringCount={5}
+                speed={0.7}
+                attenuation={isMobileView ? 8 : 10}
+                lineThickness={isMobileView ? 3 : 2.2}
+                baseRadius={isMobileView ? 0.3 : 0.5}
+                radiusStep={isMobileView ? 0.025 : 0.05}
+                scaleRate={0.1}
+                opacity={isMobileView ? 0.45 : 0.35}
+                blur={0}
+                noiseAmount={0.03}
+                rotation={0}
+                ringGap={1.5}
+                fadeIn={0.7}
+                fadeOut={0.5}
+                followMouse={false}
+                parallax={0.05}
+                clickBurst={false}
+              />
+            </NearViewport>
           </div>
           <div className="relative max-w-[1408px] mx-auto px-6 lg:px-12 flex flex-col items-center gap-6 lg:gap-10 text-center">
             <span
