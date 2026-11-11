@@ -428,6 +428,7 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
        starts the clip when it is on screen. */
     let inView = false;
     let clipTimer: ReturnType<typeof setTimeout> | null = null;
+    let postersWarmed = false;
     const assetsFor = (idx: number) => {
       const step = steps[idx];
       const w = mobileVideo ? mobileVideo.clientWidth : 0;
@@ -471,7 +472,20 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
           mobileVideo?.pause();
         }
       },
-      primePoster: () => showPoster(currentIdx),
+      primePoster: () => {
+        showPoster(currentIdx);
+        /* Warm the other steps' posters too (four small images, only once
+           the section is near): a step change swaps the poster while the
+           box is faded out, and on a cold cache the new one was not there
+           yet when the box faded back in, a second blink. */
+        if (postersWarmed || !mobileVideo || !isShown(mobileVideo)) return;
+        postersWarmed = true;
+        steps.forEach((_, idx) => {
+          const img = new Image();
+          img.decoding = "async";
+          img.src = assetsFor(idx).poster;
+        });
+      },
       // Layout changed (rotation, resize across the breakpoint).
       refresh: () => {
         if (!mobileVideo) return;
