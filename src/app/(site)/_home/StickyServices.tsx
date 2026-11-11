@@ -78,9 +78,31 @@ function setClipSources(video: HTMLVideoElement, src: string) {
   video.dataset.clip = src;
 }
 
+/* The poster is an <img> under the <video>, not the poster attribute, and
+   the <video> stays transparent until a frame of the clip has actually
+   been presented (data-playing, faded in by CSS). Safari drops a poster
+   attribute the moment load() or play() is called, before the first frame
+   is decoded, so every clip start blinked: once for the step's own fade
+   and once more for the blank between poster and first frame. */
+function revealWhenPlaying(video: HTMLVideoElement) {
+  if (video.dataset.playing !== undefined) return;
+  const show = () => {
+    video.dataset.playing = "";
+  };
+  video.addEventListener(
+    "playing",
+    () => {
+      if ("requestVideoFrameCallback" in video) video.requestVideoFrameCallback(show);
+      else show();
+    },
+    { once: true },
+  );
+}
+
 /* Drops the clip: its download is aborted, the decoder is released and
-   the element falls back to its poster. */
+   the element turns transparent again, showing the poster image under it. */
 function clearClipSources(video: HTMLVideoElement) {
+  delete video.dataset.playing;
   if (!video.dataset.clip) return;
   video.pause();
   video.querySelectorAll("source").forEach((el) => el.remove());
@@ -395,11 +417,13 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
     // renders one <video> per step instead). This was missing, so on mobile
     // the clip never changed while the text did.
     const mobileVideo = mobileWrapper.querySelector<HTMLVideoElement>("video");
+    const mobilePoster = mobileWrapper.querySelector<HTMLImageElement>("[data-mobile-poster]");
+    const mobileMedia = mobileVideo?.parentElement ?? null;
     let currentIdx = 0;
 
-    /* The pinned <video> starts with no poster and no sources: a poster
-       attribute is fetched at page load even inside a display:none
-       subtree, several screens above where it is seen. The playback
+    /* The pinned <video> starts with no sources and its poster <img>
+       with no src: either would be fetched at page load even inside a
+       display:none subtree, several screens above where it is seen. The playback
        effect below primes the poster when the section comes near and
        starts the clip when it is on screen. */
     let inView = false;
@@ -416,15 +440,19 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
     const showPoster = (idx: number) => {
       if (!mobileVideo || !isShown(mobileVideo)) return;
       const { poster } = assetsFor(idx);
-      if (mobileVideo.getAttribute("poster") !== poster) mobileVideo.setAttribute("poster", poster);
+      if (mobilePoster && mobilePoster.getAttribute("src") !== poster) {
+        mobilePoster.setAttribute("src", poster);
+      }
     };
     const playClip = (idx: number) => {
       if (!mobileVideo || !inView || !isShown(mobileVideo)) return;
       const { clip } = assetsFor(idx);
       if (mobileVideo.dataset.clip !== clip) {
+        delete mobileVideo.dataset.playing;
         setClipSources(mobileVideo, clip);
         mobileVideo.load();
       }
+      revealWhenPlaying(mobileVideo);
       void mobileVideo.play().catch(() => {});
     };
     const cancelClipTimer = () => {
@@ -462,9 +490,10 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
       currentIdx = idx;
       const step = steps[idx];
       if (!step || !eyebrowEl || !h2El || !pEl) return;
-      // Fade out text + video, swap the content AND the pinned video's clip,
-      // then fade back in.
-      const fadeTargets = [eyebrowEl, h2El, pEl, mobileVideo].filter(
+      // Fade out text + media box, swap the content AND the pinned clip,
+      // then fade back in. The box (poster image + video) fades as one;
+      // the video's own opacity belongs to revealWhenPlaying.
+      const fadeTargets = [eyebrowEl, h2El, pEl, mobileMedia].filter(
         Boolean,
       ) as HTMLElement[];
       gsap.to(fadeTargets, {
@@ -491,6 +520,9 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
           // crop; "cover" (default) for full-frame footage.
           if (mobileVideo) {
             mobileVideo.style.objectFit = step.fit ?? "cover";
+          }
+          if (mobilePoster) {
+            mobilePoster.style.objectFit = step.fit ?? "cover";
           }
           gsap.fromTo(
             fadeTargets,
@@ -546,13 +578,16 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
     const desktopVideos = items
       .map((item) => item.querySelector<HTMLVideoElement>("video"))
       .filter((v): v is HTMLVideoElement => Boolean(v));
+    const desktopPosters = Array.from(
+      root.querySelectorAll<HTMLImageElement>("[data-sticky-steps-item] img[data-poster]"),
+    );
     let inView = false;
     let near = false;
     const primePosters = () => {
       if (!near) return;
-      desktopVideos.forEach((v) => {
-        const poster = v.dataset.poster;
-        if (poster && !v.getAttribute("poster") && isShown(v)) v.setAttribute("poster", poster);
+      desktopPosters.forEach((img) => {
+        const poster = img.dataset.poster;
+        if (poster && !img.getAttribute("src") && isShown(img)) img.setAttribute("src", poster);
       });
       mobileClipRef.current?.primePoster();
     };
@@ -562,8 +597,10 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
         if (!v) return;
         const active =
           item.getAttribute("data-sticky-steps-item-status") === "active";
-        if (inView && active && isShown(v)) void v.play().catch(() => {});
-        else v.pause();
+        if (inView && active && isShown(v)) {
+          revealWhenPlaying(v);
+          void v.play().catch(() => {});
+        } else v.pause();
       });
       mobileClipRef.current?.setInView(inView);
     };
@@ -646,13 +683,21 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
                             screen. No `autoPlay`: it overrides
                             preload="none" and made all four files download
                             in full at page load, ahead of the hero video.
-                            `image` is the poster until then; it sits in
-                            data-poster and is attached when the section
-                            comes near, because a poster attribute is
-                            fetched at page load even when hidden. */}
-                        <video
+                            `image` is the poster until then: an <img>
+                            under the video whose src is attached when
+                            the section comes near (a poster is fetched at
+                            page load even when hidden). The video fades
+                            in over it once a frame is presented. */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
                           className="sticky-steps__cover-image"
                           data-poster={step.image}
+                          alt=""
+                          aria-hidden
+                          decoding="async"
+                        />
+                        <video
+                          className="sticky-steps__cover-image sticky-steps__clip"
                           loop
                           muted
                           playsInline
@@ -730,12 +775,20 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
                 background: "#000",
               }}
             >
-              {/* No poster and no <source> in the markup: the effects
-                  above attach the poster when the section comes near and
-                  the clip (phone-sized or desktop file) when it is on
-                  screen. */}
-              <video
+              {/* No poster src and no <source> in the markup: the effects
+                  above attach the poster image when the section comes
+                  near and the clip (phone-sized or desktop file) when it
+                  is on screen. */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 className="sticky-steps__cover-image"
+                data-mobile-poster=""
+                alt=""
+                aria-hidden
+                decoding="async"
+              />
+              <video
+                className="sticky-steps__cover-image sticky-steps__clip"
                 loop
                 muted
                 playsInline

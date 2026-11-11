@@ -122,6 +122,22 @@
   left: 0;
 }
 
+/* The clip sits over its poster image and stays transparent until a frame
+   has been presented (data-playing is set by StickyServices), then fades
+   in. Hiding is instant: it only happens while the box itself is faded
+   out or the clip has been dropped. An <img> with no src yet (posters are
+   attached when the section comes near) draws nothing. */
+.sticky-steps__clip {
+  opacity: 0;
+}
+.sticky-steps__clip[data-playing] {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+img.sticky-steps__cover-image:not([src]) {
+  visibility: hidden;
+}
+
 /* Character-wave target. Chars are visible by default in muted grey;
    when the parent step becomes "active", JS plays a colour wave that
    sweeps each char from grey → blue → ink, then leaves it at ink for
