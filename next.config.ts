@@ -21,6 +21,41 @@ function contentRedirects(): { source: string; destination: string; statusCode: 
   }
 }
 
+/* The old site lived on goatmovers.org (Webflow, taken down in November
+   2026). Vercel serves that domain from this project, and every old URL
+   lands on its new counterpart with a 301. The old URL list comes from the
+   Wayback Machine (last snapshot of the home page 14.07.2026): /, /portland,
+   /seattle, /vancouver, /policy, /privacypolicy, /free-estimate,
+   /free-estimate/confirmation_page, plus Webflow drafts (/main, /2, /copy,
+   /page48537371.html) that go to the home page with everything unknown.
+   Specific paths first: Next picks the first matching redirect. */
+const OLD_HOST = "(?:www\\.)?goatmovers\\.org";
+const NEW_ORIGIN = "https://thegoatmovers.net";
+
+function oldDomainRedirects(): {
+  source: string;
+  destination: string;
+  statusCode: 301;
+  has: { type: "host"; value: string }[];
+}[] {
+  const map: [string, string][] = [
+    ["/portland", "/portland-movers"],
+    ["/seattle", "/seattle-movers"],
+    ["/vancouver", "/vancouver-movers"],
+    ["/policy", "/privacy"],
+    ["/privacypolicy", "/privacy"],
+    ["/free-estimate", "/contacts"],
+    ["/free-estimate/:path*", "/contacts"],
+    ["/:path*", "/"],
+  ];
+  return map.map(([source, to]) => ({
+    source,
+    destination: `${NEW_ORIGIN}${to}`,
+    statusCode: 301 as const,
+    has: [{ type: "host" as const, value: OLD_HOST }],
+  }));
+}
+
 /** Security + perf headers applied to every response. */
 const securityHeaders = [
   /* Force HTTPS for 2 years + include subdomains. Only safe after HTTPS is verified in prod. */
@@ -69,7 +104,7 @@ const nextConfig: NextConfig = {
   },
 
   async redirects() {
-    return contentRedirects();
+    return [...oldDomainRedirects(), ...contentRedirects()];
   },
 
   async headers() {
