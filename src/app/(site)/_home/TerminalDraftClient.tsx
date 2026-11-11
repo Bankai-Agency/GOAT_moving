@@ -267,9 +267,11 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
 
     /* Seek engine. One seek in flight at a time: a seek issued while the
        previous one is still decoding queues up on a weak device and the
-       picture trails the finger. The target is quantised to a frame
-       (24 fps) so two scroll ticks inside one frame do not cost two
-       decodes. `seeked` releases the next seek and times the previous
+       picture trails the finger. The target is quantised to the CENTRE
+       of a frame (24 fps): two scroll ticks inside one frame do not cost
+       two decodes, and a seek to an exact frame boundary lands on either
+       neighbour depending on rounding, which showed every third frame
+       twice and then skipped one (the scrub looked torn). `seeked` releases the next seek and times the previous
        one; the p95 of those timings is the device's real scrub budget. */
     const FRAME = 1 / 24;
     const SEEK_LAG_LIMIT_MS = 120;
@@ -298,8 +300,8 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
       // Clamp just shy of the end — some browsers snap an exact
       // `duration` seek back to 0.
       const t = Math.min(
-        Math.round((scrollProgress * videoDuration) / FRAME) * FRAME,
-        videoDuration - 0.05,
+        (Math.floor((scrollProgress * videoDuration) / FRAME) + 0.5) * FRAME,
+        videoDuration - FRAME / 2,
       );
       if (Math.abs(t - shownTime) < FRAME / 2) return;
       if (videoEl.readyState < 2 || !isBuffered(t)) return;
@@ -384,6 +386,10 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
       // opacity:0 below). CSS keeps phrases hidden until this runs so they
       // never flash-overlap before the scroll reveal initialises.
       el.style.opacity = "1";
+      // The first phrase is on screen from the first paint (CSS shows it
+      // before this script runs), so its chars start visible; the scroll
+      // timeline only fades it out.
+      const startOpacity = el.hasAttribute("data-hero-first") ? "1" : "0";
       // Split on whitespace AND hyphens, keeping the delimiters as
       // their own segments so hyphens become independent line-break
       // candidates (otherwise long hyphenated words like
@@ -399,7 +405,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
           const dash = document.createElement("span");
           dash.className = "hero-char";
           dash.style.display = "inline-block";
-          dash.style.opacity = "0";
+          dash.style.opacity = startOpacity;
           dash.style.willChange = "opacity";
           dash.textContent = "-";
           el.appendChild(dash);
@@ -412,7 +418,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
           const span = document.createElement("span");
           span.className = "hero-char";
           span.style.display = "inline-block";
-          span.style.opacity = "0";
+          span.style.opacity = startOpacity;
           span.style.willChange = "opacity";
           span.textContent = ch;
           wordSpan.appendChild(span);
@@ -421,6 +427,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
       });
     });
 
+    let hintHidden = false;
     const ctx = gsap.context(() => {
       const vid = { t: 0 };
       const tl = gsap.timeline({
@@ -456,6 +463,11 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
           onUpdate: () => {
             scrollProgress = vid.t;
             syncVideo();
+            const scrolled = vid.t > 0.012;
+            if (scrolled !== hintHidden) {
+              hintHidden = scrolled;
+              wrapperEl.toggleAttribute("data-hero-scrolled", scrolled);
+            }
             // A quarter into the pin with no frame shown yet and the
             // page open for a while: the clip is late, stop waiting.
             if (
@@ -488,8 +500,9 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
           // Each char starts transparent + blue. A wave of opacity reveals
           // chars in blue, and a longer trailing wave eases their color
           // to white — Terminal-style soft shimmer.
-          gsap.set(chars, { color: BLUE });
           const start = 0.04 + i * slot;
+          if (i > 0) {
+          gsap.set(chars, { color: BLUE });
           // Wave 1 (opacity 0 → 1, still blue): each char eases in
           // smoothly, with a generous overlap between neighbours.
           const stagIn = (fadeIn * 0.5) / chars.length;
@@ -517,6 +530,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
             },
             start + stagIn * 3,
           );
+          }
           if (i < N - 1) {
             const stagOut = fadeOut / chars.length;
             tl.to(
@@ -1099,7 +1113,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
         data-hero-region=""
         className="relative w-full"
       >
-        <section className="sticky top-0 h-screen w-full overflow-hidden">
+        <section className="sticky top-0 h-screen w-full overflow-hidden bg-black">
           {/* The first frame as a real image under the <video>. The phrases
               are invisible until the visitor scrolls (by design), so without
               this the largest thing painted early is the logo, and the
@@ -1117,20 +1131,20 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
             {/* Phones and tablets get the portrait clip (heroSource.ts), so
                 their poster is its first frame: same framing, no jump when
                 the video paints over the image. */}
-            <source media="(max-width: 991px)" srcSet="/frames-vhero/frame_0001-portrait.webp" />
+            <source media="(max-width: 991px)" srcSet="/frames-vhero/frame_0001-phone.webp" />
             <img
               src="/frames-vhero/frame_0001.webp"
               alt=""
               aria-hidden
               fetchPriority="high"
               decoding="async"
-              className="absolute inset-0 w-full h-[calc(100%-1px)] object-cover"
+              className="hero-media absolute inset-0 w-full h-[calc(100%-1px)] object-cover"
             />
           </picture>
           <video
             id="hero-video"
             ref={videoRef}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="hero-media absolute inset-0 w-full h-full object-cover"
             muted
             playsInline
             preload="auto"
@@ -1161,6 +1175,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
                 <h1
                   key={i}
                   data-hero-phrase
+                  data-hero-first={i === 0 ? "" : undefined}
                   style={{
                     position: "absolute",
                     top: pos.top,
@@ -1179,6 +1194,12 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
                 </h1>
               );
             })}
+          </div>
+          {/* The hero is driven by the scroll; nothing on the first screen
+              said so. Fades out on the first scroll (data-hero-scrolled). */}
+          <div aria-hidden className="hero-scroll-hint">
+            <span className="hero-scroll-hint__label">Scroll</span>
+            <span className="hero-scroll-hint__line" />
           </div>
         </section>
       </div>

@@ -22,14 +22,14 @@ export default function Home() {
   return (
     <SmoothScrollProvider>
       <JsonLd data={[localBusinessSchema(), websiteSchema()]} />
-      {/* Preload the hero's first frame (the LCP paint): the portrait cut
+      {/* Preload the hero's first frame (the LCP paint): the phone cut
           on phones and tablets, the landscape frame on desktop, matching
           the <picture> in the hero. Without the media split a phone
           fetched both. */}
       <link
         rel="preload"
         as="image"
-        href="/frames-vhero/frame_0001-portrait.webp"
+        href="/frames-vhero/frame_0001-phone.webp"
         type="image/webp"
         media="(max-width: 991px)"
       />

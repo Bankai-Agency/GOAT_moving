@@ -218,6 +218,86 @@ body:has([data-accent="blue"]) .bg-\[\#FFE533\] .text-\[\#0c0c0c\] {
 [data-hero-phrase] {
   opacity: 0;
 }
+/* ...except the first one: it is the headline of the first screen and is
+   visible from the first paint, before any script. */
+[data-hero-phrase][data-hero-first] {
+  opacity: 1;
+}
+
+/* ── Hero on phones and tablets: the clip as a band ──────────────
+   The source clip is 1280x720. Filling a portrait screen with it left a
+   404 px wide slice stretched three times, with half the truck outside
+   the frame. Here the clip is a 4:5 crop (576x720, the whole truck)
+   across the full width at the top, fading into the black section below
+   it; the phrase and the scroll hint sit on the black. */
+@media (max-width: 991px) {
+  .hero-media {
+    inset: 0 0 auto 0;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    max-height: 100%;
+    object-position: 50% 62%;
+    -webkit-mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 74%, transparent 100%);
+  }
+}
+
+/* ── Scroll hint ─────────────────────────────────────────────────
+   Sits just above the bottom of the VISIBLE viewport: the pinned screen
+   is 100vh tall, and on iOS the lowest ~85 px of that are under the
+   browser toolbar until the first scroll (100lvh - 100svh). */
+.hero-scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  bottom: calc(100lvh - 100svh + 22px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+[data-hero-scrolled] .hero-scroll-hint {
+  opacity: 0;
+}
+.hero-scroll-hint__label {
+  font-family: var(--font-roboto-mono, ui-monospace, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+}
+.hero-scroll-hint__line {
+  position: relative;
+  width: 1px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.22);
+  overflow: hidden;
+}
+.hero-scroll-hint__line::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 45%;
+  background: #ffe533;
+  animation: hero-scroll-hint 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes hero-scroll-hint {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(230%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-hint__line::after {
+    animation: none;
+  }
+}
 
 /* ── Hero phrases: mobile re-anchor ──────────────────────────────
    On desktop each phrase is absolutely positioned to a "wandering"
@@ -228,8 +308,11 @@ body:has([data-accent="blue"]) .bg-\[\#FFE533\] .text-\[\#0c0c0c\] {
    transform/max-width/text-align. */
 @media (max-width: 991px) {
   [data-hero-phrase] {
-    top: auto !important;
-    bottom: 13% !important;
+    /* A caption right under the clip band (which is 125vw tall, see
+       .hero-media), but never so low that it runs into the scroll hint
+       at the bottom of the visible viewport. */
+    top: min(calc(125vw - 6px), calc(100svh - 200px)) !important;
+    bottom: auto !important;
     left: 5% !important;
     right: 5% !important;
     transform: none !important;

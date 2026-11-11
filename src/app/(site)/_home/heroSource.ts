@@ -10,9 +10,13 @@
  *   static  poster only, shorter pin. Reduced motion, data saver, a weak
  *           device (deviceMemory <= 2 or <= 2 cores).
  *   light   a small clip that loads within a few seconds on a slow 4G
- *           link (~1.6 Mbit/s): the portrait cut on every phone and
- *           tablet (<= 991px), the 640x360 clip on a desktop that reports
- *           a 2G/3G connection.
+ *           link (~1.6 Mbit/s): the phone cut on every phone and tablet
+ *           (<= 991px), the 640x360 clip on a desktop that reports a
+ *           2G/3G connection. The phone cut is a 4:5 crop (576x720) shown
+ *           as a full-width band at the top of the screen, not a
+ *           full-bleed portrait slice: the source is 1280x720, and a
+ *           slice narrow enough to fill a phone screen was 404 px wide,
+ *           stretched 3x and cutting the truck in half.
  *   full    the 1280x720 desktop clip: AV1 when the browser decodes it in
  *           hardware, HEVC where the browser plays it (Safari, hardware),
  *           H.264 otherwise.
@@ -38,7 +42,7 @@ export type HeroChoice = {
 };
 
 export const HERO_SOURCES = {
-  portrait: "/videos/hero-portrait.mp4",
+  portrait: "/videos/hero-phone.mp4",
   lite: "/videos/hero-lite.mp4",
   h264: "/videos/hero.mp4",
   hevc: "/videos/hero.hevc.mp4",
@@ -47,7 +51,7 @@ export const HERO_SOURCES = {
 
 export const HERO_POSTERS = {
   landscape: "/frames-vhero/frame_0001.webp",
-  portrait: "/frames-vhero/frame_0001-portrait.webp",
+  portrait: "/frames-vhero/frame_0001-phone.webp",
 } as const;
 
 export const MOBILE_QUERY = "(max-width: 991px)";

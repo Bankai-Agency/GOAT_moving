@@ -84,7 +84,7 @@ async function phoneSlow(browser) {
   await page.waitForTimeout(12000);
   const s = await probe(page);
   console.log(JSON.stringify(s));
-  check(s.tier === "light" && s.src === "hero-portrait.mp4", "phone gets the light tier with the portrait clip");
+  check(s.tier === "light" && s.src === "hero-phone.mp4", "phone gets the light tier with the phone clip");
   check(s.pinVh !== null && s.pinVh <= 3.05, `phone pin is three screens (got ${s.pinVh})`);
   check(s.jumps.length === 0, `no backward scroll jump while loading (got ${JSON.stringify(s.jumps)})`);
   check(s.y > 1000, `the swipes moved the page (y=${s.y})`);
