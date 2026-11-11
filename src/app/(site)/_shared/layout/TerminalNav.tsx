@@ -1155,9 +1155,29 @@ export function TerminalNav() {
                         />
                       </svg>
                     </button>
+                    {/* Height animates through grid-template-rows 0fr → 1fr,
+                        i.e. over the list's real height. The old
+                        max-height 0 → 800px ran its easing over 800 px
+                        while the list is ~200 px tall, so it snapped open
+                        in the first quarter of the transition and, on the
+                        way back, sat still and then dropped. Opening is
+                        a touch slower than closing. */}
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateRows:
+                          mobileSubmenu === link.label ? "1fr" : "0fr",
+                        opacity: mobileSubmenu === link.label ? 1 : 0,
+                        transition:
+                          mobileSubmenu === link.label
+                            ? "grid-template-rows .46s cubic-bezier(0.4, 0, 0.2, 1), opacity .4s ease .06s"
+                            : "grid-template-rows .36s cubic-bezier(0.4, 0, 0.2, 1), opacity .24s ease",
+                      }}
+                    >
                     <div
                       style={{
                         overflow: "hidden",
+                        minHeight: 0,
                         display: "grid",
                         gridTemplateColumns:
                           link.label === "Locations"
@@ -1165,13 +1185,7 @@ export function TerminalNav() {
                             : "1fr",
                         columnGap: 16,
                         rowGap: 0,
-                        maxHeight:
-                          mobileSubmenu === link.label ? "800px" : "0px",
-                        opacity: mobileSubmenu === link.label ? 1 : 0,
-                        paddingBottom:
-                          mobileSubmenu === link.label ? 12 : 0,
-                        transition:
-                          "max-height .3s ease-out, opacity .3s ease-out, padding-bottom .3s ease-out",
+                        alignContent: "start",
                       }}
                     >
                       {link.items.map((item) => (
@@ -1196,6 +1210,10 @@ export function TerminalNav() {
                           {item.label}
                         </Link>
                       ))}
+                      {/* Bottom spacing lives inside the clipped box so it
+                          collapses with the list. */}
+                      <span aria-hidden style={{ gridColumn: "1 / -1", height: 12 }} />
+                    </div>
                     </div>
                   </>
                 ) : (
