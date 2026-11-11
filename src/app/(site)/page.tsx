@@ -22,12 +22,23 @@ export default function Home() {
   return (
     <SmoothScrollProvider>
       <JsonLd data={[localBusinessSchema(), websiteSchema()]} />
-      {/* Preload the hero's first frame (the LCP paint). */}
+      {/* Preload the hero's first frame (the LCP paint): the portrait cut
+          on phones and tablets, the landscape frame on desktop, matching
+          the <picture> in the hero. Without the media split a phone
+          fetched both. */}
+      <link
+        rel="preload"
+        as="image"
+        href="/frames-vhero/frame_0001-portrait.webp"
+        type="image/webp"
+        media="(max-width: 991px)"
+      />
       <link
         rel="preload"
         as="image"
         href="/frames-vhero/frame_0001.webp"
         type="image/webp"
+        media="(min-width: 992px)"
       />
       <main>
         <TerminalDraftClient />

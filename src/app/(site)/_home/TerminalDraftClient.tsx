@@ -1131,7 +1131,6 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
             id="hero-video"
             ref={videoRef}
             className="absolute inset-0 w-full h-full object-cover"
-            poster="/frames-vhero/frame_0001.webp"
             muted
             playsInline
             preload="auto"
@@ -1352,7 +1351,6 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
                   fill
                   sizes="100vw"
                   className="object-cover"
-                  priority={i === 0}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
               </div>

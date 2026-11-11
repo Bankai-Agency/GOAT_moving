@@ -8,26 +8,55 @@ import { defaultStickySteps, type StickyStep } from "./stickyServicesData";
    BLUE for the hero wave). */
 const BLUE = "#FFE533";
 
-/* AV1 twins of the H.264 service clips: about half the bytes at the same
-   picture (each one is checked against its H.264 file at VMAF >= 97 by
-   scripts/video-av1.sh, which is also how to regenerate them). Listed by
-   hand rather than derived from the name, so a clip without an AV1 file
-   simply plays its H.264 one. Browsers that cannot decode AV1 (older
-   iPhones, most of Safari before 17) skip the first <source> by its codecs
-   string without fetching a byte of it. */
+/* Lighter twins of the H.264 service clips, listed first in <source> so a
+   browser that can play one never fetches the H.264 file. AV1: about half
+   the bytes at the same picture (checked against the H.264 file at
+   VMAF >= 97 by scripts/video-av1.sh, which is also how to regenerate
+   it). HEVC: for Safari without AV1 (every iPhone before 15 Pro, Intel and
+   M1/M2 Macs), which would otherwise pull the 4 MB H.264 file. Listed by
+   hand rather than derived from the name, so a clip without a twin simply
+   plays its H.264 one. A browser skips a <source> it cannot decode by its
+   codecs string without fetching a byte of it. */
 const AV1_CLIPS: Record<string, string> = {
   // The other three clips are grainier: their AV1 encodes either miss the
   // VMAF bar or come out no smaller than the H.264 file, so they have none.
   "/videos/service-long-distance.mp4": "/videos/service-long-distance.av1.mp4",
 };
+const HEVC_CLIPS: Record<string, string> = {
+  "/videos/service-long-distance.mp4": "/videos/service-long-distance.hevc.mp4",
+};
 const AV1_TYPE = 'video/mp4; codecs="av01.0.08M.08"';
+const HEVC_TYPE = 'video/mp4; codecs="hvc1"';
 const H264_TYPE = "video/mp4";
+
+/* Phone set. The pinned mobile panel shows the clip in a box about
+   340x250 CSS px with object-fit: cover, so more than half of a
+   1244x1664 desktop frame was downloaded only to be cropped away, at a
+   bitrate above what a slow 4G link carries. These are centre crops at
+   720 px (the part `cover` showed anyway), 0.2-0.65 MB each, with posters
+   cut from their first frames. Used when the panel is phone-sized; a
+   tablet in the mobile layout keeps the desktop files. */
+const PHONE_CLIPS: Record<string, string> = {
+  "/videos/service-local-moving.mp4": "/videos/service-local-moving-m.mp4",
+  "/videos/service-long-distance.mp4": "/videos/service-long-distance-m.mp4",
+  "/videos/service-commercial.mp4": "/videos/service-commercial-m.mp4",
+  "/videos/service-packing.mp4": "/videos/service-packing-m.mp4",
+};
+const PHONE_POSTERS: Record<string, string> = {
+  "/images/service-local-moving-poster.webp": "/images/service-local-moving-poster-m.webp",
+  "/images/service-long-distance-poster.webp": "/images/service-long-distance-poster-m.webp",
+  "/images/service-commercial-poster.webp": "/images/service-commercial-poster-m.webp",
+  "/images/service-packing-poster.webp": "/images/service-packing-poster-m.webp",
+};
+const PHONE_PANEL_MAX_WIDTH = 500;
 
 function ClipSources({ src }: { src: string }) {
   const av1 = AV1_CLIPS[src];
+  const hevc = HEVC_CLIPS[src];
   return (
     <>
       {av1 && <source src={av1} type={AV1_TYPE} />}
+      {hevc && <source src={hevc} type={HEVC_TYPE} />}
       <source src={src} type={H264_TYPE} />
     </>
   );
@@ -37,17 +66,39 @@ function ClipSources({ src }: { src: string }) {
    per step at runtime: replace its <source> children, then load(). */
 function setClipSources(video: HTMLVideoElement, src: string) {
   video.querySelectorAll("source").forEach((el) => el.remove());
-  const av1 = AV1_CLIPS[src];
   const add = (href: string, type: string) => {
     const el = document.createElement("source");
     el.src = href;
     el.type = type;
     video.appendChild(el);
   };
-  if (av1) add(av1, AV1_TYPE);
+  if (AV1_CLIPS[src]) add(AV1_CLIPS[src], AV1_TYPE);
+  if (HEVC_CLIPS[src]) add(HEVC_CLIPS[src], HEVC_TYPE);
   add(src, H264_TYPE);
   video.dataset.clip = src;
 }
+
+/* Drops the clip: its download is aborted, the decoder is released and
+   the element falls back to its poster. */
+function clearClipSources(video: HTMLVideoElement) {
+  if (!video.dataset.clip) return;
+  video.pause();
+  video.querySelectorAll("source").forEach((el) => el.remove());
+  delete video.dataset.clip;
+  video.load();
+}
+
+/* Both layouts (desktop list, mobile pinned panel) are always in the DOM
+   and one of them is display:none. A hidden <video> still downloads and
+   decodes when played, so everything below asks this first. */
+const isShown = (el: Element | null) => Boolean(el && el.getClientRects().length);
+
+/* What the mobile-panel effect exposes to the playback effect. */
+type MobileClipControl = {
+  setInView: (inView: boolean) => void;
+  primePoster: () => void;
+  refresh: () => void;
+};
 
 
 /* ── Second services block (sticky-steps) — extracted so each page can
@@ -59,6 +110,7 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
   const mobileEyebrowRef = useRef<HTMLSpanElement>(null);
   const mobileH2Ref = useRef<HTMLHeadingElement>(null);
   const mobilePRef = useRef<HTMLParagraphElement>(null);
+  const mobileClipRef = useRef<MobileClipControl | null>(null);
 
   /* ── SERVICES VISUAL: terminal-industries-style notch silhouette,
      scroll-driven. Each `.sticky-steps__visual.mp5-notch-shaped`
@@ -344,6 +396,67 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
     // the clip never changed while the text did.
     const mobileVideo = mobileWrapper.querySelector<HTMLVideoElement>("video");
     let currentIdx = 0;
+
+    /* The pinned <video> starts with no poster and no sources: a poster
+       attribute is fetched at page load even inside a display:none
+       subtree, several screens above where it is seen. The playback
+       effect below primes the poster when the section comes near and
+       starts the clip when it is on screen. */
+    let inView = false;
+    let clipTimer: ReturnType<typeof setTimeout> | null = null;
+    const assetsFor = (idx: number) => {
+      const step = steps[idx];
+      const w = mobileVideo ? mobileVideo.clientWidth : 0;
+      const phone = w > 0 && w <= PHONE_PANEL_MAX_WIDTH;
+      return {
+        clip: (phone && PHONE_CLIPS[step.video]) || step.video,
+        poster: (phone && PHONE_POSTERS[step.image]) || step.image,
+      };
+    };
+    const showPoster = (idx: number) => {
+      if (!mobileVideo || !isShown(mobileVideo)) return;
+      const { poster } = assetsFor(idx);
+      if (mobileVideo.getAttribute("poster") !== poster) mobileVideo.setAttribute("poster", poster);
+    };
+    const playClip = (idx: number) => {
+      if (!mobileVideo || !inView || !isShown(mobileVideo)) return;
+      const { clip } = assetsFor(idx);
+      if (mobileVideo.dataset.clip !== clip) {
+        setClipSources(mobileVideo, clip);
+        mobileVideo.load();
+      }
+      void mobileVideo.play().catch(() => {});
+    };
+    const cancelClipTimer = () => {
+      if (clipTimer) clearTimeout(clipTimer);
+      clipTimer = null;
+    };
+    mobileClipRef.current = {
+      setInView: (v) => {
+        if (v === inView) return;
+        inView = v;
+        if (v) {
+          showPoster(currentIdx);
+          playClip(currentIdx);
+        } else {
+          cancelClipTimer();
+          mobileVideo?.pause();
+        }
+      },
+      primePoster: () => showPoster(currentIdx),
+      // Layout changed (rotation, resize across the breakpoint).
+      refresh: () => {
+        if (!mobileVideo) return;
+        if (!isShown(mobileVideo)) {
+          cancelClipTimer();
+          clearClipSources(mobileVideo);
+        } else if (inView) {
+          showPoster(currentIdx);
+          playClip(currentIdx);
+        }
+      },
+    };
+
     const swapTo = (idx: number) => {
       if (idx === currentIdx) return;
       currentIdx = idx;
@@ -363,11 +476,15 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
           eyebrowEl.textContent = step.eyebrow;
           h2El.textContent = step.h2;
           pEl.textContent = step.p;
-          if (mobileVideo && mobileVideo.dataset.clip !== step.video) {
-            mobileVideo.setAttribute("poster", step.image);
-            setClipSources(mobileVideo, step.video);
-            mobileVideo.load();
-            void mobileVideo.play().catch(() => {});
+          if (mobileVideo && mobileVideo.dataset.clip !== assetsFor(idx).clip) {
+            /* The step's poster shows at once; its clip only if the
+               visitor stays on the step. A swipe crosses a step in under
+               a second, and loading every clip on the way aborted each
+               download half-finished and paid for bytes nobody saw. */
+            clearClipSources(mobileVideo);
+            showPoster(idx);
+            cancelClipTimer();
+            clipTimer = setTimeout(() => playClip(currentIdx), 350);
           }
           // Per-step mobile object-fit: "contain" for a single centred
           // subject on a solid bg (e.g. the old vase clip) that cover would
@@ -395,6 +512,8 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
       start: "top top",
       end: "bottom bottom",
       onUpdate: (self) => {
+        // On desktop this wrapper is display:none; its progress is noise.
+        if (!isShown(mobileWrapper)) return;
         const idx = Math.min(
           totalSteps - 1,
           Math.floor(self.progress * totalSteps),
@@ -405,37 +524,48 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
 
     return () => {
       trigger.kill();
+      cancelClipTimer();
+      mobileClipRef.current = null;
+      if (mobileVideo) clearClipSources(mobileVideo);
     };
   }, []);
 
-  /* ── SERVICES videos: play only the ACTIVE step's video, and only while
-     the section is on-screen — cuts up to 4 concurrent decodes to 1 and
-     stops all decoding once scrolled past. This effect is also what starts
-     playback at all (the <video> tags carry no autoPlay), so a clip is
-     fetched the first time its step is active on screen, not at load. */
+  /* ── SERVICES videos: play only the ACTIVE step's video of the layout
+     that is actually displayed, and only while the section is on-screen:
+     one decoder instead of up to five, none once scrolled past. This
+     effect is also what starts playback at all (the <video> tags carry no
+     autoPlay), so a clip is fetched the first time its step is active on
+     screen, not at load. Posters are deferred the same way (data-poster)
+     and attached when the section is within a screen and a half. */
   useEffect(() => {
     const root = stickyStepsRef.current;
     if (!root) return;
     const items = Array.from(
       root.querySelectorAll<HTMLElement>("[data-sticky-steps-item]"),
     );
-    const mobileVideo = root.querySelector<HTMLVideoElement>(
-      ".sticky-steps__mobile video",
-    );
+    const desktopVideos = items
+      .map((item) => item.querySelector<HTMLVideoElement>("video"))
+      .filter((v): v is HTMLVideoElement => Boolean(v));
     let inView = false;
+    let near = false;
+    const primePosters = () => {
+      if (!near) return;
+      desktopVideos.forEach((v) => {
+        const poster = v.dataset.poster;
+        if (poster && !v.getAttribute("poster") && isShown(v)) v.setAttribute("poster", poster);
+      });
+      mobileClipRef.current?.primePoster();
+    };
     const sync = () => {
       items.forEach((item) => {
         const v = item.querySelector<HTMLVideoElement>("video");
         if (!v) return;
         const active =
           item.getAttribute("data-sticky-steps-item-status") === "active";
-        if (inView && active) void v.play().catch(() => {});
+        if (inView && active && isShown(v)) void v.play().catch(() => {});
         else v.pause();
       });
-      if (mobileVideo) {
-        if (inView) void mobileVideo.play().catch(() => {});
-        else mobileVideo.pause();
-      }
+      mobileClipRef.current?.setInView(inView);
     };
     const mo = new MutationObserver(sync);
     items.forEach((item) =>
@@ -452,13 +582,33 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
       { rootMargin: "100px" },
     );
     io.observe(root);
+    const nearIo = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        near = true;
+        primePosters();
+      },
+      { rootMargin: "150% 0px" },
+    );
+    nearIo.observe(root);
+    // Rotation or a resize across the breakpoint swaps which layout shows.
+    let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+    const onResize = () => {
+      if (resizeTimer) clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        primePosters();
+        sync();
+        mobileClipRef.current?.refresh();
+      }, 200);
+    };
+    window.addEventListener("resize", onResize);
     return () => {
       mo.disconnect();
       io.disconnect();
-      items.forEach((item) =>
-        item.querySelector<HTMLVideoElement>("video")?.pause(),
-      );
-      mobileVideo?.pause();
+      nearIo.disconnect();
+      window.removeEventListener("resize", onResize);
+      if (resizeTimer) clearTimeout(resizeTimer);
+      desktopVideos.forEach((v) => v.pause());
     };
   }, []);
 
@@ -496,10 +646,13 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
                             screen. No `autoPlay`: it overrides
                             preload="none" and made all four files download
                             in full at page load, ahead of the hero video.
-                            `image` is the poster until then. */}
+                            `image` is the poster until then; it sits in
+                            data-poster and is attached when the section
+                            comes near, because a poster attribute is
+                            fetched at page load even when hidden. */}
                         <video
                           className="sticky-steps__cover-image"
-                          poster={step.image}
+                          data-poster={step.image}
                           loop
                           muted
                           playsInline
@@ -577,17 +730,17 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
                 background: "#000",
               }}
             >
+              {/* No poster and no <source> in the markup: the effects
+                  above attach the poster when the section comes near and
+                  the clip (phone-sized or desktop file) when it is on
+                  screen. */}
               <video
                 className="sticky-steps__cover-image"
-                data-clip={steps[0].video}
-                poster={steps[0].image}
                 loop
                 muted
                 playsInline
                 preload="none"
-              >
-                <ClipSources src={steps[0].video} />
-              </video>
+              />
             </div>
           </div>
         </div>
