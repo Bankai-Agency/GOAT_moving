@@ -42,7 +42,11 @@ export function OtherServicesSection({
         </div>
 
         {/* Service cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
+        <div
+          className={`grid grid-cols-1 gap-4 lg:gap-5 ${
+            services.length >= 4 ? "md:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-3"
+          }`}
+        >
           {services.map((service, i) => (
             <Link
               key={i}

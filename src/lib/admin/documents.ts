@@ -122,6 +122,23 @@ const otherServicesGroup = f.group("otherServices", "Другие услуги (
   f.list("items", "Карточки", otherServiceFields, { itemLabel: "карточку", titleKey: "title" }),
 ]);
 
+const routesGroup = f.group("routes", "Маршруты (Where We Move)", [
+  f.text("label", "Надпись над заголовком"),
+  f.text("title", "Заголовок"),
+  f.list(
+    "items",
+    "Маршруты",
+    [
+      f.text("fromCode", "Код откуда", { placeholder: "PDX" }),
+      f.text("fromName", "Откуда", { placeholder: "Portland, OR" }),
+      f.text("toCode", "Код куда", { placeholder: "CA" }),
+      f.text("toName", "Куда", { placeholder: "California" }),
+      f.text("desc", "Описание"),
+    ],
+    { itemLabel: "маршрут", titleKey: "toName" },
+  ),
+]);
+
 /* ───────────── documents ───────────── */
 
 export const DOCUMENTS: DocumentDef[] = [
@@ -341,22 +358,60 @@ export const DOCUMENTS: DocumentDef[] = [
       whatsIncludedGroup(false),
       whyTrustGroup,
       howItWorksGroup,
-      f.group("routes", "Маршруты (Where We Move)", [
+      routesGroup,
+      faqGroup,
+      otherServicesGroup,
+    ],
+  },
+  {
+    id: "services/shared-load-moving",
+    file: "src/content/services/shared-load-moving.json",
+    label: "Shared Load Moving",
+    description: "Страница /shared-load-moving: сборный груз на 1000+ миль, оплата за объём.",
+    group: "pages",
+    urls: ["/shared-load-moving"],
+    kind: "single",
+    schema: [
+      meta,
+      heroGroup,
+      f.group("facts", "Блок фактов (Shared Truck Delivery)", [
         f.text("label", "Надпись над заголовком"),
-        f.text("title", "Заголовок"),
+        f.text("title", "Заголовок", { required: true }),
+        f.textarea("subtitle", "Подзаголовок", { rows: 2 }),
         f.list(
           "items",
-          "Маршруты",
+          "Карточки",
           [
-            f.text("fromCode", "Код откуда", { placeholder: "PDX" }),
-            f.text("fromName", "Откуда", { placeholder: "Portland, OR" }),
-            f.text("toCode", "Код куда", { placeholder: "CA" }),
-            f.text("toName", "Куда", { placeholder: "California" }),
-            f.text("desc", "Описание"),
+            f.text("label", "Подпись над цифрой", { placeholder: "Delivery window" }),
+            f.text("value", "Крупная цифра", { required: true, placeholder: "7-14 days" }),
+            f.text("title", "Заголовок", { required: true }),
+            f.textarea("description", "Описание", { rows: 2 }),
           ],
-          { itemLabel: "маршрут", titleKey: "toName" },
+          { itemLabel: "карточку", titleKey: "title" },
         ),
+        f.text("note", "Строка под карточками"),
+        f.text("ctaLabel", "Текст кнопки"),
       ]),
+      f.group("options", "Shared vs. Dedicated (два варианта)", [
+        f.text("label", "Надпись над заголовком"),
+        f.text("title", "Заголовок", { required: true }),
+        f.text("subtitle", "Подзаголовок"),
+        f.list(
+          "items",
+          "Варианты",
+          [...iconItemFields, f.text("bestFor", "Best for", { optional: true, placeholder: "Moves over 1,000 miles…" })],
+          { itemLabel: "вариант", titleKey: "title" },
+        ),
+        f.group("dedicated", "Ссылка на dedicated-страницу", [
+          f.text("text", "Текст перед ссылкой"),
+          f.text("linkLabel", "Текст ссылки"),
+          f.text("href", "Ссылка", { placeholder: "/long-distance-moving", mono: true }),
+        ]),
+      ]),
+      whatsIncludedGroup(false),
+      whyTrustGroup,
+      howItWorksGroup,
+      routesGroup,
       faqGroup,
       otherServicesGroup,
     ],

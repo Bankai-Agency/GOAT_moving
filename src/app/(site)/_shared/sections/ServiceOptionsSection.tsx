@@ -17,6 +17,8 @@ export type ServiceOptionsSectionProps = {
   title?: string;
   subtitle?: string;
   options: ServiceOption[];
+  /** Optional line under the rows (e.g. a cross-link to a related page). */
+  footer?: React.ReactNode;
 };
 
 /**
@@ -34,6 +36,7 @@ export function ServiceOptionsSection({
   title = "Choose the Service That Fits Your Needs",
   subtitle,
   options,
+  footer,
 }: ServiceOptionsSectionProps) {
   return (
     <section className="bg-[#0c0c0c] px-4 py-[60px] lg:py-[100px]">
@@ -101,6 +104,8 @@ export function ServiceOptionsSection({
             </div>
           ))}
         </div>
+
+        {footer && <div className="-mt-4 lg:-mt-6">{footer}</div>}
       </div>
     </section>
   );

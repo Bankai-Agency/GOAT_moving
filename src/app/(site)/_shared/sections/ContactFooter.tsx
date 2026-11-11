@@ -18,6 +18,7 @@ const navLinkClass =
 const NAV_LINKS = [
   { href: "/local-moving", label: "Local Moving" },
   { href: "/long-distance-moving", label: "Long Distance" },
+  { href: "/shared-load-moving", label: "Shared Load" },
   { href: "/commercial-moving", label: "Commercial" },
   { href: "/packing-services", label: "Packing" },
   { href: "/reviews", label: "Reviews" },

@@ -1,0 +1,278 @@
+{
+  "meta": {
+    "title": "Shared Load Movers from Vancouver, WA & Portland, OR",
+    "description": "Moving 1,000+ miles from Vancouver, WA or Portland, OR? Share truck space and pay only for the room your belongings take. Licensed FMCSA carrier (USDOT #4232069), fully insured. Free shared load quote.",
+    "keywords": [
+      "shared load moving Vancouver WA",
+      "shared load movers Portland OR",
+      "consolidated moving company",
+      "partial load long distance movers",
+      "cheap long distance movers Pacific Northwest",
+      "budget interstate movers",
+      "LTL household moving"
+    ],
+    "ogTitle": "Shared Load Moving from Vancouver, WA & Portland, OR",
+    "ogDescription": "Long-distance moves without paying for a full truck. Share the space, pay for your volume, delivery in a 7-14 day window. Licensed interstate carrier, USDOT #4232069."
+  },
+  "hero": {
+    "image": "/images/tigard-longdistance.webp",
+    "imageAlt": "GOAT Movers crew loading boxes for a shared load move from Vancouver WA and Portland OR",
+    "h1Highlight": "Shared Load Moving",
+    "h1Rest": "from Vancouver, WA & Portland, OR",
+    "subtitle": "Moving 1,000+ miles? Share the truck and pay only for the space your belongings need - licensed, insured, no full-truck price tag."
+  },
+  "facts": {
+    "label": "How Shared Load Works",
+    "title": "Cost-Effective Shared Truck Delivery",
+    "subtitle": "Built for moves over 1,000 miles where the budget comes first.",
+    "items": [
+      {
+        "label": "Pricing",
+        "value": "By volume",
+        "title": "Smart pricing",
+        "description": "You pay for the cubic feet your belongings actually take. No need to pay for the whole truck if you don't fill it."
+      },
+      {
+        "label": "Delivery window",
+        "value": "7-14 days",
+        "title": "Clear timeline",
+        "description": "Estimated delivery within 7-14 days from your first available date. We call you before the truck arrives."
+      },
+      {
+        "label": "Distance",
+        "value": "1,000+ mi",
+        "title": "Long-haul routes",
+        "description": "Available for relocations of 1,000 miles and more: California, Arizona, Nevada, Colorado, Texas and beyond."
+      }
+    ],
+    "note": "Don't pay for the empty space - pay only for what you move.",
+    "ctaLabel": "Get My Budget Quote"
+  },
+  "options": {
+    "label": "Shared vs. Dedicated",
+    "title": "Two Ways to Move Long Distance",
+    "subtitle": "Same licensed crews, same protection. Pick the option that matches your timeline and your budget.",
+    "items": [
+      {
+        "icon": "crate",
+        "title": "Shared Load",
+        "description": "Your belongings travel in a truck with other shipments heading the same way. Every item is tagged on your inventory and loaded in its own section. You pay only for the volume it takes, and delivery lands in a 7-14 day window.",
+        "bestFor": "Moves over 1,000 miles, studios and homes up to two bedrooms, flexible move-in dates, tight budgets"
+      },
+      {
+        "icon": "truck",
+        "title": "Dedicated Truck",
+        "description": "The truck is yours alone. One flat rate, one crew from loading to delivery, and the fastest transit on your schedule.",
+        "bestFor": "Larger homes, fixed move-in dates, high-value or fragile inventories"
+      }
+    ],
+    "dedicated": {
+      "text": "Would rather have the truck to yourself?",
+      "linkLabel": "See dedicated long distance moving",
+      "href": "/long-distance-moving"
+    }
+  },
+  "whatsIncluded": {
+    "title": "What's Included in Your Shared Load Move",
+    "subtitle": "Everything a long-distance move needs, at a shared-truck price",
+    "items": [
+      {
+        "icon": "dollar-outline",
+        "title": "Volume-Based Quote",
+        "description": "A written quote for the space your belongings take. Fuel and tolls on the route are included."
+      },
+      {
+        "icon": "people",
+        "title": "Professional Crew",
+        "description": "Licensed GOAT movers load your shipment and a licensed crew unloads it at the destination."
+      },
+      {
+        "icon": "checklist",
+        "title": "Inventory & Labeling",
+        "description": "Every item is listed and tagged, so your shipment is tracked separately from the others on the truck."
+      },
+      {
+        "icon": "shield-half",
+        "title": "Furniture Protection",
+        "description": "Blankets, shrink wrap and straps for every piece before it goes on the truck."
+      },
+      {
+        "icon": "wrench",
+        "title": "Disassembly &\nReassembly",
+        "description": "Beds and basic furniture taken apart for loading and put back together at delivery."
+      },
+      {
+        "icon": "house",
+        "title": "Door-to-Door Delivery",
+        "description": "Pickup at your old home, delivery to your new one within the agreed window."
+      }
+    ]
+  },
+  "whyTrust": {
+    "title": "Why Trust GOAT Movers with Your Shared Load Move",
+    "description": "Shared load is the budget way to move across the country, but it only works when the carrier is organized: a tagged inventory, a protected load and a clear delivery window. We run shared loads out of the Pacific Northwest with federal authority and the same crews that handle our dedicated moves.",
+    "image": "/images/long-distance-why-trust.png",
+    "imageAlt": "GOAT movers crew loading a shared load truck",
+    "items": [
+      {
+        "icon": "shield-half",
+        "title": "Federally Licensed",
+        "subtitle": "FMCSA interstate authority, USDOT #4232069"
+      },
+      {
+        "icon": "checkmark",
+        "title": "Fully Insured",
+        "subtitle": "Covered from loading to final delivery"
+      },
+      {
+        "icon": "checklist",
+        "title": "Tagged Inventory",
+        "subtitle": "Your items tracked separately on a shared truck"
+      },
+      {
+        "icon": "dollar",
+        "title": "No Full-Truck Price",
+        "subtitle": "Pay for your volume, not for empty space"
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "Your Shared Load Move, Step by Step",
+    "steps": [
+      {
+        "icon": "estimate",
+        "title": "Get Your Quote",
+        "description": "Send us your inventory list or walk us through it on a call. You get a written quote based on the volume your belongings take."
+      },
+      {
+        "icon": "calendar",
+        "title": "Book Your Dates",
+        "description": "A small deposit secures your pickup date and your first available delivery date. Book early for the best window."
+      },
+      {
+        "icon": "box",
+        "title": "Packing & Protection",
+        "description": "Our crew arrives on time, wraps your furniture and tags every item for the shared inventory."
+      },
+      {
+        "icon": "truck",
+        "title": "Loading & Consolidation",
+        "description": "Your shipment is loaded, strapped and secured in its own section of the truck, next to other loads heading the same way."
+      },
+      {
+        "icon": "clock-dial",
+        "title": "Transit & Updates",
+        "description": "You get a delivery window and updates from the road. Expect delivery within 7-14 days from your first available date."
+      },
+      {
+        "icon": "home",
+        "title": "Delivery & Setup",
+        "description": "We call before arrival, unload, reassemble furniture and place everything where you want it. The balance is due only after you confirm delivery."
+      }
+    ]
+  },
+  "routes": {
+    "label": "Where We Move",
+    "title": "Popular Shared Load Routes",
+    "items": [
+      {
+        "fromCode": "VAN",
+        "fromName": "Vancouver, WA",
+        "toCode": "CA",
+        "toName": "Southern California",
+        "desc": "Los Angeles, San Diego, Orange County and all Southern California cities"
+      },
+      {
+        "fromCode": "PDX",
+        "fromName": "Portland, OR",
+        "toCode": "AZ",
+        "toName": "Arizona",
+        "desc": "Phoenix, Tucson, Scottsdale, Mesa and all AZ cities"
+      },
+      {
+        "fromCode": "VAN",
+        "fromName": "Vancouver, WA",
+        "toCode": "NV",
+        "toName": "Nevada",
+        "desc": "Las Vegas, Henderson and all NV cities"
+      },
+      {
+        "fromCode": "PDX",
+        "fromName": "Portland, OR",
+        "toCode": "CO",
+        "toName": "Colorado",
+        "desc": "Denver, Colorado Springs, Boulder and all CO cities"
+      },
+      {
+        "fromCode": "VAN",
+        "fromName": "Vancouver, WA",
+        "toCode": "TX",
+        "toName": "Texas",
+        "desc": "Houston, Dallas, Austin, San Antonio and all TX cities"
+      },
+      {
+        "fromCode": "PDX",
+        "fromName": "Portland, OR",
+        "toCode": "IL",
+        "toName": "Illinois",
+        "desc": "Chicago, the suburbs and the Midwest on the way"
+      }
+    ]
+  },
+  "faq": {
+    "title": "Shared Load Moving FAQ",
+    "items": [
+      {
+        "question": "What is shared load moving?",
+        "answer": "Shared load (also called consolidated or partial load moving) means your belongings travel in a truck together with other shipments heading the same direction. Each shipment is inventoried, wrapped and loaded in its own section, and you pay only for the space yours takes."
+      },
+      {
+        "question": "How much does a shared load move cost?",
+        "answer": "The price is based on the volume of your belongings (cubic feet), the distance and any extra services such as packing. Because you don't pay for an empty truck, a shared load is usually the most affordable way to move 1,000+ miles. You get a written quote before moving day."
+      },
+      {
+        "question": "How long does delivery take?",
+        "answer": "Estimated delivery is within 7-14 days from your first available delivery date. The window depends on the route and on how quickly the truck fills. We call you before the truck arrives."
+      },
+      {
+        "question": "Is my shipment mixed with other people's items?",
+        "answer": "It shares the truck, not the boxes. Every item is tagged and listed on your inventory, wrapped and strapped in its own section, and checked against the list at delivery."
+      },
+      {
+        "question": "What's the difference between a shared load and a dedicated truck?",
+        "answer": "A dedicated truck carries only your move, on your schedule, for one flat rate. A shared load costs less because the truck is shared, but delivery comes in a window rather than on a fixed day. If you have a strict move-in date, see our long distance moving page."
+      },
+      {
+        "question": "Are my belongings insured on a shared load?",
+        "answer": "Yes. Every move includes basic carrier liability at $0.60 per pound per item, and full-value protection plans are available. Ask for details during your estimate."
+      },
+      {
+        "question": "What can't go on a shared load?",
+        "answer": "Federal regulations prohibit hazardous materials, perishable food, plants and live animals. We send you the full list of non-allowable items before your move."
+      }
+    ]
+  },
+  "otherServices": {
+    "title": "Explore Our Other Services",
+    "items": [
+      {
+        "title": "Long Distance Moving",
+        "description": "Need the truck to yourself? Dedicated interstate moves with one crew and a fixed delivery date.",
+        "href": "/long-distance-moving",
+        "image": "/images/service-longdistance.webp"
+      },
+      {
+        "title": "Local Moving",
+        "description": "Professional local moves in Vancouver, WA and Portland, OR metro area.",
+        "href": "/local-moving",
+        "image": "/images/service-local.webp"
+      },
+      {
+        "title": "Packing Services",
+        "description": "Full-service packing with quality materials for a stress-free move.",
+        "href": "/packing-services",
+        "image": "/images/service-packing.webp"
+      }
+    ]
+  }
+}

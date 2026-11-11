@@ -187,6 +187,12 @@
     "title": "Explore Our Other Services",
     "items": [
       {
+        "title": "Shared Load Moving",
+        "description": "Moving 1,000+ miles on a budget? Share the truck and pay only for your volume.",
+        "href": "/shared-load-moving",
+        "image": "/images/tigard-longdistance.webp"
+      },
+      {
         "title": "Local Moving",
         "description": "Professional local moves in Vancouver, WA and Portland, OR metro area.",
         "href": "/local-moving",

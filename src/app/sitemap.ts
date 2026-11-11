@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/`,                     lastModified: now, changeFrequency: "weekly",  priority: 1.0 },
     { url: `${SITE_URL}/local-moving`,         lastModified: now, changeFrequency: "weekly",  priority: 0.9 },
     { url: `${SITE_URL}/long-distance-moving`, lastModified: now, changeFrequency: "weekly",  priority: 0.9 },
+    { url: `${SITE_URL}/shared-load-moving`,   lastModified: now, changeFrequency: "weekly",  priority: 0.9 },
     { url: `${SITE_URL}/commercial-moving`,    lastModified: now, changeFrequency: "weekly",  priority: 0.9 },
     { url: `${SITE_URL}/packing-services`,     lastModified: now, changeFrequency: "weekly",  priority: 0.9 },
     { url: `${SITE_URL}/reviews`,              lastModified: now, changeFrequency: "weekly",  priority: 0.7 },

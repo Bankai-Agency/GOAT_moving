@@ -151,11 +151,44 @@ export type LongDistanceContent = {
   whatsIncluded: { title: string; subtitle: string; items: IconItem[] };
   whyTrust: WhyTrustBlock;
   howItWorks: { title: string; steps: IconItem[] };
-  routes: {
+  routes: RoutesBlock;
+  faq: { title: string; items: FaqItem[] };
+  otherServices: { title: string; items: OtherService[] };
+};
+
+/** "Where We Move" boarding-pass route cards (long distance, shared load). */
+export type RoutesBlock = {
+  label: string;
+  title: string;
+  items: { fromCode: string; fromName: string; toCode: string; toName: string; desc: string }[];
+};
+
+/** Big-number card of the shared load "Cost-Effective Shared Truck Delivery" block. */
+export type SharedLoadFact = { label: string; value: string; title: string; description: string };
+
+export type SharedLoadContent = {
+  meta: Meta;
+  hero: ServiceHero;
+  facts: {
     label: string;
     title: string;
-    items: { fromCode: string; fromName: string; toCode: string; toName: string; desc: string }[];
+    subtitle: string;
+    items: SharedLoadFact[];
+    note: string;
+    ctaLabel: string;
   };
+  options: {
+    label: string;
+    title: string;
+    subtitle: string;
+    items: ServiceOption[];
+    /** Cross-link to the dedicated-truck page under the option rows. */
+    dedicated: { text: string; linkLabel: string; href: string };
+  };
+  whatsIncluded: { title: string; subtitle: string; items: IconItem[] };
+  whyTrust: WhyTrustBlock;
+  howItWorks: { title: string; steps: IconItem[] };
+  routes: RoutesBlock;
   faq: { title: string; items: FaqItem[] };
   otherServices: { title: string; items: OtherService[] };
 };

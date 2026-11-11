@@ -10,6 +10,7 @@ import sharedJson from "@/content/shared.json";
 import homeJson from "@/content/home.json";
 import localMovingJson from "@/content/services/local-moving.json";
 import longDistanceJson from "@/content/services/long-distance-moving.json";
+import sharedLoadJson from "@/content/services/shared-load-moving.json";
 import commercialJson from "@/content/services/commercial-moving.json";
 import packingJson from "@/content/services/packing-services.json";
 import reviewsJson from "@/content/reviews.json";
@@ -29,6 +30,7 @@ import type {
   PackingContent,
   ReviewsPageContent,
   SharedContent,
+  SharedLoadContent,
   SiteContent,
 } from "./types";
 
@@ -39,6 +41,7 @@ export const sharedContent = sharedJson as SharedContent;
 export const homeContent = homeJson as HomeContent;
 export const localMovingContent = localMovingJson as LocalMovingContent;
 export const longDistanceContent = longDistanceJson as LongDistanceContent;
+export const sharedLoadContent = sharedLoadJson as SharedLoadContent;
 export const commercialContent = commercialJson as CommercialContent;
 export const packingContent = packingJson as PackingContent;
 export const reviewsPageContent = reviewsJson as ReviewsPageContent;

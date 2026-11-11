@@ -8,6 +8,7 @@ import { locationConfigs } from "@site/locations/locationConfigs";
 const servicesDropdown = [
   { label: "Local Moving", href: "/local-moving" },
   { label: "Long Distance Moving", href: "/long-distance-moving" },
+  { label: "Shared Load Moving", href: "/shared-load-moving" },
   { label: "Commercial Moving", href: "/commercial-moving" },
   { label: "Packing & Labor", href: "/packing-services" },
 ];

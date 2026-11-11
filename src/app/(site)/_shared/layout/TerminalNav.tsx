@@ -22,6 +22,7 @@ type DropdownItem = { label: string; href: string; desc?: string };
 const servicesDropdown: DropdownItem[] = [
   { label: "Local Moving", href: "/local-moving", desc: "Same-day, same-team moves" },
   { label: "Long Distance", href: "/long-distance-moving", desc: "Cross-state with one crew" },
+  { label: "Shared Load", href: "/shared-load-moving", desc: "Pay only for the space you use" },
   { label: "Commercial", href: "/commercial-moving", desc: "Offices, warehouses, retail" },
   { label: "Packing & Labor", href: "/packing-services", desc: "Full-service packing" },
 ];
