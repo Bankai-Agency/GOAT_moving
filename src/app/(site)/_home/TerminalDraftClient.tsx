@@ -4,6 +4,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode, type Ref } from "react";
 import { gsap, ScrollTrigger, registerGsapPlugins } from "@site/motion/gsap";
+import {
+  HERO_SOURCES,
+  HERO_SOURCE_SCRIPT,
+  applyHeroChoice,
+  chooseHeroSource,
+  pushHeroEvent,
+  readHeroChoice,
+  type HeroChoice,
+  type HeroTier,
+} from "./heroSource";
 import { MP5Button } from "@site/ui/MP5Button";
 import dynamic from "next/dynamic";
 import { GridStreaks } from "./GridStreaks";
@@ -195,33 +205,40 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
     const videoEl = videoRef.current;
     if (!wrapperEl || !videoEl) return;
 
-    /* Pick the source by viewport — a lighter 960×540 file on phones, the
-       1280×720 file on desktop. Chosen once at mount (cross-breakpoint
-       reload acceptable). Set in JS rather than JSX so SSR and client
-       agree on the src (a static mobile src would double-download on
-       desktop and vice-versa). Normally the inline <script> right after
-       the <video> has already done this while the HTML was parsing, so
-       the download started seconds before hydration; this is the fallback
-       for client-side navigation, where inline scripts do not execute. */
-    const isMobile = window.matchMedia("(max-width: 991px)").matches;
-    /* Same choice as the inline script below: on a slow or data-saving
-       connection (Network Information API, Chrome/Android; Safari has no
-       such API and gets the normal file) the 640x360 clip, ~0.8 MB instead
-       of 2.9-4.3: on 3G the full clip is a minute of download, and a scrub
-       that far behind the scroll is worse than a softer picture. */
-    const conn = (navigator as Navigator & {
-      connection?: { saveData?: boolean; effectiveType?: string };
-    }).connection;
-    const slowNet = Boolean(
-      conn && (conn.saveData || /^(slow-)?2g$|^3g$/.test(conn.effectiveType ?? "")),
-    );
-    const wantedSrc = slowNet
-      ? "/videos/hero-lite.mp4"
-      : isMobile
-        ? "/videos/hero-mobile.mp4"
-        : "/videos/hero.mp4";
-    const srcAlreadySet = Boolean(videoEl.getAttribute("src"));
-    if (!srcAlreadySet) videoEl.src = wantedSrc;
+    /* Which clip, if any: see heroSource.ts. Normally the inline <script>
+       right after the <video> has already decided while the HTML was
+       parsing, so the download started seconds before hydration; this
+       repeats the decision for client-side navigation, where inline
+       scripts do not execute. The decision can be async (hardware AV1
+       probe), so everything below reads `tier` at call time. */
+    let tier: HeroTier = "static";
+    let disposed = false;
+    const effectStartedAt = performance.now();
+    const reportTier = (choice: HeroChoice) => {
+      pushHeroEvent("hero_tier", {
+        hero_tier: choice.tier,
+        hero_reason: choice.reason,
+        hero_codec: choice.codec ?? "none",
+      });
+    };
+    const preset = readHeroChoice(wrapperEl, videoEl);
+    if (preset) {
+      tier = preset.tier;
+      reportTier(preset);
+    } else {
+      void chooseHeroSource(videoEl).then((choice) => {
+        if (disposed) return;
+        tier = choice.tier;
+        applyHeroChoice(wrapperEl, videoEl, choice);
+        if (choice.src) {
+          try { videoEl.load(); } catch { /* ignore */ }
+        }
+        // The tier attribute sets the wrapper height (CSS) and the
+        // ScrollTrigger below has already measured the old one.
+        ScrollTrigger.refresh();
+        reportTier(choice);
+      });
+    }
 
     /* Hero is a native <video> scrubbed by scroll (was a canvas webp
        frame-sequence). Hardware-accelerated decode + one streamed file
@@ -234,7 +251,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
        download and open a new range request at that offset; on a slow
        connection every scroll tick did that, the buffer turned into
        scattered half-second islands and the clip never finished loading
-       while the phrases kept scrolling past. Now the scroll position is
+       while the phrases kept scrolling past. The scroll position is
        always remembered (even before the metadata arrives) and the frame
        holds until the bytes for it are in; every loading event then lets
        the video catch up to the latest scroll position in one seek. The
@@ -247,16 +264,100 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
       }
       return false;
     };
+
+    /* Seek engine. One seek in flight at a time: a seek issued while the
+       previous one is still decoding queues up on a weak device and the
+       picture trails the finger. The target is quantised to a frame
+       (24 fps) so two scroll ticks inside one frame do not cost two
+       decodes. `seeked` releases the next seek and times the previous
+       one; the p95 of those timings is the device's real scrub budget. */
+    const FRAME = 1 / 24;
+    const SEEK_LAG_LIMIT_MS = 120;
+    const percentile = (values: number[], p: number) => {
+      const sorted = [...values].sort((a, b) => a - b);
+      return sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))];
+    };
     let scrollProgress = 0; // 0..1 through the pinned hero, always current
-    let shownProgress = -1; // the progress the video currently displays
+    let shownTime = -1; // the clip time the video displays (or is seeking to)
+    let pendingTime: number | null = null;
+    let seekInFlight = false;
+    let seekStartedAt = 0;
+    let firstFrameAt = 0;
+    let lagReported = false;
+    let downgraded = false;
+    const seekLags: number[] = [];
+
+    const seekTo = (t: number) => {
+      seekInFlight = true;
+      seekStartedAt = performance.now();
+      shownTime = t;
+      videoEl.currentTime = t;
+    };
     const syncVideo = () => {
-      if (!videoDuration || shownProgress === scrollProgress) return;
+      if (tier === "static" || !videoDuration) return;
       // Clamp just shy of the end — some browsers snap an exact
       // `duration` seek back to 0.
-      const t = Math.min(scrollProgress * videoDuration, videoDuration - 0.05);
+      const t = Math.min(
+        Math.round((scrollProgress * videoDuration) / FRAME) * FRAME,
+        videoDuration - 0.05,
+      );
+      if (Math.abs(t - shownTime) < FRAME / 2) return;
       if (videoEl.readyState < 2 || !isBuffered(t)) return;
-      videoEl.currentTime = t;
-      shownProgress = scrollProgress;
+      if (seekInFlight || videoEl.seeking) {
+        pendingTime = t;
+        return;
+      }
+      seekTo(t);
+    };
+
+    /* Step down once per page view. A desktop drops to the small clip at
+       the same scroll position; a phone drops to the poster (the <img>
+       under the <video>, CSS hides the video). The pin keeps its height:
+       changing it mid-scroll would move the page under the finger. */
+    const downgrade = (reason: string) => {
+      if (downgraded || tier === "static") return;
+      downgraded = true;
+      const from = tier;
+      pendingTime = null;
+      seekInFlight = false;
+      shownTime = -1;
+      seekLags.length = 0;
+      wrapperEl.dataset.heroDowngraded = "1";
+      if (tier === "full") {
+        tier = "light";
+        wrapperEl.dataset.heroTier = "light";
+        videoDuration = 0;
+        videoEl.src = HERO_SOURCES.lite;
+      } else {
+        tier = "static";
+        wrapperEl.dataset.heroTier = "static";
+        videoEl.removeAttribute("src");
+      }
+      try { videoEl.load(); } catch { /* ignore */ }
+      pushHeroEvent("hero_downgrade", { hero_from: from, hero_to: tier, hero_reason: reason });
+    };
+
+    const onSeeked = () => {
+      seekInFlight = false;
+      const lag = performance.now() - seekStartedAt;
+      if (!firstFrameAt) {
+        firstFrameAt = performance.now();
+        pushHeroEvent("hero_first_frame", {
+          hero_first_frame_ms: Math.round(firstFrameAt - effectStartedAt),
+          hero_tier: tier,
+        });
+      }
+      seekLags.push(lag);
+      if (seekLags.length > 20) seekLags.shift();
+      if (seekLags.length >= 12 && percentile(seekLags, 0.95) > SEEK_LAG_LIMIT_MS) {
+        downgrade("seek-lag");
+        return;
+      }
+      if (pendingTime !== null) {
+        const t = pendingTime;
+        pendingTime = null;
+        if (Math.abs(t - shownTime) >= FRAME / 2) seekTo(t);
+      }
     };
     const onMeta = () => {
       videoDuration = videoEl.duration || 0;
@@ -266,39 +367,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
     videoEl.addEventListener("progress", syncVideo);
     videoEl.addEventListener("loadeddata", syncVideo);
     videoEl.addEventListener("canplay", syncVideo);
-    // Kick off buffering even though we never autoplay - but only when we
-    // set the src ourselves: load() on a source already in flight restarts
-    // the download.
-    if (!srcAlreadySet) {
-      try { videoEl.load(); } catch { /* ignore */ }
-    }
-
-    /* Mobile horizontal focal point — keep the driver cab fully in frame
-       through the whole truck, then re-centre for the map. The 16:9 clip
-       plays: photoreal truck driving → wireframe truck on a grid → flash →
-       map/navigation. In every truck frame the cab (front bumper included)
-       sits LEFT of centre, so a centred object-cover crop on a portrait
-       phone clips the cab nose. The crop only shows a ~26%-wide slice, so
-       we hold it LEFT (object-position 28% → cab nose fully visible) for
-       the entire truck, then ease to centre UNDER the flash so the map +
-       route pin read centred:
-         p<0.62   : hold 28% — whole cab in frame (photoreal AND wireframe)
-         0.62–0.72: ease 28% → 50% under the flash (masks the swing)
-         p>0.72   : 50% — map/navigation centred
-       Desktop stays centred (the class default). Composition isn't moved —
-       only the crop window. Breakpoint picked once at mount. */
-    const applyFocal = (p: number) => {
-      if (!isMobile) return;
-      let x: number;
-      if (p < 0.62) {
-        x = 0.28; // hold left so the whole cab (nose included) stays in frame
-      } else {
-        const f = Math.min(1, Math.max(0, (p - 0.62) / (0.72 - 0.62)));
-        x = 0.28 + 0.22 * f; // 28% → 50% over the flash
-      }
-      videoEl.style.objectPosition = `${x * 100}% 50%`;
-    };
-    applyFocal(0);
+    videoEl.addEventListener("seeked", onSeeked);
 
     // Per-char split for every phrase — each phrase gets its own
     // staggered reveal window during scroll. StrictMode safe.
@@ -360,6 +429,17 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
           start: "top top",
           end: "bottom bottom",
           scrub: 0.4,
+          // Field data for the hero: once per page view, when the visitor
+          // scrolls out of the pin, report how the scrub behaved.
+          onLeave: () => {
+            if (lagReported) return;
+            lagReported = true;
+            pushHeroEvent("hero_scrubbed", {
+              hero_tier: tier,
+              hero_seek_lag_p95_ms: seekLags.length ? Math.round(percentile(seekLags, 0.95)) : null,
+              hero_had_frame: Boolean(firstFrameAt),
+            });
+          },
         },
       });
 
@@ -374,9 +454,19 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
           ease: "none",
           duration: 1,
           onUpdate: () => {
-            applyFocal(vid.t);
             scrollProgress = vid.t;
             syncVideo();
+            // A quarter into the pin with no frame shown yet and the
+            // page open for a while: the clip is late, stop waiting.
+            if (
+              !firstFrameAt &&
+              !downgraded &&
+              tier !== "static" &&
+              vid.t >= 0.25 &&
+              performance.now() - effectStartedAt > 3000
+            ) {
+              downgrade("not-ready");
+            }
           },
         },
         0,
@@ -445,10 +535,12 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
     });
 
     return () => {
+      disposed = true;
       videoEl.removeEventListener("loadedmetadata", onMeta);
       videoEl.removeEventListener("progress", syncVideo);
       videoEl.removeEventListener("loadeddata", syncVideo);
       videoEl.removeEventListener("canplay", syncVideo);
+      videoEl.removeEventListener("seeked", onSeeked);
       ctx.revert();
     };
   }, []);
@@ -1006,7 +1098,6 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
         ref={heroWrapperRef}
         data-hero-region=""
         className="relative w-full"
-        style={{ height: "500vh" }}
       >
         <section className="sticky top-0 h-screen w-full overflow-hidden">
           {/* The first frame as a real image under the <video>. The phrases
@@ -1022,15 +1113,20 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
               that covers the whole viewport from LCP as "probably a
               background". The video above it still covers the full screen,
               and the missing line sits in the gradient's black edge. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/frames-vhero/frame_0001.webp"
-            alt=""
-            aria-hidden
-            fetchPriority="high"
-            decoding="async"
-            className="absolute inset-0 w-full h-[calc(100%-1px)] object-cover"
-          />
+          <picture>
+            {/* Phones and tablets get the portrait clip (heroSource.ts), so
+                their poster is its first frame: same framing, no jump when
+                the video paints over the image. */}
+            <source media="(max-width: 991px)" srcSet="/frames-vhero/frame_0001-portrait.webp" />
+            <img
+              src="/frames-vhero/frame_0001.webp"
+              alt=""
+              aria-hidden
+              fetchPriority="high"
+              decoding="async"
+              className="absolute inset-0 w-full h-[calc(100%-1px)] object-cover"
+            />
+          </picture>
           <video
             id="hero-video"
             ref={videoRef}
@@ -1041,20 +1137,11 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
             preload="auto"
             aria-hidden
           />
-          {/* Picks the hero clip for this viewport while the HTML is still
-              parsing, so the browser starts fetching it long before
-              hydration (which arrived ~2.5 s later on a phone). It waits for
-              the first rendering frame: that fires once the stylesheets are
-              in, so on a slow connection the 3 MB clip does not share the
-              first second with the CSS, fonts and poster the first paint
-              needs. A 1.5 s timer covers a tab that never gets a frame. The
-              effect above repeats the choice for client-side navigation. */}
-          <script
-            dangerouslySetInnerHTML={{
-              __html:
-                "(function(){var v=document.getElementById('hero-video');if(!v)return;var done=false;function set(){if(done||v.getAttribute('src'))return;done=true;var c=navigator.connection,slow=!!(c&&(c.saveData||/^(slow-)?2g$|^3g$/.test(c.effectiveType||'')));v.src=slow?'/videos/hero-lite.mp4':window.matchMedia('(max-width: 991px)').matches?'/videos/hero-mobile.mp4':'/videos/hero.mp4';}window.requestAnimationFrame(set);setTimeout(set,1500);})();",
-            }}
-          />
+          {/* Decides the hero tier and starts the clip download while the
+              HTML is still parsing (hydration arrived ~2.5 s later on a
+              phone): see heroSource.ts, which also holds the React-side
+              copy of the decision for client-side navigation. */}
+          <script dangerouslySetInnerHTML={{ __html: HERO_SOURCE_SCRIPT }} />
           <div
             aria-hidden
             className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/55 pointer-events-none"

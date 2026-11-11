@@ -187,6 +187,29 @@ body:has([data-accent="blue"]) .bg-\[\#FFE533\] .text-\[\#0c0c0c\] {
   }
 }
 
+/* ── Hero pin height per tier ────────────────────────────────────
+   The hero region is a sticky screen inside a tall wrapper; the scroll
+   through the wrapper drives the clip and the phrase reveal. Five screens
+   on desktop. Three on phones: with a frozen picture every extra swipe
+   reads as "the page is stuck". The static tier (no clip at all, see
+   heroSource.ts) is shorter still and hides the <video> so the poster
+   <img> underneath shows. The tier attribute is set by the inline script
+   before first paint, so ScrollTrigger measures the right height. */
+[data-hero-region] {
+  height: 500vh;
+}
+@media (max-width: 991px) {
+  [data-hero-region] {
+    height: 300vh;
+  }
+}
+[data-hero-region][data-hero-tier="static"] {
+  height: 250vh;
+}
+[data-hero-region][data-hero-tier="static"] video {
+  display: none;
+}
+
 /* Hero phrases start hidden — the per-char scroll reveal (JS) un-hides
    each phrase's container (sets inline opacity:1) and staggers its chars
    in. Without this, on first paint all 8 phrases flash visible and
