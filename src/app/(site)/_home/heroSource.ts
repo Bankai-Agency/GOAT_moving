@@ -35,6 +35,11 @@ export type HeroChoice = {
   tier: HeroTier;
   /** Clip to load, null for the static tier. */
   src: string | null;
+  /** Load the clip as one blob instead of pointing the <video> at the
+      URL. Phones only: iOS Safari does not buffer a clip that is not
+      playing, so a scrub that waits for buffered data never moved there;
+      a blob is all in memory and every seek is local. */
+  viaBlob: boolean;
   poster: string;
   codec: HeroCodec | null;
   /** Why this tier was picked (reported to analytics). */
@@ -100,13 +105,14 @@ function baseTier(): { tier: HeroTier; reason: string } {
 export async function chooseHeroSource(video: HTMLVideoElement): Promise<HeroChoice> {
   const base = baseTier();
   if (base.tier === "static") {
-    return { tier: "static", src: null, poster: HERO_POSTERS.landscape, codec: null, reason: base.reason };
+    return { tier: "static", src: null, viaBlob: false, poster: HERO_POSTERS.landscape, codec: null, reason: base.reason };
   }
   if (base.tier === "light") {
     const mobile = base.reason === "mobile";
     return {
       tier: "light",
       src: mobile ? HERO_SOURCES.portrait : HERO_SOURCES.lite,
+      viaBlob: mobile,
       poster: mobile ? HERO_POSTERS.portrait : HERO_POSTERS.landscape,
       codec: "h264",
       reason: base.reason,
@@ -126,7 +132,7 @@ export async function chooseHeroSource(video: HTMLVideoElement): Promise<HeroCho
     /* no probe, fall through */
   }
   if (codec === "h264" && video.canPlayType(HEVC_TYPE) === "probably") codec = "hevc";
-  return { tier: "full", src: HERO_SOURCES[codec], poster: HERO_POSTERS.landscape, codec, reason: base.reason };
+  return { tier: "full", src: HERO_SOURCES[codec], viaBlob: false, poster: HERO_POSTERS.landscape, codec, reason: base.reason };
 }
 
 /** Writes the choice onto the DOM: tier attribute (CSS reads it for the
@@ -135,19 +141,35 @@ export function applyHeroChoice(wrapper: HTMLElement, video: HTMLVideoElement, c
   wrapper.dataset.heroTier = choice.tier;
   wrapper.dataset.heroReason = choice.reason;
   if (choice.codec) wrapper.dataset.heroCodec = choice.codec;
+  if (choice.src) wrapper.dataset.heroSrc = choice.src;
+  if (choice.viaBlob) wrapper.dataset.heroBlob = "1";
   video.poster = choice.poster;
-  if (choice.src) video.src = choice.src;
+  if (choice.src && !choice.viaBlob) video.src = choice.src;
+}
+
+type HeroClipWindow = Window & { __heroClip?: { url: string; blob: Promise<Blob> } };
+
+/** The clip as a blob: the download the inline script already started for
+    this URL, or a new one. */
+export function fetchHeroBlob(url: string): Promise<Blob> {
+  const pre = (window as HeroClipWindow).__heroClip;
+  if (pre && pre.url === url) return pre.blob;
+  return fetch(url).then((r) => {
+    if (!r.ok) throw new Error(`hero clip ${r.status}`);
+    return r.blob();
+  });
 }
 
 /** Reads a choice the inline script already made, if any. */
 export function readHeroChoice(wrapper: HTMLElement, video: HTMLVideoElement): HeroChoice | null {
   const tier = wrapper.dataset.heroTier as HeroTier | undefined;
   if (!tier) return null;
-  const src = video.getAttribute("src");
+  const src = wrapper.dataset.heroSrc ?? null;
   if (tier !== "static" && !src) return null;
   return {
     tier,
     src,
+    viaBlob: wrapper.dataset.heroBlob === "1",
     poster: video.poster,
     codec: (wrapper.dataset.heroCodec as HeroCodec | undefined) ?? (src ? "h264" : null),
     reason: wrapper.dataset.heroReason ?? "inline",
@@ -172,11 +194,15 @@ export const HERO_SOURCE_SCRIPT = `(function(){
 var w=document.querySelector('[data-hero-region]'),v=document.getElementById('hero-video');
 if(!w||!v)return;
 var S=${JSON.stringify(HERO_SOURCES)},P=${JSON.stringify(HERO_POSTERS)},done=false;
-function apply(tier,reason,src,poster,codec){
+function apply(tier,reason,src,poster,codec,blob){
   w.setAttribute('data-hero-tier',tier);w.setAttribute('data-hero-reason',reason);
   if(codec)w.setAttribute('data-hero-codec',codec);
   if(poster)v.setAttribute('poster',poster);
-  if(src)v.src=src;
+  if(src)w.setAttribute('data-hero-src',src);
+  if(src&&blob){
+    w.setAttribute('data-hero-blob','1');
+    try{var b=fetch(src).then(function(r){if(!r.ok)throw new Error('hero clip '+r.status);return r.blob();});b.catch(function(){});window.__heroClip={url:src,blob:b};}catch(e){}
+  }else if(src)v.src=src;
 }
 function set(){
   if(done||v.getAttribute('src')||w.getAttribute('data-hero-tier'))return;done=true;
@@ -185,7 +211,7 @@ function set(){
   if(c.saveData)return apply('static','save-data',null,null,null);
   if(typeof n.deviceMemory==='number'&&n.deviceMemory<=2)return apply('static','low-memory',null,null,null);
   if(typeof n.hardwareConcurrency==='number'&&n.hardwareConcurrency<=2)return apply('static','few-cores',null,null,null);
-  if(mm(${JSON.stringify(MOBILE_QUERY)}))return apply('light','mobile',S.portrait,P.portrait,'h264');
+  if(mm(${JSON.stringify(MOBILE_QUERY)}))return apply('light','mobile',S.portrait,P.portrait,'h264',true);
   if(/^(slow-)?2g$|^3g$/.test(c.effectiveType||''))return apply('light','slow-network',S.lite,P.landscape,'h264');
   var hevc=v.canPlayType(${JSON.stringify(HEVC_TYPE)})==='probably',settled=false;
   function full(codec){if(settled)return;settled=true;apply('full','desktop',S[codec],P.landscape,codec);}

@@ -47,7 +47,8 @@ const probe = (page) => page.evaluate(() => {
     reason: w && w.getAttribute("data-hero-reason"),
     codec: w && w.getAttribute("data-hero-codec"),
     pinVh: w ? +(w.getBoundingClientRect().height / window.innerHeight).toFixed(1) : null,
-    src: v ? (v.getAttribute("src") || "").split("/").pop() : null,
+    src: w ? (w.getAttribute("data-hero-src") || "").split("/").pop() : null,
+    blob: v ? (v.getAttribute("src") || "").startsWith("blob:") : false,
     videoHidden: v ? getComputedStyle(v).display === "none" : null,
     t: v ? +v.currentTime.toFixed(2) : null,
     ready: v ? v.readyState : null,
@@ -84,12 +85,12 @@ async function phoneSlow(browser) {
   await page.waitForTimeout(12000);
   const s = await probe(page);
   console.log(JSON.stringify(s));
-  check(s.tier === "light" && s.src === "hero-phone.mp4", "phone gets the light tier with the phone clip");
+  check(s.tier === "light" && s.src === "hero-phone.mp4" && s.blob, "phone gets the light tier with the phone clip as a blob");
   check(s.pinVh !== null && s.pinVh <= 3.05, `phone pin is three screens (got ${s.pinVh})`);
   check(s.jumps.length === 0, `no backward scroll jump while loading (got ${JSON.stringify(s.jumps)})`);
   check(s.y > 1000, `the swipes moved the page (y=${s.y})`);
   check(s.events.includes("hero_tier"), "hero_tier reported to dataLayer");
-  check(s.t > 0 || s.events.includes("hero_downgrade"), `clip followed the scroll or stepped down (t=${s.t}, events=${s.events})`);
+  check(s.t > 0 && !s.events.includes("hero_downgrade"), `clip followed the scroll and did not step down (t=${s.t}, events=${s.events})`);
   await ctx.close();
 }
 

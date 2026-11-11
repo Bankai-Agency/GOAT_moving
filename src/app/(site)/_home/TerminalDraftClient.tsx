@@ -9,6 +9,7 @@ import {
   HERO_SOURCE_SCRIPT,
   applyHeroChoice,
   chooseHeroSource,
+  fetchHeroBlob,
   pushHeroEvent,
   readHeroChoice,
   type HeroChoice,
@@ -221,16 +222,52 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
         hero_codec: choice.codec ?? "none",
       });
     };
+    /* Phones take the clip as one blob (see HeroChoice.viaBlob): iOS
+       Safari does not buffer a clip that is not playing, so waiting for
+       buffered data left the hero a still picture there. Once the blob is
+       set the decoder is primed with a muted play/pause, without which
+       iOS does not paint a frame for a seek on a never-played video. */
+    let blobUrl: string | null = null;
+    let primed = false;
+    const loadViaBlob = (url: string) => {
+      fetchHeroBlob(url)
+        .then((blob) => {
+          if (disposed) return;
+          blobUrl = URL.createObjectURL(blob);
+          videoEl.src = blobUrl;
+        })
+        .catch(() => {
+          if (!disposed) videoEl.src = url;
+        })
+        .finally(() => {
+          if (disposed) return;
+          try { videoEl.load(); } catch { /* ignore */ }
+        });
+    };
+    const prime = () => {
+      if (primed || tier === "static" || !blobUrl) return;
+      primed = true;
+      const done = () => {
+        videoEl.pause();
+        shownTime = -1;
+        syncVideo();
+      };
+      // Rejected in iOS Low Power Mode: the seeks are still attempted.
+      videoEl.play().then(done, done);
+    };
     const preset = readHeroChoice(wrapperEl, videoEl);
     if (preset) {
       tier = preset.tier;
+      if (preset.viaBlob && preset.src) loadViaBlob(preset.src);
       reportTier(preset);
     } else {
       void chooseHeroSource(videoEl).then((choice) => {
         if (disposed) return;
         tier = choice.tier;
         applyHeroChoice(wrapperEl, videoEl, choice);
-        if (choice.src) {
+        if (choice.viaBlob && choice.src) {
+          loadViaBlob(choice.src);
+        } else if (choice.src) {
           try { videoEl.load(); } catch { /* ignore */ }
         }
         // The tier attribute sets the wrapper height (CSS) and the
@@ -312,12 +349,15 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
       seekTo(t);
     };
 
-    /* Step down once per page view. A desktop drops to the small clip at
-       the same scroll position; a phone drops to the poster (the <img>
-       under the <video>, CSS hides the video). The pin keeps its height:
-       changing it mid-scroll would move the page under the finger. */
+    /* Step down once per page view, desktop only: the full clip gives way
+       to the small one at the same scroll position. A phone never steps
+       down to the poster at runtime: its clip is one blob, so it is
+       either not here yet (the poster shows and the clip catches up with
+       the scroll when it lands) or fully local, and a still picture in
+       place of the scrub is the worse outcome on any phone that can play
+       it at all. */
     const downgrade = (reason: string) => {
-      if (downgraded || tier === "static") return;
+      if (downgraded || tier !== "full") return;
       downgraded = true;
       const from = tier;
       pendingTime = null;
@@ -325,16 +365,10 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
       shownTime = -1;
       seekLags.length = 0;
       wrapperEl.dataset.heroDowngraded = "1";
-      if (tier === "full") {
-        tier = "light";
-        wrapperEl.dataset.heroTier = "light";
-        videoDuration = 0;
-        videoEl.src = HERO_SOURCES.lite;
-      } else {
-        tier = "static";
-        wrapperEl.dataset.heroTier = "static";
-        videoEl.removeAttribute("src");
-      }
+      tier = "light";
+      wrapperEl.dataset.heroTier = "light";
+      videoDuration = 0;
+      videoEl.src = HERO_SOURCES.lite;
       try { videoEl.load(); } catch { /* ignore */ }
       pushHeroEvent("hero_downgrade", { hero_from: from, hero_to: tier, hero_reason: reason });
     };
@@ -370,6 +404,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
     videoEl.addEventListener("loadeddata", syncVideo);
     videoEl.addEventListener("canplay", syncVideo);
     videoEl.addEventListener("seeked", onSeeked);
+    videoEl.addEventListener("loadeddata", prime);
 
     // Per-char split for every phrase — each phrase gets its own
     // staggered reveal window during scroll. StrictMode safe.
@@ -555,6 +590,8 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
       videoEl.removeEventListener("loadeddata", syncVideo);
       videoEl.removeEventListener("canplay", syncVideo);
       videoEl.removeEventListener("seeked", onSeeked);
+      videoEl.removeEventListener("loadeddata", prime);
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
       ctx.revert();
     };
   }, []);
