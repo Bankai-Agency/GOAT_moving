@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 import { gsap } from "@site/motion/gsap";
 import { locationConfigs, siteContent } from "@/lib/content";
@@ -62,6 +63,16 @@ const mobileNavLinks: MobileNavLink[] = [
 
 export function TerminalNav() {
   const navRef = useRef<HTMLElement>(null);
+
+  /* Client-side navigation keeps this nav mounted, so an open desktop
+     dropdown used to survive the page change until the next outside
+     click. The GSAP effect stores its closeDropdown here and the route
+     effect calls it on every pathname change. */
+  const pathname = usePathname();
+  const closeDesktopDropdownRef = useRef<() => void>(() => {});
+  useEffect(() => {
+    closeDesktopDropdownRef.current();
+  }, [pathname]);
 
   /* Mobile menu — React-state driven full-screen overlay (port of live
      `/` Header pattern). Independent of the GSAP machinery above which
@@ -763,12 +774,24 @@ export function TerminalNav() {
       }, 150);
     }
 
+    /* A panel link navigates client-side while the nav stays mounted,
+       so the dropdown closes on the click itself. This also covers a
+       link to the current page, where the pathname effect never fires. */
+    function handlePanelClick(e: Event) {
+      if (state.isMobile || !state.isOpen) return;
+      if ((e.target as Element).closest("a")) closeDropdown();
+    }
+    closeDesktopDropdownRef.current = closeDropdown;
+
     /* ── Bind listeners. Desktop dropdowns are click-toggle (no hover). */
     toggles.forEach((btn) => {
       btn.addEventListener("keydown", handleKeydownOnToggle);
       btn.addEventListener("click", handleToggleClick);
     });
-    panels.forEach((p) => p.addEventListener("keydown", handleKeydownInPanel));
+    panels.forEach((p) => {
+      p.addEventListener("keydown", handleKeydownInPanel);
+      p.addEventListener("click", handlePanelClick);
+    });
     backdrop.addEventListener("click", closeDropdown);
     document.addEventListener("keydown", handleEscape);
     document.addEventListener("click", handleDocClick);
@@ -789,7 +812,11 @@ export function TerminalNav() {
         btn.removeEventListener("keydown", handleKeydownOnToggle);
         btn.removeEventListener("click", handleToggleClick);
       });
-      panels.forEach((p) => p.removeEventListener("keydown", handleKeydownInPanel));
+      panels.forEach((p) => {
+        p.removeEventListener("keydown", handleKeydownInPanel);
+        p.removeEventListener("click", handlePanelClick);
+      });
+      closeDesktopDropdownRef.current = () => {};
       backdrop.removeEventListener("click", closeDropdown);
       document.removeEventListener("keydown", handleEscape);
       document.removeEventListener("click", handleDocClick);
