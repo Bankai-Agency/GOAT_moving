@@ -22,7 +22,7 @@ import { BenefitsVariantsStack } from "./sections/BenefitsVariants";
 import { TestimonialVariantsStack } from "./sections/TestimonialVariants";
 import { StickyServices } from "./StickyServices";
 import { defaultStickySteps, type StickyStep } from "./stickyServicesData";
-import { homeContent } from "@/lib/content";
+import { homeContent, nbCity } from "@/lib/content";
 
 /* THREE.js is heavy and has exactly one consumer (MagicRings), used only
    in the CTA section below the fold — code-split it so the THREE chunk
@@ -210,8 +210,8 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
        right after the <video> has already decided while the HTML was
        parsing, so the download started seconds before hydration; this
        repeats the decision for client-side navigation, where inline
-       scripts do not execute. The decision can be async (hardware AV1
-       probe), so everything below reads `tier` at call time. */
+       scripts do not execute. The decision resolves asynchronously, so
+       everything below reads `tier` at call time. */
     let tier: HeroTier = "static";
     let disposed = false;
     const effectStartedAt = performance.now();
@@ -261,7 +261,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
       if (preset.viaBlob && preset.src) loadViaBlob(preset.src);
       reportTier(preset);
     } else {
-      void chooseHeroSource(videoEl).then((choice) => {
+      void chooseHeroSource().then((choice) => {
         if (disposed) return;
         tier = choice.tier;
         applyHeroChoice(wrapperEl, videoEl, choice);
@@ -409,8 +409,8 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
     // Per-char split for every phrase — each phrase gets its own
     // staggered reveal window during scroll. StrictMode safe.
     const phraseEls = Array.from(
-      heroTextRef.current?.querySelectorAll<HTMLHeadingElement>(
-        "h1[data-hero-phrase]",
+      heroTextRef.current?.querySelectorAll<HTMLElement>(
+        "[data-hero-phrase]",
       ) ?? [],
     );
     phraseEls.forEach((el) => {
@@ -502,17 +502,6 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
             if (scrolled !== hintHidden) {
               hintHidden = scrolled;
               wrapperEl.toggleAttribute("data-hero-scrolled", scrolled);
-            }
-            // A quarter into the pin with no frame shown yet and the
-            // page open for a while: the clip is late, stop waiting.
-            if (
-              !firstFrameAt &&
-              !downgraded &&
-              tier !== "static" &&
-              vid.t >= 0.25 &&
-              performance.now() - effectStartedAt > 3000
-            ) {
-              downgrade("not-ready");
             }
           },
         },
@@ -1200,6 +1189,13 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
             ref={heroTextRef}
             className="absolute inset-0 px-6 lg:px-12 pointer-events-none"
           >
+            {/* The one <h1> of the page: service + area. Visually hidden
+                on purpose: the hero design is the slogans alone, and
+                they used to be eight <h1>s, none of which named the
+                service and the cities together. Search engines and
+                screen readers get this heading; the slogans below are
+                paragraphs. Text: home.json → hero.h1. */}
+            <h1 className="sr-only">{nbCity(homeContent.hero.h1)}</h1>
             {heroPhrases.map((phrase, i) => {
               /* Desktop: phrases "wander" to the open zone per frame
                  (positions below). Mobile: all phrases are re-anchored
@@ -1209,7 +1205,7 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
                  hydration / viewport-read timing. */
               const pos: HeroPos = heroPhrasePositions[i % heroPhrasePositions.length];
               return (
-                <h1
+                <p
                   key={i}
                   data-hero-phrase
                   data-hero-first={i === 0 ? "" : undefined}
@@ -1225,10 +1221,13 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
                     textShadow:
                       "0 2px 24px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.6)",
                   }}
-                  className="font-sans font-normal text-[clamp(29px,6.2vw,76px)] leading-[1.05] tracking-[-0.025em] text-white"
+                  /* font-medium, not font-normal: as <h1>s the phrases got
+                     weight 500 from the site-wide heading rule
+                     (typography.css), which a <p> does not match. */
+                  className="font-sans font-medium text-[clamp(29px,6.2vw,76px)] leading-[1.05] tracking-[-0.025em] text-white"
                 >
                   {phrase}
-                </h1>
+                </p>
               );
             })}
           </div>

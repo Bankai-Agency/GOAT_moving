@@ -262,6 +262,11 @@ export const DOCUMENTS: DocumentDef[] = [
     schema: [
       meta,
       f.group("hero", "Hero (фразы поверх видео)", [
+        f.text("h1", "H1 страницы (не виден на экране, для поисковиков)", {
+          required: true,
+          placeholder: "Movers in Vancouver, WA & Portland, OR",
+          help: "Единственный H1 главной: услуга и города. Фразы ниже идут обычным текстом.",
+        }),
         f.strings("phrases", "Фразы (сменяются при прокрутке)", { itemLabel: "фразу" }),
       ]),
       f.textarea("mission", "Миссия (большой текст после hero)", { rows: 2 }),

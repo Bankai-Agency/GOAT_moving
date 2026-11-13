@@ -17,9 +17,12 @@
  *           full-bleed portrait slice: the source is 1280x720, and a
  *           slice narrow enough to fill a phone screen was 404 px wide,
  *           stretched 3x and cutting the truck in half.
- *   full    the 1280x720 desktop clip: AV1 when the browser decodes it in
- *           hardware, HEVC where the browser plays it (Safari, hardware),
- *           H.264 otherwise.
+ *   full    the 1280x720 desktop clip, the original H.264 file. HEVC and
+ *           AV1 twins were tried and dropped: at this keyframe density a
+ *           re-encode that holds VMAF 96 against the original weighs
+ *           3.9-4.2 MB next to the original's 4.4 MB, and the lighter
+ *           ones (2.1 MB, VMAF 93) were visibly softer in a frame-by-
+ *           frame scrub, where every frame stands still on screen.
  *
  * The same decision runs twice on purpose: `HERO_SOURCE_SCRIPT` is inlined
  * right after the <video> so the download starts while the HTML is still
@@ -29,7 +32,7 @@
  */
 
 export type HeroTier = "static" | "light" | "full";
-export type HeroCodec = "h264" | "hevc" | "av1";
+export type HeroCodec = "h264";
 
 export type HeroChoice = {
   tier: HeroTier;
@@ -50,8 +53,6 @@ export const HERO_SOURCES = {
   portrait: "/videos/hero-phone.mp4",
   lite: "/videos/hero-lite.mp4",
   h264: "/videos/hero.mp4",
-  hevc: "/videos/hero.hevc.mp4",
-  av1: "/videos/hero.av1.mp4",
 } as const;
 
 export const HERO_POSTERS = {
@@ -60,21 +61,6 @@ export const HERO_POSTERS = {
 } as const;
 
 export const MOBILE_QUERY = "(max-width: 991px)";
-
-/* Probe for hardware AV1 decode. `powerEfficient` is the signal that the
-   frames are decoded by the GPU; software AV1 seeks are too slow for a
-   scrub on a laptop CPU. */
-const AV1_PROBE: MediaDecodingConfiguration = {
-  type: "file",
-  video: {
-    contentType: 'video/mp4; codecs="av01.0.05M.08"',
-    width: 1280,
-    height: 720,
-    bitrate: 1_700_000,
-    framerate: 24,
-  },
-};
-const HEVC_TYPE = 'video/mp4; codecs="hvc1.1.6.L93.B0"';
 
 type NavigatorSignals = Navigator & {
   connection?: { saveData?: boolean; effectiveType?: string };
@@ -102,7 +88,7 @@ function baseTier(): { tier: HeroTier; reason: string } {
 }
 
 /** Same decision as the inline script, for client-side navigation. */
-export async function chooseHeroSource(video: HTMLVideoElement): Promise<HeroChoice> {
+export async function chooseHeroSource(): Promise<HeroChoice> {
   const base = baseTier();
   if (base.tier === "static") {
     return { tier: "static", src: null, viaBlob: false, poster: HERO_POSTERS.landscape, codec: null, reason: base.reason };
@@ -118,21 +104,14 @@ export async function chooseHeroSource(video: HTMLVideoElement): Promise<HeroCho
       reason: base.reason,
     };
   }
-  let codec: HeroCodec = "h264";
-  try {
-    const mc = navigator.mediaCapabilities;
-    if (mc && mc.decodingInfo) {
-      const info = await Promise.race([
-        mc.decodingInfo(AV1_PROBE),
-        new Promise<null>((resolve) => setTimeout(() => resolve(null), 300)),
-      ]);
-      if (info && info.supported && info.smooth && info.powerEfficient) codec = "av1";
-    }
-  } catch {
-    /* no probe, fall through */
-  }
-  if (codec === "h264" && video.canPlayType(HEVC_TYPE) === "probably") codec = "hevc";
-  return { tier: "full", src: HERO_SOURCES[codec], viaBlob: false, poster: HERO_POSTERS.landscape, codec, reason: base.reason };
+  return {
+    tier: "full",
+    src: HERO_SOURCES.h264,
+    viaBlob: false,
+    poster: HERO_POSTERS.landscape,
+    codec: "h264",
+    reason: base.reason,
+  };
 }
 
 /** Writes the choice onto the DOM: tier attribute (CSS reads it for the
@@ -213,13 +192,7 @@ function set(){
   if(typeof n.hardwareConcurrency==='number'&&n.hardwareConcurrency<=2)return apply('static','few-cores',null,null,null);
   if(mm(${JSON.stringify(MOBILE_QUERY)}))return apply('light','mobile',S.portrait,P.portrait,'h264',true);
   if(/^(slow-)?2g$|^3g$/.test(c.effectiveType||''))return apply('light','slow-network',S.lite,P.landscape,'h264');
-  var hevc=v.canPlayType(${JSON.stringify(HEVC_TYPE)})==='probably',settled=false;
-  function full(codec){if(settled)return;settled=true;apply('full','desktop',S[codec],P.landscape,codec);}
-  var mc=n.mediaCapabilities;
-  if(mc&&mc.decodingInfo){
-    setTimeout(function(){full(hevc?'hevc':'h264');},300);
-    mc.decodingInfo(${JSON.stringify(AV1_PROBE)}).then(function(i){full(i&&i.supported&&i.smooth&&i.powerEfficient?'av1':hevc?'hevc':'h264');},function(){full(hevc?'hevc':'h264');});
-  }else full(hevc?'hevc':'h264');
+  apply('full','desktop',S.h264,P.landscape,'h264');
 }
 window.requestAnimationFrame(set);setTimeout(set,1500);
 })();`;

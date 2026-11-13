@@ -106,7 +106,12 @@ export type StickyStep = {
 
 export type HomeContent = {
   meta: Meta;
-  hero: { phrases: string[] };
+  hero: {
+    /** The page's single <h1>: service + area. Visually hidden; the
+        phrases are slogans and render as paragraphs. */
+    h1: string;
+    phrases: string[];
+  };
   mission: string;
   services: StickyStep[];
   ctaBeat: { eyebrow: string; headline: string; mark: string; buttonLabel: string };

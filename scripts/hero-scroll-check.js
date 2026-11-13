@@ -121,7 +121,7 @@ async function desktop(browser) {
   await page.waitForTimeout(1500);
   const s = await probe(page);
   console.log(JSON.stringify(s));
-  check(s.tier === "full" && !!s.codec, `desktop gets the full tier (codec ${s.codec}, ${s.src})`);
+  check(s.tier === "full" && s.src === "hero.mp4", `desktop gets the full tier with the original clip (${s.src})`);
   check(s.pinVh !== null && s.pinVh >= 4.9, `desktop pin is five screens (got ${s.pinVh})`);
   check(s.t > 0, `clip followed the wheel (t=${s.t})`);
   check(s.jumps.length === 0, "no backward scroll jump");
