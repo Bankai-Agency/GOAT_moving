@@ -155,9 +155,16 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
     const ARC_SPAN = 58;              // y-extent of each S-curve at top/bottom of notch
     const NOTCH_INNER_H = 296;        // inner vertical edge length (terminal: 296)
 
+    /* The notch has to stay between the two left corners. On a short
+       card the inner edge gives way so the S-curves still fit. */
+    const notchHeight = (H: number) => {
+      const room = H - 2 * CORNER_R;
+      return Math.max(2 * ARC_SPAN, Math.min(NOTCH_INNER_H + 2 * ARC_SPAN, room));
+    };
+
     const composePath = (W: number, H: number, notchCenterY: number) => {
       /* Total notch height = inner edge + 2 × S-curve regions. */
-      const notchH = NOTCH_INNER_H + 2 * ARC_SPAN;
+      const notchH = notchHeight(H);
       const top = notchCenterY - notchH / 2;
       const bottom = notchCenterY + notchH / 2;
       /* Inset values for the S-curve: derived from terminal's geometry
@@ -193,14 +200,59 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
       ].join(" ");
     };
 
-    /* Notch travel range — center sweeps from 15% to 85% of card
-       height as scroll progress goes 0 → 1. Wider range = more
-       visible motion per scroll unit. */
-    const notchYAtProgress = (H: number, p: number) =>
-      H * (0.15 + 0.70 * p);
+    /* Notch travel range: the notch slides from right under the
+       top-left corner to right above the bottom-left one. Its outer
+       arc has the corner's radius and centre line, so at both ends
+       the corner rounding runs straight into the notch as one arc.
+       It used to sweep 15% → 85% of the card height by its centre,
+       which pushed the notch past both corners and cut them off at
+       the start and the end of the section. */
+    const notchYAtProgress = (H: number, p: number) => {
+      const first = CORNER_R + notchHeight(H) / 2;
+      const last = Math.max(first, H - first);
+      return first + (last - first) * p;
+    };
 
     let elements: HTMLElement[] = [];
     let lastProgress = 0;
+    /* Part of the section's scroll progress during which a card is on
+       screen: from the first card's top edge entering at the bottom of
+       the viewport to the last card's bottom edge leaving at the top.
+       The travel is spread over this window, so the notch is at the
+       corner when the corner comes into view, not some way past it. */
+    let travelFrom = 0;
+    let travelTo = 1;
+
+    const measureTravel = () => {
+      travelFrom = 0;
+      travelTo = 1;
+      const first = elements[0];
+      const last = elements[elements.length - 1];
+      const firstMedia = first?.closest<HTMLElement>(".sticky-steps__media");
+      const lastMedia = last?.closest<HTMLElement>(".sticky-steps__media");
+      if (!first || !last || !firstMedia || !lastMedia) return;
+      const vh = window.innerHeight;
+      const sec = section.getBoundingClientRect();
+      const total = sec.height + vh;
+      if (total <= 0) return;
+      /* A card is centred in its sticky slot, which is as tall as the
+         viewport: before the slot sticks the card sits this far under
+         the slot's top, after it unsticks this far above its bottom. */
+      const slotGap = (H: number) => Math.max(0, (vh - H) / 2);
+      const enter =
+        firstMedia.getBoundingClientRect().top - sec.top + slotGap(first.clientHeight);
+      const leave =
+        lastMedia.getBoundingClientRect().bottom - sec.top - slotGap(last.clientHeight);
+      const from = enter / total;
+      const to = (leave + vh) / total;
+      if (to - from > 0.05) {
+        travelFrom = Math.max(0, from);
+        travelTo = Math.min(1, to);
+      }
+    };
+
+    const travel = (progress: number) =>
+      Math.min(1, Math.max(0, (progress - travelFrom) / (travelTo - travelFrom)));
     // Cache the last applied geometry per element so we can skip the
     // path() rebuild + style write when nothing changed — eliminates the
     // bulk of redundant per-tick work during fine scrolling.
@@ -212,7 +264,7 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
         const W = el.clientWidth;
         const H = el.clientHeight;
         if (!W || !H) continue;
-        const cy = Math.round(notchYAtProgress(H, progress));
+        const cy = Math.round(notchYAtProgress(H, travel(progress)));
         const key = `${W}|${H}|${cy}`;
         if (lastKey.get(el) === key) continue;
         lastKey.set(el, key);
@@ -227,6 +279,7 @@ export function StickyServices({ steps = defaultStickySteps }: { steps?: StickyS
       elements = Array.from(
         section.querySelectorAll<HTMLElement>(".sticky-steps__visual.mp5-notch-shaped"),
       );
+      measureTravel();
       apply(lastProgress);
     };
 
