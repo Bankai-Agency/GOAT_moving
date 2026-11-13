@@ -242,6 +242,15 @@ body:has([data-accent="blue"]) .bg-\[\#FFE533\] .text-\[\#0c0c0c\] {
   }
 }
 
+/* Once the video has painted a frame of its own, the poster image under
+   it goes. On phones both layers fade to transparent along the bottom of
+   the band (the mask above), and through the half-transparent video the
+   first-frame poster showed as a ghost of the truck under every later
+   frame. */
+[data-hero-region][data-hero-frame] picture .hero-media {
+  visibility: hidden;
+}
+
 /* ── Scroll hint ─────────────────────────────────────────────────
    Sits just above the bottom of the VISIBLE viewport: the pinned screen
    is 100vh tall, and on iOS the lowest ~85 px of that are under the

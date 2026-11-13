@@ -358,6 +358,9 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
       const lag = performance.now() - seekStartedAt;
       if (!firstFrameAt) {
         firstFrameAt = performance.now();
+        // The video now paints its own frame: take the poster image out
+        // from under it (see [data-hero-frame] in accent.css).
+        wrapperEl.dataset.heroFrame = "1";
         pushHeroEvent("hero_first_frame", {
           hero_first_frame_ms: Math.round(firstFrameAt - effectStartedAt),
           hero_tier: tier,
