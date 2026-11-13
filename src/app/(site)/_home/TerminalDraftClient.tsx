@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode, type Ref } from "react";
 import { gsap, ScrollTrigger, registerGsapPlugins } from "@site/motion/gsap";
 import {
-  HERO_SOURCES,
   HERO_SOURCE_SCRIPT,
   applyHeroChoice,
   chooseHeroSource,
@@ -311,7 +310,6 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
        twice and then skipped one (the scrub looked torn). `seeked` releases the next seek and times the previous
        one; the p95 of those timings is the device's real scrub budget. */
     const FRAME = 1 / 24;
-    const SEEK_LAG_LIMIT_MS = 120;
     const percentile = (values: number[], p: number) => {
       const sorted = [...values].sort((a, b) => a - b);
       return sorted[Math.min(sorted.length - 1, Math.floor(p * sorted.length))];
@@ -323,7 +321,6 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
     let seekStartedAt = 0;
     let firstFrameAt = 0;
     let lagReported = false;
-    let downgraded = false;
     const seekLags: number[] = [];
 
     const seekTo = (t: number) => {
@@ -349,30 +346,13 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
       seekTo(t);
     };
 
-    /* Step down once per page view, desktop only: the full clip gives way
-       to the small one at the same scroll position. A phone never steps
-       down to the poster at runtime: its clip is one blob, so it is
-       either not here yet (the poster shows and the clip catches up with
-       the scroll when it lands) or fully local, and a still picture in
-       place of the scrub is the worse outcome on any phone that can play
-       it at all. */
-    const downgrade = (reason: string) => {
-      if (downgraded || tier !== "full") return;
-      downgraded = true;
-      const from = tier;
-      pendingTime = null;
-      seekInFlight = false;
-      shownTime = -1;
-      seekLags.length = 0;
-      wrapperEl.dataset.heroDowngraded = "1";
-      tier = "light";
-      wrapperEl.dataset.heroTier = "light";
-      videoDuration = 0;
-      videoEl.src = HERO_SOURCES.lite;
-      try { videoEl.load(); } catch { /* ignore */ }
-      pushHeroEvent("hero_downgrade", { hero_from: from, hero_to: tier, hero_reason: reason });
-    };
-
+    /* No runtime step-down. There used to be one (seeks slower than
+       120 ms at p95 swapped the clip for the 640x360 one), and it fired
+       on exactly the wrong visitors: on a cold cache, while the file was
+       still arriving, seeks were slow for a few seconds and the page
+       traded the full clip for a soft one for the rest of the visit. A
+       slow seek already costs nothing but a held frame, because only the
+       latest target is ever sought. The timings are still reported. */
     const onSeeked = () => {
       seekInFlight = false;
       const lag = performance.now() - seekStartedAt;
@@ -385,10 +365,6 @@ export function TerminalDraftClient({ services = defaultStickySteps }: { service
       }
       seekLags.push(lag);
       if (seekLags.length > 20) seekLags.shift();
-      if (seekLags.length >= 12 && percentile(seekLags, 0.95) > SEEK_LAG_LIMIT_MS) {
-        downgrade("seek-lag");
-        return;
-      }
       if (pendingTime !== null) {
         const t = pendingTime;
         pendingTime = null;
